@@ -1,0 +1,18 @@
+{
+  "name": "@/server",
+  "type": "module",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "bun --env-file=../../.env .",
+    "dev": "bun --env-file=../../.env --watch .",
+    "format": "cd ../../ && bun format"
+  },
+  "devDependencies": {
+    "@/env": "workspace:*",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
