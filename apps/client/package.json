@@ -1,5 +1,5 @@
 {
-  "name": "@/server",
+  "name": "@/client",
   "type": "module",
   "private": true,
   "main": "src/index.ts",
@@ -10,14 +10,9 @@
   },
   "devDependencies": {
     "@/env": "workspace:*",
-    "@/codes": "workspace:*",
-    "@/utils": "workspace:*",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "hono": "^4.5.10"
   }
 }

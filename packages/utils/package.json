@@ -1,0 +1,9 @@
+{
+  "name": "@/utils",
+  "type": "module",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2"
+  }
+}
