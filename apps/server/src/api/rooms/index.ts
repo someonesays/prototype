@@ -28,9 +28,9 @@ rooms.get(
     }
 
     return upgradeWebSocket((c: Context<RoomMiddleware>) => {
-      const { user, room } = c.var.data;
       return {
         onOpen(evt, ws) {
+          const { user, room } = c.var.data;
           console.log('WebSocket connected');
         },
         onMessage(evt, ws) {
