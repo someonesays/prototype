@@ -2,12 +2,6 @@ import type { JWTPayload } from 'hono/utils/jwt/types';
 
 export type MatchmakingDataJWT = MatchmakingData & JWTPayload;
 
-export interface RoomMiddleware {
-  Variables: {
-    data: MatchmakingDataJWT;
-  };
-}
-
 export interface MatchmakingResponse {
   authorization: string;
   data: MatchmakingData;

@@ -2,7 +2,7 @@ import env from '@/env';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { secureHeaders } from 'hono/secure-headers';
-import { websocket } from './utils/ws';
+import { websocket } from './utils';
 import { api } from './api';
 
 const app = new Hono();
