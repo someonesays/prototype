@@ -1,18 +1,20 @@
 {
   "name": "@/client",
-  "type": "module",
   "private": true,
-  "main": "src/index.ts",
+  "type": "module",
   "scripts": {
-    "start": "bun --env-file=../../.env .",
-    "dev": "bun --env-file=../../.env --watch .",
+    "dev": "bunx --bun vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@/env": "workspace:*",
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.5.4"
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@tsconfig/svelte": "^5.0.4",
+    "svelte": "^4.2.18",
+    "svelte-check": "^3.8.5",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1"
   }
 }
