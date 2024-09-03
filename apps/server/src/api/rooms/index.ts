@@ -10,7 +10,7 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
   const protocol = c.req.header('sec-websocket-protocol');
   if (!protocol) return;
 
-  const payload = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
+  const { user, room } = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
   return {
     open({ ws }) {
       const { user, room } = c.var.data;
