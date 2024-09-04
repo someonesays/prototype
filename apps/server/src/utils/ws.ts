@@ -1,7 +1,7 @@
-import { createBunWebSocket } from 'hono/bun';
-import { createMiddleware } from 'hono/factory';
-import type { Context, Env, Input } from 'hono';
-import type { WSContext, WSMessageReceive } from 'hono/ws';
+import { createBunWebSocket } from "hono/bun";
+import { createMiddleware } from "hono/factory";
+import type { Context, Env, Input } from "hono";
+import type { WSContext, WSMessageReceive } from "hono/ws";
 
 export const { upgradeWebSocket, websocket } = createBunWebSocket();
 
@@ -17,7 +17,7 @@ export function createWebSocketMiddleware<
         open?: (data: { evt: Event; ws: WSContext }) => void;
         message?: (data: {
           evt: MessageEvent<WSMessageReceive>;
-          data: MessageEvent<WSMessageReceive>['data'];
+          data: MessageEvent<WSMessageReceive>["data"];
           ws: WSContext;
         }) => void;
         close?: (data: { evt: CloseEvent; ws: WSContext }) => void;
@@ -29,7 +29,7 @@ export function createWebSocketMiddleware<
 ) {
   return createMiddleware(async (c, next) => {
     try {
-      if (c.req.header('upgrade') !== 'websocket') return await next();
+      if (c.req.header("upgrade") !== "websocket") return await next();
 
       const events = await middleware(c);
       if (!events) return c.newResponse(null);

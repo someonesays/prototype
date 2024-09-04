@@ -1,20 +1,23 @@
-import env from '@/env';
-import { Hono } from 'hono';
-import { serveStatic } from 'hono/bun';
-import { secureHeaders } from 'hono/secure-headers';
-import { websocket } from './utils';
-import { api } from './api';
+import env from "@/env";
+import { Hono } from "hono";
+import { serveStatic } from "hono/bun";
+import { secureHeaders } from "hono/secure-headers";
+import { websocket } from "./utils";
+import { api } from "./api";
+import { proxy } from "./proxy";
 
 const app = new Hono();
 
-app.use(secureHeaders());
-app.route('/api', api);
+app.route("/proxy", proxy);
 
-if (env.NodeEnv === 'production') {
-  app.get('*', serveStatic({ root: '/build' }));
-  app.get('*', serveStatic({ path: '/build/index.html' }));
+app.use(secureHeaders());
+app.route("/api", api);
+
+if (env.NodeEnv === "production") {
+  app.get("*", serveStatic({ root: "/build" }));
+  app.get("*", serveStatic({ path: "/build/index.html" }));
 } else {
-  app.get('*', (c) => c.redirect(`http://localhost:${env.VitePort}${c.req.path}`));
+  app.get("*", (c) => c.redirect(`http://localhost:${env.VitePort}${c.req.path}`));
 }
 
 export default {

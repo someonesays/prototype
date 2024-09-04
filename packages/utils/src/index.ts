@@ -1,6 +1,6 @@
-import env from '@/env';
-import { getRandomValues } from 'node:crypto';
-import { init, isCuid } from '@paralleldrive/cuid2';
+import env from "@/env";
+import { getRandomValues } from "node:crypto";
+import { init, isCuid } from "@paralleldrive/cuid2";
 
 /**
  * Create a CUID.
@@ -18,9 +18,9 @@ const createCuid = init({
  * @returns The randomly generated code
  */
 function createCode(length: number) {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const values = new Uint32Array(length);
-  let result = '';
+  let result = "";
   getRandomValues(values);
   for (let i = 0; i < length; i++) {
     result += charset[values[i] % charset.length];

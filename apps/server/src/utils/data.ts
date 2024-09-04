@@ -1,4 +1,4 @@
-import type { JWTPayload } from 'hono/utils/jwt/types';
+import type { JWTPayload } from "hono/utils/jwt/types";
 
 export type MatchmakingDataJWT = MatchmakingData & JWTPayload;
 

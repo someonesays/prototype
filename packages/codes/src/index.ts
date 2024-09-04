@@ -1,4 +1,4 @@
 export enum MessageCodes {
-  HelloWorld = 'hello_world',
-  NotFound = 'not_found',
+  HelloWorld = "hello_world",
+  NotFound = "not_found",
 }

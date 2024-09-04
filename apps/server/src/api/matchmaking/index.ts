@@ -1,12 +1,12 @@
-import env from '@/env';
-import { Hono } from 'hono';
-import { sign } from 'hono/jwt';
-import { createCode, createCuid } from '@/utils';
-import type { MatchmakingDataJWT } from '../../utils';
+import env from "@/env";
+import { Hono } from "hono";
+import { sign } from "hono/jwt";
+import { createCode, createCuid } from "@/utils";
+import type { MatchmakingDataJWT } from "../../utils";
 
 export const matchmaking = new Hono();
 
-matchmaking.get('/', async (c) => {
+matchmaking.get("/", async (c) => {
   // Get user information
   const user = {
     id: createCuid(),
@@ -14,9 +14,9 @@ matchmaking.get('/', async (c) => {
   };
   // Get room information
   const room = {
-    id: 'test_room_id',
+    id: "test_room_id",
     server: {
-      id: 'test_server_id',
+      id: "test_server_id",
       url: `ws://localhost:${env.Port}/rooms`,
     },
   };

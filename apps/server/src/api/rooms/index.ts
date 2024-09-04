@@ -1,7 +1,7 @@
-import env from '@/env';
-import { Hono } from 'hono';
-import { verify } from 'hono/jwt';
-import { createWebSocketMiddleware, type MatchmakingDataJWT } from '../../utils';
+import env from "@/env";
+import { Hono } from "hono";
+import { verify } from "hono/jwt";
+import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
 
 export const rooms = new Hono();
 
