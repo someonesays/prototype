@@ -10,7 +10,7 @@ onMount(() => {
   iframe.allow = "autoplay; encrypted-media";
   iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-same-origin", "allow-forms");
 
-  iframe.src = "https://example.com/";
+  iframe.src = "/api/proxy/https/example.com/";
   container.appendChild(iframe);
 
   return () => {
