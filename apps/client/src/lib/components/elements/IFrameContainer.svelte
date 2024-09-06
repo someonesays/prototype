@@ -8,7 +8,7 @@ onMount(() => {
   iframe.classList.add("iframe");
   iframe.referrerPolicy = "origin";
   iframe.allow = "autoplay; encrypted-media";
-  iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-same-origin", "allow-forms");
+  iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-forms");
   iframe.width = "1024px";
   iframe.height = "1024px";
 

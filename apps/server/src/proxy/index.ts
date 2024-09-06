@@ -1,3 +1,4 @@
+import env from "@/env";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import type { BlankEnv } from "hono/types";
@@ -7,8 +8,7 @@ export const proxy = new Hono();
 const route = "/:http{(http|https)}/:domain{^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$}/*";
 
 proxy.use(route, (c, next) => {
-  const { http, domain } = getProxyUrl(c);
-  const url = `${http}://${domain}/`;
+  const { proxyUrl } = getProxyUrl(c);
   return secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
@@ -16,11 +16,11 @@ proxy.use(route, (c, next) => {
       styleSrc: ["'self'", "'unsafe-inline'", "blob:"],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", "data:"],
-      connectSrc: [url, "data:", "blob:"],
+      connectSrc: [proxyUrl, "data:", "blob:"],
       mediaSrc: ["'self'", "blob:", "data:"],
-      frameSrc: [url],
-      childSrc: [url, "blob:"],
-      workerSrc: [url, "blob:"],
+      frameSrc: [proxyUrl],
+      childSrc: [proxyUrl, "blob:"],
+      workerSrc: [proxyUrl, "blob:"],
     },
     xFrameOptions: "SAMEORIGIN",
   })(c, next);
@@ -55,7 +55,9 @@ function getProxyUrl(c: Context<BlankEnv, typeof route>) {
   const query = Object.entries(c.req.query()).length
     ? `?${new URLSearchParams(c.req.query())}`
     : "";
+  const href = `${http}://${domain}/`;
   const url = `${http}://${domain}${path}${query}`;
+  const proxyUrl = `${env.Domain}/${http}/${domain}`;
 
-  return { http, domain, path, query, url };
+  return { http, domain, path, query, href, url, proxyUrl };
 }

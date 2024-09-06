@@ -10,20 +10,19 @@ const app = new Hono();
 
 app.route("/api/proxy", proxy);
 
-const url = "http://localhost:3001";
 app.use(
   secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
-      scriptSrc: [url, "'self'", "'unsafe-eval'", "'unsafe-inline'", NONCE, "blob:"],
+      scriptSrc: [env.Domain, "'self'", "'unsafe-eval'", "'unsafe-inline'", NONCE, "blob:"],
       styleSrc: ["'self'", "'unsafe-inline'", "blob:"],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", "data:"],
-      connectSrc: [url, "data:", "blob:"],
+      connectSrc: [env.Domain, "data:", "blob:"],
       mediaSrc: ["'self'", "blob:", "data:"],
-      frameSrc: [url],
-      childSrc: [url, "blob:"],
-      workerSrc: [url, "blob:"],
+      frameSrc: [env.Domain],
+      childSrc: [env.Domain, "blob:"],
+      workerSrc: [env.Domain, "blob:"],
     },
   }),
 );
