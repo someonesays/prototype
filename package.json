@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
+    "build": "turbo run build",
     "start": "turbo run start",
     "dev": "turbo run dev",
     "format": "biome format --write ./",

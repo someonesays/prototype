@@ -4,8 +4,8 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "start": "bun --env-file=../../.env .",
-    "dev": "bun --env-file=../../.env --watch .",
+    "start": "NODE_ENV=production TZ=UTC bun --env-file=../../.env .",
+    "dev": "NODE_ENV=development TZ=UTC bun --env-file=../../.env --watch .",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {

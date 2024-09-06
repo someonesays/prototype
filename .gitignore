@@ -1,14 +1,12 @@
-# Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
-
-
 # Logs
+
 logs
-*.log
-npm-debug.log*
+_.log
+npm-debug.log_
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
 # Caches
 
@@ -105,6 +103,9 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+.env.*
+!.env.example
+!.env.test
 
 # parcel-bundler cache (https://parceljs.org/)
 
@@ -177,13 +178,17 @@ dist
 # Turborepo
 .turbo/
 
-# Svelte
-dist-ssr
-*.local
+# Output
+.output
+.vercel
+.svelte-kit/
+build/
 
-# Editor directories and files
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# OS
+Thumbs.db
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+local/
