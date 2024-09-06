@@ -10,6 +10,7 @@ const route = "/:http{(http|https)}/:domain{^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+
 proxy.use(route, (c, next) => {
   const { proxyUrl } = getProxyUrl(c);
   return secureHeaders({
+    originAgentCluster: "",
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-eval'", NONCE, "blob:"],
