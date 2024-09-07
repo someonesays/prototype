@@ -12,7 +12,8 @@ onMount(() => {
   iframe.width = "1024px";
   iframe.height = "1024px";
 
-  iframe.src = "/api/proxy/https/example.com/";
+  iframe.src = "/api/proxy/1/";
+
   container.appendChild(iframe);
 
   return () => {

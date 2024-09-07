@@ -5,18 +5,18 @@ export enum Visibility {
 
 export const prompts = [
   {
-    id: "cm0p7w2ys0",
+    id: "1",
     visibility: Visibility.Public,
     prompt: "click the buttons",
     url: {
-      host: "google.com",
-      secure: true,
+      host: "localhost:5173",
+      secure: false,
     },
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },
   {
-    id: "mjax5z1doc",
+    id: "2",
     visibility: Visibility.Public,
     prompt: "kill youself",
     url: {

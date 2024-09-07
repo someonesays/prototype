@@ -11,6 +11,7 @@
   "devDependencies": {
     "@/env": "workspace:*",
     "@/codes": "workspace:*",
+    "@/db": "workspace:*",
     "@/utils": "workspace:*",
     "@types/bun": "latest"
   },

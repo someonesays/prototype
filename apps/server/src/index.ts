@@ -8,7 +8,7 @@ import { proxy } from "./proxy";
 
 const app = new Hono();
 
-app.route("/api/proxy", proxy);
+app.route("/", proxy);
 
 app.use(
   secureHeaders({
