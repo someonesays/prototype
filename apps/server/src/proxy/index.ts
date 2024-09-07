@@ -1,5 +1,5 @@
 import env from "@/env";
-import { getPrompt } from "@/db";
+import { getPrompt, PromptType } from "@/db";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import type { BlankEnv } from "hono/types";
@@ -25,6 +25,7 @@ proxy.use(route, async (c, next) => {
       workerSrc: [proxyHref, "blob:"],
     },
     xFrameOptions: "SAMEORIGIN",
+    crossOriginResourcePolicy: "same-site",
   })(c, next);
 });
 
@@ -55,7 +56,8 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   const prompt = await getPrompt(promptId);
   if (!prompt) throw new Error("Invalid prompt ID");
 
-  const path = c.req.path.slice(promptId.length + 12);
+  const path =
+    prompt.url.type === PromptType.Original ? c.req.path.slice(promptId.length + 12) : c.req.path;
 
   const http = prompt.url.secure ? "https" : "http";
   const query = Object.entries(c.req.query()).length
@@ -66,6 +68,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   const proxyHref = `${env.Domain}/${http}/${prompt.url.host}`;
 
   const url = `${href}${path}${query}`;
+  console.log(url);
   // const proxyUrl = `${proxyHref}${path}${query}`;
 
   return { proxyHref, url };
