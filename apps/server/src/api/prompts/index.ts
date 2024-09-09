@@ -14,6 +14,9 @@ prompts.get("/:id", async (c) => {
     id: prompt.id,
     visibility: prompt.visibility,
     prompt: prompt.prompt,
+    author: {
+      name: prompt.author.name,
+    },
     url: `/api/proxy/${prompt.id}/`,
     createdAt: prompt.createdAt,
     updatedAt: prompt.updatedAt,

@@ -5,6 +5,9 @@ export const prompts = [
     id: "1",
     visibility: Visibility.Public,
     prompt: "click the buttons",
+    author: {
+      name: "Someone",
+    },
     urlType: PromptType.WholePath,
     urlHost: "localhost:5173",
     urlSecure: false,
@@ -14,7 +17,10 @@ export const prompts = [
   {
     id: "2",
     visibility: Visibility.Public,
-    prompt: "kill youself",
+    prompt: "kill yourself",
+    author: {
+      name: "Nobody",
+    },
     urlType: PromptType.Original,
     urlHost: "example.com",
     urlSecure: true,

@@ -3,7 +3,9 @@ import { onMount } from "svelte";
 import type { Visibility } from "@/public";
 
 let container: HTMLDivElement;
+let authorText = "Someone";
 let promptText = "";
+let promptTextOpacity = 0;
 
 onMount(() => {
   const promptId = "1";
@@ -20,12 +22,18 @@ onMount(() => {
       id: string;
       visibility: Visibility;
       prompt: string;
+      author: {
+        name: string;
+      };
       url: string;
       createdAt: string;
       updatedAt: string;
     };
 
+    authorText = prompt.author.name;
     promptText = prompt.prompt;
+    promptTextOpacity = 1;
+
     iframe.src = prompt.url;
   })();
 
@@ -37,7 +45,7 @@ onMount(() => {
 
 <div class="prompt-container">
   <div class="prompt-row">
-    <p class="prompt-text">Someone says <b>{promptText}</b></p>
+    <p class="prompt-text" style="opacity:{promptTextOpacity}">{authorText} says <b>{promptText}</b></p>
   </div>
   <div class="prompt-iframe" bind:this={container} />
 </div>
@@ -58,6 +66,9 @@ onMount(() => {
     color: white;
     text-align: center;
     font-size: calc(16px + 0.5vh);
+  }
+  .prompt-text {
+    opacity: 0;
   }
   .prompt-iframe {
     background-color: black;
