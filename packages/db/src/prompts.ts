@@ -1,23 +1,13 @@
-export enum Visibility {
-  Private = 0,
-  Public = 1,
-}
-
-export enum PromptType {
-  Original = 0,
-  WholePath = 1,
-}
+import { PromptType, Visibility } from "@/public";
 
 export const prompts = [
   {
     id: "1",
     visibility: Visibility.Public,
     prompt: "click the buttons",
-    url: {
-      type: PromptType.WholePath,
-      host: "localhost:5173",
-      secure: false,
-    },
+    urlType: PromptType.WholePath,
+    urlHost: "localhost:5173",
+    urlSecure: false,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },
@@ -25,11 +15,9 @@ export const prompts = [
     id: "2",
     visibility: Visibility.Public,
     prompt: "kill youself",
-    url: {
-      type: PromptType.Original,
-      host: "example.com",
-      secure: true,
-    },
+    urlType: PromptType.Original,
+    urlHost: "example.com",
+    urlSecure: true,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },

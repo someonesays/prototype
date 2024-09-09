@@ -1,4 +1,5 @@
-import { prompts, Visibility } from "./prompts";
+import { prompts } from "./prompts";
+import { Visibility } from "@/public";
 
 export function getPrompts({
   visibility = [Visibility.Private, Visibility.Public],

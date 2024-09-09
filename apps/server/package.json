@@ -9,16 +9,16 @@
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@/env": "workspace:*",
-    "@/codes": "workspace:*",
-    "@/db": "workspace:*",
-    "@/utils": "workspace:*",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@/env": "workspace:*",
+    "@/public": "workspace:*",
+    "@/db": "workspace:*",
+    "@/utils": "workspace:*",
     "hono": "^4.5.10"
   }
 }

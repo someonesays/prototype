@@ -1,5 +1,5 @@
 {
-  "name": "@/codes",
+  "name": "@/public",
   "type": "module",
   "private": true,
   "main": "src/index.ts"

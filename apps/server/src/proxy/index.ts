@@ -1,5 +1,6 @@
 import env from "@/env";
-import { getPrompt, PromptType } from "@/db";
+import { getPrompt } from "@/db";
+import { PromptType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import type { BlankEnv } from "hono/types";
@@ -42,6 +43,7 @@ proxy.get(route, async (c) => {
     }
 
     return new Response(res.body, {
+      status: res.status,
       headers: {
         "content-type": res.headers.get("content-type") ?? "",
       },
@@ -57,18 +59,17 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   if (!prompt) throw new Error("Invalid prompt ID");
 
   const path =
-    prompt.url.type === PromptType.Original ? c.req.path.slice(promptId.length + 12) : c.req.path;
+    prompt.urlType === PromptType.Original ? c.req.path.slice(promptId.length + 12) : c.req.path;
 
-  const http = prompt.url.secure ? "https" : "http";
+  const http = prompt.urlSecure ? "https" : "http";
   const query = Object.entries(c.req.query()).length
     ? `?${new URLSearchParams(c.req.query())}`
     : "";
 
-  const href = `${http}://${prompt.url.host}`;
-  const proxyHref = `${env.Domain}/${http}/${prompt.url.host}`;
+  const href = `${http}://${prompt.urlHost}`;
+  const proxyHref = `${env.Domain}/${http}/${prompt.urlHost}`;
 
   const url = `${href}${path}${query}`;
-  console.log(url);
   // const proxyUrl = `${proxyHref}${path}${query}`;
 
   return { proxyHref, url };

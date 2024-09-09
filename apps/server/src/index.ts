@@ -1,5 +1,5 @@
 import env from "@/env";
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { serve } from "./utils";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import { websocket } from "./utils";
@@ -29,20 +29,21 @@ app.use(
 app.route("/api", api);
 
 if (env.NodeEnv === "production") {
+  const inject = (c: Context, html: string) =>
+    html.replace(/<script/g, `<script nonce="${c.get("secureHeadersNonce")}"`);
+
   app.get(
     "*",
     serve({
       root: "/build",
-      inject: (c, html) =>
-        html.replace(/<script/g, `<script nonce="${c.get("secureHeadersNonce")}"`),
+      inject,
     }),
   );
   app.get(
     "*",
     serve({
       path: "/build/index.html",
-      inject: (c, html) =>
-        html.replace(/<script/g, `<script nonce="${c.get("secureHeadersNonce")}"`),
+      inject,
     }),
   );
 } else {
