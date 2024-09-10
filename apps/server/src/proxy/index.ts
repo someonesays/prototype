@@ -45,6 +45,7 @@ proxy.get(route, async (c) => {
     return new Response(res.body, {
       status: res.status,
       headers: {
+        "access-control-allow-origin": "*",
         "content-type": res.headers.get("content-type") ?? "",
       },
     });
@@ -67,7 +68,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
     : "";
 
   const href = `${http}://${prompt.urlHost}`;
-  const proxyHref = `${env.Domain}/${http}/${prompt.urlHost}`;
+  const proxyHref = `${env.Domain}/api/proxy/${prompt.id}`;
 
   const url = `${href}${path}${query}`;
   // const proxyUrl = `${proxyHref}${path}${query}`;

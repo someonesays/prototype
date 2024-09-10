@@ -1,7 +1,8 @@
 import env from "@/env";
 import { Hono, type Context } from "hono";
-import { serve } from "./utils";
+import { cors } from "hono/cors";
 import { NONCE, secureHeaders } from "hono/secure-headers";
+import { serve } from "./utils";
 import { websocket } from "./utils";
 import { api } from "./api";
 import { proxy } from "./proxy";
@@ -9,6 +10,14 @@ import { proxy } from "./proxy";
 const app = new Hono();
 
 app.route("/", proxy);
+
+app.use(
+  cors({
+    origin: env.Domain,
+    maxAge: 600,
+    credentials: true,
+  }),
+);
 
 app.use(
   secureHeaders({
@@ -24,8 +33,10 @@ app.use(
       childSrc: [env.Domain, "blob:"],
       workerSrc: [env.Domain, "blob:"],
     },
+    xFrameOptions: "DENY",
   }),
 );
+
 app.route("/api", api);
 
 if (env.NodeEnv === "production") {
