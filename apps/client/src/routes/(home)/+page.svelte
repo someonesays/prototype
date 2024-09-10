@@ -1,7 +1,4 @@
-<script lang="ts">
-import PromptContainer from "$lib/components/elements/PromptContainer.svelte";
-</script>
-  
 <main>
-  <PromptContainer />
+  <p>Someone Says</p>
+  <p><a href="/rooms/test">Play</a></p>
 </main>

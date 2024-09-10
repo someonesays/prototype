@@ -4,6 +4,8 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import { onMount } from "svelte";
 import type { Visibility } from "@/public";
 
+export let promptId: string;
+
 let container: HTMLDivElement;
 let authorText = "Someone";
 let promptText = "";
@@ -11,8 +13,6 @@ let promptTextOpacity = 0;
 $: volumeValue = 100;
 
 onMount(() => {
-  const promptId = "1";
-
   const iframe = document.createElement("iframe") as HTMLIFrameElement;
   iframe.referrerPolicy = "origin";
   iframe.allow = "autoplay; encrypted-media";
