@@ -154,15 +154,6 @@ function leaveGame() {
   .prompt-settings-button-active {
     background-color: #4a5259;
   }
-  @media (hover: hover) {
-    .prompt-settings-button:hover {
-      background-color: #4a5259;
-      box-shadow: #64646f73 0px 7px 29px 0px;
-    }
-    .prompt-settings-button:hover > div {
-      transform: rotate(90deg);
-    }
-  }
   .leave-game {
     border: 2px #e03131 solid;
     border-radius: 2px;
@@ -175,8 +166,17 @@ function leaveGame() {
     height: 30px;
     transition: border .5s ease-out;
   }
-  .leave-game:hover {
-    background-color: #e03131;
-    color: #ffc9c9;
+  @media (hover: hover) {
+    .prompt-settings-button:hover {
+      background-color: #4a5259;
+      box-shadow: #64646f73 0px 7px 29px 0px;
+    }
+    .prompt-settings-button:hover > div {
+      transform: rotate(90deg);
+    }
+    .leave-game:hover {
+      background-color: #e03131;
+      color: #ffc9c9;
+    }
   }
 </style>
