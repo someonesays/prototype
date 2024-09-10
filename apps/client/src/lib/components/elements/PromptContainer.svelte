@@ -43,6 +43,11 @@ onMount(() => {
     container.removeChild(iframe);
   };
 });
+
+let isSettingsOpen = false;
+function openSettings() {
+  isSettingsOpen = !isSettingsOpen;
+}
 </script>
 
 <div class="prompt-container">
@@ -53,7 +58,10 @@ onMount(() => {
   </div>
   <div class="prompt-iframe" bind:this={container} />
   <div class="prompt-settings">
-    <div><GearIcon /></div>
+    <div class="prompt-settings-menu" class:prompt-settings-menu-active={isSettingsOpen}>I can add more goofy content here!</div>
+    <button class="prompt-settings-button" class:prompt-settings-button-active={isSettingsOpen} on:click={openSettings}>
+      <div><GearIcon /></div>
+    </button>
   </div>
 </div>
 
@@ -89,29 +97,45 @@ onMount(() => {
   }
   .prompt-settings {
     position: absolute;
-    background-color: #343a40;
     color: white;
+    right: calc(16px + 0.5vh);
+    bottom: calc(16px + 0.5vh);
+  }
+  .prompt-settings-menu {
+    display: none;
+    margin-bottom: 12px;
+  }
+  .prompt-settings-menu-active {
+    display: block;
+  }
+  .prompt-settings-button {
+    background-color: #343a40;
     border: 2px #4a5259 solid;
     border-radius: calc(4px + 0.5vh);
     box-shadow: #64646f33 0px 7px 29px 0px;
+    padding: 0px;
+    float: right;
     cursor: pointer;
-    right: calc(16px + 0.5vh);
-    bottom: calc(16px + 0.5vh);
     width: calc(40px + 0.5vh);
     height: calc(40px + 0.5vh);
     transition: box-shadow .5s ease-out;
   }
-  .prompt-settings:hover {
-    background-color: #4a5259;
-    box-shadow: #64646f73 0px 7px 29px 0px;
-  }
-  .prompt-settings div {
+  .prompt-settings-button div {
     margin: 25%;
     width: 50%;
     height: 50%;
     transition: transform .5s ease-out;
   }
-  .prompt-settings:hover > div {
-    transform: rotate(90deg);
+  .prompt-settings-button-active {
+    background-color: #4a5259;
+  }
+  @media (hover: hover) {
+    .prompt-settings-button:hover {
+      background-color: #4a5259;
+      box-shadow: #64646f73 0px 7px 29px 0px;
+    }
+    .prompt-settings-button:hover > div {
+      transform: rotate(90deg);
+    }
   }
 </style>
