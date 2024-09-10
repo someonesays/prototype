@@ -8,6 +8,7 @@ let container: HTMLDivElement;
 let authorText = "Someone";
 let promptText = "";
 let promptTextOpacity = 0;
+$: volumeValue = 100;
 
 onMount(() => {
   const promptId = "1";
@@ -48,6 +49,10 @@ let isSettingsOpen = false;
 function openSettings() {
   isSettingsOpen = !isSettingsOpen;
 }
+
+function leaveGame() {
+  alert("This is an unfinished button");
+}
 </script>
 
 <div class="prompt-container">
@@ -58,7 +63,20 @@ function openSettings() {
   </div>
   <div class="prompt-iframe" bind:this={container} />
   <div class="prompt-settings">
-    <div class="prompt-settings-menu" class:prompt-settings-menu-active={isSettingsOpen}>I can add more goofy content here!</div>
+    <div class="prompt-settings-menu" class:prompt-settings-menu-active={isSettingsOpen}>
+      <div>
+        <div>
+          <p style="float: left">Volume</p>
+          <p style="float: right">{volumeValue}%</p>
+        </div>
+        <input type="range" min="0" max="100" bind:value={volumeValue} />
+
+        
+      </div>
+      <div>
+        <button class="leave-game" on:click={leaveGame}>Leave game</button>
+      </div>
+    </div>
     <button class="prompt-settings-button" class:prompt-settings-button-active={isSettingsOpen} on:click={openSettings}>
       <div><GearIcon /></div>
     </button>
@@ -105,8 +123,15 @@ function openSettings() {
     display: none;
     margin-bottom: 12px;
   }
+  .prompt-settings-menu p {
+    margin: 0;
+  }
   .prompt-settings-menu-active {
     display: block;
+    border-radius: 2px;
+    background-color: #1e1e1e;
+    box-shadow: #64646f33 0px 7px 29px 0px;
+    padding: 15px;
   }
   .prompt-settings-button {
     background-color: #343a40;
@@ -137,5 +162,21 @@ function openSettings() {
     .prompt-settings-button:hover > div {
       transform: rotate(90deg);
     }
+  }
+  .leave-game {
+    border: 2px #e03131 solid;
+    border-radius: 2px;
+    background-color: #ffc9c9;
+    color: #e03131;
+    text-align: right;
+    cursor: pointer;
+    margin-top: 12px;
+    width: 100%;
+    height: 30px;
+    transition: border .5s ease-out;
+  }
+  .leave-game:hover {
+    background-color: #e03131;
+    color: #ffc9c9;
   }
 </style>
