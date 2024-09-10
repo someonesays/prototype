@@ -1,7 +1,7 @@
 <script lang="ts">
-import IFrameContainer from "$lib/components/elements/IFrameContainer.svelte";
+import PromptContainer from "$lib/components/elements/PromptContainer.svelte";
 </script>
   
 <main>
-  <IFrameContainer />
+  <PromptContainer />
 </main>
