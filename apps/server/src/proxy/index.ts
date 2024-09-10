@@ -8,6 +8,7 @@ import type { BlankEnv } from "hono/types";
 export const proxy = new Hono();
 
 const route = "/api/proxy/:promptId/*";
+const devHeaders = env.NodeEnv === "production" ? [] : [`http://localhost:${env.VitePort}`];
 
 proxy.use(route, async (c, next) => {
   const { proxyHref } = await getProxy(c);
@@ -19,11 +20,11 @@ proxy.use(route, async (c, next) => {
       styleSrc: ["'self'", "'unsafe-inline'", "blob:"],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", "data:"],
-      connectSrc: [proxyHref, "data:", "blob:"],
+      connectSrc: [...devHeaders, proxyHref, "data:", "blob:"],
       mediaSrc: ["'self'", "blob:", "data:"],
-      frameSrc: [proxyHref],
-      childSrc: [proxyHref, "blob:"],
-      workerSrc: [proxyHref, "blob:"],
+      frameSrc: [...devHeaders, proxyHref],
+      childSrc: [...devHeaders, proxyHref, "blob:"],
+      workerSrc: [...devHeaders, proxyHref, "blob:"],
     },
     xFrameOptions: "SAMEORIGIN",
     crossOriginResourcePolicy: "same-site",
@@ -68,7 +69,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
     : "";
 
   const href = `${http}://${prompt.urlHost}`;
-  const proxyHref = `${env.Domain}/api/proxy/${prompt.id}`;
+  const proxyHref = `${env.Domain}/api/proxy/${prompt.id}/`;
 
   const url = `${href}${path}${query}`;
   // const proxyUrl = `${proxyHref}${path}${query}`;
