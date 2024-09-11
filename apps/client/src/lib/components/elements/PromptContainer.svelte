@@ -1,8 +1,8 @@
 <script lang="ts">
-import GearIcon from "$lib/components/icons/GearIcon.svelte";
-
 import { onMount } from "svelte";
 import type { Visibility } from "@/public";
+
+import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 export let promptId: string;
 
@@ -17,6 +17,21 @@ onMount(() => {
   iframe.referrerPolicy = "origin";
   iframe.allow = "autoplay; encrypted-media";
   iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-forms");
+
+  window.onmessage = ({ data }) => {
+    if (
+      !Array.isArray(data) ||
+      data.length !== 2 ||
+      typeof data[0] !== "number" ||
+      typeof data[1] !== "object" ||
+      Array.isArray(data[1])
+    ) {
+      return console.error("Received an invalid data from the iframe", data);
+    }
+
+    const [opcode, payload] = data;
+    console.log(opcode, payload);
+  };
 
   container.appendChild(iframe);
 
@@ -41,6 +56,7 @@ onMount(() => {
   })();
 
   return () => {
+    window.onmessage = null;
     container.removeChild(iframe);
   };
 });
@@ -70,8 +86,6 @@ function leaveGame() {
           <p style="float: right">{volumeValue}%</p>
         </div>
         <input type="range" min="0" max="100" bind:value={volumeValue} />
-
-        
       </div>
       <div>
         <button class="leave-game" on:click={leaveGame}>Leave game</button>

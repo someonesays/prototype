@@ -22,3 +22,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+
+window.onmessage = (e) => {
+  console.log(e.data);
+};
+
+window.top?.postMessage([0, { message: "Hello world!" }], "*");
