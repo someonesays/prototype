@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@/public": "workspace:*",
+    "@/sdk": "workspace:*",
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@fontsource/syne": "^5.0.20",
     "@msgpack/msgpack": "^3.0.0-beta2",

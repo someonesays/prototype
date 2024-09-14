@@ -1,11 +1,4 @@
 /**
- * These are the opcodes the parent page sends to the server
- */
-export enum ClientOpcodes {
-  Ping = 0,
-}
-
-/**
  * These are the opcodes the server sends to the parent page
  */
 export enum ServerOpcodes {

@@ -1,2 +1,5 @@
-export * from "./opcodes/prompt";
-export * from "./opcodes/server";
+export * from "./opcodes/ParentOpcodes";
+export * from "./opcodes/PromptOpcodes";
+
+export * from "./opcodes/ServerOpcodes";
+export * from "./opcodes/ClientOpcodes";

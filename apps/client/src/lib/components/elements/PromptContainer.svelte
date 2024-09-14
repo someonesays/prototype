@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
+import { ParentSdk } from "@/sdk";
 import type { Visibility } from "@/public";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
@@ -17,36 +18,14 @@ onMount(() => {
   iframe.referrerPolicy = "origin";
   iframe.allow = "autoplay; encrypted-media";
   iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-forms");
-
-  window.onmessage = ({ data }) => {
-    if (
-      !Array.isArray(data) ||
-      data.length !== 2 ||
-      typeof data[0] !== "number" ||
-      typeof data[1] !== "object" ||
-      Array.isArray(data[1])
-    ) {
-      return console.error("Received an invalid data from the iframe", data);
-    }
-
-    const [opcode, payload] = data;
-    console.log(opcode, payload);
-  };
-
   container.appendChild(iframe);
 
+  const sdk = new ParentSdk(iframe);
+
   (async () => {
-    const prompt = (await (await fetch(`/api/prompts/${promptId}`)).json()) as {
-      id: string;
-      visibility: Visibility;
-      prompt: string;
-      author: {
-        name: string;
-      };
-      url: string;
-      createdAt: string;
-      updatedAt: string;
-    };
+    const { success, prompt } = await ParentSdk.getPrompt(promptId);
+
+    if (!success || !prompt) throw new Error("The prompt with the given ID doesn't exist");
 
     authorText = prompt.author.name;
     promptText = prompt.prompt;
@@ -56,7 +35,7 @@ onMount(() => {
   })();
 
   return () => {
-    window.onmessage = null;
+    sdk.destroy();
     container.removeChild(iframe);
   };
 });

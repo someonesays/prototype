@@ -23,8 +23,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 
-window.onmessage = (e) => {
-  console.log(e.data);
-};
+import { PromptSdk } from "@/sdk";
 
-window.top?.postMessage([0, { message: "Hello world!" }], "*");
+const sdk = new PromptSdk();
+const ready = await sdk.ready();
+
+console.log("testing", ready);
