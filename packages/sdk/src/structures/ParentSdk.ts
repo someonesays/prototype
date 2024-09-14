@@ -60,7 +60,7 @@ export class ParentSdk {
         if (this.isReady) return console.error("Already recieved handshake from this prompt");
         this.isReady = true;
         this.postMessage(ParentOpcodes.Ready, {
-          // WIP: Finish messages here
+          // WIP: Remove these placeholder messages
           started: false,
           user: "mock_user_id",
           room: {
