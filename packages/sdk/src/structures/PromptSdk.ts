@@ -11,6 +11,10 @@ export class PromptSdk {
   private targetOrigin = document.referrer || "*";
 
   constructor() {
+    if (window.self === window.top) {
+      throw new Error("Failed to initiate PromptSdk. Are you running this prompt inside the game?");
+    }
+
     window.addEventListener("message", this.handleMessage.bind(this));
   }
   private handleMessage<O extends ParentOpcodes>({

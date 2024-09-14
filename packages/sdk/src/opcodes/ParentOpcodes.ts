@@ -10,7 +10,7 @@ export enum ParentOpcodes {
   /**
    * Sent the room and user information, including the game's state and all user states.
    */
-  Ready = "ready (parent)",
+  Ready = "ready",
 
   /**
    * The game has started.
