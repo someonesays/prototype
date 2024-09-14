@@ -2,6 +2,7 @@ import EventEmitter from "eventemitter3";
 import { ParentOpcodes, PromptOpcodes } from "../opcodes";
 import { PromptValidation, type ParentTypes } from "../types";
 import type { Visibility } from "@/public";
+import type { z } from "zod";
 
 /**
  * This is the parent SDK for Someone Says.
@@ -14,9 +15,6 @@ export class ParentSdk {
   private iframe: HTMLIFrameElement;
   private isDestroyed = false;
   private targetOrigin = "*";
-
-  public on = this.emitter.on.bind(this.emitter);
-  public once = this.emitter.once.bind(this.emitter);
 
   static async getPrompt(promptId: string) {
     try {
@@ -61,31 +59,37 @@ export class ParentSdk {
     if (!success) return console.error("Received an invalid payload from the iframe:", data);
 
     switch (opcode) {
-      case PromptOpcodes.Handshake: {
+      case PromptOpcodes.Handshake:
         if (this.isReady) return console.error("Already recieved handshake from this prompt");
         this.isReady = true;
         this.emitter.emit(PromptOpcodes.Handshake, payload);
         break;
-      }
-      case PromptOpcodes.EndGame: {
+      default:
+        this.emitter.emit(opcode, payload);
         break;
-      }
-      case PromptOpcodes.SetGameState: {
-        break;
-      }
-      case PromptOpcodes.SetPlayerState: {
-        break;
-      }
-      case PromptOpcodes.SendGameMessage: {
-        break;
-      }
-      case PromptOpcodes.SendPlayerMessage: {
-        break;
-      }
     }
   }
   private postMessage<O extends ParentOpcodes>(opcode: O, payload: ParentTypes[O]) {
     this.iframe.contentWindow?.postMessage([opcode, payload], this.targetOrigin);
+  }
+
+  on<O extends PromptOpcodes>(
+    evt: O,
+    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+  ) {
+    return this.emitter.on(evt, listener);
+  }
+  once<O extends PromptOpcodes>(
+    evt: O,
+    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+  ) {
+    return this.emitter.once(evt, listener);
+  }
+  off<O extends PromptOpcodes>(
+    evt: O,
+    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+  ) {
+    return this.emitter.off(evt, listener);
   }
 
   confirmHandshake(payload: ParentTypes[ParentOpcodes.Ready]) {

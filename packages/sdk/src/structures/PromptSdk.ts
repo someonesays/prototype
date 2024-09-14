@@ -23,32 +23,13 @@ export class PromptSdk {
 
     const [opcode, payload] = data;
     switch (opcode) {
-      case ParentOpcodes.Ready: {
+      case ParentOpcodes.Ready:
         this.isReady = true;
         this.emitter.emit(ParentOpcodes.Ready, payload);
         break;
-      }
-      case ParentOpcodes.StartGame: {
+      default:
+        this.emitter.emit(opcode, payload);
         break;
-      }
-      case ParentOpcodes.PlayerJoined: {
-        break;
-      }
-      case ParentOpcodes.PlayerLeft: {
-        break;
-      }
-      case ParentOpcodes.UpdatedGameState: {
-        break;
-      }
-      case ParentOpcodes.UpdatedPlayerState: {
-        break;
-      }
-      case ParentOpcodes.ReceivedGameMessage: {
-        break;
-      }
-      case ParentOpcodes.ReceivedPlayerMessage: {
-        break;
-      }
     }
   }
   private postMessage<O extends PromptOpcodes>(
@@ -58,9 +39,34 @@ export class PromptSdk {
     this.source.postMessage([opcode, payload], this.targetOrigin);
   }
 
+  on<O extends ParentOpcodes>(evt: O, listener: (payload: ParentTypes[O]) => unknown) {
+    return this.emitter.on(evt, listener);
+  }
+  once<O extends ParentOpcodes>(evt: O, listener: (payload: ParentTypes[O]) => unknown) {
+    return this.emitter.once(evt, listener);
+  }
+  off<O extends ParentOpcodes>(evt: O, listener: (payload: ParentTypes[O]) => unknown) {
+    return this.emitter.off(evt, listener);
+  }
+
   ready(): Promise<ParentTypes[ParentOpcodes.Ready]> {
     if (this.isReady) throw new Error("Already ready or requested to be ready");
     this.postMessage(PromptOpcodes.Handshake, {});
     return new Promise((resolve) => this.emitter.once(ParentOpcodes.Ready, resolve));
+  }
+  endGame(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.EndGame]>) {
+    this.postMessage(PromptOpcodes.EndGame, payload);
+  }
+  setGameState(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SetGameState]>) {
+    this.postMessage(PromptOpcodes.SetGameState, payload);
+  }
+  setPlayerState(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SetPlayerState]>) {
+    this.postMessage(PromptOpcodes.SetPlayerState, payload);
+  }
+  sendGameMessage(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SendGameMessage]>) {
+    this.postMessage(PromptOpcodes.SendGameMessage, payload);
+  }
+  sendPlayerMessage(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SendPlayerMessage]>) {
+    this.postMessage(PromptOpcodes.SendPlayerMessage, payload);
   }
 }

@@ -28,4 +28,4 @@ import { PromptSdk } from "@/sdk";
 const sdk = new PromptSdk();
 const ready = await sdk.ready();
 
-console.log("testing", ready);
+console.log("ready response", ready);

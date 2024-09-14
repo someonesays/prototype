@@ -8,7 +8,7 @@ export enum PromptOpcodes {
    * Sending a Handshake message will be the equivalence to succesfully connecting to a game/prompt.
    * You'll only start receiving game and player states and messages after you ready up.
    */
-  Handshake = "ready",
+  Handshake = "handshake",
 
   /**
    * When the host ends the game, they'll also provide information, such as who won (up to top 3, optional) and anyone else who should earn participation points (aka they did what the prompt told them to do, also optional).

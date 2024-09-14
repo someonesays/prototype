@@ -24,7 +24,7 @@ export const PromptValidation = {
     state: stateZod,
   }),
   [PromptOpcodes.SendGameMessage]: z.object({
-    state: stateZod,
+    message: stateZod,
   }),
   [PromptOpcodes.SendPlayerMessage]: z.object({
     // WIP: Add proper validation for the player ID
