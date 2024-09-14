@@ -107,12 +107,17 @@ function leaveGame() {
   .prompt-row {
     background-color: black;
     color: white;
-    font-size: calc(16px + 0.5vh);
   }
   .prompt-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(4px + 0.5vh);
     opacity: 0;
     text-align: center;
-    padding: 12px;
+    height: calc(40px + 0.5vh);
+    max-height: calc(40px + 0.5vh);
+    font-size: calc(16px + 0.25vh);
   }
   .prompt-iframe {
     background-color: black;
