@@ -27,6 +27,28 @@ export class PromptSdk {
     switch (opcode) {
       case ParentOpcodes.Ready: {
         this.emitter.emit(ParentOpcodes.Ready, payload);
+        break;
+      }
+      case ParentOpcodes.StartGame: {
+        break;
+      }
+      case ParentOpcodes.PlayerJoined: {
+        break;
+      }
+      case ParentOpcodes.PlayerLeft: {
+        break;
+      }
+      case ParentOpcodes.UpdatedGameState: {
+        break;
+      }
+      case ParentOpcodes.UpdatedUserState: {
+        break;
+      }
+      case ParentOpcodes.ReceivedGameMessage: {
+        break;
+      }
+      case ParentOpcodes.ReceivedUserMessage: {
+        break;
       }
     }
   }
@@ -39,7 +61,7 @@ export class PromptSdk {
 
   ready(): Promise<z.infer<(typeof ParentValidation)[ParentOpcodes.Ready]>> {
     if (this.isReady) throw new Error("Already ready or requested to be ready");
-    this.postMessage(PromptOpcodes.Ready, {});
+    this.postMessage(PromptOpcodes.Handshake, {});
     return new Promise((resolve) => this.emitter.once(ParentOpcodes.Ready, resolve));
   }
 }

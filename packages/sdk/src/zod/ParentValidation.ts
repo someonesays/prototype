@@ -2,7 +2,6 @@ import z from "zod";
 import { ParentOpcodes } from "../opcodes";
 
 export const ParentValidation = {
-  [ParentOpcodes.Ping]: z.object({}),
   [ParentOpcodes.Ready]: z.object({
     test: z.literal("test"),
   }),

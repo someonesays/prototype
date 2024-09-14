@@ -3,11 +3,6 @@
  */
 export enum ParentOpcodes {
   /**
-   * A ping was sent to the prompt.
-   */
-  Ping = "ping",
-
-  /**
    * Sent the room and user information, including the game's state and all user states.
    */
   Ready = "ready",

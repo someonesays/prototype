@@ -3,17 +3,12 @@
  */
 export enum PromptOpcodes {
   /**
-   * Sends a ping to the parent website.
-   */
-  Ping = "ping",
-
-  /**
-   * The parent initiates the iframe and waits for a Ready message.
+   * The parent initiates the iframe and waits for a Handshake message.
    *
-   * Sending a Ready message will be the equivalence to succesfully connecting to a game/prompt.
+   * Sending a Handshake message will be the equivalence to succesfully connecting to a game/prompt.
    * You'll only start receiving game and player states and messages after you ready up.
    */
-  Ready = "ready",
+  Handshake = "ready",
 
   /**
    * When the host ends the game, they'll also provide information, such as who won (up to top 3, optional) and anyone else who should earn participation points (aka they did what the prompt told them to do, also optional).

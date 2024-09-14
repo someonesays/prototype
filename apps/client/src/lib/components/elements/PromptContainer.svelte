@@ -20,11 +20,10 @@ onMount(() => {
   iframe.sandbox.add("allow-pointer-lock", "allow-scripts", "allow-forms");
   container.appendChild(iframe);
 
-  const sdk = new ParentSdk(iframe);
+  const sdk = new ParentSdk({ iframe });
 
   (async () => {
     const { success, prompt } = await ParentSdk.getPrompt(promptId);
-
     if (!success || !prompt) throw new Error("The prompt with the given ID doesn't exist");
 
     authorText = prompt.author.name;

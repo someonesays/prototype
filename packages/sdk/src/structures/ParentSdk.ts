@@ -36,7 +36,7 @@ export class ParentSdk {
     }
   }
 
-  constructor(iframe: HTMLIFrameElement) {
+  constructor({ iframe }: { iframe: HTMLIFrameElement }) {
     this.iframe = iframe;
     window.addEventListener("message", this.handleMessage.bind(this));
   }
@@ -54,10 +54,26 @@ export class ParentSdk {
     if (!success) return console.error("Received an invalid payload from the iframe:", data);
 
     switch (opcode) {
-      case PromptOpcodes.Ready: {
-        if (this.isReady) return console.error("The prompt is already ready:", data);
+      case PromptOpcodes.Handshake: {
+        if (this.isReady) return console.error("Already recieved handshake from this prompt");
         this.isReady = true;
         this.postMessage(ParentOpcodes.Ready, { test: "test" });
+        break;
+      }
+      case PromptOpcodes.EndGame: {
+        break;
+      }
+      case PromptOpcodes.SetGameState: {
+        break;
+      }
+      case PromptOpcodes.SetUserState: {
+        break;
+      }
+      case PromptOpcodes.SendGameMessage: {
+        break;
+      }
+      case PromptOpcodes.SendUserMessage: {
+        break;
       }
     }
   }
