@@ -5,9 +5,8 @@ import type { z } from "zod";
 
 export class PromptSdk {
   private isReady = false;
-  private emitter = new EventEmitter();
+  private emitter = new EventEmitter<ParentOpcodes>();
   private source = window.parent.opener ?? window.parent;
-
   private targetOrigin = document.referrer || "*";
 
   constructor() {

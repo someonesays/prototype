@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { ParentSdk } from "@/sdk";
+import { ParentSdk, PromptOpcodes } from "@/sdk";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
@@ -20,6 +20,25 @@ onMount(() => {
   container.appendChild(iframe);
 
   const sdk = new ParentSdk({ iframe });
+
+  sdk.once(PromptOpcodes.Handshake, () => {
+    sdk.confirmHandshake({
+      // WIP: Remove these placeholder messages
+      started: false,
+      user: "mock_user_id",
+      room: {
+        name: "mock room name",
+        state: null,
+      },
+      players: [
+        {
+          id: "mock_user_id",
+          displayName: "mock display name",
+          state: null,
+        },
+      ],
+    });
+  });
 
   (async () => {
     const { success, prompt } = await ParentSdk.getPrompt(promptId);
