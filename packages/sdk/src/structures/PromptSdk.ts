@@ -14,8 +14,7 @@ export class PromptSdk {
     if (window.self === window.top) {
       throw new Error("Failed to initiate PromptSdk. Are you running this prompt inside the game?");
     }
-
-    window.addEventListener("message", this.handleMessage.bind(this));
+    window.addEventListener("message", this.handleMessage.bind(this), false);
   }
   private handleMessage<O extends ParentOpcodes>({
     origin,
@@ -26,6 +25,7 @@ export class PromptSdk {
     const [opcode, payload] = data;
     switch (opcode) {
       case ParentOpcodes.Ready: {
+        this.isReady = true;
         this.emitter.emit(ParentOpcodes.Ready, payload);
         break;
       }

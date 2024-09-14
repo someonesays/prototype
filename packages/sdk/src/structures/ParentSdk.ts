@@ -8,8 +8,9 @@ import type { Visibility } from "@/public";
  * You want to initiate this class every time you load a new prompt.
  */
 export class ParentSdk {
+  public isReady = false;
+
   private iframe: HTMLIFrameElement;
-  private isReady = false;
   private isDestroyed = false;
   private targetOrigin = "*";
 
@@ -38,7 +39,9 @@ export class ParentSdk {
 
   constructor({ iframe }: { iframe: HTMLIFrameElement }) {
     this.iframe = iframe;
-    window.addEventListener("message", this.handleMessage.bind(this));
+    this.handleMessage = this.handleMessage.bind(this);
+
+    window.addEventListener("message", this.handleMessage, false);
   }
   private handleMessage({ data }: MessageEvent) {
     if (

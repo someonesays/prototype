@@ -1,7 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
 import { ParentSdk } from "@/sdk";
-import type { Visibility } from "@/public";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
