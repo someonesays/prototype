@@ -1,6 +1,5 @@
-import type { z } from "zod";
 import { ParentOpcodes, PromptOpcodes } from "../opcodes";
-import { PromptValidation, type ParentValidation } from "../zod";
+import { PromptValidation, type ParentTypes } from "../types";
 import type { Visibility } from "@/public";
 
 /**
@@ -60,7 +59,22 @@ export class ParentSdk {
       case PromptOpcodes.Handshake: {
         if (this.isReady) return console.error("Already recieved handshake from this prompt");
         this.isReady = true;
-        this.postMessage(ParentOpcodes.Ready, { test: "test" });
+        this.postMessage(ParentOpcodes.Ready, {
+          // WIP: Finish messages here
+          started: false,
+          user: "mock_user_id",
+          room: {
+            name: "mock room name",
+            state: null,
+          },
+          players: [
+            {
+              id: "mock_user_id",
+              displayName: "mock display name",
+              state: null,
+            },
+          ],
+        });
         break;
       }
       case PromptOpcodes.EndGame: {
@@ -69,21 +83,18 @@ export class ParentSdk {
       case PromptOpcodes.SetGameState: {
         break;
       }
-      case PromptOpcodes.SetUserState: {
+      case PromptOpcodes.SetPlayerState: {
         break;
       }
       case PromptOpcodes.SendGameMessage: {
         break;
       }
-      case PromptOpcodes.SendUserMessage: {
+      case PromptOpcodes.SendPlayerMessage: {
         break;
       }
     }
   }
-  private postMessage<O extends ParentOpcodes>(
-    opcode: O,
-    payload: z.infer<(typeof ParentValidation)[O]>,
-  ) {
+  private postMessage<O extends ParentOpcodes>(opcode: O, payload: ParentTypes[O]) {
     this.iframe.contentWindow?.postMessage([opcode, payload], this.targetOrigin);
   }
 

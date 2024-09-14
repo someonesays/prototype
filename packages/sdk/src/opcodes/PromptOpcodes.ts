@@ -28,11 +28,11 @@ and it will display the leaderboards.
   SetGameState = "set_game_state", // Host only
 
   /**
-   * Set your own user state (persistent until the prompt's game ends).
+   * Set your own player state (persistent until the prompt's game ends).
    *
-   * The host can modify anyone's user state.
+   * The host can modify anyone's player state.
    */
-  SetUserState = "set_user_state",
+  SetPlayerState = "set_player_state",
 
   /**
    * Send a game message (one-time, think of it like a system message).
@@ -42,9 +42,9 @@ and it will display the leaderboards.
   SendGameMessage = "send_game_message", // Host only
 
   /**
-   * Send a user message.
+   * Send a player message.
    *
-   * The host can modify anyone's user state.
+   * The host can modify anyone's player state.
    */
-  SendUserMessage = "send_user_message",
+  SendPlayerMessage = "send_player_message",
 }

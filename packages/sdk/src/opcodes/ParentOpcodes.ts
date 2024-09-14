@@ -3,7 +3,7 @@
  */
 export enum ParentOpcodes {
   /**
-   * Sent the room and user information, including the game's state and all user states.
+   * Sent the room and player information, including the game's state and all player states.
    */
   Ready = "ready",
 
@@ -12,7 +12,7 @@ export enum ParentOpcodes {
    *
    * The prompt's game will "start" when everyone is readied.
    * The host needs to have the prompt loaded in for the game started.
-   * If anyone takes over 30 seconds longer than the host to load the prompt, the game will start before they successfully load the prompt and will be treated as a user who joined the game mid-game.
+   * If anyone takes over 30 seconds longer than the host to load the prompt, the game will start before they successfully load the prompt and will be treated as a player who joined the game mid-game.
    *
    * Also, it's necessary for the host to join to start the game, because they'll be treated like the "server" in a sense.
    */
@@ -40,9 +40,9 @@ export enum ParentOpcodes {
   UpdatedGameState = "updated_game_state",
 
   /**
-   * The user's state has been updated.
+   * The player's state has been updated.
    */
-  UpdatedUserState = "updated_user_state",
+  UpdatedPlayerState = "updated_player_state",
 
   /**
    * The game's host has sent a one-time message (think of it like a system message).
@@ -50,7 +50,7 @@ export enum ParentOpcodes {
   ReceivedGameMessage = "received_game_message",
 
   /**
-   * A user has sent a one-time message.
+   * A player has sent a one-time message.
    */
-  ReceivedUserMessage = "received_user_message",
+  ReceivedPlayerMessage = "received_player_message",
 }

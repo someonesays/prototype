@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { ParentOpcodes, PromptOpcodes } from "../opcodes";
-import type { ParentValidation, PromptValidation } from "../zod";
+import type { ParentTypes, PromptValidation } from "../types";
 import type { z } from "zod";
 
 export class PromptSdk {
@@ -19,7 +19,7 @@ export class PromptSdk {
   private handleMessage<O extends ParentOpcodes>({
     origin,
     data,
-  }: { origin: MessageEvent["origin"] } & { data: [O, z.infer<(typeof ParentValidation)[O]>] }) {
+  }: { origin: MessageEvent["origin"] } & { data: [O, ParentTypes[O]] }) {
     if (new URL(origin).pathname !== new URL(this.targetOrigin).pathname) return;
 
     const [opcode, payload] = data;
@@ -41,13 +41,13 @@ export class PromptSdk {
       case ParentOpcodes.UpdatedGameState: {
         break;
       }
-      case ParentOpcodes.UpdatedUserState: {
+      case ParentOpcodes.UpdatedPlayerState: {
         break;
       }
       case ParentOpcodes.ReceivedGameMessage: {
         break;
       }
-      case ParentOpcodes.ReceivedUserMessage: {
+      case ParentOpcodes.ReceivedPlayerMessage: {
         break;
       }
     }
@@ -59,7 +59,7 @@ export class PromptSdk {
     this.source.postMessage([opcode, payload], this.targetOrigin);
   }
 
-  ready(): Promise<z.infer<(typeof ParentValidation)[ParentOpcodes.Ready]>> {
+  ready(): Promise<ParentTypes[ParentOpcodes.Ready]> {
     if (this.isReady) throw new Error("Already ready or requested to be ready");
     this.postMessage(PromptOpcodes.Handshake, {});
     return new Promise((resolve) => this.emitter.once(ParentOpcodes.Ready, resolve));
