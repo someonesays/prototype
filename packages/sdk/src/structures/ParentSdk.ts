@@ -98,8 +98,8 @@ export class ParentSdk {
   setGameStarted() {
     this.postMessage(ParentOpcodes.StartGame, { started: true });
   }
-  addPlayer(payload: ParentTypes[ParentOpcodes.PlayerJoined]) {
-    this.postMessage(ParentOpcodes.PlayerJoined, payload);
+  readyPlayer(payload: ParentTypes[ParentOpcodes.PlayerReady]) {
+    this.postMessage(ParentOpcodes.PlayerReady, payload);
   }
   removePlayer(payload: ParentTypes[ParentOpcodes.PlayerLeft]) {
     this.postMessage(ParentOpcodes.PlayerLeft, payload);

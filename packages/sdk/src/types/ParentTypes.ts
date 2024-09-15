@@ -11,7 +11,7 @@ export interface ParentTypes {
   [ParentOpcodes.StartGame]: {
     started: true;
   };
-  [ParentOpcodes.PlayerJoined]: {
+  [ParentOpcodes.PlayerReady]: {
     player: GamePlayer;
   };
   [ParentOpcodes.PlayerLeft]: {

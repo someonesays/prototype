@@ -6,7 +6,6 @@ export enum ParentOpcodes {
    * Sent the room and player information, including the game's state and all player states.
    */
   Ready = "ready",
-
   /**
    * The game has started.
    *
@@ -17,14 +16,12 @@ export enum ParentOpcodes {
    * Also, it's necessary for the host to join to start the game, because they'll be treated like the "server" in a sense.
    */
   StartGame = "start_game",
-
   /**
-   * A player joined the room and readied the prompt.
+   * A player readied the prompt (consider this as a player join event on prompts).
    *
    * When a player readies a prompt, the player joined event is given to all clients who are readied as well.
    */
-  PlayerJoined = "player_joined",
-
+  PlayerReady = "player_ready",
   /**
    * If a player leaves, a player left state will be given.
    *
@@ -33,22 +30,18 @@ export enum ParentOpcodes {
    * The prompt will end with "no winner" and nobody will gain points.
    */
   PlayerLeft = "player_left",
-
   /**
    * The game's state has been updated.
    */
   UpdatedGameState = "updated_game_state",
-
   /**
    * The player's state has been updated.
    */
   UpdatedPlayerState = "updated_player_state",
-
   /**
    * The game's host has sent a one-time message (think of it like a system message).
    */
   ReceivedGameMessage = "received_game_message",
-
   /**
    * A player has sent a one-time message.
    */
