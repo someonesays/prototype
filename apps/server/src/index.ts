@@ -3,7 +3,7 @@ import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import { serve } from "./utils";
-import { websocket } from "./utils";
+import { websocket, developmentUrl } from "./utils";
 import { api } from "./api";
 import { proxy } from "./proxy";
 
@@ -58,7 +58,7 @@ if (env.NodeEnv === "production") {
     }),
   );
 } else {
-  app.get("*", (c) => c.redirect(`http://localhost:${env.VitePort}${c.req.path}`));
+  app.get("*", (c) => c.redirect(`${developmentUrl}${c.req.path}`));
 }
 
 export default {

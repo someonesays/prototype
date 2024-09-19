@@ -2,6 +2,7 @@ export default {
   NodeEnv: process.env.NODE_ENV as "production" | "development",
 
   Domain: process.env.DOMAIN as string,
+  Websocket: process.env.WEBSOCKET as string,
 
   Port: Number(process.env.PORT),
   VitePort: Number(process.env.VITE_PORT),

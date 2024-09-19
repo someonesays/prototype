@@ -3,15 +3,15 @@ import { getPrompt } from "@/db";
 import { PromptType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
+import { developmentCsp } from "../utils";
 import type { BlankEnv } from "hono/types";
 
 export const proxy = new Hono();
 
 const route = "/api/proxy/:promptId/*";
-const devHeaders = env.NodeEnv === "production" ? [] : [`http://localhost:${env.VitePort}`];
 
 proxy.use(route, async (c, next) => {
-  const { proxyHref } = await getProxy(c);
+  const { proxyHref, proxyWebsocket } = await getProxy(c);
   return secureHeaders({
     originAgentCluster: "",
     contentSecurityPolicy: {
@@ -20,28 +20,24 @@ proxy.use(route, async (c, next) => {
       styleSrc: ["'self'", "'unsafe-inline'", "blob:"],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", "data:"],
-      connectSrc: [...devHeaders, proxyHref, "data:", "blob:"],
+      connectSrc: [...developmentCsp, proxyHref, proxyWebsocket, "data:", "blob:"],
       mediaSrc: ["'self'", "blob:", "data:"],
-      frameSrc: [...devHeaders, proxyHref],
-      childSrc: [...devHeaders, proxyHref, "blob:"],
-      workerSrc: [...devHeaders, proxyHref, "blob:"],
+      frameSrc: [...developmentCsp, proxyHref],
+      childSrc: [...developmentCsp, proxyHref, "blob:"],
+      workerSrc: [...developmentCsp, proxyHref, "blob:"],
     },
     xFrameOptions: "SAMEORIGIN",
     crossOriginResourcePolicy: "same-site",
   })(c, next);
 });
 
-proxy.get(route, async (c) => {
+proxy.all(route, async (c) => {
   const { url } = await getProxy(c);
   try {
     const res = await fetch(url, {
       method: c.req.method,
       headers: { "user-agent": "Someone Says" },
     });
-
-    if (![200, 404].includes(res.status)) {
-      return c.text("Returned a status other than 200 and 404", 400);
-    }
 
     return new Response(res.body, {
       status: res.status,
@@ -68,11 +64,14 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
     ? `?${new URLSearchParams(c.req.query())}`
     : "";
 
+  const absolutePath = `/api/proxy/${prompt.id}/`;
+
   const href = `${http}://${prompt.urlHost}`;
-  const proxyHref = `${env.Domain}/api/proxy/${prompt.id}/`;
+  const proxyHref = `${env.Domain}${absolutePath}`;
+  const proxyWebsocket = `${env.Websocket}${absolutePath}`;
 
   const url = `${href}${path}${query}`;
   // const proxyUrl = `${proxyHref}${path}${query}`;
 
-  return { proxyHref, url };
+  return { proxyHref, proxyWebsocket, url };
 }
