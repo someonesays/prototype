@@ -2,6 +2,7 @@ import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
+import { ClientOpcodes, ServerOpcodes } from "@/sdk";
 
 export const rooms = new Hono();
 
@@ -13,9 +14,19 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
   const { user, room } = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
   if (room.server.id !== "test_server_id") return;
 
-  // Do not create any timeouts, intervals or events outside the open() function.
+  // Make sure 2 clients cannot join with the same user ID
+  // Make functions for finding rooms and make sure to check if a room has to be created or not
+  // Make sure to check if the server is full and if it is, disallow the room from being created in the first place
+
   const state = {
     connected: false,
+    room: {
+      id: room.id,
+    },
+    user: {
+      id: user.id,
+      displayName: user.display_name,
+    },
   };
   
   return {
