@@ -1,5 +1,5 @@
 import { decode, encode } from "@msgpack/msgpack";
-import { ClientOpcodes, ClientValidation, ServerOpcodes, type ServerTypes } from "@/sdk";
+import { ClientValidation, type ClientOpcodes, type ServerOpcodes, type ServerTypes } from "@/sdk";
 import type z from "zod";
 
 export function encodeClient<O extends ClientOpcodes>(payload: {
