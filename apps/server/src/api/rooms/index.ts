@@ -11,9 +11,10 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
   if (!protocol) return;
 
   const { user, room } = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
+  if (room.server.id !== "test_server_id") return;
+  
   return {
     open({ ws }) {
-      const { user, room } = c.var.data;
       console.log('WebSocket connected');
     },
     message({ data, ws }) {
@@ -21,6 +22,9 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
     },
     close({ ws }) {
       console.log('WebSocket closed');
+    },
+    error({ ws }) {
+      console.log('WebSocket errored');
     },
   };
 }));
