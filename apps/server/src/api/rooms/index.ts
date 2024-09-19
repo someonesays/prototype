@@ -12,18 +12,29 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
 
   const { user, room } = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
   if (room.server.id !== "test_server_id") return;
+
+  // Do not create any timeouts, intervals or events outside the open() function.
+  const state = {
+    connected: false,
+  };
   
   return {
     open({ ws }) {
+      state.connected = true;
+
       console.log('WebSocket connected');
     },
     message({ data, ws }) {
       console.log('WebSocket message', data);
     },
     close({ ws }) {
+      state.connected = false;
+
       console.log('WebSocket closed');
     },
     error({ ws }) {
+      state.connected = false;
+
       console.log('WebSocket errored');
     },
   };
