@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "NODE_ENV=production TZ=UTC bun --env-file=../../.env .",
-    "dev": "NODE_ENV=development TZ=UTC bun --env-file=../../.env --hot .",
+    "dev": "NODE_ENV=development TZ=UTC bun --env-file=../../.env --watch .",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
@@ -21,6 +21,7 @@
     "@/sdk": "workspace:*",
     "@/utils": "workspace:*",
     "@msgpack/msgpack": "^3.0.0-beta2",
-    "hono": "^4.5.10"
+    "hono": "^4.5.10",
+    "zod": "^3.23.8"
   }
 }

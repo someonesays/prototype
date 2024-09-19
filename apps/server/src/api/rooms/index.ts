@@ -1,9 +1,9 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { encode, decode } from "@msgpack/msgpack";
 import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
-import { ClientOpcodes, ServerOpcodes } from "@/sdk";
+import { encodeServer } from "@/sdk";
+import { ServerOpcodes } from "@/sdk";
 
 export const rooms = new Hono();
 
@@ -35,14 +35,10 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
       state.connected = true;
 
       // Make sure to make a built in WebSocket function to make life easier
-      const opcode = ServerOpcodes.GetInformation;
-      const encoded = encode({
-        hello: "world"
-      });
-      const buffer = new Uint8Array([encode.length + 1]);
-      buffer[0] = opcode;
-      buffer.set(encoded, 1);
-      ws.send(buffer);
+      ws.send(encodeServer({
+        opcode: ServerOpcodes.GetInformation,
+        data: {},
+      }));
 
       console.log('WebSocket connected');
     },

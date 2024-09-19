@@ -1,8 +1,12 @@
+export * from "./types/ClientValidation";
+
+export type * from "./types/GamePlayer";
+export * from "./types/GamePrize";
+export type * from "./types/GameRoom";
+
 export type * from "./types/ParentTypes";
 export * from "./types/PromptValidation";
 
-export * from "./types/State";
+export type * from "./types/ServerTypes";
 
-export type * from "./types/GamePlayer";
-export type * from "./types/GameRoom";
-export * from "./types/GamePrize";
+export * from "./types/State";
