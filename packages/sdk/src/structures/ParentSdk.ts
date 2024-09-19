@@ -65,6 +65,7 @@ export class ParentSdk {
         this.emitter.emit(PromptOpcodes.Handshake, payload);
         break;
       default:
+        if (!this.isReady) return console.error("Recieved payload from prompt before handshake");
         this.emitter.emit(opcode, payload);
         break;
     }
