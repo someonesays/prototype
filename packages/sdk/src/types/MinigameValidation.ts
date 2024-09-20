@@ -1,34 +1,27 @@
 import z from "zod";
 import { MinigameOpcodes } from "../opcodes";
-import { stateZod } from "./State";
-import { GamePrize } from "../types";
+import { StateZod } from "./State";
+import { GamePrizeArrayZod } from "../types";
 
 export const MinigameValidation = {
   [MinigameOpcodes.Handshake]: z.object({}),
   [MinigameOpcodes.EndGame]: z.object({
-    // WIP: Add proper validation for the winner ID and participation IDs
-    // WIP: Make sure to disallow repeating PrizeType.Winner, PrizeType.Second and PrizeType.Third
-    prizes: z.array(
-      z.object({
-        id: z.string(),
-        type: z.nativeEnum(GamePrize),
-      }),
-    ),
+    prizes: GamePrizeArrayZod,
   }),
   [MinigameOpcodes.SetGameState]: z.object({
-    state: stateZod,
+    state: StateZod,
   }),
   [MinigameOpcodes.SetPlayerState]: z.object({
     // WIP: Add proper validation for the player ID
-    id: z.string(),
-    state: stateZod,
+    user: z.string(),
+    state: StateZod,
   }),
   [MinigameOpcodes.SendGameMessage]: z.object({
-    message: stateZod,
+    message: StateZod,
   }),
   [MinigameOpcodes.SendPlayerMessage]: z.object({
     // WIP: Add proper validation for the player ID
-    id: z.string(),
-    message: stateZod,
+    user: z.string(),
+    message: StateZod,
   }),
 };

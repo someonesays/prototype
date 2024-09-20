@@ -2,6 +2,7 @@ import type { State } from "../types";
 
 export interface GameRoom {
   name: string;
+  host: string;
   state: State;
 }
 

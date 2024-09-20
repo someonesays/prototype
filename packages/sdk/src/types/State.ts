@@ -12,6 +12,6 @@ export type State =
   | State[];
 
 // Zod
-export const stateZod: z.ZodSchema<State> = z.lazy(() =>
-  z.union([z.boolean(), z.number(), z.string(), z.record(stateZod), z.array(stateZod)]).nullable(),
+export const StateZod: z.ZodSchema<State> = z.lazy(() =>
+  z.union([z.boolean(), z.number(), z.string(), z.record(StateZod), z.array(StateZod)]).nullable(),
 );

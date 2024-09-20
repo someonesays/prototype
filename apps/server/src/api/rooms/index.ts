@@ -2,7 +2,7 @@ import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
-import { encodeServer } from "@/sdk";
+import { encodeServer, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { getMinigamePublic } from "@/db";
 
@@ -46,12 +46,16 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
           room: {
             id: room.id,
             name: "test name",
+            host: user.id,
             state: null
           },
+          screen: Screens.Minigame,
           minigame,
           players: [{
             id: user.id,
             displayName: user.displayName,
+            points: 0,
+            ready: false,
             state: null,
           }],
         },

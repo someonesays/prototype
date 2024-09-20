@@ -1,5 +1,5 @@
 import { ParentOpcodes } from "../opcodes";
-import type { State, GamePlayer, GameRoom, GameSettings } from "../types";
+import type { State, GamePlayer, GameRoom, GameSettings, GamePlayerSetState } from "../types";
 
 export interface ParentTypes {
   [ParentOpcodes.Ready]: {
@@ -19,19 +19,19 @@ export interface ParentTypes {
     player: GamePlayer;
   };
   [ParentOpcodes.PlayerLeft]: {
-    player: GamePlayer;
+    user: string;
   };
   [ParentOpcodes.UpdatedGameState]: {
     room: GameRoom;
   };
   [ParentOpcodes.UpdatedPlayerState]: {
-    player: GamePlayer;
+    player: GamePlayerSetState;
   };
   [ParentOpcodes.ReceivedGameMessage]: {
     message: State;
   };
   [ParentOpcodes.ReceivedPlayerMessage]: {
-    player: GamePlayer;
+    user: string;
     message: State;
   };
 }

@@ -3,16 +3,15 @@
  */
 export enum ClientOpcodes {
   Ping = 0,
-  ChatMessage = 1,
-  KickPlayer = 2,
-  TransferHost = 3, // (Disallow running this mid-game)
-  SetRoomSettings = 4,
-  BeginGame = 5, // Actually begins the game (not a minigame)
-  EndGame = 6, // Force a game to end (back to the room lobby screen)
-  MinigameHandshake = 7,
-  MinigameEndGame = 8,
-  MinigameSetGameState = 9,
-  MinigameSetPlayerState = 10,
-  MinigameSetGameMessage = 11,
-  MinigameSetPlayerMessage = 12,
+  KickPlayer = 1,
+  TransferHost = 2, // (Disallow running this mid-game)
+  SetRoomSettings = 3,
+  BeginGame = 4, // Actually begins the game (not a minigame)
+  EndGame = 5, // Force a game to end (back to the room lobby screen)
+  MinigameHandshake = 6,
+  MinigameEndGame = 7, // End the minigame game
+  MinigameSetGameState = 8,
+  MinigameSetPlayerState = 9,
+  MinigameSetGameMessage = 10,
+  MinigameSetPlayerMessage = 11,
 }
