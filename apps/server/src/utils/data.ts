@@ -10,7 +10,7 @@ export interface MatchmakingResponse {
 export interface MatchmakingData {
   user: {
     id: string;
-    display_name: string;
+    displayName: string;
   };
   room: {
     id: string;

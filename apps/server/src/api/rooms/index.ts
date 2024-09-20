@@ -4,6 +4,7 @@ import { verify } from "hono/jwt";
 import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
 import { encodeServer } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
+import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
 
@@ -26,18 +27,34 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
     },
     user: {
       id: user.id,
-      displayName: user.display_name,
+      displayName: user.displayName,
     },
   };
   
   return {
-    open({ ws }) {
+    async open({ ws }) {
       state.connected = true;
 
-      // Make sure to make a built in WebSocket function to make life easier
+      // WIP: Remove placeholder values
+      const minigame = await getMinigamePublic("1");
+      if (!minigame) return ws.close();
       ws.send(encodeServer({
         opcode: ServerOpcodes.GetInformation,
-        data: {},
+        data: {
+          started: false,
+          user: user.id,
+          room: {
+            id: room.id,
+            name: "test name",
+            state: null
+          },
+          minigame,
+          players: [{
+            id: user.id,
+            displayName: user.displayName,
+            state: null,
+          }],
+        },
       }));
 
       console.log('WebSocket connected');

@@ -1,7 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
-import { MinigameValidation, type ParentTypes } from "../types";
-import type { Visibility } from "@/public";
+import { MinigameValidation, type Minigame, type ParentTypes } from "../types";
 import type { z } from "zod";
 
 /**
@@ -21,21 +20,7 @@ export class ParentSdk {
       const req = await fetch(`/api/minigames/${encodeURIComponent(minigameId)}`);
       if (req.status !== 200) return { success: false };
 
-      const minigame = (await req.json()) as {
-        id: string;
-        visibility: Visibility;
-        prompt: string;
-        author: {
-          name: string;
-        };
-        url: string;
-        flags: {
-          allowModifyingSelfUserState: boolean;
-        };
-        createdAt: string;
-        updatedAt: string;
-      };
-
+      const minigame = (await req.json()) as Minigame;
       return { success: true, minigame };
     } catch (err) {
       return { success: false };

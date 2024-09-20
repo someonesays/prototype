@@ -5,3 +5,5 @@ export interface GamePlayer {
   displayName: string;
   state: State;
 }
+
+export interface GamePlayerPrivate extends GamePlayer {}

@@ -45,6 +45,7 @@ onMount(() => {
   });
 
   (async () => {
+    // WIP: Stop using getMinigame() and use data from WebSocket instead.
     const { success, minigame } = await ParentSdk.getMinigame(minigameId);
     if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
 

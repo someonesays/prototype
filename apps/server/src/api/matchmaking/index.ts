@@ -10,7 +10,7 @@ matchmaking.get("/", async (c) => {
   // Get user information
   const user = {
     id: createCuid(),
-    display_name: c.req.query("display_name") || `Guest_${createCode(4)}`,
+    displayName: c.req.query("display_name") || `Guest_${createCode(4)}`,
   };
   // Get room information
   const room = {
