@@ -3,6 +3,7 @@ export * from "./types/ClientValidation";
 export type * from "./types/GamePlayer";
 export * from "./types/GamePrize";
 export type * from "./types/GameRoom";
+export * from "./types/GameSettings";
 
 export type * from "./types/ParentTypes";
 export * from "./types/PromptValidation";

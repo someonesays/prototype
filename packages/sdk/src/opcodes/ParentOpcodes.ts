@@ -4,8 +4,13 @@
 export enum ParentOpcodes {
   /**
    * Sent the room and player information, including the game's state and all player states.
+   * This should also include player settings, such as volume and language.
    */
   Ready = "ready",
+  /**
+   * Updated player's settings
+   */
+  UpdateSettings = "update_settings",
   /**
    * The game has started.
    *
