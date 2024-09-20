@@ -1,4 +1,4 @@
-import { MinigameType, Visibility } from "@/public";
+import { MinigameType, Visibility, MinigamePermissions } from "@/public";
 
 export const minigames = [
   {
@@ -11,6 +11,7 @@ export const minigames = [
     urlType: MinigameType.WholePath,
     urlHost: "localhost:5173",
     urlSecure: false,
+    flagsAllowModifyingSelfUserState: true,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },
@@ -24,6 +25,7 @@ export const minigames = [
     urlType: MinigameType.Original,
     urlHost: "example.com",
     urlSecure: true,
+    flagsAllowModifyingSelfUserState: true,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },

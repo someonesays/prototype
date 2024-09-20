@@ -29,6 +29,9 @@ export class ParentSdk {
           name: string;
         };
         url: string;
+        flags: {
+          allowModifyingSelfUserState: boolean;
+        };
         createdAt: string;
         updatedAt: string;
       };

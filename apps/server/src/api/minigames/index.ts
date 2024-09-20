@@ -18,6 +18,9 @@ minigames.get("/:id", async (c) => {
       name: minigame.author.name,
     },
     url: `/api/proxy/${minigame.id}/`,
+    flags: {
+      allowModifyingSelfUserState: minigame.flagsAllowModifyingSelfUserState,
+    },
     createdAt: minigame.createdAt,
     updatedAt: minigame.updatedAt,
   });
