@@ -10,9 +10,13 @@ export class PromptSdk {
   private targetOrigin = document.referrer || "*";
 
   constructor() {
-    if (window.self === window.top) {
+    try {
+      // https://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
+      if (window.self === window.top) throw new Error();
+    } catch (e) {
       throw new Error("Failed to initiate PromptSdk. Are you running this prompt inside the game?");
     }
+
     window.addEventListener("message", this.handleMessage.bind(this), false);
   }
   private handleMessage<O extends ParentOpcodes>({
