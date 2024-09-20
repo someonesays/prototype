@@ -1,6 +1,6 @@
-import { PromptType, Visibility } from "@/public";
+import { MinigameType, Visibility } from "@/public";
 
-export const prompts = [
+export const minigames = [
   {
     id: "1",
     visibility: Visibility.Public,
@@ -8,7 +8,7 @@ export const prompts = [
     author: {
       name: "Someone",
     },
-    urlType: PromptType.WholePath,
+    urlType: MinigameType.WholePath,
     urlHost: "localhost:5173",
     urlSecure: false,
     createdAt: new Date().toString(),
@@ -21,7 +21,7 @@ export const prompts = [
     author: {
       name: "Nobody",
     },
-    urlType: PromptType.Original,
+    urlType: MinigameType.Original,
     urlHost: "example.com",
     urlSecure: true,
     createdAt: new Date().toString(),

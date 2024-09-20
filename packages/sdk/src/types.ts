@@ -6,7 +6,7 @@ export type * from "./types/GameRoom";
 export type * from "./types/GameSettings";
 
 export type * from "./types/ParentTypes";
-export * from "./types/PromptValidation";
+export * from "./types/MinigameValidation";
 
 export type * from "./types/ServerTypes";
 

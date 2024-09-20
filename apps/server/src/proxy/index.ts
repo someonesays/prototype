@@ -1,6 +1,6 @@
 import env from "@/env";
-import { getPrompt } from "@/db";
-import { PromptType } from "@/public";
+import { getMinigame } from "@/db";
+import { MinigameType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import { developmentCsp } from "../utils";
@@ -8,7 +8,7 @@ import type { BlankEnv } from "hono/types";
 
 export const proxy = new Hono();
 
-const route = "/api/proxy/:promptId/*";
+const route = "/api/proxy/:minigameId/*";
 
 proxy.use(route, async (c, next) => {
   const { proxyHref } = await getProxy(c);
@@ -59,27 +59,29 @@ proxy.all(route, async (c) => {
 });
 
 async function getProxy(c: Context<BlankEnv, typeof route>) {
-  const promptId = c.req.param("promptId");
-  const prompt = await getPrompt(promptId);
-  if (!prompt) throw new Error("Invalid prompt ID");
+  const minigameId = c.req.param("minigameId");
+  const minigame = await getMinigame(minigameId);
+  if (!minigame) throw new Error("Invalid minigame ID");
 
   const path =
-    prompt.urlType === PromptType.Original ? c.req.path.slice(promptId.length + 12) : c.req.path;
+    minigame.urlType === MinigameType.Original
+      ? c.req.path.slice(minigameId.length + 12)
+      : c.req.path;
 
-  const http = prompt.urlSecure ? "https" : "http";
-  // const ws = prompt.urlSecure ? "wss" : "ws";
+  const http = minigame.urlSecure ? "https" : "http";
+  // const ws = minigame.urlSecure ? "wss" : "ws";
 
-  const absolutePath = `/api/proxy/${prompt.id}/`;
+  const absolutePath = `/api/proxy/${minigame.id}/`;
   const query = Object.entries(c.req.query()).length
     ? `?${new URLSearchParams(c.req.query())}`
     : "";
 
-  const href = `${http}://${prompt.urlHost}`;
+  const href = `${http}://${minigame.urlHost}`;
   const url = `${href}${path}${query}`;
   const proxyHref = `${env.Domain}${absolutePath}`;
   // const proxyUrl = `${proxyHref}${path}${query}`;
 
-  // const websocketHref = `${ws}://${prompt.urlHost}`;
+  // const websocketHref = `${ws}://${minigame.urlHost}`;
   // const proxyWebsocket = `${env.Websocket}${absolutePath}`;
   // const urlWebsocket = `${websocketHref}${path}${query}`;
 

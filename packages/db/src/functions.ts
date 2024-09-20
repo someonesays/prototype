@@ -1,16 +1,16 @@
-import { prompts } from "./prompts";
+import { minigames } from "./minigames";
 import { Visibility } from "@/public";
 
-export function getPrompts({
+export function getMinigames({
   visibility = [Visibility.Private, Visibility.Public],
 }: { visibility: Visibility[] }) {
-  return prompts.find((p) => visibility.includes(p.visibility));
+  return minigames.find((p) => visibility.includes(p.visibility));
 }
 
-export function getPrompt(id: string) {
-  return prompts.find((p) => p.id === id);
+export function getMinigame(id: string) {
+  return minigames.find((p) => p.id === id);
 }
 
-export function getRandomPrompt() {
-  return prompts[Math.floor(Math.random() * prompts.length)];
+export function getRandomMinigame() {
+  return minigames[Math.floor(Math.random() * minigames.length)];
 }

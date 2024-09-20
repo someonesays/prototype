@@ -10,10 +10,10 @@ export interface ServerTypes {
   [ServerOpcodes.UpdatedRoomSettings]: {};
   [ServerOpcodes.UpdatedScreen]: {};
   [ServerOpcodes.UpdatedLeaderboards]: {};
-  [ServerOpcodes.PromptPlayerReady]: {};
-  [ServerOpcodes.PromptStartGame]: {};
-  [ServerOpcodes.PromptSetGameState]: {};
-  [ServerOpcodes.PromptSetPlayerState]: {};
-  [ServerOpcodes.PromptSendGameMessage]: {};
-  [ServerOpcodes.PromptSendPlayerMessage]: {};
+  [ServerOpcodes.MinigamePlayerReady]: {};
+  [ServerOpcodes.MinigameStartGame]: {};
+  [ServerOpcodes.MinigameSetGameState]: {};
+  [ServerOpcodes.MinigameSetPlayerState]: {};
+  [ServerOpcodes.MinigameSendGameMessage]: {};
+  [ServerOpcodes.MinigameSendPlayerMessage]: {};
 }

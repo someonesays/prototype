@@ -1,31 +1,31 @@
 /**
- * These are the opcodes the prompt's iframe to the parent page
+ * These are the opcodes the minigame's iframe to the parent page
  */
-export enum PromptOpcodes {
+export enum MinigameOpcodes {
   /**
    * The parent initiates the iframe and waits for a Handshake message.
    *
-   * Sending a Handshake message will be the equivalence to succesfully connecting to a game/prompt.
+   * Sending a Handshake message will be the equivalence to succesfully connecting to a game/minigame.
    * You'll only start receiving game and player states and messages after you ready up.
    */
   Handshake = "handshake",
   /**
-   * When the host ends the game, they'll also provide information, such as who won (up to top 3, optional) and anyone else who should earn participation points (aka they did what the prompt told them to do, also optional).
+   * When the host ends the game, they'll also provide information, such as who won (up to top 3, optional) and anyone else who should earn participation points (aka they did what the minigame told them to do, also optional).
    * 
-   * The prompt should display who won and gained points once the game ends, before sending the EndGame message.
+   * The minigame should display who won and gained points once the game ends, before sending the EndGame message.
    * 
-   * The prompt will never recieve the EndGame message, because when the game ends, the iframe will be deleted
+   * The minigame will never recieve the EndGame message, because when the game ends, the iframe will be deleted
 and it will display the leaderboards.
    */
   EndGame = "end_game", // Host only
   /**
-   * Set the game's state (persistent until the prompt's game ends).
+   * Set the game's state (persistent until the minigame's game ends).
    *
    * Only the host can send this message.
    */
   SetGameState = "set_game_state", // Host only
   /**
-   * Set your own player state (persistent until the prompt's game ends).
+   * Set your own player state (persistent until the minigame's game ends).
    *
    * The host can modify anyone's player state.
    */

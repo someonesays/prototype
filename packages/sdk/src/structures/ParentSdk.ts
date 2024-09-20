@@ -1,27 +1,27 @@
 import EventEmitter from "eventemitter3";
-import { ParentOpcodes, PromptOpcodes } from "../opcodes";
-import { PromptValidation, type ParentTypes } from "../types";
+import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
+import { MinigameValidation, type ParentTypes } from "../types";
 import type { Visibility } from "@/public";
 import type { z } from "zod";
 
 /**
  * This is the parent SDK for Someone Says.
- * You want to initiate this class every time you load a new prompt.
+ * You want to initiate this class every time you load a new minigame.
  */
 export class ParentSdk {
   public isReady = false;
 
-  private emitter = new EventEmitter<PromptOpcodes>();
+  private emitter = new EventEmitter<MinigameOpcodes>();
   private iframe: HTMLIFrameElement;
   private isDestroyed = false;
   private targetOrigin = "*";
 
-  static async getPrompt(promptId: string) {
+  static async getMinigame(minigameId: string) {
     try {
-      const req = await fetch(`/api/prompts/${encodeURIComponent(promptId)}`);
+      const req = await fetch(`/api/minigames/${encodeURIComponent(minigameId)}`);
       if (req.status !== 200) return { success: false };
 
-      const prompt = (await req.json()) as {
+      const minigame = (await req.json()) as {
         id: string;
         visibility: Visibility;
         prompt: string;
@@ -33,7 +33,7 @@ export class ParentSdk {
         updatedAt: string;
       };
 
-      return { success: true, prompt };
+      return { success: true, minigame };
     } catch (err) {
       return { success: false };
     }
@@ -49,23 +49,23 @@ export class ParentSdk {
     if (
       !Array.isArray(data) ||
       data.length !== 2 ||
-      !Object.values(PromptOpcodes).includes(data[0])
+      !Object.values(MinigameOpcodes).includes(data[0])
     ) {
       return console.error("Received an invalid data from the iframe:", data);
     }
 
-    const opcode: PromptOpcodes = data[0];
-    const { success, data: payload } = PromptValidation[opcode].safeParse(data[1]);
+    const opcode: MinigameOpcodes = data[0];
+    const { success, data: payload } = MinigameValidation[opcode].safeParse(data[1]);
     if (!success) return console.error("Received an invalid payload from the iframe:", data);
 
     switch (opcode) {
-      case PromptOpcodes.Handshake:
-        if (this.isReady) return console.error("Already recieved handshake from this prompt");
+      case MinigameOpcodes.Handshake:
+        if (this.isReady) return console.error("Already recieved handshake from this minigame");
         this.isReady = true;
-        this.emitter.emit(PromptOpcodes.Handshake, payload);
+        this.emitter.emit(MinigameOpcodes.Handshake, payload);
         break;
       default:
-        if (!this.isReady) return console.error("Recieved payload from prompt before handshake");
+        if (!this.isReady) return console.error("Recieved payload from minigame before handshake");
         this.emitter.emit(opcode, payload);
         break;
     }
@@ -74,21 +74,21 @@ export class ParentSdk {
     this.iframe.contentWindow?.postMessage([opcode, payload], this.targetOrigin);
   }
 
-  on<O extends PromptOpcodes>(
+  on<O extends MinigameOpcodes>(
     evt: O,
-    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
   ) {
     return this.emitter.on(evt, listener);
   }
-  once<O extends PromptOpcodes>(
+  once<O extends MinigameOpcodes>(
     evt: O,
-    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
   ) {
     return this.emitter.once(evt, listener);
   }
-  off<O extends PromptOpcodes>(
+  off<O extends MinigameOpcodes>(
     evt: O,
-    listener: (payload: z.infer<(typeof PromptValidation)[O]>) => unknown,
+    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
   ) {
     return this.emitter.off(evt, listener);
   }

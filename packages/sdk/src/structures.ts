@@ -1,2 +1,2 @@
 export * from "./structures/ParentSdk";
-export * from "./structures/PromptSdk";
+export * from "./structures/MinigameSdk";

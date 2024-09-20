@@ -3,7 +3,7 @@ export enum Visibility {
   Public = 1,
 }
 
-export enum PromptType {
+export enum MinigameType {
   Original = 0,
   WholePath = 1,
 }

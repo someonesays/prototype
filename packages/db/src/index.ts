@@ -1,2 +1,2 @@
 export * from "./functions";
-export * from "./prompts";
+export * from "./minigames";

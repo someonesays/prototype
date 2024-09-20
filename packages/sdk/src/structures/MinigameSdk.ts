@@ -1,9 +1,9 @@
 import EventEmitter from "eventemitter3";
-import { ParentOpcodes, PromptOpcodes } from "../opcodes";
-import type { ParentTypes, PromptValidation } from "../types";
+import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
+import type { ParentTypes, MinigameValidation } from "../types";
 import type { z } from "zod";
 
-export class PromptSdk {
+export class MinigameSdk {
   private isReady = false;
   private emitter = new EventEmitter<ParentOpcodes>();
   private source = window.parent.opener ?? window.parent;
@@ -14,7 +14,9 @@ export class PromptSdk {
       // https://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
       if (window.self === window.top) throw new Error();
     } catch (e) {
-      throw new Error("Failed to initiate PromptSdk. Are you running this prompt inside the game?");
+      throw new Error(
+        "Failed to initiate MinigameSdk. Are you running this minigame inside the game?",
+      );
     }
 
     window.addEventListener("message", this.handleMessage.bind(this), false);
@@ -36,9 +38,9 @@ export class PromptSdk {
         break;
     }
   }
-  private postMessage<O extends PromptOpcodes>(
+  private postMessage<O extends MinigameOpcodes>(
     opcode: O,
-    payload: z.infer<(typeof PromptValidation)[O]>,
+    payload: z.infer<(typeof MinigameValidation)[O]>,
   ) {
     this.source.postMessage([opcode, payload], this.targetOrigin);
   }
@@ -55,22 +57,24 @@ export class PromptSdk {
 
   ready(): Promise<ParentTypes[ParentOpcodes.Ready]> {
     if (this.isReady) throw new Error("Already ready or requested to be ready");
-    this.postMessage(PromptOpcodes.Handshake, {});
+    this.postMessage(MinigameOpcodes.Handshake, {});
     return new Promise((resolve) => this.emitter.once(ParentOpcodes.Ready, resolve));
   }
-  endGame(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.EndGame]>) {
-    this.postMessage(PromptOpcodes.EndGame, payload);
+  endGame(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.EndGame]>) {
+    this.postMessage(MinigameOpcodes.EndGame, payload);
   }
-  setGameState(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SetGameState]>) {
-    this.postMessage(PromptOpcodes.SetGameState, payload);
+  setGameState(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SetGameState]>) {
+    this.postMessage(MinigameOpcodes.SetGameState, payload);
   }
-  setPlayerState(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SetPlayerState]>) {
-    this.postMessage(PromptOpcodes.SetPlayerState, payload);
+  setPlayerState(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SetPlayerState]>) {
+    this.postMessage(MinigameOpcodes.SetPlayerState, payload);
   }
-  sendGameMessage(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SendGameMessage]>) {
-    this.postMessage(PromptOpcodes.SendGameMessage, payload);
+  sendGameMessage(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendGameMessage]>) {
+    this.postMessage(MinigameOpcodes.SendGameMessage, payload);
   }
-  sendPlayerMessage(payload: z.infer<(typeof PromptValidation)[PromptOpcodes.SendPlayerMessage]>) {
-    this.postMessage(PromptOpcodes.SendPlayerMessage, payload);
+  sendPlayerMessage(
+    payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPlayerMessage]>,
+  ) {
+    this.postMessage(MinigameOpcodes.SendPlayerMessage, payload);
   }
 }

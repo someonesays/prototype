@@ -23,9 +23,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 
-import { PromptSdk } from "@/sdk";
+import { MinigameSdk } from "@/sdk";
 
-const sdk = new PromptSdk();
+const sdk = new MinigameSdk();
 const ready = await sdk.ready();
 
 console.log("ready response", ready);

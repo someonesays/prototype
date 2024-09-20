@@ -1,15 +1,15 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { ParentSdk, PromptOpcodes } from "@/sdk";
+import { ParentSdk, MinigameOpcodes } from "@/sdk";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
-export let promptId: string;
+export let minigameId: string;
 
 let container: HTMLDivElement;
 let authorText = "Someone";
-let promptText = "";
-let promptTextOpacity = 0;
+let minigamePromptText = "";
+let minigameTextOpacity = 0;
 $: volumeValue = 100;
 
 onMount(() => {
@@ -21,10 +21,14 @@ onMount(() => {
 
   const sdk = new ParentSdk({ iframe });
 
-  sdk.once(PromptOpcodes.Handshake, () => {
+  sdk.once(MinigameOpcodes.Handshake, () => {
     sdk.confirmHandshake({
       // WIP: Remove these placeholder messages
       started: false,
+      settings: {
+        language: "en-US",
+        volume: 1,
+      },
       user: "mock_user_id",
       room: {
         name: "mock room name",
@@ -41,14 +45,14 @@ onMount(() => {
   });
 
   (async () => {
-    const { success, prompt } = await ParentSdk.getPrompt(promptId);
-    if (!success || !prompt) throw new Error("The prompt with the given ID doesn't exist");
+    const { success, minigame } = await ParentSdk.getMinigame(minigameId);
+    if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
 
-    authorText = prompt.author.name;
-    promptText = prompt.prompt;
-    promptTextOpacity = 1;
+    authorText = minigame.author.name;
+    minigamePromptText = minigame.prompt;
+    minigameTextOpacity = 1;
 
-    iframe.src = prompt.url;
+    iframe.src = minigame.url;
   })();
 
   return () => {
@@ -67,15 +71,15 @@ function leaveGame() {
 }
 </script>
 
-<div class="prompt-container">
-  <div class="prompt-row">
-    <div class="prompt-text" style="opacity:{promptTextOpacity}">
-      <p>{authorText} says <b>{promptText}</b></p>
+<div class="minigame-container">
+  <div class="minigame-row">
+    <div class="minigame-text" style="opacity:{minigameTextOpacity}">
+      <p>{authorText} says <b>{minigamePromptText}</b></p>
     </div>
   </div>
-  <div class="prompt-iframe" bind:this={container} />
-  <div class="prompt-settings">
-    <div class="prompt-settings-menu" class:prompt-settings-menu-active={isSettingsOpen}>
+  <div class="minigame-iframe" bind:this={container} />
+  <div class="minigame-settings">
+    <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
       <div>
         <div>
           <p style="float: left">Volume</p>
@@ -87,14 +91,14 @@ function leaveGame() {
         <button class="leave-game" on:click={leaveGame}>Leave game</button>
       </div>
     </div>
-    <button class="prompt-settings-button" class:prompt-settings-button-active={isSettingsOpen} on:click={openSettings}>
+    <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} on:click={openSettings}>
       <div><GearIcon /></div>
     </button>
   </div>
 </div>
 
 <style>
-  .prompt-container {
+  .minigame-container {
     position: absolute;
     display: flex;
     width: 100%;
@@ -104,11 +108,11 @@ function leaveGame() {
     align-items: stretch;
     overflow: hidden;
   }
-  .prompt-row {
+  .minigame-row {
     background-color: black;
     color: white;
   }
-  .prompt-text {
+  .minigame-text {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,36 +123,36 @@ function leaveGame() {
     max-height: calc(40px + 0.5vh);
     font-size: calc(16px + 0.25vh);
   }
-  .prompt-iframe {
+  .minigame-iframe {
     background-color: black;
     flex: 1 1 auto;
   }
-  :global(.prompt-iframe iframe) {
+  :global(.minigame-iframe iframe) {
     border-width: 0;
     width: 100%;
     height: 100%;
   }
-  .prompt-settings {
+  .minigame-settings {
     position: absolute;
     color: white;
     right: calc(16px + 0.5vh);
     bottom: calc(16px + 0.5vh);
   }
-  .prompt-settings-menu {
+  .minigame-settings-menu {
     display: none;
     margin-bottom: 12px;
   }
-  .prompt-settings-menu p {
+  .minigame-settings-menu p {
     margin: 0;
   }
-  .prompt-settings-menu-active {
+  .minigame-settings-menu-active {
     display: block;
     border-radius: 2px;
     background-color: #1e1e1e;
     box-shadow: #64646f33 0px 7px 29px 0px;
     padding: 15px;
   }
-  .prompt-settings-button {
+  .minigame-settings-button {
     background-color: #343a40;
     border: 2px #4a5259 solid;
     border-radius: calc(4px + 0.5vh);
@@ -160,13 +164,13 @@ function leaveGame() {
     height: calc(40px + 0.5vh);
     transition: box-shadow .5s ease-out;
   }
-  .prompt-settings-button div {
+  .minigame-settings-button div {
     margin: 25%;
     width: 50%;
     height: 50%;
     transition: transform .5s ease-out;
   }
-  .prompt-settings-button-active {
+  .minigame-settings-button-active {
     background-color: #4a5259;
   }
   .leave-game {
@@ -182,11 +186,11 @@ function leaveGame() {
     transition: border .5s ease-out;
   }
   @media (hover: hover) {
-    .prompt-settings-button:hover {
+    .minigame-settings-button:hover {
       background-color: #4a5259;
       box-shadow: #64646f73 0px 7px 29px 0px;
     }
-    .prompt-settings-button:hover > div {
+    .minigame-settings-button:hover > div {
       transform: rotate(90deg);
     }
     .leave-game:hover {

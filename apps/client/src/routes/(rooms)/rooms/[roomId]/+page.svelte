@@ -1,7 +1,7 @@
 <script lang="ts">
-import PromptContainer from "$lib/components/elements/PromptContainer.svelte";
+import MinigameContainer from "$lib/components/elements/MinigameContainer.svelte";
 </script>
   
 <main>
-  <PromptContainer promptId="1" />
+  <MinigameContainer minigameId="1" />
 </main>
