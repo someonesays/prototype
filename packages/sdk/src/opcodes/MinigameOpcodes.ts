@@ -19,6 +19,12 @@ and it will display the leaderboards.
    */
   EndGame = "end_game", // Host only
   /**
+   * Set the minigame prompt displayed.
+   *
+   * This will only impact the singular client you are sending this message on.
+   */
+  SetClientPrompt = "set_client_prompt",
+  /**
    * Set the game's state (persistent until the minigame's game ends).
    *
    * Only the host can send this message.
