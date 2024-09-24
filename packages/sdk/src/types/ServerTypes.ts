@@ -17,7 +17,7 @@ export interface ServerTypes {
     user: string;
     room: GameRoomPrivate;
     screen: Screens;
-    minigame: Minigame;
+    minigame: Minigame | null;
     players: GamePlayerPrivate[];
   };
   [ServerOpcodes.PlayerJoin]: {

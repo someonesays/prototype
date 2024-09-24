@@ -1,8 +1,8 @@
 import { decode, encode } from "@msgpack/msgpack";
-import { ClientValidation, type ClientOpcodes, type ServerOpcodes, type ServerTypes } from "@/sdk";
+import { ClientOpcodes, ClientValidation, type ServerOpcodes, type ServerTypes } from "@/sdk";
 import type z from "zod";
 
-export function encodeClient<O extends ClientOpcodes>(payload: {
+export function encodeOppackClient<O extends ClientOpcodes>(payload: {
   opcode: O;
   data: z.infer<(typeof ClientValidation)[O]>;
 }) {
@@ -14,7 +14,7 @@ export function encodeClient<O extends ClientOpcodes>(payload: {
   return buffer;
 }
 
-export function encodeServer<O extends ServerOpcodes>(payload: {
+export function encodeOppackServer<O extends ServerOpcodes>(payload: {
   opcode: O;
   data: ServerTypes[O];
 }) {
@@ -26,7 +26,7 @@ export function encodeServer<O extends ServerOpcodes>(payload: {
   return buffer;
 }
 
-export function decodeClient<O extends ClientOpcodes>(
+export function decodeOppackClient<O extends ClientOpcodes>(
   payload: Uint8Array,
 ): {
   opcode: O;
@@ -39,11 +39,16 @@ export function decodeClient<O extends ClientOpcodes>(
   return { opcode, data };
 }
 
-export function decodeServer<O extends ServerOpcodes>(
+export function decodeOppackServer<O extends ServerOpcodes>(
   payload: Uint8Array,
 ): {
   opcode: O;
   data: ServerTypes[O];
 } {
   return { opcode: payload[0] as O, data: decode(payload.slice(1)) as ServerTypes[O] };
+}
+
+const test = decodeOppackClient(new Uint8Array());
+if (test.opcode === ClientOpcodes.MinigameSetGameMessage) {
+  test.data;
 }

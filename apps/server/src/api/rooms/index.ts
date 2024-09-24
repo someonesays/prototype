@@ -1,10 +1,17 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { createWebSocketMiddleware, type MatchmakingDataJWT } from "../../utils";
-import { encodeServer, Screens } from "@/sdk";
+import {
+  gameRooms,
+  createWebSocketMiddleware,
+  type MatchmakingDataJWT,
+  type ServerRoom,
+  type ServerPlayer,
+} from "../../utils";
+import { decodeJsonClient, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { getMinigamePublic } from "@/db";
+import { recieveMessage, sendMessage } from "../../utils/messages";
 
 export const rooms = new Hono();
 
@@ -13,7 +20,10 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
   const protocol = c.req.header('sec-websocket-protocol');
   if (!protocol) return;
 
-  const { user, room } = (await verify(protocol, env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
+  const [ messageType, authorization ] = protocol.split(",");
+  if (messageType !== "Json" && messageType !== "Oppack") return;
+
+  const { user, room } = (await verify(authorization.trim(), env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
   if (room.server.id !== "test_server_id") return;
 
   // Make sure 2 clients cannot join with the same user ID
@@ -22,49 +32,91 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
 
   const state = {
     connected: false,
-    room: {
-      id: room.id,
-    },
-    user: {
-      id: user.id,
-      displayName: user.displayName,
-    },
+    messageType,
+    userId: user.id,
+    user: null as ServerPlayer | null,
+    serverRoom: null as ServerRoom | null,
   };
   
   return {
     async open({ ws }) {
       state.connected = true;
 
-      // WIP: Remove placeholder values
-      const minigame = await getMinigamePublic("1");
-      if (!minigame) return ws.close();
-      ws.send(encodeServer({
-        opcode: ServerOpcodes.GetInformation,
-        data: {
+      const serverRoom = gameRooms.get(room.id);
+      if (!serverRoom) {
+        // WIP: Remove placeholder miniga,e
+        const minigame = await getMinigamePublic("1");
+        if (!minigame) return ws.close();
+
+        state.user = {
+          id: user.id,
+          ws,
+          messageType,
+          displayName: user.displayName,
+          ready: false,
+          state: null,
+          points: 0,
+        }
+
+        state.serverRoom = {
           started: false,
-          user: user.id,
           room: {
             id: room.id,
-            name: "test name",
-            host: user.id,
+            name: `Room ${room.id}`,
+            host: state.userId,
             state: null
           },
-          screen: Screens.Minigame,
-          minigame,
-          players: [{
-            id: user.id,
-            displayName: user.displayName,
-            points: 0,
-            ready: false,
-            state: null,
-          }],
+          screen: Screens.Lobby,
+          minigame, // Can be null
+          players: [state.user],
+        }
+        gameRooms.set(room.id, state.serverRoom);
+      } else {
+        state.serverRoom = serverRoom;
+        if (state.serverRoom.players.find(p => p.id === user.id)) {
+          return ws.close(1003, "A player with the given ID is already in the game");
+        }
+
+        state.user = {
+          id: user.id,
+          ws,
+          messageType,
+          displayName: user.displayName,
+          ready: false,
+          state: null,
+          points: 0,
+        };
+        state.serverRoom.players.push(state.user);
+      }
+      
+      sendMessage({
+        user: state.user,
+        opcode: ServerOpcodes.GetInformation,
+        data: {
+          started: state.serverRoom.started,
+          user: state.userId,
+          room: state.serverRoom.room,
+          screen: state.serverRoom.screen,
+          minigame: state.serverRoom.minigame,
+          players: state.serverRoom.players.map(p => ({...p, ws: undefined, messageType: undefined })),
         },
-      }));
+      });
 
       console.log('WebSocket connected');
     },
-    message({ data, ws }) {
-      console.log('WebSocket message', data);
+    message({ data: rawPayload, ws }) {
+      if (!state.serverRoom) return;
+
+      const { opcode, data } = recieveMessage({
+        user: state.user!,
+        payload: rawPayload,
+      });
+
+      console.log('WebSocket message', opcode, data);
+
+      if (opcode === 3) {
+        data;
+      }
     },
     close({ ws }) {
       state.connected = false;

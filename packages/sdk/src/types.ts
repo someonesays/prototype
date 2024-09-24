@@ -4,7 +4,7 @@ export type * from "./types/ServerTypes";
 export * from "./types/MinigameValidation";
 export type * from "./types/ParentTypes";
 
-export * from "./types/GamePlayer";
+export type * from "./types/GamePlayer";
 export * from "./types/GamePrize";
 export type * from "./types/GameRoom";
 export type * from "./types/GameSettings";
