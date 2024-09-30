@@ -194,7 +194,7 @@ function openSettings() {
     -moz-appearance: none;
     appearance: none;
     background: none;
-    cursor: pointer;
+    cursor: ew-resize;
     overflow: hidden;
   }
   .volume-slider:focus-visible,
