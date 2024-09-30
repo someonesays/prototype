@@ -7,12 +7,11 @@ export enum ClientOpcodes {
   TransferHost = 2, // (Disallow running this mid-game)
   SetRoomSettings = 3,
   BeginGame = 4, // Actually begins the game (not a minigame)
-  EndGame = 5, // Force a game to end (back to the room lobby screen)
-  MinigameHandshake = 6,
-  MinigameEndGame = 7, // End the minigame game
-  MinigameSetGameState = 8,
-  MinigameSetPlayerState = 9,
-  MinigameSendGameMessage = 10,
-  MinigameSendPlayerMessage = 11,
-  MinigameSendPrivateMessage = 12, // Player message to host only
+  MinigameHandshake = 5,
+  MinigameEndGame = 6, // End the minigame game
+  MinigameSetGameState = 7,
+  MinigameSetPlayerState = 8,
+  MinigameSendGameMessage = 9,
+  MinigameSendPlayerMessage = 10,
+  MinigameSendPrivateMessage = 11, // Player message to host only
 }

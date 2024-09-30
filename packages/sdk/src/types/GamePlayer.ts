@@ -11,5 +11,7 @@ export interface GamePlayerPrivate extends GamePlayer {
   points: number;
 }
 
-export interface GamePlayerLeaderboards extends Omit<GamePlayerPrivate, "displayName" | "state"> {}
+export interface GamePlayerLeaderboards extends Omit<GamePlayerPrivate, "displayName" | "state"> {
+  ready: false;
+}
 export interface GamePlayerSetState extends Omit<GamePlayer, "displayName" | "ready"> {}

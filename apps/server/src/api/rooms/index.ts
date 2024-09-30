@@ -12,7 +12,11 @@ import {
 import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { broadcastMessage, recieveMessage, sendMessage } from "../../utils/messages";
-import { transformToGamePlayerPrivate } from "../../utils/transform";
+import {
+  transformToGamePlayerLeaderboards,
+  transformToGamePlayerPrivate,
+} from "../../utils/transform";
+import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
 
@@ -71,6 +75,7 @@ rooms.get(
           players.set(state.user.id, state.user);
 
           state.serverRoom = {
+            starting: false,
             started: false,
             room: {
               id: room.id,
@@ -79,7 +84,7 @@ rooms.get(
               state: null,
             },
             screen: Screens.Lobby,
-            minigame: null, // ex. await getMinigamePublic("1")
+            minigame: null,
             players,
           };
 
@@ -87,7 +92,7 @@ rooms.get(
         }
 
         // Create WebSocket events
-        websocketEvents.message = ({ data: rawPayload, ws }) => {
+        websocketEvents.message = async ({ data: rawPayload, ws }) => {
           const { opcode, data } = recieveMessage({
             user: state.user,
             payload: rawPayload,
@@ -101,7 +106,6 @@ rooms.get(
             }
             case ClientOpcodes.KickPlayer: {
               if (state.serverRoom.room.host !== state.user.id) return;
-
               return state.serverRoom.players.get(data.player)?.ws.close();
             }
             case ClientOpcodes.TransferHost: {
@@ -125,40 +129,73 @@ rooms.get(
             }
             case ClientOpcodes.SetRoomSettings: {
               if (state.serverRoom.room.host !== state.user.id) return;
-
               state.serverRoom.room.name = data.name;
               return;
             }
             case ClientOpcodes.BeginGame: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (
+                state.serverRoom.room.host !== state.user.id ||
+                state.serverRoom.started ||
+                state.serverRoom.starting
+              )
+                return;
 
-              // WIP BeginGame
-              break;
-            }
-            case ClientOpcodes.EndGame: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              state.serverRoom.starting = true;
 
-              // WIP EndGame
-              break;
+              // TODO: Remove placeholder minigame and allow selecting custom ones
+              const minigame = await getMinigamePublic("1");
+              if (!minigame) {
+                console.error("Failed to find minigame");
+                state.serverRoom.starting = false;
+                return;
+              }
+
+              state.serverRoom.minigame = minigame;
+
+              for (const player of state.serverRoom.players.values()) {
+                player.ready = false;
+              }
+
+              state.serverRoom.started = true;
+              state.serverRoom.starting = false;
+
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.UpdatedScreen,
+                data: {
+                  screen: Screens.Minigame,
+                  players: [...state.serverRoom.players.values()].map((p) =>
+                    transformToGamePlayerLeaderboards(p),
+                  ),
+                  minigame,
+                },
+              });
+
+              return;
             }
             case ClientOpcodes.MinigameHandshake: {
+              if (!state.serverRoom.started) return;
+
               // WIP MinigameHandshake
               break;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (!state.serverRoom.started || state.serverRoom.room.host !== state.user.id) return;
 
               // WIP MinigameEndGame
               break;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (!state.serverRoom.started || state.serverRoom.room.host !== state.user.id) return;
 
               // WIP MinigameSetGameState
               break;
             }
             case ClientOpcodes.MinigameSetPlayerState: {
-              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+              if (
+                !state.serverRoom.started ||
+                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
+              ) {
                 return;
               }
 
@@ -166,13 +203,17 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (!!state.serverRoom.started || state.serverRoom.room.host !== state.user.id)
+                return;
 
               // WIP MinigameSendGameMessage
               break;
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
-              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+              if (
+                !!state.serverRoom.started ||
+                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
+              ) {
                 return;
               }
 
@@ -180,7 +221,10 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+              if (
+                !state.serverRoom.started ||
+                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
+              ) {
                 return;
               }
 

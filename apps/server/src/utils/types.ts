@@ -8,6 +8,7 @@ export interface ServerPlayer extends GamePlayerPrivate {
 }
 
 export interface ServerRoom {
+  starting: boolean;
   started: boolean;
   room: {
     id: string;

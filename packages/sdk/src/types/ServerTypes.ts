@@ -35,7 +35,7 @@ export interface ServerTypes {
   };
   [ServerOpcodes.UpdatedScreen]: {
     screen: Screens;
-    players?: GamePlayerLeaderboards[];
+    players: GamePlayerLeaderboards[];
     minigame?: Minigame;
   };
   [ServerOpcodes.MinigamePlayerReady]: {
