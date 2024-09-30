@@ -3,12 +3,10 @@ import {
   encodeOppackServer,
   decodeJsonClient,
   encodeJsonServer,
-  type ClientOpcodes,
-  type ClientValidation,
   type ServerOpcodes,
   type ServerTypes,
+  type ClientOpcodeAndDatas,
 } from "@/sdk";
-import type { z } from "zod";
 import type { WSMessageReceive } from "hono/ws";
 import type { ServerPlayer } from "./types";
 
@@ -31,16 +29,13 @@ export function sendMessage<O extends ServerOpcodes>({
   }
 }
 
-export function recieveMessage<O extends ClientOpcodes>({
+export function recieveMessage({
   user,
   payload,
 }: {
   user: ServerPlayer;
   payload: WSMessageReceive;
-}): {
-  opcode: O;
-  data: z.infer<(typeof ClientValidation)[O]>;
-} {
+}) {
   if (user.ws.readyState !== 1) throw new Error("Cannot send message to a WebSocket not READY");
 
   switch (user.messageType) {

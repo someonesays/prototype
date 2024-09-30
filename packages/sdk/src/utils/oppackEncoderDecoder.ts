@@ -1,5 +1,12 @@
 import { decode, encode } from "@msgpack/msgpack";
-import { ClientOpcodes, ClientValidation, type ServerOpcodes, type ServerTypes } from "@/sdk";
+import {
+  ClientValidation,
+  type ClientOpcodes,
+  type ClientOpcodeAndDatas,
+  type ServerOpcodes,
+  type ServerTypes,
+  type ServerOpcodeAndDatas,
+} from "@/sdk";
 import type z from "zod";
 
 export function encodeOppackClient<O extends ClientOpcodes>(payload: {
@@ -26,29 +33,14 @@ export function encodeOppackServer<O extends ServerOpcodes>(payload: {
   return buffer;
 }
 
-export function decodeOppackClient<O extends ClientOpcodes>(
-  payload: Uint8Array,
-): {
-  opcode: O;
-  data: z.infer<(typeof ClientValidation)[O]>;
-} {
-  const opcode = payload[0] as O;
+export function decodeOppackClient(payload: Uint8Array) {
+  const opcode = payload[0] as ClientOpcodes;
   if (!ClientValidation[opcode]) throw new Error("Invalid opcode recieved");
   const { success, data } = ClientValidation[opcode].safeParse(decode(payload.slice(1)));
   if (!success) throw new Error("Failed data validation check");
-  return { opcode, data };
+  return { opcode, data } as ClientOpcodeAndDatas;
 }
 
-export function decodeOppackServer<O extends ServerOpcodes>(
-  payload: Uint8Array,
-): {
-  opcode: O;
-  data: ServerTypes[O];
-} {
-  return { opcode: payload[0] as O, data: decode(payload.slice(1)) as ServerTypes[O] };
-}
-
-const test = decodeOppackClient(new Uint8Array());
-if (test.opcode === ClientOpcodes.MinigameSetGameMessage) {
-  test.data;
+export function decodeOppackServer(payload: Uint8Array) {
+  return { opcode: payload[0], data: decode(payload.slice(1)) } as ServerOpcodeAndDatas;
 }

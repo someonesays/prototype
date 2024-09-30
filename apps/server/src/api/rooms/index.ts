@@ -8,7 +8,7 @@ import {
   type ServerRoom,
   type ServerPlayer,
 } from "../../utils";
-import { decodeJsonClient, Screens } from "@/sdk";
+import { ClientOpcodes, decodeJsonClient, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { getMinigamePublic } from "@/db";
 import { recieveMessage, sendMessage } from "../../utils/messages";
@@ -113,10 +113,6 @@ rooms.get('/', createWebSocketMiddleware(async (c) => {
       });
 
       console.log('WebSocket message', opcode, data);
-
-      if (opcode === 3) {
-        data;
-      }
     },
     close({ ws }) {
       state.connected = false;

@@ -37,3 +37,22 @@ export const ClientValidation = {
     message: StateZod,
   }),
 };
+
+export interface ClientOpcodeAndData<O extends ClientOpcodes> {
+  opcode: O;
+  data: z.infer<(typeof ClientValidation)[O]>;
+}
+
+export type ClientOpcodeAndDatas =
+  | ClientOpcodeAndData<ClientOpcodes.Ping>
+  | ClientOpcodeAndData<ClientOpcodes.KickPlayer>
+  | ClientOpcodeAndData<ClientOpcodes.TransferHost>
+  | ClientOpcodeAndData<ClientOpcodes.SetRoomSettings>
+  | ClientOpcodeAndData<ClientOpcodes.BeginGame>
+  | ClientOpcodeAndData<ClientOpcodes.EndGame>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameHandshake>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameEndGame>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerState>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameMessage>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerMessage>;

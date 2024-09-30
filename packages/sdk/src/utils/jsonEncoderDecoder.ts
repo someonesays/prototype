@@ -1,4 +1,11 @@
-import { ClientValidation, type ServerOpcodes, type ClientOpcodes, type ServerTypes } from "@/sdk";
+import {
+  ClientValidation,
+  type ServerOpcodes,
+  type ClientOpcodes,
+  type ServerTypes,
+  type ClientOpcodeAndDatas,
+  type ServerOpcodeAndDatas,
+} from "@/sdk";
 import type z from "zod";
 
 export function encodeJsonClient<O extends ClientOpcodes>(payload: {
@@ -21,23 +28,14 @@ export function encodeJsonServer<O extends ServerOpcodes>(payload: {
   });
 }
 
-export function decodeJsonClient<O extends ClientOpcodes>(payload: {
-  opcode: O;
-  data: z.infer<(typeof ClientValidation)[O]>;
-}): {
-  opcode: O;
-  data: z.infer<(typeof ClientValidation)[O]>;
-} {
-  const opcode = Number(payload.opcode) as O;
+export function decodeJsonClient(payload: { opcode: number; data: unknown }) {
+  const opcode = Number(payload?.opcode) as ClientOpcodes;
   if (!ClientValidation[opcode]) throw new Error("Invalid opcode recieved");
-  const { success, data } = ClientValidation[opcode].safeParse(payload.data);
+  const { success, data } = ClientValidation[opcode].safeParse(payload?.data);
   if (!success) throw new Error("Failed data validation check");
-  return { opcode, data };
+  return { opcode, data } as ClientOpcodeAndDatas;
 }
 
-export function decodeJsonServer<O extends ServerOpcodes>(payload: {
-  opcode: number;
-  data: unknown;
-}) {
-  return { opcode: payload.opcode as O, data: payload.data as ServerTypes[O] };
+export function decodeJsonServer(payload: { opcode: number; data: unknown }) {
+  return { opcode: payload.opcode, data: payload.data } as ServerOpcodeAndDatas;
 }

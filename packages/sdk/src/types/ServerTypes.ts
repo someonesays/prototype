@@ -56,3 +56,23 @@ export interface ServerTypes {
     message: State;
   };
 }
+
+export interface ServerOpcodeAndData<O extends ServerOpcodes> {
+  opcode: O;
+  data: ServerTypes[O];
+}
+
+export type ServerOpcodeAndDatas =
+  | ServerOpcodeAndData<ServerOpcodes.Ping>
+  | ServerOpcodeAndData<ServerOpcodes.GetInformation>
+  | ServerOpcodeAndData<ServerOpcodes.PlayerJoin>
+  | ServerOpcodeAndData<ServerOpcodes.PlayerLeft>
+  | ServerOpcodeAndData<ServerOpcodes.TransferHost>
+  | ServerOpcodeAndData<ServerOpcodes.UpdatedRoomSettings>
+  | ServerOpcodeAndData<ServerOpcodes.UpdatedScreen>
+  | ServerOpcodeAndData<ServerOpcodes.MinigamePlayerReady>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameStartGame>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSendGameMessage>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>;
