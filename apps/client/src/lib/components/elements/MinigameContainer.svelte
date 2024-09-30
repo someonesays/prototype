@@ -71,10 +71,6 @@ let isSettingsOpen = false;
 function openSettings() {
   isSettingsOpen = !isSettingsOpen;
 }
-
-function leaveGame() {
-  alert("This is an unfinished button");
-}
 </script>
 
 <div class="minigame-container">
@@ -93,9 +89,6 @@ function leaveGame() {
         </div>
         <br>
         <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
-      </div>
-      <div>
-        <button class="leave-game" on:click={leaveGame}>Leave game</button>
       </div>
     </div>
     <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} on:click={openSettings}>
@@ -233,21 +226,6 @@ function leaveGame() {
       --slider_colormix: var(--slider_activecolor);
     }
   }
-  .leave-game {
-    border: 2px #e03131 solid;
-    border-radius: 6px;
-    background-color: #ffc9c9;
-    color: #e03131;
-    text-align: right;
-    cursor: pointer;
-    margin-top: 12px;
-    width: 100%;
-    height: 36px;
-    padding: 0px 12px;
-    font-size: 16px;
-    font-family: 'Virgil', sans-serif;
-    transition: border .5s ease-out;
-  }
   @media (hover: hover) {
     .minigame-settings-button:hover {
       background-color: #4a5259;
@@ -255,10 +233,6 @@ function leaveGame() {
     }
     .minigame-settings-button:hover > div {
       transform: rotate(90deg);
-    }
-    .leave-game:hover {
-      background-color: #e03131;
-      color: #ffc9c9;
     }
   }
 </style>
