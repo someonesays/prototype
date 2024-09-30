@@ -32,8 +32,8 @@ app.use(
       frameSrc: [env.Domain],
       childSrc: [env.Domain, "blob:"],
       workerSrc: [env.Domain, "blob:"],
+      frameAncestors: ["none"],
     },
-    xFrameOptions: "DENY",
   }),
 );
 

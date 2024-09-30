@@ -25,7 +25,9 @@ setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 
 import { MinigameSdk } from "@/sdk";
 
-const sdk = new MinigameSdk();
-const ready = await sdk.ready();
+(async () => {
+  const sdk = new MinigameSdk();
+  const ready = await sdk.ready();
 
-console.log("ready response", ready);
+  console.log("ready response", ready);
+})();
