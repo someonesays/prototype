@@ -9,7 +9,7 @@ import {
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
 } from "../../utils";
-import { Screens } from "@/sdk";
+import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { broadcastMessage, recieveMessage, sendMessage } from "../../utils/messages";
 import { transformToGamePlayerPrivate } from "../../utils/transform";
@@ -44,6 +44,7 @@ rooms.get(
             id: user.id,
             ws,
             messageType,
+            lastPing: performance.now(),
             displayName: user.displayName,
             ready: false,
             state: null,
@@ -93,6 +94,100 @@ rooms.get(
           });
 
           console.log("WebSocket message", opcode, data);
+          switch (opcode) {
+            case ClientOpcodes.Ping: {
+              state.user.lastPing = performance.now();
+              return sendMessage({ user: state.user, opcode: ServerOpcodes.Ping, data: {} });
+            }
+            case ClientOpcodes.KickPlayer: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              return state.serverRoom.players.get(data.player)?.ws.close();
+            }
+            case ClientOpcodes.TransferHost: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              const player = state.serverRoom.players.get(data.player);
+              if (player?.ws.readyState === 1) {
+                state.serverRoom.room.host = data.player;
+
+                // if (state.serverRoom.started) {
+                //   broadcastMessage({
+                //     room: state.serverRoom,
+                //     opcode: ServerOpcodes.UpdatedScreen,
+                //     data: {
+                //       screen: Screens.Lobby,
+                //     },
+                //   });
+                // }
+              }
+              return;
+            }
+            case ClientOpcodes.SetRoomSettings: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              state.serverRoom.room.name = data.name;
+              return;
+            }
+            case ClientOpcodes.BeginGame: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              // WIP BeginGame
+              break;
+            }
+            case ClientOpcodes.EndGame: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              // WIP EndGame
+              break;
+            }
+            case ClientOpcodes.MinigameHandshake: {
+              // WIP MinigameHandshake
+              break;
+            }
+            case ClientOpcodes.MinigameEndGame: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              // WIP MinigameEndGame
+              break;
+            }
+            case ClientOpcodes.MinigameSetGameState: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              // WIP MinigameSetGameState
+              break;
+            }
+            case ClientOpcodes.MinigameSetPlayerState: {
+              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+                return;
+              }
+
+              // WIP MinigameSetPlayerState
+              break;
+            }
+            case ClientOpcodes.MinigameSendGameMessage: {
+              if (state.serverRoom.room.host !== state.user.id) return;
+
+              // WIP MinigameSendGameMessage
+              break;
+            }
+            case ClientOpcodes.MinigameSendPlayerMessage: {
+              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+                return;
+              }
+
+              // WIP MinigameSendPlayerMessage
+              break;
+            }
+            case ClientOpcodes.MinigameSendPrivateMessage: {
+              if (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id) {
+                return;
+              }
+
+              // WIP MinigameSendPrivateMessage
+              break;
+            }
+          }
         };
 
         websocketEvents.close = ({ ws }) => {
@@ -116,15 +211,15 @@ rooms.get(
               },
             });
 
-            if (state.serverRoom.started) {
-              broadcastMessage({
-                room: state.serverRoom,
-                opcode: ServerOpcodes.UpdatedScreen,
-                data: {
-                  screen: Screens.Lobby,
-                },
-              });
-            }
+            // if (state.serverRoom.started) {
+            //   broadcastMessage({
+            //     room: state.serverRoom,
+            //     opcode: ServerOpcodes.UpdatedScreen,
+            //     data: {
+            //       screen: Screens.Lobby,
+            //     },
+            //   });
+            // }
           }
 
           // Send to everyone that the player left

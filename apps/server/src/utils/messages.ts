@@ -11,17 +11,19 @@ import type { ServerPlayer, ServerRoom } from "./types";
 
 export function broadcastMessage<O extends ServerOpcodes>({
   room,
+  readyOnly = false,
   ignoreUsers = [],
   opcode,
   data,
 }: {
   room: ServerRoom;
+  readyOnly?: boolean;
   ignoreUsers?: ServerPlayer[];
   opcode: O;
   data: ServerTypes[O];
 }) {
   for (const user of room.players.values()) {
-    if (ignoreUsers.includes(user)) continue;
+    if (ignoreUsers.includes(user) || (readyOnly && !user.ready)) continue;
     sendMessage({ user, opcode, data });
   }
 }
