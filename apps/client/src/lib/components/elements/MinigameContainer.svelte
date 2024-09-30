@@ -3,7 +3,6 @@ import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes } from "@/sdk";
 
 import "$lib/styles/fonts/cascadiaCode.css";
-import "$lib/styles/fonts/virgil.css";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
