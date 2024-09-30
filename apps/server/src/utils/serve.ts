@@ -6,9 +6,9 @@ import type { ServeStaticOptions } from "hono/serve-static";
 import type { Env, MiddlewareHandler } from "hono/types";
 import { stat } from "node:fs/promises";
 
-export const serve = <E extends Env = Env>(
+export function serve<E extends Env = Env>(
   options: ServeStaticOptions<E> & { inject?: (c: Context, html: string) => string },
-): MiddlewareHandler => {
+): MiddlewareHandler {
   return async function serveStatic(c, next) {
     const getContent = async (path: string) => {
       const file = Bun.file(`./${path}`);
@@ -36,4 +36,4 @@ export const serve = <E extends Env = Env>(
       isDir,
     })(c, next);
   };
-};
+}
