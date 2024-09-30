@@ -15,7 +15,6 @@ export const MinigameValidation = {
     state: StateZod,
   }),
   [MinigameOpcodes.SetPlayerState]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     state: StateZod,
   }),
@@ -23,12 +22,10 @@ export const MinigameValidation = {
     message: StateZod,
   }),
   [MinigameOpcodes.SendPlayerMessage]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     message: StateZod,
   }),
   [MinigameOpcodes.SendPrivateMessage]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     message: StateZod,
   }),

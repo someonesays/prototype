@@ -12,7 +12,7 @@ export const ClientValidation = {
     player: z.string(),
   }),
   [ClientOpcodes.SetRoomSettings]: z.object({
-    // TODO: Add options to set room settings
+    name: z.string().min(1).max(50),
   }),
   [ClientOpcodes.BeginGame]: z.object({}),
   [ClientOpcodes.EndGame]: z.object({}),
@@ -24,7 +24,6 @@ export const ClientValidation = {
     state: StateZod,
   }),
   [ClientOpcodes.MinigameSetPlayerState]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     state: StateZod,
   }),
@@ -32,12 +31,10 @@ export const ClientValidation = {
     message: StateZod,
   }),
   [ClientOpcodes.MinigameSendPlayerMessage]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     message: StateZod,
   }),
   [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
-    // TODO: Add proper validation for the player ID
     user: z.string(),
     message: StateZod,
   }),

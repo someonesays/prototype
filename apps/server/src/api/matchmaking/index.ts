@@ -7,6 +7,8 @@ import type { MatchmakingDataJWT } from "../../utils";
 export const matchmaking = new Hono();
 
 matchmaking.get("/", async (c) => {
+  // TODO: Create a proper matchmaking system
+
   // Get user information
   const user = {
     id: createCuid(),
@@ -16,7 +18,7 @@ matchmaking.get("/", async (c) => {
   const room = {
     id: "test_room_id",
     server: {
-      id: "test_server_id",
+      id: env.ServerId,
       url: `ws://localhost:${env.Port}/rooms`,
     },
   };

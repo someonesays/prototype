@@ -11,7 +11,6 @@ import {
 } from "../../utils";
 import { Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
-import { getMinigamePublic } from "@/db";
 import { broadcastMessage, recieveMessage, sendMessage } from "../../utils/messages";
 import { transformToGamePlayerPrivate } from "../../utils/transform";
 
@@ -34,7 +33,7 @@ rooms.get(
       env.JWTSecret,
       env.JWTAlgorithm,
     )) as MatchmakingDataJWT;
-    if (room.server.id !== "test_server_id") return;
+    if (room.server.id !== env.ServerId) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
       async open({ ws }) {
@@ -61,11 +60,10 @@ rooms.get(
           // Join room
           state.serverRoom.players.set(state.user.id, state.user);
         } else {
-          // TODO: Remove placeholder minigame
-          const minigame = await getMinigamePublic("1");
-          if (!minigame) return ws.close();
-
-          // TODO: Make sure to check if the server is full and if it is, disallow the room from being created in the first place
+          // If the server is full, disallow the creation of new rooms
+          if (gameRooms.size > env.MaxRooms) {
+            return ws.close(1003, "Server is full");
+          }
 
           // Create room
           const players = new Map();
@@ -80,7 +78,7 @@ rooms.get(
               state: null,
             },
             screen: Screens.Lobby,
-            minigame, // Can be null
+            minigame: null, // ex. await getMinigamePublic("1")
             players,
           };
 

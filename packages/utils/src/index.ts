@@ -8,7 +8,7 @@ import { init, isCuid } from "@paralleldrive/cuid2";
  */
 const createCuid = init({
   random: Math.random,
-  length: 12,
+  length: 18,
   fingerprint: env.CuidFingerprint,
 });
 
