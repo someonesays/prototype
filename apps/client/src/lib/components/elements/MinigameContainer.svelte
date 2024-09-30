@@ -2,6 +2,9 @@
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes } from "@/sdk";
 
+import "$lib/styles/fonts/cascadiaCode.css";
+import "$lib/styles/fonts/virgil.css";
+
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 export let minigameId: string;
@@ -85,10 +88,11 @@ function leaveGame() {
     <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
       <div>
         <div>
-          <p style="float: left">Volume</p>
-          <p style="float: right">{volumeValue}%</p>
+          <p class="volume-text-left">Volume</p>
+          <p class="volume-text-right">{volumeValue}%</p>
         </div>
-        <input type="range" min="0" max="100" bind:value={volumeValue} />
+        <br>
+        <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
       </div>
       <div>
         <button class="leave-game" on:click={leaveGame}>Leave game</button>
@@ -153,7 +157,16 @@ function leaveGame() {
     border-radius: 2px;
     background-color: #1e1e1e;
     box-shadow: #64646f33 0px 7px 29px 0px;
-    padding: 15px;
+    padding: 18px 12px;
+    width: 250px;
+    font-size: 16px;
+    font-family: 'Cascadia Code', sans-serif;
+  }
+  .volume-text-left {
+    float: left;
+  }
+  .volume-text-right {
+    float: right;
   }
   .minigame-settings-button {
     background-color: #343a40;
@@ -176,16 +189,63 @@ function leaveGame() {
   .minigame-settings-button-active {
     background-color: #4a5259;
   }
+  .volume-slider {
+    --slider_activecolor: #1971c2;
+    --slider_linethickness: 4px;
+    --slider_thumbsize: 16px;
+    --slider_colormix: color-mix(in srgb, var(--slider_activecolor), #000 var(--slider_mixpercentage, 0%));
+
+    margin-top: 8px;
+    width: 100%;
+    height: var(--slider_thumbsize);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .volume-slider:focus-visible,
+  .volume-slider:hover {
+    --slider_mixpercentage: 25%;
+  }
+  .volume-slider[type="range" i]::-webkit-slider-thumb {
+    height: var(--slider_thumbsize);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
+    border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1/calc(50% - var(--slider_linethickness)/2) 100vw/0px calc(100vw);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .volume-slider[type="range"]::-moz-range-thumb {
+    height: var(--slider_thumbsize);
+    width: var(--slider_thumbsize);
+    background: none;
+    border-radius: 50%;
+    box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
+    border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1/calc(50% - var(--slider_linethickness)/2) 100vw/0 calc(100vw);
+    -moz-appearance: none;
+    appearance: none;
+  }
+  @supports not (color: color-mix(in srgb, red, red)) {
+    input {
+      --slider_colormix: var(--slider_activecolor);
+    }
+  }
   .leave-game {
     border: 2px #e03131 solid;
-    border-radius: 2px;
+    border-radius: 6px;
     background-color: #ffc9c9;
     color: #e03131;
     text-align: right;
     cursor: pointer;
     margin-top: 12px;
     width: 100%;
-    height: 30px;
+    height: 36px;
+    padding: 0px 12px;
+    font-size: 16px;
+    font-family: 'Virgil', sans-serif;
     transition: border .5s ease-out;
   }
   @media (hover: hover) {
