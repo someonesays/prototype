@@ -103,6 +103,29 @@ rooms.get(
             return gameRooms.delete(state.serverRoom.room.id);
           }
 
+          // If host left, assign new host
+          if (state.serverRoom.room.host === state.user.id) {
+            state.serverRoom.room.host = [...state.serverRoom.players.keys()][0];
+
+            broadcastMessage({
+              room: state.serverRoom,
+              opcode: ServerOpcodes.TransferHost,
+              data: {
+                user: state.serverRoom.room.host,
+              },
+            });
+
+            if (state.serverRoom.started) {
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.UpdatedScreen,
+                data: {
+                  screen: Screens.Lobby,
+                },
+              });
+            }
+          }
+
           // Send to everyone that the player left
           broadcastMessage({
             room: state.serverRoom,

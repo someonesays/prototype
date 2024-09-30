@@ -1,7 +1,10 @@
 import type { State } from "../types";
 
-export interface GameRoom {
+export interface GameRoomSettings {
   name: string;
+}
+
+export interface GameRoom extends GameRoomSettings {
   host: string;
   state: State;
 }

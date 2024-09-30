@@ -4,6 +4,7 @@ import type {
   GamePlayerPrivate,
   GamePlayerSetState,
   GameRoomPrivate,
+  GameRoomSettings,
   Minigame,
   Screens,
   State,
@@ -30,7 +31,7 @@ export interface ServerTypes {
     user: string;
   };
   [ServerOpcodes.UpdatedRoomSettings]: {
-    room: GameRoomPrivate;
+    room: GameRoomSettings;
   };
   [ServerOpcodes.UpdatedScreen]: {
     screen: Screens;
