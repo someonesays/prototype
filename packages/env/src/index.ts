@@ -4,6 +4,8 @@ export default {
   Domain: process.env.DOMAIN as string,
   Websocket: process.env.WEBSOCKET as string,
 
+  AllowedWsOrigins: (process.env.ALLOWED_WS_ORIGINS as string).split(",").map((o) => o.trim()),
+
   Port: Number(process.env.PORT),
   VitePort: Number(process.env.VITE_PORT),
 

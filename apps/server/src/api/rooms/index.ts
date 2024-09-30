@@ -20,6 +20,9 @@ export const rooms = new Hono();
 rooms.get(
   "/",
   createWebSocketMiddleware(async (c) => {
+    const origin = c.req.header("origin");
+    if (origin && !env.AllowedWsOrigins.includes(origin)) return;
+
     const protocol = c.req.header("sec-websocket-protocol");
     if (!protocol) return;
 
