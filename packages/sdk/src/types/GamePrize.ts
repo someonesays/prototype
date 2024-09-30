@@ -8,8 +8,8 @@ export enum GamePrize {
 }
 
 export const GamePrizeArrayZod = z.array(
-  // WIP: Add proper validation for the winner ID and participation IDs
-  // WIP: Make sure to disallow repeating PrizeType.Winner, PrizeType.Second and PrizeType.Third
+  // TODO: Add proper validation for the winner ID and participation IDs
+  // TODO: Make sure to disallow repeating PrizeType.Winner, PrizeType.Second and PrizeType.Third
   z.object({
     user: z.string(),
     type: z.nativeEnum(GamePrize),

@@ -23,7 +23,7 @@ onMount(() => {
 
   sdk.once(MinigameOpcodes.Handshake, () => {
     sdk.confirmHandshake({
-      // WIP: Remove these placeholder messages
+      // TODO: Remove these placeholder messages
       started: false,
       settings: {
         language: "en-US",
@@ -32,12 +32,14 @@ onMount(() => {
       user: "mock_user_id",
       room: {
         name: "mock room name",
+        host: "mock_user_id",
         state: null,
       },
       players: [
         {
           id: "mock_user_id",
           displayName: "mock display name",
+          ready: false,
           state: null,
         },
       ],
@@ -45,7 +47,7 @@ onMount(() => {
   });
 
   (async () => {
-    // WIP: Stop using getMinigame() and use data from WebSocket instead.
+    // TODO: Stop using getMinigame() and use data from WebSocket instead.
     const { success, minigame } = await ParentSdk.getMinigame(minigameId);
     if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
 

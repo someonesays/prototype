@@ -16,5 +16,5 @@ export interface ServerRoom {
   };
   screen: Screens;
   minigame: Minigame | null;
-  players: ServerPlayer[];
+  players: Map<string, ServerPlayer>;
 }

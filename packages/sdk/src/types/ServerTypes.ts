@@ -55,6 +55,10 @@ export interface ServerTypes {
     user: string;
     message: State;
   };
+  [ServerOpcodes.MinigameSendPrivateMessage]: {
+    user: string;
+    message: State;
+  };
 }
 
 export interface ServerOpcodeAndData<O extends ServerOpcodes> {
@@ -75,4 +79,5 @@ export type ServerOpcodeAndDatas =
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSendGameMessage>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>;
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPrivateMessage>;

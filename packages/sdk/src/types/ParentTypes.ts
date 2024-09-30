@@ -34,4 +34,8 @@ export interface ParentTypes {
     user: string;
     message: State;
   };
+  [ParentOpcodes.ReceivedPrivateMessage]: {
+    user: string;
+    message: State;
+  };
 }

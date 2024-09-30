@@ -12,7 +12,7 @@ export const ClientValidation = {
     player: z.string(),
   }),
   [ClientOpcodes.SetRoomSettings]: z.object({
-    // WIP: Add options to set room settings
+    // TODO: Add options to set room settings
   }),
   [ClientOpcodes.BeginGame]: z.object({}),
   [ClientOpcodes.EndGame]: z.object({}),
@@ -24,15 +24,20 @@ export const ClientValidation = {
     state: StateZod,
   }),
   [ClientOpcodes.MinigameSetPlayerState]: z.object({
-    // WIP: Add proper validation for the player ID
+    // TODO: Add proper validation for the player ID
     user: z.string(),
     state: StateZod,
   }),
-  [ClientOpcodes.MinigameSetGameMessage]: z.object({
+  [ClientOpcodes.MinigameSendGameMessage]: z.object({
     message: StateZod,
   }),
-  [ClientOpcodes.MinigameSetPlayerMessage]: z.object({
-    // WIP: Add proper validation for the player ID
+  [ClientOpcodes.MinigameSendPlayerMessage]: z.object({
+    // TODO: Add proper validation for the player ID
+    user: z.string(),
+    message: StateZod,
+  }),
+  [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
+    // TODO: Add proper validation for the player ID
     user: z.string(),
     message: StateZod,
   }),
@@ -54,5 +59,6 @@ export type ClientOpcodeAndDatas =
   | ClientOpcodeAndData<ClientOpcodes.MinigameEndGame>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerState>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameMessage>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerMessage>;
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSendGameMessage>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSendPlayerMessage>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSendPrivateMessage>;

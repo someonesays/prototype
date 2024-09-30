@@ -5,10 +5,26 @@ import {
   encodeJsonServer,
   type ServerOpcodes,
   type ServerTypes,
-  type ClientOpcodeAndDatas,
 } from "@/sdk";
 import type { WSMessageReceive } from "hono/ws";
-import type { ServerPlayer } from "./types";
+import type { ServerPlayer, ServerRoom } from "./types";
+
+export function broadcastMessage<O extends ServerOpcodes>({
+  room,
+  ignoreUsers = [],
+  opcode,
+  data,
+}: {
+  room: ServerRoom;
+  ignoreUsers?: ServerPlayer[];
+  opcode: O;
+  data: ServerTypes[O];
+}) {
+  for (const user of room.players.values()) {
+    if (ignoreUsers.includes(user)) continue;
+    sendMessage({ user, opcode, data });
+  }
+}
 
 export function sendMessage<O extends ServerOpcodes>({
   user,

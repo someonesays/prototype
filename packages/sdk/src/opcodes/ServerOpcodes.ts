@@ -15,4 +15,5 @@ export enum ServerOpcodes {
   MinigameSetPlayerState = 10,
   MinigameSendGameMessage = 11,
   MinigameSendPlayerMessage = 12,
+  MinigameSendPrivateMessage = 13,
 }

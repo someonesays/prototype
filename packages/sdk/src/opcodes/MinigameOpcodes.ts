@@ -45,7 +45,13 @@ and it will display the leaderboards.
   /**
    * Send a player message.
    *
-   * The host can modify anyone's player state.
+   * The host can force anyone to send a message.
    */
   SendPlayerMessage = "send_player_message",
+  /**
+   * Send a private player message to the host.
+   *
+   * The host can force anyone to send a message.
+   */
+  SendPrivateMessage = "send_private_message",
 }

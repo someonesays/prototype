@@ -77,4 +77,9 @@ export class MinigameSdk {
   ) {
     this.postMessage(MinigameOpcodes.SendPlayerMessage, payload);
   }
+  sendPrivateMessage(
+    payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPrivateMessage]>,
+  ) {
+    this.postMessage(MinigameOpcodes.SendPrivateMessage, payload);
+  }
 }

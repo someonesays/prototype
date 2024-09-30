@@ -84,6 +84,9 @@ export class ParentSdk {
   confirmHandshake(payload: ParentTypes[ParentOpcodes.Ready]) {
     this.postMessage(ParentOpcodes.Ready, payload);
   }
+  updateSettings(payload: ParentTypes[ParentOpcodes.UpdateSettings]) {
+    this.postMessage(ParentOpcodes.UpdateSettings, payload);
+  }
   setGameStarted() {
     this.postMessage(ParentOpcodes.StartGame, { started: true });
   }
@@ -104,6 +107,9 @@ export class ParentSdk {
   }
   sendPlayerMessage(payload: ParentTypes[ParentOpcodes.ReceivedPlayerMessage]) {
     this.postMessage(ParentOpcodes.ReceivedPlayerMessage, payload);
+  }
+  sendPrivateMessage(payload: ParentTypes[ParentOpcodes.ReceivedPrivateMessage]) {
+    this.postMessage(ParentOpcodes.ReceivedPrivateMessage, payload);
   }
 
   destroy() {
