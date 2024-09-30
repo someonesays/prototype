@@ -50,7 +50,6 @@ proxy.all(route, async (c) => {
       headers: {
         ...res.headers,
         "access-control-allow-origin": "*",
-        "access-control-expose-headers": "*",
         "content-type": res.headers.get("content-type") ?? "",
       },
     });
