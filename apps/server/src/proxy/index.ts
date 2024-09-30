@@ -27,7 +27,7 @@ proxy.use(route, async (c, next) => {
       workerSrc: [...developmentCsp, proxyHref, "blob:"],
       frameAncestors: ["'self'", env.Domain],
     },
-    crossOriginResourcePolicy: "same-site",
+    crossOriginResourcePolicy: "",
   })(c, next);
 });
 
