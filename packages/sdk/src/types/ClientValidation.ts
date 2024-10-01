@@ -35,6 +35,7 @@ export const ClientValidation = {
   }),
   [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
     user: z.string(),
+    toUser: z.string().optional(), // Defaults to host
     message: StateZod,
   }),
 };

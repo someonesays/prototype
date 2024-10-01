@@ -27,6 +27,7 @@ export const MinigameValidation = {
   }),
   [MinigameOpcodes.SendPrivateMessage]: z.object({
     user: z.string(),
+    toUser: z.string().optional(), // Defaults to host
     message: StateZod,
   }),
 };

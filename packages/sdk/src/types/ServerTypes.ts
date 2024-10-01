@@ -58,6 +58,7 @@ export interface ServerTypes {
   };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
     user: string;
+    toUser?: string;
     message: State;
   };
 }
