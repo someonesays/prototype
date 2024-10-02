@@ -4,7 +4,6 @@ import type { WSContext } from "hono/ws";
 export interface ServerPlayer extends GamePlayerPrivate {
   ws: WSContext;
   messageType: "Oppack" | "Json";
-  lastPing: number;
 }
 
 export interface ServerRoom {

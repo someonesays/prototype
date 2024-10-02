@@ -2,7 +2,6 @@
  * These are the opcodes the parent page sends to the server
  */
 export enum ClientOpcodes {
-  Ping = 0,
   KickPlayer = 1,
   TransferHost = 2, // (Disallow running this mid-game)
   SetRoomSettings = 3,

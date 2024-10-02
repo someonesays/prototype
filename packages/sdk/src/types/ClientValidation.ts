@@ -4,7 +4,6 @@ import { GamePrizeArrayZod } from "./GamePrize";
 import { StateZod } from "./State";
 
 export const ClientValidation = {
-  [ClientOpcodes.Ping]: z.object({}),
   [ClientOpcodes.KickPlayer]: z.object({
     player: z.string(),
   }),
@@ -46,7 +45,6 @@ export interface ClientOpcodeAndData<O extends ClientOpcodes> {
 }
 
 export type ClientOpcodeAndDatas =
-  | ClientOpcodeAndData<ClientOpcodes.Ping>
   | ClientOpcodeAndData<ClientOpcodes.KickPlayer>
   | ClientOpcodeAndData<ClientOpcodes.TransferHost>
   | ClientOpcodeAndData<ClientOpcodes.SetRoomSettings>

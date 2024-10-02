@@ -48,7 +48,6 @@ rooms.get(
             id: user.id,
             ws,
             messageType,
-            lastPing: performance.now(),
             displayName: user.displayName,
             ready: false,
             state: null,
@@ -100,10 +99,6 @@ rooms.get(
 
           console.log("WebSocket message", opcode, data);
           switch (opcode) {
-            case ClientOpcodes.Ping: {
-              state.user.lastPing = performance.now();
-              return sendMessage({ user: state.user, opcode: ServerOpcodes.Ping, data: {} });
-            }
             case ClientOpcodes.KickPlayer: {
               if (state.serverRoom.room.host !== state.user.id) return;
               return state.serverRoom.players.get(data.player)?.ws.close();
@@ -159,7 +154,7 @@ rooms.get(
               state.serverRoom.started = true;
               state.serverRoom.starting = false;
 
-              broadcastMessage({
+              return broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UpdatedScreen,
                 data: {
@@ -170,23 +165,40 @@ rooms.get(
                   minigame,
                 },
               });
+            }
+            case ClientOpcodes.MinigameHandshake: {
+              if (!state.serverRoom.started || state.user.ready) return;
+
+              state.user.ready = true;
+
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.PlayerReady,
+                data: { user: state.user.id },
+              });
+
+              // TODO: Start game if everyone is ready.
 
               return;
             }
-            case ClientOpcodes.MinigameHandshake: {
-              if (!state.serverRoom.started) return;
-
-              // WIP MinigameHandshake
-              break;
-            }
             case ClientOpcodes.MinigameEndGame: {
-              if (!state.serverRoom.started || state.serverRoom.room.host !== state.user.id) return;
+              if (
+                !state.serverRoom.started ||
+                !state.user.ready ||
+                state.serverRoom.room.host !== state.user.id
+              )
+                return;
 
               // WIP MinigameEndGame
               break;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (!state.serverRoom.started || state.serverRoom.room.host !== state.user.id) return;
+              if (
+                !state.serverRoom.started ||
+                !state.user.ready ||
+                state.serverRoom.room.host !== state.user.id
+              )
+                return;
 
               // WIP MinigameSetGameState
               break;
@@ -194,16 +206,22 @@ rooms.get(
             case ClientOpcodes.MinigameSetPlayerState: {
               if (
                 !state.serverRoom.started ||
+                !state.user.ready ||
                 (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
-              ) {
+              )
                 return;
-              }
+
+              // TODO: Check if the player being modified is ready as well
 
               // WIP MinigameSetPlayerState
               break;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (!!state.serverRoom.started || state.serverRoom.room.host !== state.user.id)
+              if (
+                !state.serverRoom.started ||
+                !state.user.ready ||
+                state.serverRoom.room.host !== state.user.id
+              )
                 return;
 
               // WIP MinigameSendGameMessage
@@ -211,11 +229,13 @@ rooms.get(
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
               if (
-                !!state.serverRoom.started ||
+                !state.serverRoom.started ||
+                !state.user.ready ||
                 (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
-              ) {
+              )
                 return;
-              }
+
+              // TODO: Check if the player being modified is ready as well
 
               // WIP MinigameSendPlayerMessage
               break;
@@ -223,10 +243,12 @@ rooms.get(
             case ClientOpcodes.MinigameSendPrivateMessage: {
               if (
                 !state.serverRoom.started ||
+                !state.user.ready ||
                 (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
-              ) {
+              )
                 return;
-              }
+
+              // TODO: Check if the player being modified is ready as well
 
               // WIP MinigameSendPrivateMessage
               break;

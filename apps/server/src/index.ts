@@ -61,8 +61,12 @@ if (env.NodeEnv === "production") {
   app.get("*", (c) => c.redirect(`${developmentUrl}${c.req.path}`));
 }
 
-export default {
+Bun.serve({
   port: env.Port,
   fetch: app.fetch,
-  websocket,
-};
+  websocket: {
+    ...websocket,
+    idleTimeout: 30,
+    sendPings: true,
+  },
+});

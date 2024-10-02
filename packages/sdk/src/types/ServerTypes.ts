@@ -11,8 +11,6 @@ import type {
 } from "../types";
 
 export interface ServerTypes {
-  // biome-ignore lint/complexity/noBannedTypes: Doesn't need to send anything over
-  [ServerOpcodes.Ping]: {};
   [ServerOpcodes.GetInformation]: {
     started: boolean;
     user: string;
@@ -38,7 +36,7 @@ export interface ServerTypes {
     players: GamePlayerLeaderboards[];
     minigame?: Minigame;
   };
-  [ServerOpcodes.MinigamePlayerReady]: {
+  [ServerOpcodes.PlayerReady]: {
     user: string;
   };
   // biome-ignore lint/complexity/noBannedTypes: Doesn't need to send anything over
@@ -69,14 +67,13 @@ export interface ServerOpcodeAndData<O extends ServerOpcodes> {
 }
 
 export type ServerOpcodeAndDatas =
-  | ServerOpcodeAndData<ServerOpcodes.Ping>
   | ServerOpcodeAndData<ServerOpcodes.GetInformation>
   | ServerOpcodeAndData<ServerOpcodes.PlayerJoin>
   | ServerOpcodeAndData<ServerOpcodes.PlayerLeft>
   | ServerOpcodeAndData<ServerOpcodes.TransferHost>
   | ServerOpcodeAndData<ServerOpcodes.UpdatedRoomSettings>
   | ServerOpcodeAndData<ServerOpcodes.UpdatedScreen>
-  | ServerOpcodeAndData<ServerOpcodes.MinigamePlayerReady>
+  | ServerOpcodeAndData<ServerOpcodes.PlayerReady>
   | ServerOpcodeAndData<ServerOpcodes.MinigameStartGame>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
