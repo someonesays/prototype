@@ -12,10 +12,7 @@ import {
 import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { broadcastMessage, recieveMessage, sendMessage } from "../../utils/messages";
-import {
-  transformToGamePlayerLeaderboards,
-  transformToGamePlayerPrivate,
-} from "../../utils/transform";
+import { transformToGamePlayerLeaderboards, transformToGamePlayerPrivate } from "../../utils/transform";
 import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
@@ -32,11 +29,7 @@ rooms.get(
     const [messageType, authorization] = protocol.split(",");
     if (messageType !== "Json" && messageType !== "Oppack") return;
 
-    const { user, room } = (await verify(
-      authorization.trim(),
-      env.JWTSecret,
-      env.JWTAlgorithm,
-    )) as MatchmakingDataJWT;
+    const { user, room } = (await verify(authorization.trim(), env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
     if (room.server.id !== env.ServerId) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
@@ -128,11 +121,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.BeginGame: {
-              if (
-                state.serverRoom.room.host !== state.user.id ||
-                state.serverRoom.started ||
-                state.serverRoom.starting
-              )
+              if (state.serverRoom.room.host !== state.user.id || state.serverRoom.started || state.serverRoom.starting)
                 return;
 
               state.serverRoom.starting = true;
@@ -159,9 +148,7 @@ rooms.get(
                 opcode: ServerOpcodes.UpdatedScreen,
                 data: {
                   screen: Screens.Minigame,
-                  players: [...state.serverRoom.players.values()].map((p) =>
-                    transformToGamePlayerLeaderboards(p),
-                  ),
+                  players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayerLeaderboards(p)),
                   minigame,
                 },
               });
@@ -182,22 +169,14 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                state.serverRoom.room.host !== state.user.id
-              )
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
                 return;
 
               // WIP MinigameEndGame
               break;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                state.serverRoom.room.host !== state.user.id
-              )
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
                 return;
 
               // WIP MinigameSetGameState
@@ -207,7 +186,8 @@ rooms.get(
               if (
                 !state.serverRoom.started ||
                 !state.user.ready ||
-                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
+                ((!state.serverRoom.minigame?.flags.allowModifyingSelfUserState || data.user !== state.user.id) &&
+                  state.serverRoom.room.host !== state.user.id)
               )
                 return;
 
@@ -217,11 +197,7 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                state.serverRoom.room.host !== state.user.id
-              )
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
                 return;
 
               // WIP MinigameSendGameMessage
@@ -311,9 +287,7 @@ rooms.get(
             room: state.serverRoom.room,
             screen: state.serverRoom.screen,
             minigame: state.serverRoom.minigame,
-            players: [...state.serverRoom.players.values()].map((p) =>
-              transformToGamePlayerPrivate(p),
-            ),
+            players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayerPrivate(p)),
           },
         });
         broadcastMessage({

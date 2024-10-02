@@ -14,9 +14,7 @@ export class MinigameSdk {
       // https://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
       if (window.self === window.top) throw new Error();
     } catch (e) {
-      throw new Error(
-        "Failed to initiate MinigameSdk. Are you running this minigame inside the game?",
-      );
+      throw new Error("Failed to initiate MinigameSdk. Are you running this minigame inside the game?");
     }
 
     window.addEventListener("message", this.handleMessage.bind(this), false);
@@ -38,10 +36,7 @@ export class MinigameSdk {
         break;
     }
   }
-  private postMessage<O extends MinigameOpcodes>(
-    opcode: O,
-    payload: z.infer<(typeof MinigameValidation)[O]>,
-  ) {
+  private postMessage<O extends MinigameOpcodes>(opcode: O, payload: z.infer<(typeof MinigameValidation)[O]>) {
     this.source.postMessage([opcode, payload], this.targetOrigin);
   }
 
@@ -72,14 +67,10 @@ export class MinigameSdk {
   sendGameMessage(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendGameMessage]>) {
     this.postMessage(MinigameOpcodes.SendGameMessage, payload);
   }
-  sendPlayerMessage(
-    payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPlayerMessage]>,
-  ) {
+  sendPlayerMessage(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPlayerMessage]>) {
     this.postMessage(MinigameOpcodes.SendPlayerMessage, payload);
   }
-  sendPrivateMessage(
-    payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPrivateMessage]>,
-  ) {
+  sendPrivateMessage(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SendPrivateMessage]>) {
     this.postMessage(MinigameOpcodes.SendPrivateMessage, payload);
   }
 }

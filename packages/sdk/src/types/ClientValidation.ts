@@ -14,6 +14,7 @@ export const ClientValidation = {
     name: z.string().min(1).max(50),
   }),
   [ClientOpcodes.BeginGame]: z.object({}),
+  [ClientOpcodes.EndGame]: z.object({}),
   [ClientOpcodes.MinigameHandshake]: z.object({}),
   [ClientOpcodes.MinigameEndGame]: z.object({
     prizes: GamePrizeArrayZod,
@@ -49,6 +50,7 @@ export type ClientOpcodeAndDatas =
   | ClientOpcodeAndData<ClientOpcodes.TransferHost>
   | ClientOpcodeAndData<ClientOpcodes.SetRoomSettings>
   | ClientOpcodeAndData<ClientOpcodes.BeginGame>
+  | ClientOpcodeAndData<ClientOpcodes.EndGame>
   | ClientOpcodeAndData<ClientOpcodes.MinigameHandshake>
   | ClientOpcodeAndData<ClientOpcodes.MinigameEndGame>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>

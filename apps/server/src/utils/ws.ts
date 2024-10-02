@@ -32,8 +32,7 @@ export function createWebSocketMiddleware<
 
       return upgradeWebSocket(() => ({
         onOpen: (evt, ws) => (events.open ? events.open?.({ evt, ws }) : undefined),
-        onMessage: (evt, ws) =>
-          events.message ? events.message?.({ evt, data: evt.data, ws }) : undefined,
+        onMessage: (evt, ws) => (events.message ? events.message?.({ evt, data: evt.data, ws }) : undefined),
         onClose: (evt, ws) => (events.close ? events.close?.({ evt, ws }) : undefined),
         onError: (evt, ws) => (events.error ? events.error?.({ evt, ws }) : undefined),
       }))(c, next);

@@ -63,18 +63,13 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   const minigame = await getMinigame(minigameId);
   if (!minigame) throw new Error("Invalid minigame ID");
 
-  const path =
-    minigame.urlType === MinigameType.Original
-      ? c.req.path.slice(minigameId.length + 12)
-      : c.req.path;
+  const path = minigame.urlType === MinigameType.Original ? c.req.path.slice(minigameId.length + 12) : c.req.path;
 
   const http = minigame.urlSecure ? "https" : "http";
   // const ws = minigame.urlSecure ? "wss" : "ws";
 
   const absolutePath = `/api/proxy/${minigame.id}/`;
-  const query = Object.entries(c.req.query()).length
-    ? `?${new URLSearchParams(c.req.query())}`
-    : "";
+  const query = Object.entries(c.req.query()).length ? `?${new URLSearchParams(c.req.query())}` : "";
 
   const href = `${http}://${minigame.urlHost}`;
   const url = `${href}${path}${query}`;

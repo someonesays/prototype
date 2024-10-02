@@ -35,6 +35,7 @@ export interface ServerTypes {
     screen: Screens;
     players: GamePlayerLeaderboards[];
     minigame?: Minigame;
+    hostLeftRoom?: boolean;
   };
   [ServerOpcodes.PlayerReady]: {
     user: string;

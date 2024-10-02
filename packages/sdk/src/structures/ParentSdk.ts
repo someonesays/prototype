@@ -34,11 +34,7 @@ export class ParentSdk {
     window.addEventListener("message", this.handleMessage, false);
   }
   private handleMessage({ data }: MessageEvent) {
-    if (
-      !Array.isArray(data) ||
-      data.length !== 2 ||
-      !Object.values(MinigameOpcodes).includes(data[0])
-    ) {
+    if (!Array.isArray(data) || data.length !== 2 || !Object.values(MinigameOpcodes).includes(data[0])) {
       return console.error("Received an invalid data from the iframe:", data);
     }
 
@@ -62,22 +58,13 @@ export class ParentSdk {
     this.iframe.contentWindow?.postMessage([opcode, payload], this.targetOrigin);
   }
 
-  on<O extends MinigameOpcodes>(
-    evt: O,
-    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
-  ) {
+  on<O extends MinigameOpcodes>(evt: O, listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown) {
     return this.emitter.on(evt, listener);
   }
-  once<O extends MinigameOpcodes>(
-    evt: O,
-    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
-  ) {
+  once<O extends MinigameOpcodes>(evt: O, listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown) {
     return this.emitter.once(evt, listener);
   }
-  off<O extends MinigameOpcodes>(
-    evt: O,
-    listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown,
-  ) {
+  off<O extends MinigameOpcodes>(evt: O, listener: (payload: z.infer<(typeof MinigameValidation)[O]>) => unknown) {
     return this.emitter.off(evt, listener);
   }
 
