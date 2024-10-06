@@ -6,15 +6,6 @@
   "files": {
     "ignore": ["dist/*", ".next/"]
   },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "noNonNullAssertion": "off"
-      }
-    }
-  },
   "formatter": {
     "indentStyle": "space",
     "lineWidth": 120
