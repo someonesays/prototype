@@ -6,6 +6,7 @@ import { serve } from "./utils";
 import { websocket, developmentUrl } from "./utils";
 import { api } from "./api";
 import { proxy } from "./proxy";
+import type { WebSocketHandler } from "bun";
 
 const app = new Hono();
 
@@ -65,7 +66,7 @@ Bun.serve({
   port: env.Port,
   fetch: app.fetch,
   websocket: {
-    ...websocket,
+    ...(websocket as WebSocketHandler<{ connId: number; url: URL; protocol: string }>),
     idleTimeout: 30,
     sendPings: true,
   },
