@@ -221,7 +221,7 @@ function openSettings() {
     appearance: none;
   }
   @supports not (color: color-mix(in srgb, red, red)) {
-    input {
+    .volume-slider {
       --slider_colormix: var(--slider_activecolor);
     }
   }
