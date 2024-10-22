@@ -19,7 +19,7 @@ matchmaking.get("/", async (c) => {
     id: "test_room_id",
     server: {
       id: env.ServerId,
-      url: `ws://localhost:${env.Port}/rooms`,
+      url: `ws://localhost:${env.Port}/api/rooms`,
     },
   };
   // Create authorization token
