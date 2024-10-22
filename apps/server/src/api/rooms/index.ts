@@ -54,6 +54,12 @@ rooms.get(
           if (state.serverRoom.players.get(user.id)) {
             return ws.close(1003, "A player with the given ID is already in the game");
           }
+
+          // Disallow over 25 people in a game
+          if (state.serverRoom.players.size >= 25) {
+            return ws.close(1003, "Reached maximum player limit in this room");
+          }
+
           // Join room
           state.serverRoom.players.set(state.user.id, state.user);
         } else {
