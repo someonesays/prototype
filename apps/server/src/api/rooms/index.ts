@@ -175,15 +175,13 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
-                return;
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
 
               // WIP MinigameEndGame
               break;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
-                return;
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
 
               // WIP MinigameSetGameState
               break;
@@ -203,8 +201,7 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id)
-                return;
+              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
 
               // WIP MinigameSendGameMessage
               break;

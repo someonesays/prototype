@@ -41,8 +41,7 @@ app.use(
 app.route("/api", api);
 
 if (env.NodeEnv === "production") {
-  const inject = (c: Context, html: string) =>
-    html.replace(/<script/g, `<script nonce="${c.get("secureHeadersNonce")}"`);
+  const inject = (c: Context, html: string) => html.replace(/<script/g, `<script nonce="${c.get("secureHeadersNonce")}"`);
 
   app.get(
     "*",

@@ -6,13 +6,15 @@ import "$lib/styles/fonts/cascadiaCode.css";
 
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
-export let minigameId: string;
+const { minigameId }: { minigameId: string } = $props();
 
 let container: HTMLDivElement;
-let authorText = "Someone";
-let minigamePromptText = "";
-let minigameTextOpacity = 0;
-$: volumeValue = 100;
+let authorText = $state("Someone");
+let minigamePromptText = $state("");
+let minigameTextOpacity = $state(0);
+let volumeValue = $state(100);
+
+let isSettingsOpen = $state(false);
 
 onMount(() => {
   const iframe = document.createElement("iframe") as HTMLIFrameElement;
@@ -65,11 +67,6 @@ onMount(() => {
     container.removeChild(iframe);
   };
 });
-
-let isSettingsOpen = false;
-function openSettings() {
-  isSettingsOpen = !isSettingsOpen;
-}
 </script>
 
 <div class="minigame-container">
@@ -78,7 +75,7 @@ function openSettings() {
       <p>{authorText} says <b>{minigamePromptText}</b></p>
     </div>
   </div>
-  <div class="minigame-iframe" bind:this={container} />
+  <div class="minigame-iframe" bind:this={container}></div>
   <div class="minigame-settings">
     <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
       <div>
@@ -90,7 +87,7 @@ function openSettings() {
         <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
       </div>
     </div>
-    <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} on:click={openSettings}>
+    <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
       <div><GearIcon /></div>
     </button>
   </div>
