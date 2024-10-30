@@ -2,7 +2,6 @@ import { ServerOpcodes } from "../opcodes";
 import type {
   GamePlayerLeaderboards,
   GamePlayerPrivate,
-  GamePlayerSetState,
   GameRoomPrivate,
   GameRoomSettings,
   Minigame,
@@ -46,7 +45,8 @@ export interface ServerTypes {
     state: State;
   };
   [ServerOpcodes.MinigameSetPlayerState]: {
-    player: GamePlayerSetState;
+    user: string;
+    state: State;
   };
   [ServerOpcodes.MinigameSendGameMessage]: {
     message: State;
@@ -56,8 +56,8 @@ export interface ServerTypes {
     message: State;
   };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
-    user: string;
-    toUser?: string;
+    user: string; // User who sent it
+    toUser: string; // Who it was sent by (mainly for the host)
     message: State;
   };
 }

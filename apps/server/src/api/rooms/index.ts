@@ -24,6 +24,7 @@ import {
 import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { getMinigamePublic } from "@/db";
+import { isSwitchStatement } from "typescript";
 
 export const rooms = new Hono();
 
@@ -122,7 +123,13 @@ rooms.get(
 
               state.serverRoom.room.host = data.player;
 
-              // TODO: Alert every client that there is a new host
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.TransferHost,
+                data: {
+                  user: data.player,
+                },
+              });
 
               return;
             }
@@ -131,7 +138,15 @@ rooms.get(
 
               state.serverRoom.room.name = data.name;
 
-              // TODO: Alert every client that there is a new room name
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.UpdatedRoomSettings,
+                data: {
+                  room: {
+                    name: data.name,
+                  },
+                },
+              });
 
               // TODO: Support a way to choose a specific minigame or minigame pack to play
 
@@ -159,10 +174,12 @@ rooms.get(
                 player.ready = false;
               }
 
+              // TODO: Is doing .started = true right? Shouldn't this be true after ServerOpcodes.MinigameStartGame is broadcasted to everyone?
+
               state.serverRoom.started = true;
               state.serverRoom.starting = false;
 
-              return broadcastMessage({
+              broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UpdatedScreen,
                 data: {
@@ -171,6 +188,8 @@ rooms.get(
                   minigame,
                 },
               });
+
+              return;
             }
             case ClientOpcodes.MinigameHandshake: {
               if (isNotStarted(state) || isReady(state)) return;
@@ -190,42 +209,105 @@ rooms.get(
             case ClientOpcodes.MinigameEndGame: {
               if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
-              // WIP - Unfinished event: MinigameEndGame
+              // WIP TODO - Unfinished event: MinigameEndGame
 
               return;
             }
             case ClientOpcodes.MinigameSetGameState: {
               if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
-              // WIP - Unfinished event: MinigameSetGameState
+              state.serverRoom.room.state = data.state;
+
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: false, // (client must keep track of states before player is ready as well)
+                opcode: ServerOpcodes.MinigameSetGameState,
+                data: {
+                  state: data.state,
+                },
+              });
 
               return;
             }
             case ClientOpcodes.MinigameSetPlayerState: {
               if (isNotStarted(state) || !isReady(state) || isNotUserWithStatePermissionOrHost(state, data.user)) return;
 
-              // WIP - Unfinished event: MinigameSetPlayerState
+              const player = state.serverRoom.players.get(data.user);
+              if (!player?.ready) return; // (should never happen)
+
+              player.state = data.state;
+
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: false, // (client must keep track of states before player is ready as well)
+                opcode: ServerOpcodes.MinigameSetPlayerState,
+                data: {
+                  user: data.user,
+                  state: data.state,
+                },
+              });
 
               return;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
               if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
-              // WIP - Unfinished event: MinigameSendGameMessage
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: true,
+                opcode: ServerOpcodes.MinigameSendGameMessage,
+                data: {
+                  message: data.message,
+                },
+              });
 
               return;
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
               if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
-              // WIP - Unfinished event: MinigameSendPlayerMessage
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: true,
+                opcode: ServerOpcodes.MinigameSendPlayerMessage,
+                data: {
+                  user: data.user,
+                  message: data.message,
+                },
+              });
 
               return;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
               if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
-              // WIP - Unfinished event: MinigameSendPrivateMessage
+              // Get host and the toUser (if toUser or host isn't ready, reject private message request)
+              const host = state.serverRoom.players.get(state.serverRoom.room.host);
+              const toUser = data.toUser ? state.serverRoom.players.get(data.toUser) : host;
+              if (!toUser?.ready || !host?.ready) return;
+
+              // Payload to send
+              const payload = {
+                user: data.user,
+                toUser: toUser.id,
+                message: data.message,
+              };
+
+              // Send private message to toUser
+              sendMessage({
+                user: toUser,
+                opcode: ServerOpcodes.MinigameSendPrivateMessage,
+                data: payload,
+              });
+
+              // If private message wasn't sent to the host, send private message to the host as well
+              if (toUser !== host) {
+                sendMessage({
+                  user: host,
+                  opcode: ServerOpcodes.MinigameSendPrivateMessage,
+                  data: payload,
+                });
+              }
 
               return;
             }

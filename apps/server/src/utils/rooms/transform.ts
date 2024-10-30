@@ -1,4 +1,4 @@
-import type { GamePlayerLeaderboards, GamePlayerPrivate, GamePlayerSetState } from "@/sdk";
+import type { GamePlayerLeaderboards, GamePlayerPrivate } from "@/sdk";
 import type { ServerPlayer } from "../types/rooms";
 
 export function transformToGamePlayerPrivate(player: ServerPlayer): GamePlayerPrivate {
@@ -16,12 +16,5 @@ export function transformToGamePlayerLeaderboards(player: ServerPlayer): GamePla
     id: player.id,
     ready: false,
     points: player.points,
-  };
-}
-
-export function transformToGamePlayerSetState(player: ServerPlayer): GamePlayerSetState {
-  return {
-    id: player.id,
-    state: player.state,
   };
 }
