@@ -209,7 +209,7 @@ rooms.get(
             case ClientOpcodes.MinigameEndGame: {
               if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
-              // WIP TODO - Unfinished event: MinigameEndGame
+              // TODO WIP - Unfinished event: MinigameEndGame
 
               return;
             }
