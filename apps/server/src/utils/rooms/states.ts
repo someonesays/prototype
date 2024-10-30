@@ -17,9 +17,12 @@ export function isReady(state: WSState) {
 }
 
 export function isNotUserOrHost(state: WSState, user: string) {
-  return user !== state.user.id && isNotHost(state);
+  return user !== state.user.id && (isNotHost(state) || !state.serverRoom.players.get(user)?.ready);
 }
 
 export function isNotUserWithStatePermissionOrHost(state: WSState, user: string) {
-  return (!state.serverRoom.minigame?.flags.allowModifyingSelfUserState || user !== state.user.id) && isNotHost(state);
+  return (
+    (isNotHost(state) || !state.serverRoom.players.get(user)?.ready) &&
+    (!state.serverRoom.minigame?.flags.allowModifyingSelfUserState || user !== state.user.id)
+  );
 }
