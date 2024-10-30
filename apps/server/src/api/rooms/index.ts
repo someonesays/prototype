@@ -24,7 +24,6 @@ import {
 import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
 import { getMinigamePublic } from "@/db";
-import { isSwitchStatement } from "typescript";
 
 export const rooms = new Hono();
 
