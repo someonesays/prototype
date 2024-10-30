@@ -25,6 +25,8 @@ onMount(() => {
 
   const sdk = new ParentSdk({ iframe });
 
+  // TODO: Make sure to get states from events and save ready EVEN when the player isn't ready!!
+
   sdk.once(MinigameOpcodes.Handshake, () => {
     sdk.confirmHandshake({
       // TODO: Remove these placeholder messages
