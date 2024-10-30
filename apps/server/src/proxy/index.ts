@@ -7,7 +7,6 @@ import { developmentCsp } from "../utils";
 import type { BlankEnv } from "hono/types";
 
 export const proxy = new Hono();
-
 const route = "/api/proxy/:minigameId/*";
 
 proxy.use(route, async (c, next) => {
