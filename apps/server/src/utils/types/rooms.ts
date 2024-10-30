@@ -7,7 +7,8 @@ export interface ServerPlayer extends GamePlayerPrivate {
 }
 
 export interface ServerRoom {
-  starting: boolean;
+  loading: boolean;
+  loaded: boolean;
   started: boolean;
   room: {
     id: string;

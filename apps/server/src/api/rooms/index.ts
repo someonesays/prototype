@@ -10,11 +10,11 @@ import {
   transformToGamePlayerLeaderboards,
   transformToGamePlayerPrivate,
   isNotHost,
-  isNotStarted,
+  isNotLoaded,
   isNotUserOrHost,
   isNotUserWithStatePermissionOrHost,
   isReady,
-  isStartedOrStarting,
+  isLoadedOrLoading,
   type MatchmakingDataJWT,
   type ServerRoom,
   type ServerPlayer,
@@ -83,7 +83,8 @@ rooms.get(
           players.set(state.user.id, state.user);
 
           state.serverRoom = {
-            starting: false,
+            loading: false,
+            loaded: false,
             started: false,
             room: {
               id: room.id,
@@ -115,7 +116,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.TransferHost: {
-              if (isNotHost(state) || isStartedOrStarting(state)) return;
+              if (isNotHost(state) || isLoadedOrLoading(state)) return;
 
               const player = state.serverRoom.players.get(data.player);
               if (player?.ws.readyState !== 1) return;
@@ -152,10 +153,10 @@ rooms.get(
               return;
             }
             case ClientOpcodes.BeginGame: {
-              if (isNotHost(state) || isStartedOrStarting(state)) return;
+              if (isNotHost(state) || isLoadedOrLoading(state)) return;
 
-              // Set the room's state as starting
-              state.serverRoom.starting = true;
+              // Set the room's state as loading
+              state.serverRoom.loading = true;
 
               // Get the minigame
               // TODO: Remove placeholder minigame and allow selecting custom ones
@@ -163,7 +164,7 @@ rooms.get(
               const minigame = await getMinigamePublic("1");
               if (!minigame) {
                 console.error("Failed to find minigame");
-                state.serverRoom.starting = false;
+                state.serverRoom.loading = false;
                 return;
               }
 
@@ -173,10 +174,10 @@ rooms.get(
                 player.ready = false;
               }
 
-              // TODO: Is doing .started = true right? Shouldn't this be true after ServerOpcodes.MinigameStartGame is broadcasted to everyone?
+              // TODO: Add a way for state.serverRoom.started = true and a ServerOpcodes.MinigameStartGame broadcast
 
-              state.serverRoom.started = true;
-              state.serverRoom.starting = false;
+              state.serverRoom.loaded = true;
+              state.serverRoom.loading = false;
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -191,7 +192,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameHandshake: {
-              if (isNotStarted(state) || isReady(state)) return;
+              if (isNotLoaded(state) || isReady(state)) return;
 
               state.user.ready = true;
 
@@ -206,14 +207,14 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
 
               // TODO WIP - Unfinished event: MinigameEndGame
 
               return;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
 
               state.serverRoom.room.state = data.state;
 
@@ -229,7 +230,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSetPlayerState: {
-              if (isNotStarted(state) || !isReady(state) || isNotUserWithStatePermissionOrHost(state, data.user)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotUserWithStatePermissionOrHost(state, data.user)) return;
 
               const player = state.serverRoom.players.get(data.user);
               if (!player?.ready) return; // (should never happen)
@@ -249,7 +250,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -263,7 +264,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
-              if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -278,7 +279,7 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
+              if (isNotLoaded(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
               // Get host and the toUser (if toUser or host isn't ready, reject private message request)
               const host = state.serverRoom.players.get(state.serverRoom.room.host);
@@ -334,7 +335,7 @@ rooms.get(
               },
             });
 
-            // if (state.serverRoom.started) {
+            // if (state.serverRoom.loaded) {
             //   broadcastMessage({
             //     room: state.serverRoom,
             //     opcode: ServerOpcodes.UpdatedScreen,

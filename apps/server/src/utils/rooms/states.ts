@@ -4,12 +4,12 @@ export function isNotHost(state: WSState) {
   return state.serverRoom.room.host !== state.user.id;
 }
 
-export function isStartedOrStarting(state: WSState) {
-  return state.serverRoom.started || state.serverRoom.starting;
+export function isLoadedOrLoading(state: WSState) {
+  return state.serverRoom.loaded || state.serverRoom.loading;
 }
 
-export function isNotStarted(state: WSState) {
-  return !state.serverRoom.started;
+export function isNotLoaded(state: WSState) {
+  return !state.serverRoom.loaded;
 }
 
 export function isReady(state: WSState) {
