@@ -7,7 +7,7 @@ import {
   type ServerTypes,
 } from "@/sdk";
 import type { WSMessageReceive } from "hono/ws";
-import type { ServerPlayer, ServerRoom } from "./types";
+import type { ServerPlayer, ServerRoom } from "../types/rooms";
 
 export function broadcastMessage<O extends ServerOpcodes>({
   room,

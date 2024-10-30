@@ -4,15 +4,25 @@ import { verify } from "hono/jwt";
 import {
   gameRooms,
   createWebSocketMiddleware,
+  broadcastMessage,
+  recieveMessage,
+  sendMessage,
+  transformToGamePlayerLeaderboards,
+  transformToGamePlayerPrivate,
+  isNotHost,
+  isNotStarted,
+  isNotUserOrHost,
+  isNotUserWithStatePermissionOrHost,
+  isReady,
+  isStartedOrStarting,
   type MatchmakingDataJWT,
   type ServerRoom,
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
+  type WSState,
 } from "../../utils";
 import { ClientOpcodes, Screens } from "@/sdk";
 import { ServerOpcodes } from "@/sdk";
-import { broadcastMessage, recieveMessage, sendMessage } from "../../utils/messages";
-import { transformToGamePlayerLeaderboards, transformToGamePlayerPrivate } from "../../utils/transform";
 import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
@@ -35,7 +45,7 @@ rooms.get(
     const websocketEvents: WebSocketMiddlewareEvents = {
       async open({ ws }) {
         // Create state
-        const state = {
+        const state: WSState = {
           messageType,
           user: {
             id: user.id,
@@ -99,56 +109,62 @@ rooms.get(
           console.log("WebSocket message", opcode, data);
           switch (opcode) {
             case ClientOpcodes.KickPlayer: {
-              if (state.serverRoom.room.host !== state.user.id) return;
-              return state.serverRoom.players.get(data.player)?.ws.close();
+              if (isNotHost(state)) return;
+
+              // Kick player from room (if exists)
+              state.serverRoom.players.get(data.player)?.ws.close();
+              return;
             }
             case ClientOpcodes.TransferHost: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (isNotHost(state) || isStartedOrStarting(state)) return;
 
+              // Get the player (if not exists, ignore transfer host request)
               const player = state.serverRoom.players.get(data.player);
-              if (player?.ws.readyState === 1) {
-                state.serverRoom.room.host = data.player;
+              if (player?.ws.readyState !== 1) return;
 
-                // if (state.serverRoom.started) {
-                //   broadcastMessage({
-                //     room: state.serverRoom,
-                //     opcode: ServerOpcodes.UpdatedScreen,
-                //     data: {
-                //       screen: Screens.Lobby,
-                //     },
-                //   });
-                // }
-              }
+              // Set the new host
+              state.serverRoom.room.host = data.player;
+
+              // WIP: Alert every client that there is a new host
+
               return;
             }
             case ClientOpcodes.SetRoomSettings: {
-              if (state.serverRoom.room.host !== state.user.id) return;
+              if (isNotHost(state)) return;
+
+              // Set room name
               state.serverRoom.room.name = data.name;
               return;
             }
             case ClientOpcodes.BeginGame: {
-              if (state.serverRoom.room.host !== state.user.id || state.serverRoom.started || state.serverRoom.starting)
-                return;
+              if (isNotHost(state) || isStartedOrStarting(state)) return;
 
+              // Set the room's state as starting
               state.serverRoom.starting = true;
 
+              // Get the minigame
               // TODO: Remove placeholder minigame and allow selecting custom ones
               const minigame = await getMinigamePublic("1");
               if (!minigame) {
+                // On failure, cancel start request
                 console.error("Failed to find minigame");
                 state.serverRoom.starting = false;
                 return;
               }
 
+              // Set the minigame
               state.serverRoom.minigame = minigame;
 
+              // Set everyone's ready state to false
               for (const player of state.serverRoom.players.values()) {
                 player.ready = false;
               }
 
+              // Start the game and toggle off the starting start
               state.serverRoom.started = true;
               state.serverRoom.starting = false;
 
+              // Broadcast to every client that the game has started
               return broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UpdatedScreen,
@@ -160,10 +176,13 @@ rooms.get(
               });
             }
             case ClientOpcodes.MinigameHandshake: {
-              if (!state.serverRoom.started || state.user.ready) return;
+              // Disallow if the game hasn't started or if the user is already ready
+              if (isNotStarted(state) || isReady(state)) return;
 
+              // Set the user's ready state to true
               state.user.ready = true;
 
+              // Broadcast to everyone that the player is ready
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.PlayerReady,
@@ -175,25 +194,19 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
+              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
               // WIP MinigameEndGame
               break;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
+              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
               // WIP MinigameSetGameState
               break;
             }
             case ClientOpcodes.MinigameSetPlayerState: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                ((!state.serverRoom.minigame?.flags.allowModifyingSelfUserState || data.user !== state.user.id) &&
-                  state.serverRoom.room.host !== state.user.id)
-              )
-                return;
+              if (isNotStarted(state) || !isReady(state) || isNotUserWithStatePermissionOrHost(state, data.user)) return;
 
               // TODO: Check if the player being modified is ready as well
 
@@ -201,18 +214,13 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (!state.serverRoom.started || !state.user.ready || state.serverRoom.room.host !== state.user.id) return;
+              if (isNotStarted(state) || !isReady(state) || isNotHost(state)) return;
 
               // WIP MinigameSendGameMessage
               break;
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
-              )
-                return;
+              if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
               // TODO: Check if the player being modified is ready as well
 
@@ -220,12 +228,7 @@ rooms.get(
               break;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (
-                !state.serverRoom.started ||
-                !state.user.ready ||
-                (data.user !== state.user.id && state.serverRoom.room.host !== state.user.id)
-              )
-                return;
+              if (isNotStarted(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
 
               // TODO: Check if the player being modified is ready as well
 
