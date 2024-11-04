@@ -160,7 +160,7 @@ rooms.get(
 
               // Get the minigame
               // TODO: Remove placeholder minigame and allow selecting custom ones
-              // TODO: It might be a good idea to load the minigame on another event instead
+              // TODO: It might be a good idea to load the minigame on another event instead (with checks if the minigame gets deleted mid-game)
               const minigame = await getMinigamePublic("1");
               if (!minigame) {
                 console.error("Failed to find minigame");
