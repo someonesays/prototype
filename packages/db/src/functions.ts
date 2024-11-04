@@ -1,3 +1,4 @@
+import env from "@/env";
 import { minigames } from "./minigames";
 import { Visibility } from "@/public";
 import type { Minigame } from "@/sdk";
@@ -21,7 +22,7 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
     author: {
       name: minigame.author.name,
     },
-    url: `/api/proxy/${minigame.id}/`,
+    url: `${env.ViteBaseApi}/api/proxy/${minigame.id}/`,
     flags: {
       allowModifyingSelfUserState: minigame.flagsAllowModifyingSelfUserState,
     },

@@ -3,7 +3,6 @@ import { getMinigame } from "@/db";
 import { MinigameType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
-import { developmentCsp } from "../utils";
 import type { BlankEnv } from "hono/types";
 
 export const proxy = new Hono();
@@ -19,12 +18,13 @@ proxy.use(route, async (c, next) => {
       styleSrc: ["'self'", "'unsafe-inline'", "blob:"],
       imgSrc: ["'self'", "blob:", "data:"],
       fontSrc: ["'self'", "data:"],
-      connectSrc: [...developmentCsp, proxyHref, "data:", "blob:"],
+      connectSrc: [proxyHref, "data:", "blob:"],
       mediaSrc: ["'self'", "blob:", "data:"],
-      frameSrc: [...developmentCsp, proxyHref],
-      childSrc: [...developmentCsp, proxyHref, "blob:"],
-      workerSrc: [...developmentCsp, proxyHref, "blob:"],
-      frameAncestors: ["'self'", env.Domain],
+      frameSrc: [proxyHref],
+      childSrc: [proxyHref, "blob:"],
+      workerSrc: [proxyHref, "blob:"],
+      frameAncestors: ["'self'", env.FrontendUrl],
+      baseUri: ["'self'"],
     },
     crossOriginResourcePolicy: "",
   })(c, next);
@@ -72,12 +72,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
 
   const href = `${http}://${minigame.urlHost}`;
   const url = `${href}${path}${query}`;
-  const proxyHref = `${env.Domain}${absolutePath}`;
-  // const proxyUrl = `${proxyHref}${path}${query}`;
-
-  // const websocketHref = `${ws}://${minigame.urlHost}`;
-  // const proxyWebsocket = `${env.Websocket}${absolutePath}`;
-  // const urlWebsocket = `${websocketHref}${path}${query}`;
+  const proxyHref = `${env.ViteBaseApi}${absolutePath}`;
 
   return { proxyHref, url };
 }

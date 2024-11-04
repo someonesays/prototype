@@ -4,7 +4,7 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["dist/*", ".next/"]
+    "ignore": ["dist/", "build/", ".svelte-kit/", ".next/"]
   },
   "formatter": {
     "indentStyle": "space",

@@ -15,9 +15,9 @@ export class ParentSdk {
   private isDestroyed = false;
   private targetOrigin = "*";
 
-  static async getMinigame(minigameId: string) {
+  static async getMinigame(minigameId: string, baseUrl = "") {
     try {
-      const req = await fetch(`/api/minigames/${encodeURIComponent(minigameId)}`);
+      const req = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
       if (req.status !== 200) return { success: false };
 
       const minigame = (await req.json()) as Minigame;

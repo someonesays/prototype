@@ -1,10 +1,10 @@
 <script lang="ts">
+import "$lib/styles/fonts/cascadiaCode.css";
+import GearIcon from "$lib/components/icons/GearIcon.svelte";
+
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes } from "@/sdk";
-
-import "$lib/styles/fonts/cascadiaCode.css";
-
-import GearIcon from "$lib/components/icons/GearIcon.svelte";
+import { VITE_BASE_API } from "$lib/utils/env";
 
 const { minigameId }: { minigameId: string } = $props();
 
@@ -54,7 +54,7 @@ onMount(() => {
 
   (async () => {
     // TODO: Stop using getMinigame() and use data from WebSocket instead.
-    const { success, minigame } = await ParentSdk.getMinigame(minigameId);
+    const { success, minigame } = await ParentSdk.getMinigame(minigameId, VITE_BASE_API);
     if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
 
     authorText = minigame.author.name;

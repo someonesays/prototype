@@ -2,13 +2,14 @@ export default {
   NodeEnv: process.env.NODE_ENV as "production" | "development",
 
   Port: Number(process.env.PORT),
+
+  FrontendUrl: process.env.FRONTEND_URL as string,
+
   VitePort: Number(process.env.VITE_PORT),
+  ViteBaseApi: process.env.VITE_BASE_API as string,
 
   ServerId: process.env.SERVER_ID as string,
   MaxRooms: Number(process.env.MAX_ROOMS),
-
-  Domain: process.env.DOMAIN as string,
-  Websocket: process.env.WEBSOCKET as string,
 
   AllowedWsOrigins: (process.env.ALLOWED_WS_ORIGINS as string).split(",").map((o) => o.trim()),
 
