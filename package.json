@@ -7,8 +7,7 @@
     "start": "turbo run start",
     "dev": "turbo run dev",
     "preview": "turbo run preview",
-    "format": "biome format --write ./",
-    "cloudflared": "cloudflared tunnel run"
+    "format": "biome format --write ./"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

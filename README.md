@@ -8,5 +8,4 @@ bun run build # build
 bun start # start
 bun dev # start dev
 bun format # formats code
-bun cloudflared # starts cloudflared (if installed)
 ```
