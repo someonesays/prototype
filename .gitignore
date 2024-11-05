@@ -192,3 +192,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 local/
+
+# Wrangler
+.wrangler/
