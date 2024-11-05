@@ -10,6 +10,14 @@ const route = "/api/proxy/:minigameId/*";
 
 proxy.use(route, async (c, next) => {
   const { proxyHref } = await getProxy(c);
+
+  const fetchMetadata = c.req.header("Sec-Fetch-Dest");
+  if (!fetchMetadata) {
+    return c.text("Missing Sec-Fetch-Dest header. Have you updated your browser?", 401);
+  } else if (fetchMetadata === "document") {
+    return c.text("Cannot access page as a document.", 401);
+  }
+
   return secureHeaders({
     originAgentCluster: "",
     contentSecurityPolicy: {
