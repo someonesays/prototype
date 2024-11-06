@@ -10,12 +10,12 @@
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@sveltejs/kit": "^2.7.3",
+    "@sveltejs/kit": "^2.7.7",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
-    "svelte": "^5.1.5",
+    "svelte": "^5.1.11",
     "typescript": "^5.6.3",
     "vite": "^5.4.10",
-    "wrangler": "^3.84.1"
+    "wrangler": "^3.85.0"
   },
   "dependencies": {
     "@/public": "workspace:*",
