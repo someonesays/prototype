@@ -8,9 +8,6 @@ export interface Minigame {
     name: string;
   };
   url: string;
-  flags: {
-    allowModifyingSelfUserState: boolean;
-  };
   createdAt: string;
   updatedAt: string;
 }

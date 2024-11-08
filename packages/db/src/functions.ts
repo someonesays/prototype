@@ -23,9 +23,6 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
       name: minigame.author.name,
     },
     url: `${env.ViteBaseApi}/api/proxy/${minigame.id}/`,
-    flags: {
-      allowModifyingSelfUserState: minigame.flagsAllowModifyingSelfUserState,
-    },
     createdAt: minigame.createdAt,
     updatedAt: minigame.updatedAt,
   };

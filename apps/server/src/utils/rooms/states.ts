@@ -21,8 +21,5 @@ export function isNotUserOrHost(state: WSState, user: string) {
 }
 
 export function isNotUserWithStatePermissionOrHost(state: WSState, user: string) {
-  return (
-    (isNotHost(state) || !state.serverRoom.players.get(user)?.ready) &&
-    (!state.serverRoom.minigame?.flags.allowModifyingSelfUserState || user !== state.user.id)
-  );
+  return (isNotHost(state) || !state.serverRoom.players.get(user)?.ready) && user !== state.user.id;
 }
