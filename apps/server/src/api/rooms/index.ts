@@ -150,17 +150,23 @@ rooms.get(
               if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
               if (!data.name && !data.minigameId) return sendError(state.user, "Missing options to change room settings");
 
-              if (data.name) {
-                state.serverRoom.room.name = data.name;
-              }
-
               if (data.minigameId) {
+                // Get minigame
                 const minigame = await getMinigamePublic(data.minigameId);
                 if (!minigame) return sendError(state.user, "Failed to find minigame");
 
+                // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
+                if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
+                if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
+
+                // Set minigame
                 state.serverRoom.minigame = minigame;
               } else if (data.minigameId === null) {
                 state.serverRoom.minigame = null;
+              }
+
+              if (data.name) {
+                state.serverRoom.room.name = data.name;
               }
 
               broadcastMessage({
