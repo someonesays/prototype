@@ -24,7 +24,15 @@ import {
   type WebSocketMiddlewareEvents,
   type WSState,
 } from "../../utils";
-import { ClientOpcodes, ServerOpcodes, GameStatus, MinigameEndReason, GamePrizeType, type GamePrize } from "@/sdk";
+import {
+  ClientOpcodes,
+  ServerOpcodes,
+  GameStatus,
+  MinigameEndReason,
+  GamePrizeType,
+  type GamePrize,
+  GamePrizePoints,
+} from "@/sdk";
 import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
@@ -277,6 +285,14 @@ rooms.get(
                 if (second) transformedPrizes.push({ type: GamePrizeType.Second, user: second });
                 if (third) transformedPrizes.push({ type: GamePrizeType.Third, user: third });
                 transformedPrizes.push(...prizes.filter((p) => p.type === GamePrizeType.Participation));
+
+                // Give prizes
+                for (const { type, user } of transformedPrizes) {
+                  const player = state.serverRoom.players.get(user);
+                  if (player) {
+                    player.points += GamePrizePoints[type];
+                  }
+                }
 
                 // Broadcasts end game message
                 return endGame({

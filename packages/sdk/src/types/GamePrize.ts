@@ -7,6 +7,13 @@ export enum GamePrizeType {
   Third = 3,
 }
 
+export const GamePrizePoints = {
+  [GamePrizeType.Participation]: 1,
+  [GamePrizeType.Winner]: 5,
+  [GamePrizeType.Second]: 4,
+  [GamePrizeType.Third]: 3,
+};
+
 export type GamePrize = z.infer<typeof GamePrizeZod>;
 
 export const GamePrizeZod = z.object({
