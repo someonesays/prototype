@@ -1,24 +1,22 @@
-import type { GamePlayerPrivate, Minigame, Screens, State } from "@/sdk";
+import type { GamePlayer, GameStatus, Minigame, State } from "@/sdk";
 import type { WSContext } from "hono/ws";
 
-export interface ServerPlayer extends GamePlayerPrivate {
+export interface ServerPlayer extends GamePlayer {
   ws: WSContext;
   messageType: "Oppack" | "Json";
 }
 
 export interface ServerRoom {
-  loading: boolean;
-  loaded: boolean;
-  started: boolean;
+  status: GameStatus;
   room: {
     id: string;
     name: string;
     host: string;
     state: State;
   };
-  screen: Screens;
   minigame: Minigame | null;
   players: Map<string, ServerPlayer>;
+  readyTimer?: Timer;
 }
 
 export interface WSState {

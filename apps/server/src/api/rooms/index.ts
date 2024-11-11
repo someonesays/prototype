@@ -7,22 +7,25 @@ import {
   broadcastMessage,
   recieveMessage,
   sendMessage,
-  transformToGamePlayerLeaderboards,
-  transformToGamePlayerPrivate,
+  transformToGamePlayer,
+  transformToGamePlayers,
   isNotHost,
-  isNotLoaded,
-  isNotUserOrHost,
-  isNotUserWithStatePermissionOrHost,
+  isLobby,
+  isUserReady,
   isReady,
-  isLoadedOrLoading,
+  sendError,
+  startGame,
+  endGame,
   type MatchmakingDataJWT,
   type ServerRoom,
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
   type WSState,
+  unreadyPlayersGame,
+  isStarted,
+  isNotUserOrHost,
 } from "../../utils";
-import { ClientOpcodes, Screens } from "@/sdk";
-import { ServerOpcodes } from "@/sdk";
+import { ClientOpcodes, ServerOpcodes, GameStatus, MinigameEndReason, GamePrizeType, type GamePrize } from "@/sdk";
 import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();
@@ -62,7 +65,7 @@ rooms.get(
         if (state.serverRoom) {
           // Check if the player with the given user ID is already in the room
           if (state.serverRoom.players.get(user.id)) {
-            return ws.close(1003, "A player with the given ID is already in the game");
+            return ws.close(1003, "A player with given ID is already in the game");
           }
 
           // Disallow over 25 people in a game
@@ -83,16 +86,13 @@ rooms.get(
           players.set(state.user.id, state.user);
 
           state.serverRoom = {
-            loading: false,
-            loaded: false,
-            started: false,
+            status: GameStatus.Lobby,
             room: {
               id: room.id,
               name: `Room ${room.id}`,
               host: state.user.id,
               state: null,
             },
-            screen: Screens.Lobby,
             minigame: null,
             players,
           };
@@ -100,121 +100,202 @@ rooms.get(
           gameRooms.set(room.id, state.serverRoom);
         }
 
-        // Create WebSocket events
-        websocketEvents.message = async ({ data: rawPayload, ws }) => {
+        // Handle messages
+        websocketEvents.message = async ({ data: rawPayload }) => {
           const { opcode, data } = recieveMessage({
             user: state.user,
             payload: rawPayload,
           });
 
+          if (opcode === ClientOpcodes.Ping) return;
+
           console.log("WebSocket message", opcode, data);
           switch (opcode) {
             case ClientOpcodes.KickPlayer: {
-              if (isNotHost(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can kick players");
+              if (state.user.id === data.user) return sendError(state.user, "Cannot kick yourself");
 
-              state.serverRoom.players.get(data.player)?.ws.close();
+              state.serverRoom.players.get(data.user)?.ws.close();
               return;
             }
             case ClientOpcodes.TransferHost: {
-              if (isNotHost(state) || isLoadedOrLoading(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can transfer host");
+              if (!isLobby(state)) return sendError(state.user, "Cannot transfer host during game");
+              if (state.user.id === data.user) return sendError(state.user, "Cannot transfer host to yourself");
 
-              const player = state.serverRoom.players.get(data.player);
+              const player = state.serverRoom.players.get(data.user);
               if (player?.ws.readyState !== 1) return;
 
-              state.serverRoom.room.host = data.player;
+              state.serverRoom.room.host = data.user;
 
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.TransferHost,
                 data: {
-                  user: data.player,
+                  user: data.user,
                 },
               });
 
               return;
             }
             case ClientOpcodes.SetRoomSettings: {
-              if (isNotHost(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
+              if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
+              if (!data.name && !data.minigameId) return sendError(state.user, "Missing options to change room settings");
 
-              state.serverRoom.room.name = data.name;
+              if (data.name) {
+                state.serverRoom.room.name = data.name;
+              }
+
+              if (data.minigameId) {
+                const minigame = await getMinigamePublic(data.minigameId);
+                if (!minigame) return sendError(state.user, "Failed to find minigame");
+
+                state.serverRoom.minigame = minigame;
+              } else if (data.minigameId === null) {
+                state.serverRoom.minigame = null;
+              }
 
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UpdatedRoomSettings,
                 data: {
-                  room: {
-                    name: data.name,
-                  },
+                  room: { name: state.serverRoom.room.name },
+                  minigame: state.serverRoom.minigame,
                 },
               });
-
-              // TODO: Support a way to choose a specific minigame or minigame pack to play
 
               return;
             }
             case ClientOpcodes.BeginGame: {
-              if (isNotHost(state) || isLoadedOrLoading(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can begin game");
+              if (!isLobby(state)) return sendError(state.user, "Cannot begin game during an ongoing game");
 
-              // Set the room's state as loading
-              state.serverRoom.loading = true;
+              // Cannot start game without a minigame selected
+              if (!state.serverRoom.minigame) return sendError(state.user, "Cannot start game without selecting a minigame");
 
-              // Get the minigame
-              // TODO: Remove placeholder minigame and allow selecting custom ones
-              // TODO: It might be a good idea to load the minigame on another event instead (with checks if the minigame gets deleted mid-game)
-              const minigame = await getMinigamePublic("1");
-              if (!minigame) {
-                console.error("Failed to find minigame");
-                state.serverRoom.loading = false;
-                return;
-              }
+              // Check minigame's minimum players
+              if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart)
+                return sendError(
+                  state.user,
+                  "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
+                );
 
-              state.serverRoom.minigame = minigame;
+              // Set everyone's ready state as false
+              unreadyPlayersGame(state.serverRoom);
 
-              for (const player of state.serverRoom.players.values()) {
-                player.ready = false;
-              }
+              // Set status as waiting for players to load minigame
+              state.serverRoom.status = GameStatus.WaitingForPlayersToLoadMinigame;
 
-              // TODO: Add a way for state.serverRoom.started = true and a ServerOpcodes.MinigameStartGame broadcast
-
-              state.serverRoom.loaded = true;
-              state.serverRoom.loading = false;
-
+              // Send to everyone to load the minigame
               broadcastMessage({
                 room: state.serverRoom,
-                opcode: ServerOpcodes.UpdatedScreen,
+                opcode: ServerOpcodes.LoadMinigame,
                 data: {
-                  screen: Screens.Minigame,
-                  players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayerLeaderboards(p)),
-                  minigame,
+                  players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayer(p)),
+                  minigame: state.serverRoom.minigame,
                 },
               });
 
               return;
             }
             case ClientOpcodes.MinigameHandshake: {
-              if (isNotLoaded(state) || isReady(state)) return;
+              if (isLobby(state)) return sendError(state.user, "Cannot handshake when a game is not ongoing");
+              if (isReady(state)) return sendError(state.user, "Cannot handshake if already ready");
 
               state.user.ready = true;
 
               broadcastMessage({
                 room: state.serverRoom,
-                opcode: ServerOpcodes.PlayerReady,
+                opcode: ServerOpcodes.MinigamePlayerReady,
                 data: { user: state.user.id },
               });
 
-              // TODO: Start game if everyone is ready.
+              // Ignore actions below if game already started
+              if (state.serverRoom.status === GameStatus.Started) return;
+
+              // Start game if everyone is ready.
+              if (![...state.serverRoom.players.values()].some((p) => !p.ready)) {
+                return startGame(state.serverRoom);
+              }
+
+              // Set ready timer (2 minutes to ready up) once host is ready
+              if (
+                state.serverRoom.minigame &&
+                state.serverRoom.players.get(state.serverRoom.room.host)?.ready &&
+                [...state.serverRoom.players.values()].filter((p) => p.ready).length >=
+                  state.serverRoom.minigame.minimumPlayersToStart &&
+                !state.serverRoom.readyTimer
+              ) {
+                state.serverRoom.readyTimer = setTimeout(() => startGame(state.serverRoom), 120000);
+                return;
+              }
 
               return;
             }
             case ClientOpcodes.MinigameEndGame: {
-              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can end game");
+              if (isLobby(state)) return sendError(state.user, "Cannot end game in lobby");
 
-              // TODO WIP - Unfinished event: MinigameEndGame
+              if (data.prizes) {
+                if (!isReady(state)) return sendError(state.user, "Cannot end game and distribute prizes when not ready");
+
+                // Filters prizes with valid user IDs
+                const prizes = data.prizes.filter((p) => !!state.serverRoom.players.get(p.user));
+
+                // Disallows duplicate user IDs
+                if (prizes.length !== new Set(prizes.map(({ user }) => user)).size) {
+                  return sendError(state.user, "Cannot have a user get multiple prizes");
+                }
+
+                // Check the length of the winner, second place and third place
+                const winners = prizes.filter((p) => p.type === GamePrizeType.Winner);
+                const seconds = prizes.filter((p) => p.type === GamePrizeType.Second);
+                const thirds = prizes.filter((p) => p.type === GamePrizeType.Third);
+
+                if (winners.length > 1) return sendError(state.user, "Cannot be more than 1 winner");
+                if (seconds.length > 1) return sendError(state.user, "Cannot be more than 1 second place");
+                if (thirds.length > 1) return sendError(state.user, "Cannot be more than 1 third place");
+
+                // Turns third place to second place if third place isn't set
+                // Turns second place to winner if second place isn't set
+                let winner: string | undefined = winners[0]?.user;
+                let second: string | undefined = seconds[0]?.user;
+                let third: string | undefined = thirds[0]?.user;
+
+                if (third && !second) {
+                  second = third;
+                  third = undefined;
+                }
+                if (second && !winner) {
+                  winner = second;
+                  second = undefined;
+                }
+
+                // Transforms to the fixed prizes array
+                const transformedPrizes: GamePrize[] = [];
+                if (winner) transformedPrizes.push({ type: GamePrizeType.Winner, user: winner });
+                if (second) transformedPrizes.push({ type: GamePrizeType.Second, user: second });
+                if (third) transformedPrizes.push({ type: GamePrizeType.Third, user: third });
+                transformedPrizes.push(...prizes.filter((p) => p.type === GamePrizeType.Participation));
+
+                // Broadcasts end game message
+                return endGame({
+                  room: state.serverRoom,
+                  reason: MinigameEndReason.MinigameEnded,
+                  prizes: transformedPrizes,
+                });
+              }
+
+              // If there isn't prizes, the game was forcefully ended
+              endGame({ room: state.serverRoom, reason: MinigameEndReason.ForcefulEnd });
 
               return;
             }
             case ClientOpcodes.MinigameSetGameState: {
-              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can set game state");
+              if (!isStarted(state)) return sendError(state.user, "Cannot set game state when game hasn't started");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to set game state");
 
               state.serverRoom.room.state = data.state;
 
@@ -230,7 +311,11 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSetPlayerState: {
-              if (isNotLoaded(state) || !isReady(state) || isNotUserWithStatePermissionOrHost(state, data.user)) return;
+              if (isNotHost(state)) return sendError(state.user, "Only host can set player state");
+              if (!isStarted(state)) return sendError(state.user, "Cannot set player state when game hasn't started");
+              if (!isUserReady(state, data.user))
+                return sendError(state.user, "Cannot find ready player with given id to set player state");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to set player state");
 
               const player = state.serverRoom.players.get(data.user);
               if (!player?.ready) return; // (should never happen)
@@ -250,7 +335,9 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendGameMessage: {
-              if (isNotLoaded(state) || !isReady(state) || isNotHost(state)) return;
+              if (!isStarted(state)) return sendError(state.user, "Cannot send game message when game hasn't started");
+              if (isNotHost(state)) return sendError(state.user, "Only host can send game message");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to send game message");
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -264,14 +351,15 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPlayerMessage: {
-              if (isNotLoaded(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
+              if (!isStarted(state)) return sendError(state.user, "Cannot send player message when game hasn't started");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to send player message");
 
               broadcastMessage({
                 room: state.serverRoom,
                 readyOnly: true,
                 opcode: ServerOpcodes.MinigameSendPlayerMessage,
                 data: {
-                  user: data.user,
+                  user: state.user.id,
                   message: data.message,
                 },
               });
@@ -279,34 +367,48 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (isNotLoaded(state) || !isReady(state) || isNotUserOrHost(state, data.user)) return;
+              if (!data.toUser) data.toUser = state.serverRoom.room.host;
 
-              // Get host and the toUser (if toUser or host isn't ready, reject private message request)
+              if (!isStarted(state)) return sendError(state.user, "Cannot send private message when game hasn't started");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to send private message");
+              if (isNotHost(state) && data.toUser !== state.serverRoom.room.host)
+                return sendError(state.user, "Only host can set any toUser to send it to");
+              if (!isUserReady(state, data.toUser))
+                return sendError(state.user, "Cannot find ready player with given id to send a message to");
+
+              // Get host and the toUser
               const host = state.serverRoom.players.get(state.serverRoom.room.host);
-              const toUser = data.toUser ? state.serverRoom.players.get(data.toUser) : host;
-              if (!toUser?.ready || !host?.ready) return;
+              const toUser = state.serverRoom.players.get(data.toUser);
+              if (!host?.ready || !toUser?.ready) return;
 
               // Payload to send
               const payload = {
-                user: data.user,
+                fromUser: state.user.id,
                 toUser: toUser.id,
                 message: data.message,
               };
 
-              // Send private message to toUser
+              // Send private message to self
               sendMessage({
                 user: toUser,
                 opcode: ServerOpcodes.MinigameSendPrivateMessage,
                 data: payload,
               });
 
-              // If private message wasn't sent to the host, send private message to the host as well
-              if (toUser !== host) {
+              if (state.user !== toUser) {
                 sendMessage({
-                  user: host,
+                  user: state.user,
                   opcode: ServerOpcodes.MinigameSendPrivateMessage,
                   data: payload,
                 });
+
+                if (state.user !== host && toUser !== host) {
+                  sendMessage({
+                    user: host,
+                    opcode: ServerOpcodes.MinigameSendPrivateMessage,
+                    data: payload,
+                  });
+                }
               }
 
               return;
@@ -314,7 +416,8 @@ rooms.get(
           }
         };
 
-        websocketEvents.close = ({ ws }) => {
+        // Handle disconnecting
+        websocketEvents.close = () => {
           // Remove player from room
           state.serverRoom.players.delete(state.user.id);
 
@@ -335,15 +438,9 @@ rooms.get(
               },
             });
 
-            // if (state.serverRoom.loaded) {
-            //   broadcastMessage({
-            //     room: state.serverRoom,
-            //     opcode: ServerOpcodes.UpdatedScreen,
-            //     data: {
-            //       screen: Screens.Lobby,
-            //     },
-            //   });
-            // }
+            if (state.serverRoom.status !== GameStatus.Lobby) {
+              endGame({ room: state.serverRoom, reason: MinigameEndReason.HostLeft });
+            }
           }
 
           // Send to everyone that the player left
@@ -354,30 +451,50 @@ rooms.get(
               user: state.user.id,
             },
           });
-        };
-        websocketEvents.error = ({ ws }) => {
-          ws.close(1002, "A WebSocket error has occurred");
-        };
 
-        // Send join messages
+          // Check minigame's minimum players if the game is still loading
+          // Keep in mind minimumPlayersToStart will not be forced when the game actually starts
+          if (state.serverRoom.status === GameStatus.WaitingForPlayersToLoadMinigame && state.serverRoom.minigame) {
+            if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart) {
+              return endGame({
+                room: state.serverRoom,
+                reason: MinigameEndReason.FailedToSatisfyMinimumPlayersToStart,
+              });
+            }
+
+            if (
+              state.serverRoom.readyTimer &&
+              [...state.serverRoom.players.values()].filter((p) => p.ready).length <
+                state.serverRoom.minigame.minimumPlayersToStart
+            ) {
+              clearTimeout(state.serverRoom.readyTimer);
+              state.serverRoom.readyTimer = undefined;
+              return;
+            }
+          }
+        };
+        websocketEvents.error = () => ws.close(1002, "A WebSocket error has occurred");
+
+        // Give the new player room information
         sendMessage({
           user: state.user,
           opcode: ServerOpcodes.GetInformation,
           data: {
-            started: state.serverRoom.started,
+            status: state.serverRoom.status,
             user: state.user.id,
             room: state.serverRoom.room,
-            screen: state.serverRoom.screen,
             minigame: state.serverRoom.minigame,
-            players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayerPrivate(p)),
+            players: transformToGamePlayers(state.serverRoom.players),
           },
         });
+
+        // Broadcast join message
         broadcastMessage({
           room: state.serverRoom,
           ignoreUsers: [state.user],
           opcode: ServerOpcodes.PlayerJoin,
           data: {
-            player: transformToGamePlayerPrivate(state.user),
+            player: transformToGamePlayer(state.user),
           },
         });
       },

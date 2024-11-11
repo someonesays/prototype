@@ -12,10 +12,8 @@ export interface ParentTypes {
   [ParentOpcodes.UpdateSettings]: {
     settings: GameSettings;
   };
-  [ParentOpcodes.StartGame]: {
-    started: true;
-  };
-  [ParentOpcodes.PlayerReady]: {
+  [ParentOpcodes.StartGame]: {};
+  [ParentOpcodes.MinigamePlayerReady]: {
     player: GamePlayer;
   };
   [ParentOpcodes.PlayerLeft]: {

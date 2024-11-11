@@ -19,6 +19,7 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
     id: minigame.id,
     visibility: minigame.visibility,
     prompt: minigame.prompt,
+    minimumPlayersToStart: minigame.minimumPlayersToStart,
     author: {
       name: minigame.author.name,
     },

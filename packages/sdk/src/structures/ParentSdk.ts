@@ -75,10 +75,10 @@ export class ParentSdk {
     this.postMessage(ParentOpcodes.UpdateSettings, payload);
   }
   setGameStarted() {
-    this.postMessage(ParentOpcodes.StartGame, { started: true });
+    this.postMessage(ParentOpcodes.StartGame, {});
   }
-  readyPlayer(payload: ParentTypes[ParentOpcodes.PlayerReady]) {
-    this.postMessage(ParentOpcodes.PlayerReady, payload);
+  readyPlayer(payload: ParentTypes[ParentOpcodes.MinigamePlayerReady]) {
+    this.postMessage(ParentOpcodes.MinigamePlayerReady, payload);
   }
   removePlayer(payload: ParentTypes[ParentOpcodes.PlayerLeft]) {
     this.postMessage(ParentOpcodes.PlayerLeft, payload);

@@ -26,7 +26,7 @@ export enum ParentOpcodes {
    *
    * When a player readies a minigame, the player joined event is given to all clients who are readied as well.
    */
-  PlayerReady = "player_ready",
+  MinigamePlayerReady = "player_ready",
   /**
    * If a player leaves, a player left state will be given.
    *

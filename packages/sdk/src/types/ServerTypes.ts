@@ -1,25 +1,28 @@
 import { ServerOpcodes } from "../opcodes";
 import type {
-  GamePlayerLeaderboards,
-  GamePlayerPrivate,
+  MinigameEndReason,
+  GamePlayer,
+  GamePrize,
   GameRoomPrivate,
   GameRoomSettings,
+  GameStatus,
   Minigame,
-  Screens,
   State,
 } from "../types";
 
 export interface ServerTypes {
+  [ServerOpcodes.Error]: {
+    message: string;
+  };
   [ServerOpcodes.GetInformation]: {
-    started: boolean;
-    user: string;
+    status: GameStatus;
+    user: string; // (user = player id)
     room: GameRoomPrivate;
-    screen: Screens;
     minigame: Minigame | null;
-    players: GamePlayerPrivate[];
+    players: GamePlayer[];
   };
   [ServerOpcodes.PlayerJoin]: {
-    player: GamePlayerPrivate;
+    player: GamePlayer;
   };
   [ServerOpcodes.PlayerLeft]: {
     user: string;
@@ -29,14 +32,26 @@ export interface ServerTypes {
   };
   [ServerOpcodes.UpdatedRoomSettings]: {
     room: GameRoomSettings;
+    minigame: Minigame | null;
   };
-  [ServerOpcodes.UpdatedScreen]: {
-    screen: Screens;
-    players: GamePlayerLeaderboards[];
-    minigame?: Minigame;
-    hostLeftRoom?: boolean;
+  [ServerOpcodes.LoadMinigame]: {
+    players: GamePlayer[];
+    minigame: Minigame;
   };
-  [ServerOpcodes.PlayerReady]: {
+  [ServerOpcodes.EndMinigame]:
+    | {
+        players: GamePlayer[];
+        reason:
+          | MinigameEndReason.ForcefulEnd
+          | MinigameEndReason.HostLeft
+          | MinigameEndReason.FailedToSatisfyMinimumPlayersToStart;
+      }
+    | {
+        players: GamePlayer[];
+        reason: MinigameEndReason.MinigameEnded;
+        prizes: GamePrize[];
+      };
+  [ServerOpcodes.MinigamePlayerReady]: {
     user: string;
   };
   // biome-ignore lint/complexity/noBannedTypes: Doesn't need to send anything over
@@ -56,7 +71,7 @@ export interface ServerTypes {
     message: State;
   };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
-    user: string; // User who sent it
+    fromUser: string; // User who sent it
     toUser: string; // Who it was sent by (mainly for the host)
     message: State;
   };
@@ -73,8 +88,9 @@ export type ServerOpcodeAndDatas =
   | ServerOpcodeAndData<ServerOpcodes.PlayerLeft>
   | ServerOpcodeAndData<ServerOpcodes.TransferHost>
   | ServerOpcodeAndData<ServerOpcodes.UpdatedRoomSettings>
-  | ServerOpcodeAndData<ServerOpcodes.UpdatedScreen>
-  | ServerOpcodeAndData<ServerOpcodes.PlayerReady>
+  | ServerOpcodeAndData<ServerOpcodes.LoadMinigame>
+  | ServerOpcodeAndData<ServerOpcodes.EndMinigame>
+  | ServerOpcodeAndData<ServerOpcodes.MinigamePlayerReady>
   | ServerOpcodeAndData<ServerOpcodes.MinigameStartGame>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>

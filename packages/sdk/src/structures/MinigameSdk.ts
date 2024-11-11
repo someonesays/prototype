@@ -5,6 +5,8 @@ import type { z } from "zod";
 
 export class MinigameSdk {
   private isReady = false;
+  private isWaiting = false;
+
   private emitter = new EventEmitter<ParentOpcodes>();
   private source = window.parent.opener ?? window.parent;
   private targetOrigin = document.referrer || "*";
@@ -29,6 +31,7 @@ export class MinigameSdk {
     switch (opcode) {
       case ParentOpcodes.Ready:
         this.isReady = true;
+        this.isWaiting = false;
         this.emitter.emit(ParentOpcodes.Ready, payload);
         break;
       default:
@@ -51,9 +54,11 @@ export class MinigameSdk {
   }
 
   ready(): Promise<ParentTypes[ParentOpcodes.Ready]> {
-    if (this.isReady) throw new Error("Already ready or requested to be ready");
+    if (this.isReady || this.isWaiting) throw new Error("Already ready or requested to be ready");
+
+    this.isWaiting = true;
     this.postMessage(MinigameOpcodes.Handshake, {});
-    return new Promise((resolve) => this.emitter.once(ParentOpcodes.Ready, resolve));
+    return new Promise((resolve) => this.once(ParentOpcodes.Ready, resolve));
   }
   endGame(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.EndGame]>) {
     this.postMessage(MinigameOpcodes.EndGame, payload);

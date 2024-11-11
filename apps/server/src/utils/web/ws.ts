@@ -31,10 +31,10 @@ export function createWebSocketMiddleware<
       if (!events) return c.newResponse(null);
 
       return upgradeWebSocket(() => ({
-        onOpen: (evt, ws) => (events.open ? events.open?.({ evt, ws }) : undefined),
-        onMessage: (evt, ws) => (events.message ? events.message?.({ evt, data: evt.data, ws }) : undefined),
-        onClose: (evt, ws) => (events.close ? events.close?.({ evt, ws }) : undefined),
-        onError: (evt, ws) => (events.error ? events.error?.({ evt, ws }) : undefined),
+        onOpen: (evt, ws) => events.open?.({ evt, ws }),
+        onMessage: (evt, ws) => events.message?.({ evt, data: evt.data, ws }),
+        onClose: (evt, ws) => events.close?.({ evt, ws }),
+        onError: (evt, ws) => events.error?.({ evt, ws }),
       }))(c, next);
     } catch (err) {
       console.error(err);

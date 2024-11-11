@@ -3,7 +3,7 @@ import {
   encodeOppackServer,
   decodeJsonClient,
   encodeJsonServer,
-  type ServerOpcodes,
+  ServerOpcodes,
   type ServerTypes,
 } from "@/sdk";
 import type { WSMessageReceive } from "hono/ws";
@@ -45,6 +45,14 @@ export function sendMessage<O extends ServerOpcodes>({
     case "Json":
       return user.ws.send(encodeJsonServer({ opcode, data }));
   }
+}
+
+export function sendError(user: ServerPlayer, message: string) {
+  return sendMessage({
+    user,
+    opcode: ServerOpcodes.Error,
+    data: { message },
+  });
 }
 
 export function recieveMessage({

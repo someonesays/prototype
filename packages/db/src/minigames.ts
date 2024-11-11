@@ -5,6 +5,7 @@ export const minigames = [
     id: "1",
     visibility: Visibility.Public,
     prompt: "click the buttons",
+    minimumPlayersToStart: 2, // (there's nothing stopping a player from leaving after a game starts)
     author: {
       name: "Someone",
     },
@@ -18,6 +19,7 @@ export const minigames = [
     id: "2",
     visibility: Visibility.Public,
     prompt: "kill yourself",
+    minimumPlayersToStart: 1,
     author: {
       name: "Nobody",
     },

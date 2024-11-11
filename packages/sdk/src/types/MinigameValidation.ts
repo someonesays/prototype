@@ -15,19 +15,18 @@ export const MinigameValidation = {
     state: StateZod,
   }),
   [MinigameOpcodes.SetPlayerState]: z.object({
-    user: z.string(),
+    user: z.string().min(1).max(50),
     state: StateZod,
   }),
   [MinigameOpcodes.SendGameMessage]: z.object({
     message: StateZod,
   }),
   [MinigameOpcodes.SendPlayerMessage]: z.object({
-    user: z.string(),
+    user: z.string().min(1).max(50),
     message: StateZod,
   }),
   [MinigameOpcodes.SendPrivateMessage]: z.object({
-    user: z.string(),
-    toUser: z.string().optional(), // Defaults to host
+    user: z.string().min(1).max(50),
     message: StateZod,
   }),
 };

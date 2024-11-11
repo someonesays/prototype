@@ -4,38 +4,37 @@ import { GamePrizeArrayZod } from "./GamePrize";
 import { StateZod } from "./State";
 
 export const ClientValidation = {
+  [ClientOpcodes.Ping]: z.object({}),
   [ClientOpcodes.KickPlayer]: z.object({
-    player: z.string(),
+    user: z.string().min(1).max(50),
   }),
   [ClientOpcodes.TransferHost]: z.object({
-    player: z.string(),
+    user: z.string().min(1).max(50),
   }),
   [ClientOpcodes.SetRoomSettings]: z.object({
-    name: z.string().min(1).max(50),
+    name: z.string().min(1).max(50).optional(),
+    minigameId: z.string().min(1).max(50).nullable().optional(),
   }),
   [ClientOpcodes.BeginGame]: z.object({}),
-  [ClientOpcodes.EndGame]: z.object({}),
   [ClientOpcodes.MinigameHandshake]: z.object({}),
   [ClientOpcodes.MinigameEndGame]: z.object({
-    prizes: GamePrizeArrayZod,
+    prizes: GamePrizeArrayZod.optional(),
   }),
   [ClientOpcodes.MinigameSetGameState]: z.object({
     state: StateZod,
   }),
   [ClientOpcodes.MinigameSetPlayerState]: z.object({
-    user: z.string(),
+    user: z.string().min(1).max(50),
     state: StateZod,
   }),
   [ClientOpcodes.MinigameSendGameMessage]: z.object({
     message: StateZod,
   }),
   [ClientOpcodes.MinigameSendPlayerMessage]: z.object({
-    user: z.string(),
     message: StateZod,
   }),
   [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
-    user: z.string(),
-    toUser: z.string().optional(), // Defaults to host
+    toUser: z.string().min(1).max(50).optional(), // Defaults to host
     message: StateZod,
   }),
 };
@@ -46,11 +45,11 @@ export interface ClientOpcodeAndData<O extends ClientOpcodes> {
 }
 
 export type ClientOpcodeAndDatas =
+  | ClientOpcodeAndData<ClientOpcodes.Ping>
   | ClientOpcodeAndData<ClientOpcodes.KickPlayer>
   | ClientOpcodeAndData<ClientOpcodes.TransferHost>
   | ClientOpcodeAndData<ClientOpcodes.SetRoomSettings>
   | ClientOpcodeAndData<ClientOpcodes.BeginGame>
-  | ClientOpcodeAndData<ClientOpcodes.EndGame>
   | ClientOpcodeAndData<ClientOpcodes.MinigameHandshake>
   | ClientOpcodeAndData<ClientOpcodes.MinigameEndGame>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>
