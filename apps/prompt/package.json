@@ -9,7 +9,7 @@
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@/sdk": "workspace:*",
+    "@/public": "workspace:*",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"
   }

@@ -1,5 +1,4 @@
-import { ParentOpcodes } from "../opcodes";
-import type { State, GamePlayer, GameRoom, GameSettings } from "../types";
+import type { ParentOpcodes, State, GamePlayer, GameRoom, GameSettings } from "../../types";
 
 export interface ParentTypes {
   [ParentOpcodes.Ready]: {

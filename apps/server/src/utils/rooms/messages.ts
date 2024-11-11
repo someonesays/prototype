@@ -5,7 +5,7 @@ import {
   encodeJsonServer,
   ServerOpcodes,
   type ServerTypes,
-} from "@/sdk";
+} from "@/public";
 import type { WSMessageReceive } from "hono/ws";
 import type { ServerPlayer, ServerRoom } from "../types/rooms";
 

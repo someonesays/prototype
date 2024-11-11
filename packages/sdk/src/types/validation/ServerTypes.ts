@@ -1,5 +1,5 @@
-import { ServerOpcodes } from "../opcodes";
 import type {
+  ServerOpcodes,
   MinigameEndReason,
   GamePlayer,
   GamePrize,
@@ -8,7 +8,7 @@ import type {
   GameStatus,
   Minigame,
   State,
-} from "../types";
+} from "../../types";
 
 export interface ServerTypes {
   [ServerOpcodes.Error]: {

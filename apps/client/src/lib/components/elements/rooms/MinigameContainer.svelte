@@ -3,7 +3,7 @@ import "$lib/styles/fonts/cascadiaCode.css";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
-import { ParentSdk, MinigameOpcodes } from "@/sdk";
+import { ParentSdk, MinigameOpcodes } from "@/public";
 import { VITE_BASE_API } from "$lib/utils/env";
 
 const { minigameId }: { minigameId: string } = $props();

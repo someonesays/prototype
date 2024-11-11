@@ -1,4 +1,4 @@
-import type { GamePlayer } from "@/sdk";
+import type { GamePlayer } from "@/public";
 import type { ServerPlayer } from "../types/rooms";
 
 export function transformToGamePlayers(players: ServerPlayer[] | Map<string, ServerPlayer>): GamePlayer[] {

@@ -1,9 +1,10 @@
 import env from "@/env";
 import { minigames } from "./minigames";
-import { Visibility } from "@/public";
-import type { Minigame } from "@/sdk";
+import { MinigameVisibility, type Minigame } from "@/public";
 
-export function getMinigames({ visibility = [Visibility.Private, Visibility.Public] }: { visibility: Visibility[] }) {
+export function getMinigames({
+  visibility = [MinigameVisibility.Private, MinigameVisibility.Public],
+}: { visibility: MinigameVisibility[] }) {
   return minigames.find((p) => visibility.includes(p.visibility));
 }
 

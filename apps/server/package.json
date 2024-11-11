@@ -18,7 +18,6 @@
     "@/db": "workspace:*",
     "@/env": "workspace:*",
     "@/public": "workspace:*",
-    "@/sdk": "workspace:*",
     "@/utils": "workspace:*",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "hono": "^4.6.9",

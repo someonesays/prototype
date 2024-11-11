@@ -6,7 +6,7 @@ import {
   type ServerOpcodes,
   type ServerTypes,
   type ServerOpcodeAndDatas,
-} from "@/sdk";
+} from "@/public";
 import type z from "zod";
 
 export function encodeOppackClient<O extends ClientOpcodes>(payload: {

@@ -1,4 +1,4 @@
-import type { GamePlayer, GameStatus, Minigame, State } from "@/sdk";
+import type { GamePlayer, GameStatus, Minigame, State } from "@/public";
 import type { WSContext } from "hono/ws";
 
 export interface ServerPlayer extends GamePlayer {

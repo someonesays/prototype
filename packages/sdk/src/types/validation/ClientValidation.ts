@@ -1,7 +1,5 @@
 import z from "zod";
-import { ClientOpcodes } from "../opcodes";
-import { GamePrizeArrayZod } from "./GamePrize";
-import { StateZod } from "./State";
+import { ClientOpcodes, GamePrizeArrayZod, StateZod } from "../../types";
 
 export const ClientValidation = {
   [ClientOpcodes.Ping]: z.object({}),

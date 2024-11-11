@@ -1,7 +1,5 @@
 import z from "zod";
-import { MinigameOpcodes } from "../opcodes";
-import { StateZod } from "./State";
-import { GamePrizeArrayZod } from "../types";
+import { MinigameOpcodes, StateZod, GamePrizeArrayZod } from "../../types";
 
 export const MinigameValidation = {
   [MinigameOpcodes.Handshake]: z.object({}),

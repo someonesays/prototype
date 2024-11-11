@@ -5,7 +5,7 @@ import {
   type ServerTypes,
   type ClientOpcodeAndDatas,
   type ServerOpcodeAndDatas,
-} from "@/sdk";
+} from "@/public";
 import type z from "zod";
 
 export function encodeJsonClient<O extends ClientOpcodes>(payload: {

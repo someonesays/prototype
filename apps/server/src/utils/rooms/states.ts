@@ -1,4 +1,4 @@
-import { MinigameEndReason, GameStatus, ServerOpcodes, type GamePrize } from "@/sdk";
+import { MinigameEndReason, GameStatus, ServerOpcodes, type GamePrize } from "@/public";
 import { broadcastMessage } from "./messages";
 import { transformToGamePlayers } from "./transform";
 import type { ServerRoom, WSState } from "../types/rooms";

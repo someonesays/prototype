@@ -5,7 +5,7 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
-import { ParentSdk } from "@/sdk";
+import { ParentSdk } from "@/public";
 
 import MinigameContainer from "$lib/components/elements/rooms/MinigameContainer.svelte";
 import LobbyContainer from "../rooms/LobbyContainer.svelte";
@@ -58,6 +58,11 @@ onMount(() => {
     ws.onclose = () => {
       console.log("test websocket closed");
     };
+
+    // TODO: Remove this testing code and actually finish implementing WebSockets and such
+    // scene = "lobby";
+    minigameId = "1";
+    scene = "minigame";
   })();
 
   return () => {

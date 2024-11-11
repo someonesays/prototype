@@ -32,7 +32,7 @@ import {
   GamePrizePoints,
   type GamePrize,
   type MatchmakingDataJWT,
-} from "@/sdk";
+} from "@/public";
 import { getMinigamePublic } from "@/db";
 
 export const rooms = new Hono();

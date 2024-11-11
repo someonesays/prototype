@@ -2,7 +2,7 @@ import env from "@/env";
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { createCode, createCuid } from "@/utils";
-import type { MatchmakingDataJWT } from "@/sdk";
+import type { MatchmakingDataJWT } from "@/public";
 
 export const matchmaking = new Hono();
 

@@ -1,6 +1,5 @@
 import EventEmitter from "eventemitter3";
-import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
-import type { ParentTypes, MinigameValidation } from "../types";
+import { ParentOpcodes, MinigameOpcodes, type ParentTypes, type MinigameValidation } from "../types";
 import type { z } from "zod";
 
 export class MinigameSdk {

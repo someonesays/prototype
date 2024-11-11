@@ -1,6 +1,6 @@
 import env from "@/env";
 import { getMinigame } from "@/db";
-import { MinigameType } from "@/public";
+import { MinigamePathType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import type { BlankEnv } from "hono/types";
@@ -67,7 +67,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   const minigame = await getMinigame(minigameId);
   if (!minigame) throw new Error("Invalid minigame ID");
 
-  const path = minigame.urlType === MinigameType.Original ? c.req.path.slice(minigameId.length + 12) : c.req.path;
+  const path = minigame.pathType === MinigamePathType.Original ? c.req.path.slice(minigameId.length + 12) : c.req.path;
 
   const http = minigame.urlSecure ? "https" : "http";
   // const ws = minigame.urlSecure ? "wss" : "ws";

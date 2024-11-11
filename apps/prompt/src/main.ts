@@ -23,7 +23,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 
-import { MinigameSdk } from "@/sdk";
+import { MinigameSdk } from "@/public";
 
 (async () => {
   const sdk = new MinigameSdk();

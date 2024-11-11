@@ -1,6 +1,12 @@
 import EventEmitter from "eventemitter3";
-import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
-import { MinigameValidation, type MatchmakingDataJWT, type Minigame, type ParentTypes } from "../types";
+import {
+  ParentOpcodes,
+  MinigameOpcodes,
+  MinigameValidation,
+  type MatchmakingDataJWT,
+  type Minigame,
+  type ParentTypes,
+} from "../types";
 import type { z } from "zod";
 
 /**
