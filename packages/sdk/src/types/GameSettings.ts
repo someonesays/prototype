@@ -1,4 +1,6 @@
 export interface GameSettings {
-  language: "en-US";
+  language: GameSettingsLanguages;
   volume: number;
 }
+
+export type GameSettingsLanguages = "en-US";
