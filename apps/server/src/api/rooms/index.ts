@@ -16,14 +16,13 @@ import {
   sendError,
   startGame,
   endGame,
+  unreadyPlayersGame,
+  isStarted,
   type MatchmakingDataJWT,
   type ServerRoom,
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
   type WSState,
-  unreadyPlayersGame,
-  isStarted,
-  isNotUserOrHost,
 } from "../../utils";
 import { ClientOpcodes, ServerOpcodes, GameStatus, MinigameEndReason, GamePrizeType, type GamePrize } from "@/sdk";
 import { getMinigamePublic } from "@/db";

@@ -46,6 +46,7 @@ onMount(() => {
           id: "mock_user_id",
           displayName: "mock display name",
           ready: false,
+          points: 0,
           state: null,
         },
       ],
