@@ -7,5 +7,8 @@
     "@/public": "workspace:*",
     "eventemitter3": "^5.0.1",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "hono": "^4.6.9"
   }
 }

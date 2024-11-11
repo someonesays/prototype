@@ -55,7 +55,7 @@ onMount(() => {
 
   (async () => {
     // TODO: Stop using getMinigame() and use data from WebSocket instead.
-    const { success, minigame } = await ParentSdk.getMinigame(minigameId, VITE_BASE_API);
+    const { success, data: minigame } = await ParentSdk.getMinigame({ minigameId, baseUrl: VITE_BASE_API });
     if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
 
     authorText = minigame.author.name;

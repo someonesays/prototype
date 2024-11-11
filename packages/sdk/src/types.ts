@@ -4,6 +4,8 @@ export type * from "./types/ServerTypes";
 export * from "./types/MinigameValidation";
 export type * from "./types/ParentTypes";
 
+export * from "./types/Matchmaking";
+
 export * from "./types/GamePrize";
 export * from "./types/GameStatus";
 export type * from "./types/GamePlayer";

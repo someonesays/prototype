@@ -18,7 +18,6 @@ import {
   endGame,
   unreadyPlayersGame,
   isStarted,
-  type MatchmakingDataJWT,
   type ServerRoom,
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
@@ -30,8 +29,9 @@ import {
   GameStatus,
   MinigameEndReason,
   GamePrizeType,
-  type GamePrize,
   GamePrizePoints,
+  type GamePrize,
+  type MatchmakingDataJWT,
 } from "@/sdk";
 import { getMinigamePublic } from "@/db";
 
@@ -46,8 +46,8 @@ rooms.get(
     const protocol = c.req.header("sec-websocket-protocol");
     if (!protocol) return;
 
-    const [messageType, authorization] = protocol.split(",");
-    if (messageType !== "Json" && messageType !== "Oppack") return;
+    let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
+    if (!["Json", "Oppack"].includes(messageType)) return;
 
     const { user, room } = (await verify(authorization.trim(), env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
     if (room.server.id !== env.ServerId) return;

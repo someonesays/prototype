@@ -9,7 +9,7 @@ const {
 } = await (await fetch("http://localhost:3001/api/matchmaking")).json();
 
 // Connect to the WebSocket
-const ws = new WebSocket(url, ["Json", authorization]);
+const ws = new WebSocket(url, [authorization, "Json"]);
 
 // Opcodes and other enums
 const ClientOpcodes = {

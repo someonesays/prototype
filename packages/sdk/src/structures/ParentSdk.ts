@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { ParentOpcodes, MinigameOpcodes } from "../opcodes";
-import { MinigameValidation, type Minigame, type ParentTypes } from "../types";
+import { MinigameValidation, type MatchmakingDataJWT, type Minigame, type ParentTypes } from "../types";
 import type { z } from "zod";
 
 /**
@@ -15,15 +15,31 @@ export class ParentSdk {
   private isDestroyed = false;
   private targetOrigin = "*";
 
-  static async getMinigame(minigameId: string, baseUrl = "") {
-    try {
-      const req = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
-      if (req.status !== 200) return { success: false };
+  static async getMatchmaking({ roomId, displayName, baseUrl }: { roomId?: string; displayName?: string; baseUrl: string }) {
+    const query = [];
+    if (roomId) query.push(`room_id=${encodeURIComponent(roomId)}`);
+    if (displayName) query.push(`display_name=${encodeURIComponent(displayName)}`);
 
-      const minigame = (await req.json()) as Minigame;
-      return { success: true, minigame };
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking?${query.join("&")}`);
+      if (res.status !== 200) throw new Error("Response is not 200 OK.");
+
+      const data = (await res.json()) as { authorization: string; data: MatchmakingDataJWT };
+      return { success: true as true, data };
     } catch (err) {
-      return { success: false };
+      return { success: false as false, error: err };
+    }
+  }
+
+  static async getMinigame({ minigameId, baseUrl }: { minigameId: string; baseUrl: string }) {
+    try {
+      const res = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
+      if (res.status !== 200) throw new Error("Response is not 200 OK.");
+
+      const data = (await res.json()) as Minigame;
+      return { success: true as true, data };
+    } catch (err) {
+      return { success: false as false, error: err };
     }
   }
 
