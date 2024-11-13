@@ -11,8 +11,10 @@ export function decodeRoomId(hashed: string) {
   const decoded = Buffer.from(hashed, "base64").toString("utf-8");
 
   const decodedServerId = decoded.slice(0, 2);
+  if (decodedServerId.length !== 2) return null;
+
   const serverId = decodedServerId.charCodeAt(0) * 128 + decodedServerId.charCodeAt(1);
-  if (serverId > 16384) return null;
+  if (serverId < 0 || serverId > 16384) return null;
 
   const serverRoomId = decoded.slice(2);
   if (serverRoomId.length !== 4) return null;
