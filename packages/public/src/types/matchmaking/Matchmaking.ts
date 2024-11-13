@@ -15,7 +15,7 @@ export interface MatchmakingData {
   room: {
     id: string;
     server: {
-      id: string;
+      id: number;
       url: string;
     };
   };

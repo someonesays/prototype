@@ -29,7 +29,7 @@ onMount(() => {
   (async () => {
     // Get room from matchmakign
     const { success, data: matchmaking } = await ParentSdk.getMatchmaking({
-      roomId,
+      roomId: roomId === "new" ? undefined : roomId,
       // TODO: Support displayName when you join a game.
       // displayName:
       baseUrl: VITE_BASE_API,

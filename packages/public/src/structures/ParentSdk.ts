@@ -3,9 +3,11 @@ import {
   ParentOpcodes,
   MinigameOpcodes,
   MinigameValidation,
-  type MatchmakingDataJWT,
+  MessageCodes,
   type Minigame,
   type ParentTypes,
+  type APIResponse,
+  type APIMatchmakingResponse,
 } from "../types";
 import type { z } from "zod";
 
@@ -28,24 +30,25 @@ export class ParentSdk {
 
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking?${query.join("&")}`);
-      if (res.status !== 200) throw new Error("Response is not 200 OK.");
+      const data = await res.json();
 
-      const data = (await res.json()) as { authorization: string; data: MatchmakingDataJWT };
-      return { success: true as true, data };
+      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      return { success: true as true, data: data as APIMatchmakingResponse };
     } catch (err) {
-      return { success: false as false, error: err };
+      return { success: false as false, code: MessageCodes.UnexpectedError };
     }
   }
 
   static async getMinigame({ minigameId, baseUrl }: { minigameId: string; baseUrl: string }) {
     try {
       const res = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
-      if (res.status !== 200) throw new Error("Response is not 200 OK.");
+      const data = await res.json();
 
-      const data = (await res.json()) as Minigame;
-      return { success: true as true, data };
+      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      return { success: true as true, data: data as Minigame };
     } catch (err) {
-      return { success: false as false, error: err };
+      console.error(err);
+      return { success: false as false, code: MessageCodes.UnexpectedError };
     }
   }
 

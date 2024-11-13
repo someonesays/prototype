@@ -30,6 +30,7 @@ import {
   MinigameEndReason,
   GamePrizeType,
   GamePrizePoints,
+  MessageCodes,
   type GamePrize,
   type MatchmakingDataJWT,
   type Pack,
@@ -38,6 +39,15 @@ import {
 import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
 
 export const rooms = new Hono();
+
+rooms.get("/:id", async (c) => {
+  if (c.req.header("Authorization") !== env.RoomAuthorization) {
+    return c.json({ code: MessageCodes.MissingAuthorization }, 401);
+  }
+
+  const roomId = c.req.param("id");
+  return c.json({ exists: !!gameRooms.get(roomId) });
+});
 
 rooms.get(
   "/",
