@@ -2,6 +2,9 @@
 // 128 * 128 = 16384 maximum possible servers the room ID system can support
 
 export function encodeRoomId({ serverId, serverRoomId }: { serverId: number; serverRoomId: string }) {
+  if (serverId < 0 || serverId > 16384) throw new Error("The server ID should be a number between 0 and 16384");
+  if (serverRoomId.length !== 4) throw new Error("The server room ID should be 4 characters long");
+
   return Buffer.from(
     `${String.fromCharCode(Math.floor(serverId / 128)) + String.fromCharCode(serverId % 128)}${serverRoomId}`,
   ).toString("base64");
