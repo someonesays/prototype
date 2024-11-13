@@ -32,8 +32,10 @@ import {
   GamePrizePoints,
   type GamePrize,
   type MatchmakingDataJWT,
+  type Pack,
+  type Minigame,
 } from "@/public";
-import { getMinigamePublic } from "@/db";
+import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
 
 export const rooms = new Hono();
 
@@ -96,10 +98,10 @@ rooms.get(
             status: GameStatus.Lobby,
             room: {
               id: room.id,
-              name: `Room ${room.id}`,
               host: state.user.id,
               state: null,
             },
+            pack: null,
             minigame: null,
             players,
           };
@@ -148,32 +150,69 @@ rooms.get(
             case ClientOpcodes.SetRoomSettings: {
               if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
               if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
-              if (!data.name && !data.minigameId) return sendError(state.user, "Missing options to change room settings");
+              if (data.minigameId === undefined && data.packId === undefined) {
+                return sendError(state.user, "Missing options to change room settings");
+              }
+
+              const newSettings: { pack?: Pack | null; minigame?: Minigame | null } = {};
+
+              if (data.packId) {
+                // Get minigame pack
+                const pack = await getPackPublic({ id: data.packId });
+                if (!pack) return sendError(state.user, "Failed to find pack");
+
+                // Set pack in new settings
+                newSettings.pack = pack;
+              } else if (data.packId === null) {
+                newSettings.pack = null;
+              }
 
               if (data.minigameId) {
                 // Get minigame
                 const minigame = await getMinigamePublic(data.minigameId);
                 if (!minigame) return sendError(state.user, "Failed to find minigame");
 
-                // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
-                if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
-                if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
-
-                // Set minigame
-                state.serverRoom.minigame = minigame;
+                // Set pack in new settings
+                newSettings.minigame = minigame;
               } else if (data.minigameId === null) {
-                state.serverRoom.minigame = null;
+                newSettings.minigame = null;
               }
 
-              if (data.name) {
-                state.serverRoom.room.name = data.name;
+              // Make sure a minigame and a pack both co-exist
+              // Check if the minigame is in the pack
+              const pack = newSettings.pack === undefined ? state.serverRoom.pack : newSettings.pack;
+              const minigame = newSettings.minigame === undefined ? state.serverRoom.minigame : newSettings.minigame;
+
+              console.log(pack, minigame);
+
+              if (pack && !minigame) {
+                return sendError(state.user, "Cannot select pack without a minigame");
               }
+
+              if (
+                pack &&
+                minigame &&
+                !(await isMinigameInPack({
+                  id: pack.id,
+                  minigameId: minigame.id,
+                }))
+              ) {
+                return sendError(state.user, "Failed to find minigame in pack");
+              }
+
+              // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
+              if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
+              if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
+
+              // Set pack and minigame (!== undefined is necessary as they can be null)
+              if (newSettings.pack !== undefined) state.serverRoom.pack = newSettings.pack;
+              if (newSettings.minigame !== undefined) state.serverRoom.minigame = newSettings.minigame;
 
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UpdatedRoomSettings,
                 data: {
-                  room: { name: state.serverRoom.room.name },
+                  pack: state.serverRoom.pack,
                   minigame: state.serverRoom.minigame,
                 },
               });
@@ -504,6 +543,7 @@ rooms.get(
             status: state.serverRoom.status,
             user: state.user.id,
             room: state.serverRoom.room,
+            pack: state.serverRoom.pack,
             minigame: state.serverRoom.minigame,
             players: transformToGamePlayers(state.serverRoom.players),
           },

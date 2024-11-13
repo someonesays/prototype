@@ -37,7 +37,6 @@ onMount(() => {
       },
       user: "mock_user_id",
       room: {
-        name: "mock room name",
         host: "mock_user_id",
         state: null,
       },

@@ -4,10 +4,10 @@ import type {
   GamePlayer,
   GamePrize,
   GameRoomPrivate,
-  GameRoomSettings,
   GameStatus,
   Minigame,
   State,
+  Pack,
 } from "../../types";
 
 export interface ServerTypes {
@@ -18,6 +18,7 @@ export interface ServerTypes {
     status: GameStatus;
     user: string; // (user = player id)
     room: GameRoomPrivate;
+    pack: Pack | null;
     minigame: Minigame | null;
     players: GamePlayer[];
   };
@@ -31,7 +32,7 @@ export interface ServerTypes {
     user: string;
   };
   [ServerOpcodes.UpdatedRoomSettings]: {
-    room: GameRoomSettings;
+    pack: Pack | null;
     minigame: Minigame | null;
   };
   [ServerOpcodes.LoadMinigame]: {

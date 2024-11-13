@@ -1,8 +1,6 @@
 import type { State } from "../../types";
 
-export interface GameRoomSettings {
-  name: string;
-}
+export interface GameRoomSettings {}
 
 export interface GameRoom extends GameRoomSettings {
   host: string;

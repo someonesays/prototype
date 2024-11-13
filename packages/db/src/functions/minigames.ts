@@ -1,5 +1,5 @@
 import env from "@/env";
-import { minigames } from "./minigames";
+import { minigames } from "../minigames";
 import { MinigameVisibility, type Minigame } from "@/public";
 
 export function getMinigames({

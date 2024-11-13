@@ -1,4 +1,4 @@
-import type { GamePlayer, GameStatus, Minigame, State } from "@/public";
+import type { GamePlayer, GameStatus, Minigame, Pack, State } from "@/public";
 import type { WSContext } from "hono/ws";
 
 export interface ServerPlayer extends GamePlayer {
@@ -10,10 +10,10 @@ export interface ServerRoom {
   status: GameStatus;
   room: {
     id: string;
-    name: string;
     host: string;
     state: State;
   };
+  pack: Pack | null;
   minigame: Minigame | null;
   players: Map<string, ServerPlayer>;
   readyTimer?: Timer;

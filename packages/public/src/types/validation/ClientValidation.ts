@@ -10,7 +10,7 @@ export const ClientValidation = {
     user: z.string().min(1).max(50),
   }),
   [ClientOpcodes.SetRoomSettings]: z.object({
-    name: z.string().min(1).max(50).optional(),
+    packId: z.string().min(1).max(50).nullable().optional(),
     minigameId: z.string().min(1).max(50).nullable().optional(),
   }),
   [ClientOpcodes.BeginGame]: z.object({}),

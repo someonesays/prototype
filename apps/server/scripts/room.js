@@ -77,7 +77,7 @@ ws.onclose = () => {
 // Testing code
 send({ opcode: ClientOpcodes.KickPlayer, data: { user: "player id" } });
 send({ opcode: ClientOpcodes.TransferHost, data: { user: "player id" } });
-send({ opcode: ClientOpcodes.SetRoomSettings, data: { name: "new room name", minigameId: "minigameId" } });
+send({ opcode: ClientOpcodes.SetRoomSettings, data: { packId: "packId", minigameId: "minigameId" } });
 send({ opcode: ClientOpcodes.BeginGame });
 send({ opcode: ClientOpcodes.MinigameHandshake });
 send({
