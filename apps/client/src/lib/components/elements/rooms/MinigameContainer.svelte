@@ -1,5 +1,4 @@
 <script lang="ts">
-import "$lib/styles/fonts/cascadiaCode.css";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
@@ -151,7 +150,6 @@ onMount(() => {
     padding: 18px 12px;
     width: 250px;
     font-size: 16px;
-    font-family: 'Cascadia Code', sans-serif;
   }
   .volume-text-left {
     float: left;

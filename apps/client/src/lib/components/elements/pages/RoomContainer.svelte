@@ -60,9 +60,9 @@ onMount(() => {
     };
 
     // TODO: Remove this testing code and actually finish implementing WebSockets and such
-    // scene = "lobby";
-    minigameId = "1";
-    scene = "minigame";
+    scene = "lobby";
+    // minigameId = "1";
+    // scene = "minigame";
   })();
 
   return () => {
