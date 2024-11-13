@@ -3,7 +3,7 @@ import { minigames } from "../minigames";
 import { MinigameVisibility, type Minigame } from "@/public";
 
 export function getMinigames({
-  visibility = [MinigameVisibility.Private, MinigameVisibility.Public],
+  visibility = [MinigameVisibility.Disabled, MinigameVisibility.Unlisted, MinigameVisibility.Public],
 }: { visibility: MinigameVisibility[] }) {
   return minigames.find((p) => visibility.includes(p.visibility));
 }

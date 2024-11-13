@@ -3,7 +3,7 @@ import { PackVisibility, type Pack } from "@/public";
 import { getMinigamePublic } from "./minigames";
 
 export function getPacks({
-  visibility = [PackVisibility.Private, PackVisibility.Public],
+  visibility = [PackVisibility.Disabled, PackVisibility.Unlisted, PackVisibility.Public],
 }: { visibility: PackVisibility[] }) {
   return packs.find((p) => visibility.includes(p.visibility));
 }

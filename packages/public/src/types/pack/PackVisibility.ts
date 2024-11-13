@@ -1,4 +1,5 @@
 export enum PackVisibility {
-  Private = 0,
-  Public = 1,
+  Disabled = 0,
+  Unlisted = 1,
+  Public = 2,
 }
