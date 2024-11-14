@@ -25,22 +25,22 @@ let { children } = $props();
     --bg-glow: #ff93f880;
   }
   .room {
-    background: linear-gradient(90deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
     position: absolute;
+    background: linear-gradient(90deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
     width: 100%;
     height: 100%;
   }
   .pattern {
+    position: absolute;
     background-image: linear-gradient(45deg, var(--bg-checkers) 25%, transparent 25%), linear-gradient(-45deg, var(--bg-checkers) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--bg-checkers) 75%), linear-gradient(-45deg, transparent 75%, var(--bg-checkers) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    position: absolute;
     width: 100%;
     height: 100%;
   }
   .glow {
-    background: radial-gradient(50% 50% at 50% 50%, var(--bg-glow) 0%, rgba(255, 255, 255, 0) 100%);
     position: absolute;
+    background: radial-gradient(50% 50% at 50% 50%, var(--bg-glow) 0%, rgba(255, 255, 255, 0) 100%);
     width: 100%;
     height: 100%;
   }
