@@ -158,7 +158,7 @@ onMount(() => {
     float: right;
   }
   .minigame-settings-button {
-    background-color: #343a40;
+    background-color: var(--settings-button);
     border: 2px #4a5259 solid;
     border-radius: calc(4px + 0.5vh);
     box-shadow: #64646f33 0px 7px 29px 0px;

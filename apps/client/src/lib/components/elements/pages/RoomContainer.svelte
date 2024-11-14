@@ -14,7 +14,7 @@ import LobbyContainer from "../rooms/LobbyContainer.svelte";
 let scene = $state<"loading" | "kicked" | "lobby" | "minigame">("loading");
 let minigameId = $state<string | null>(null);
 let kickReason = $state("An unexpected error has occured.");
-let allowLeavingPage = $state(false);
+let allowLeavingPage = $state(true);
 
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
@@ -36,7 +36,6 @@ onMount(() => {
     });
 
     if (!success) {
-      allowLeavingPage = true;
       kickReason = "Failed to connect to matchmaking";
       scene = "kicked";
       return;
@@ -46,6 +45,9 @@ onMount(() => {
 
     // Change route to /room/:roomId
     goto(`/rooms/${encodeURIComponent(matchmaking.data.room.id)}`);
+
+    // Disallow changing page
+    allowLeavingPage = false;
 
     // Connect to WebSocket
     const opcode: "Json" | "Oppack" = "Oppack";
