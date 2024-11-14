@@ -31,7 +31,7 @@ matchmaking.get("/", async (c) => {
 
     if (decodedRoomId.serverId !== env.ServerId) return c.json({ code: MessageCodes.RoomNotFound }, 404);
 
-    const exists = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
+    const { exists } = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
     if (!exists) return c.json({ code: MessageCodes.RoomNotFound }, 404);
 
     server = { id: decodedRoomId.serverId, url: `ws://localhost:${env.Port}/api/rooms` };
