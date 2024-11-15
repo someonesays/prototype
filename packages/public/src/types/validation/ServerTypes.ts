@@ -84,6 +84,7 @@ export interface ServerOpcodeAndData<O extends ServerOpcodes> {
 }
 
 export type ServerOpcodeAndDatas =
+  | ServerOpcodeAndData<ServerOpcodes.Error>
   | ServerOpcodeAndData<ServerOpcodes.GetInformation>
   | ServerOpcodeAndData<ServerOpcodes.PlayerJoin>
   | ServerOpcodeAndData<ServerOpcodes.PlayerLeft>

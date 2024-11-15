@@ -84,12 +84,12 @@ rooms.get(
         if (state.serverRoom) {
           // Check if the player with the given user ID is already in the room
           if (state.serverRoom.players.get(user.id)) {
-            return ws.close(1003, "A player with given ID is already in the game");
+            return ws.close(1003, JSON.stringify({ code: MessageCodes.AlreadyInGame }));
           }
 
           // Disallow over 25 people in a game
           if (state.serverRoom.players.size >= 25) {
-            return ws.close(1003, "Reached maximum player limit in this room");
+            return ws.close(1003, JSON.stringify({ code: MessageCodes.ReachedMaximumPlayerLimit }));
           }
 
           // Join room
@@ -97,7 +97,7 @@ rooms.get(
         } else {
           // If the server is full, disallow the creation of new rooms
           if (gameRooms.size > env.MaxRooms) {
-            return ws.close(1003, "Server is full");
+            return ws.close(1003, JSON.stringify({ code: MessageCodes.ServersBusy }));
           }
 
           // Create room
@@ -192,8 +192,6 @@ rooms.get(
               // Check if the minigame is in the pack
               const pack = newSettings.pack === undefined ? state.serverRoom.pack : newSettings.pack;
               const minigame = newSettings.minigame === undefined ? state.serverRoom.minigame : newSettings.minigame;
-
-              console.log(pack, minigame);
 
               if (pack && !minigame) {
                 return sendError(state.user, "Cannot select pack without a minigame");

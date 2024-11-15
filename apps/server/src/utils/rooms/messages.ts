@@ -62,8 +62,6 @@ export function recieveMessage({
   user: ServerPlayer;
   payload: WSMessageReceive;
 }) {
-  if (user.ws.readyState !== 1) throw new Error("Cannot send message to a WebSocket not READY");
-
   switch (user.messageType) {
     case "Oppack":
       return decodeOppackClient(new Uint8Array(payload as ArrayBufferLike));
