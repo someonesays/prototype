@@ -17,7 +17,7 @@ export function encodeRoomId({ serverId, serverRoomId }: { serverId: number; ser
   let value = orderedHash.slice(0, -1);
 
   // Reorder ID by second character
-  const maxLength = seedChar % 3 ? 2 : 3;
+  const maxLength = (seedChar % 3) + 2;
   const savedValue = value;
   value = "";
   for (let i = 0; i < maxLength; i++) {
@@ -46,7 +46,7 @@ export function decodeRoomId(hashed: string) {
   if (seedChar % 2) value = value.split("").reverse().join("");
 
   // Reverse the reorder by second character
-  const maxLength = seedChar % 3 ? 2 : 3;
+  const maxLength = (seedChar % 3) + 2;
   const length = value.length;
   const originalValue = Array(length).fill(""); // Create an array to hold the original characters
 
