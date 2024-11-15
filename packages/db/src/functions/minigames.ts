@@ -18,6 +18,15 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
 
   return {
     id: minigame.id,
+    name: minigame.name,
+    description: minigame.description,
+    previewImage:
+      minigame.previewImage && minigame.previewPlaceholderImage
+        ? {
+            url: minigame.previewImage,
+            placeholder: minigame.previewPlaceholderImage,
+          }
+        : null,
     visibility: minigame.visibility,
     prompt: minigame.prompt,
     minimumPlayersToStart: minigame.minimumPlayersToStart,

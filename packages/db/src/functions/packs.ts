@@ -33,6 +33,15 @@ export async function getPackPublic({
 
   return {
     id: pack.id,
+    name: pack.name,
+    description: pack.description,
+    iconImage:
+      pack.iconImage && pack.iconPlaceholderImage
+        ? {
+            url: pack.iconImage,
+            placeholder: pack.iconPlaceholderImage,
+          }
+        : null,
     visibility: pack.visibility,
     author: {
       name: pack.author.name,

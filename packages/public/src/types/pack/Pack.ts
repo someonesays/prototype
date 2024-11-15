@@ -2,6 +2,12 @@ import type { Minigame, PackVisibility } from "../../types";
 
 export interface Pack {
   id: string;
+  name: string;
+  description: string;
+  iconImage: {
+    url: string;
+    placeholder: string;
+  } | null;
   visibility: PackVisibility;
   author: {
     name: string;

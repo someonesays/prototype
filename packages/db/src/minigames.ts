@@ -3,6 +3,10 @@ import { MinigamePathType, MinigameVisibility } from "@/public";
 export const minigames = [
   {
     id: "1",
+    name: "Click the buttons",
+    description: "The objective of this game is to click the buttons.",
+    previewImage: null,
+    previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
     prompt: "click the buttons",
     author: {
@@ -17,6 +21,10 @@ export const minigames = [
   },
   {
     id: "2",
+    name: "Example minigame",
+    description: "This is an example minigame.",
+    previewImage: null,
+    previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
     prompt: "kill yourself",
     author: {
