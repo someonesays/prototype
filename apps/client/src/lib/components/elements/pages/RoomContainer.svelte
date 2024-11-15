@@ -55,6 +55,9 @@ onMount(() => {
     allowLeavingPage = false;
 
     // Connect to WebSocket
+
+    // TODO: Refactor WebSocket to either a state or class which has event handlers and keeps the room state
+
     const messageType: "Json" | "Oppack" = "Oppack";
     ws = new WebSocket(matchmaking.data.room.server.url, [matchmaking.authorization, messageType]);
 
