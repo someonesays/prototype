@@ -19,6 +19,7 @@
     "@/env": "workspace:*",
     "@/public": "workspace:*",
     "@/utils": "workspace:*",
+    "@hono/zod-validator": "^0.4.1",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "hono": "^4.6.10",
     "zod": "^3.23.8"

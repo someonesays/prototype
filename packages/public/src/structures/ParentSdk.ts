@@ -23,13 +23,18 @@ export class ParentSdk {
   private isDestroyed = false;
   private targetOrigin = "*";
 
-  static async getMatchmaking({ roomId, displayName, baseUrl }: { roomId?: string; displayName?: string; baseUrl: string }) {
-    const query = [];
-    if (roomId) query.push(`room_id=${encodeURIComponent(roomId)}`);
-    if (displayName) query.push(`display_name=${encodeURIComponent(displayName)}`);
+  static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
+    const res = await fetch(`${baseUrl}/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
+    return res.status === 200;
+  }
 
+  static async getMatchmaking({ roomId, displayName, baseUrl }: { roomId?: string; displayName: string; baseUrl: string }) {
     try {
-      const res = await fetch(`${baseUrl}/api/matchmaking?${query.join("&")}`);
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "post",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ room_id: roomId, display_name: displayName }),
+      });
       const data = await res.json();
 
       if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };

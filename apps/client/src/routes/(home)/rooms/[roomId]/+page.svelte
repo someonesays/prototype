@@ -5,28 +5,48 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
+import { displayName } from "$lib/components/stores/displayName";
 import { kickedReason } from "$lib/components/stores/kickedReason";
 
-import { MessageCodesToText, RoomWebsocket, ParentSdk, ServerOpcodes, type APIResponse } from "@/public";
+import {
+  MessageCodesToText,
+  RoomWebsocket,
+  ParentSdk,
+  ServerOpcodes,
+  GameStatus,
+  type APIResponse,
+  type ServerTypes,
+} from "@/public";
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
 
-// States
+// Get params
+const roomId = $page.params.roomId;
+
+// Connection states
 let connected = $state(false);
+let ws = $state<WebSocket>();
+let room = $state<ServerTypes[ServerOpcodes.GetInformation]>();
+
+// Scene states
 let scene = $state<"lobby" | "minigame">("lobby");
 let minigameId = $state<string | null>(null);
-let allowLeavingPage = $state(true);
+
+// Page states
+let allowExitingPage = $state(true);
+let exitedPage = $state(false);
 
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
-  if (!allowLeavingPage) return cancel();
+  if (!allowExitingPage) return cancel();
 });
 
+// On load tasks
 onMount(() => {
-  let closed = false;
-  let ws: WebSocket;
-  const roomId = $page.params.roomId;
+  if (!$displayName) {
+    return goto(roomId === "new" ? "/" : `/join/${encodeURIComponent(roomId)}`);
+  }
 
   (async () => {
     // Get room from matchmaking
@@ -36,25 +56,20 @@ onMount(() => {
       data: matchmaking,
     } = await ParentSdk.getMatchmaking({
       roomId: roomId === "new" ? undefined : roomId,
-      // TODO: Support displayName when you join a game.
-      // displayName:
+      displayName: $displayName,
       baseUrl: VITE_BASE_API,
     });
 
     if (!success) return kick(`Failed to connect to matchmaking: ${MessageCodesToText[code]}`);
-
-    if (closed) return; // Prevent race-condition isssue.
+    if (exitedPage) return; // Prevent race-condition isssue.
 
     // Change route to /room/:roomId
     goto(`/rooms/${encodeURIComponent(matchmaking.data.room.id)}`);
 
     // Disallow changing page
-    allowLeavingPage = false;
+    allowExitingPage = false;
 
-    // Connect to WebSocket
-
-    // TODO: Refactor WebSocket to either a state or class which has event handlers and keeps the room state
-
+    // Handle the WebSocket
     const ws = new RoomWebsocket({
       debug: true, // TODO: Disable this.
       url: matchmaking.data.room.server.url,
@@ -64,6 +79,7 @@ onMount(() => {
 
     ws.once(ServerOpcodes.GetInformation, (evt) => {
       connected = true;
+      room = evt;
 
       scene = "lobby";
       // minigameId = "1";
@@ -86,20 +102,24 @@ onMount(() => {
   })();
 
   return () => {
-    closed = true;
+    exitedPage = true;
     ws?.close();
   };
 });
 
 function kick(reason: string) {
-  allowLeavingPage = true;
+  allowExitingPage = true;
   $kickedReason = reason;
   goto("/");
 }
 </script>
 
-{#if scene === "lobby"}
+{#if !room || room.status === GameStatus.Lobby}
   <LobbyContainer />
-{:else if scene === "minigame" && minigameId}
-  <MinigameContainer minigameId={minigameId} /> 
+{:else if room.status === GameStatus.WaitingForPlayersToLoadMinigame || room.status === GameStatus.Started}
+  {#if minigameId}
+    <MinigameContainer minigameId={minigameId} /> 
+  {:else}
+    <p>Missing minigame ID.</p>
+  {/if}
 {/if}

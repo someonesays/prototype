@@ -4,7 +4,6 @@ export enum MessageCodes {
   UnexpectedError = "unexpected_error",
   MissingAuthorization = "missing_authorization",
 
-  InvalidDisplayName = "invalid_display_name",
   RoomNotFound = "room_not_found",
   ServersBusy = "servers_busy",
 
@@ -18,7 +17,6 @@ export const MessageCodesToText = {
   [MessageCodes.UnexpectedError]: "An unexpected error has occurred.",
   [MessageCodes.MissingAuthorization]: "Missing authorization token!",
 
-  [MessageCodes.InvalidDisplayName]: "Invalid display name.",
   [MessageCodes.RoomNotFound]: "The room was not found.",
   [MessageCodes.ServersBusy]: "The servers are currently busy! Please try again later.",
 
