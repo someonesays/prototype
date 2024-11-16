@@ -45,7 +45,7 @@ matchmaking.get("/", async (c) => {
     let retries = 0;
 
     while (true) {
-      // Generate new room ID
+      // Generate new room ID based on the server ID
       roomId = encodeRoomId(env.ServerId);
 
       // Check if room ID is already taken on the server
