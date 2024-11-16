@@ -97,7 +97,7 @@ export class RoomWebsocket {
     return this.emitter.emit(evt.toString(), msg);
   }
 
-  destroy() {
+  close() {
     this.ws?.close();
     this.emitter.removeAllListeners();
   }
