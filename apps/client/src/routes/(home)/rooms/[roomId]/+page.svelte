@@ -116,7 +116,7 @@ function kick(reason: string) {
 
 {#if !room || room.status === GameStatus.Lobby}
   <LobbyContainer />
-{:else if room.status === GameStatus.WaitingForPlayersToLoadMinigame || room.status === GameStatus.Started}
+{:else if room.status === GameStatus.Started || room.status === GameStatus.WaitingForPlayersToLoadMinigame}
   {#if minigameId}
     <MinigameContainer minigameId={minigameId} /> 
   {:else}
