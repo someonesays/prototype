@@ -46,7 +46,7 @@ matchmaking.get("/", async (c) => {
 
     while (true) {
       // Generate new room ID
-      roomId = encodeRoomId({ serverId: env.ServerId, serverRoomId: createCode(4) });
+      roomId = encodeRoomId(env.ServerId);
 
       // Check if room ID is already taken on the server
       const { exists } = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
