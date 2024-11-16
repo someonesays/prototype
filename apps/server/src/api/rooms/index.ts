@@ -134,7 +134,7 @@ rooms.get(
               if (isNotHost(state)) return sendError(state.user, "Only host can kick players");
               if (state.user.id === data.user) return sendError(state.user, "Cannot kick yourself");
 
-              state.serverRoom.players.get(data.user)?.ws.close();
+              state.serverRoom.players.get(data.user)?.ws.close(1003, JSON.stringify({ code: MessageCodes.KickedFromRoom }));
               return;
             }
             case ClientOpcodes.TransferHost: {

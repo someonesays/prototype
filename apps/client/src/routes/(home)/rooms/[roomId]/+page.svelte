@@ -74,7 +74,7 @@ onMount(() => {
       debug: true, // TODO: Disable this.
       url: matchmaking.data.room.server.url,
       authorization: matchmaking.authorization,
-      messageType: "Oppack",
+      messageType: "Json", // TODO: Make this "Oppack" after debugging is finished
     });
 
     ws.once(ServerOpcodes.GetInformation, (evt) => {
@@ -87,16 +87,16 @@ onMount(() => {
     });
 
     ws.onclose = (evt) => {
-      if (!connected) {
-        try {
-          const { code } = JSON.parse(evt.reason) as APIResponse;
-          return kick(`Failed to connect to server: ${MessageCodesToText[code]}`);
-        } catch (err) {
-          console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
-          return kick(`Failed to connect to server: ${evt.reason}`);
-        }
-      } else {
-        return kick("Disconnected!");
+      try {
+        const { code } = JSON.parse(evt.reason) as APIResponse;
+
+        if (connected) return kick(MessageCodesToText[code]);
+        return kick(`Failed to connect to server: ${MessageCodesToText[code]}`);
+      } catch (err) {
+        if (connected) return kick("Disconnected!");
+
+        console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
+        return kick(`Failed to connect to server: ${evt.reason}`);
       }
     };
   })();

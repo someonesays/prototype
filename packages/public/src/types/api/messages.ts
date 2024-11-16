@@ -9,6 +9,7 @@ export enum MessageCodes {
 
   AlreadyInGame = "already_in_game",
   ReachedMaximumPlayerLimit = "reached_maximum_player_limit",
+  KickedFromRoom = "kicked_from_room",
 }
 
 export const MessageCodesToText = {
@@ -22,4 +23,5 @@ export const MessageCodesToText = {
 
   [MessageCodes.AlreadyInGame]: "A player with given ID is already in the game.",
   [MessageCodes.ReachedMaximumPlayerLimit]: "Reached maximum player limit in this room.",
+  [MessageCodes.KickedFromRoom]: "You've been kicked from the room!",
 };

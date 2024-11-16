@@ -8,7 +8,6 @@ import {
   encodeOppackClient,
   encodeJsonClient,
   type ServerTypes,
-  type ServerOpcodesStringKeys,
 } from "../";
 import type { z } from "zod";
 
@@ -17,7 +16,7 @@ export class RoomWebsocket {
   send: ReturnType<typeof RoomWebsocket.createSendMessage>;
   onclose?: ((evt: CloseEvent) => any) | null;
 
-  private emitter = new EventEmitter<ServerOpcodesStringKeys>();
+  private emitter = new EventEmitter();
   messageType: "Json" | "Oppack";
 
   static async parseMessage({ messageType, payload }: { messageType: "Oppack" | "Json"; payload: any }) {
@@ -86,16 +85,16 @@ export class RoomWebsocket {
   }
 
   on<O extends ServerOpcodes>(evt: O, listener: (payload: ServerTypes[O]) => unknown) {
-    return this.emitter.on(evt.toString() as ServerOpcodesStringKeys, listener);
+    return this.emitter.on(evt.toString(), listener);
   }
   once<O extends ServerOpcodes>(evt: O, listener: (payload: ServerTypes[O]) => unknown) {
-    return this.emitter.once(evt.toString() as ServerOpcodesStringKeys, listener);
+    return this.emitter.once(evt.toString(), listener);
   }
   off<O extends ServerOpcodes>(evt: O, listener: (payload: ServerTypes[O]) => unknown) {
-    return this.emitter.off(evt.toString() as ServerOpcodesStringKeys, listener);
+    return this.emitter.off(evt.toString(), listener);
   }
   private emit<O extends ServerOpcodes>(evt: O, msg: ServerTypes[O]) {
-    return this.emitter.emit(evt.toString() as ServerOpcodesStringKeys, msg);
+    return this.emitter.emit(evt.toString(), msg);
   }
 
   destroy() {
