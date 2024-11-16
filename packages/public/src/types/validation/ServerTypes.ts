@@ -11,6 +11,7 @@ import type {
 } from "../../types";
 
 export interface ServerTypes {
+  [ServerOpcodes.Disconnected]: CloseEvent;
   [ServerOpcodes.Error]: {
     message: string;
   };

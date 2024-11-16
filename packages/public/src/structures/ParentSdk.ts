@@ -128,6 +128,8 @@ export class ParentSdk {
     if (this.isDestroyed) return;
 
     this.isDestroyed = true;
+
+    this.emitter.removeAllListeners();
     window.removeEventListener("message", this.handleMessage);
   }
 }
