@@ -18,7 +18,7 @@ export const MessageCodesToText = {
   [MessageCodes.UnexpectedError]: "An unexpected error has occurred.",
   [MessageCodes.MissingAuthorization]: "Missing authorization token!",
 
-  [MessageCodes.RoomNotFound]: "The room was not found.",
+  [MessageCodes.RoomNotFound]: "The room could not be found.",
   [MessageCodes.ServersBusy]: "The servers are currently busy! Please try again later.",
 
   [MessageCodes.AlreadyInGame]: "A player with given ID is already in the game.",
