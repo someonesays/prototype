@@ -113,7 +113,7 @@ onMount(() => {
       $room.room.state = null;
       $room.players = evt.players;
 
-      // TODO: Do somethign with evt.reason
+      // TODO: Do something with evt.reason
       switch (evt.reason) {
         case MinigameEndReason.MinigameEnded: {
           // TODO: Do something with evt.prizes
