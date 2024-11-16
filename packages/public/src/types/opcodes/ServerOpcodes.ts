@@ -1,5 +1,3 @@
-import type { EnumValueStrings } from "./utils";
-
 /**
  * These are the opcodes the server sends to the parent page
  */
@@ -21,6 +19,3 @@ export enum ServerOpcodes {
   MinigameSendPlayerMessage = 14,
   MinigameSendPrivateMessage = 15,
 }
-
-// This is used on the game's frontend because event emitters have to be strings
-export type ServerOpcodesStringKeys = EnumValueStrings<typeof ServerOpcodes>;
