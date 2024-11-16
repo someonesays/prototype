@@ -2,4 +2,6 @@
 import RoomContainer from "$lib/components/elements/pages/RoomContainer.svelte";
 </script>
   
-<RoomContainer />
+<main>
+  <RoomContainer />
+</main>

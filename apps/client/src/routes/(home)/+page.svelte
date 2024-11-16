@@ -1,4 +1,8 @@
+<script lang="ts">
+import HomeContainer from "$lib/components/elements/pages/HomeContainer.svelte";
+</script>
+    
 <main>
-  <p>Someone Says</p>
-  <p><a href="/rooms/new">Play</a></p>
+  <HomeContainer />
 </main>
+  

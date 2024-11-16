@@ -5,15 +5,17 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
+import { kickedReason } from "$lib/components/stores/kickedReason";
+
 import { MessageCodesToText, RoomWebsocket, ParentSdk, ServerOpcodes, type APIResponse } from "@/public";
 
-import MinigameContainer from "$lib/components/elements/rooms/MinigameContainer.svelte";
-import LobbyContainer from "../rooms/LobbyContainer.svelte";
+import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
+import LobbyContainer from "../rooms/RoomLobbyContainer.svelte";
 
 // States
-let scene = $state<"loading" | "kicked" | "lobby" | "minigame">("loading");
+let connected = $state(false);
+let scene = $state<"lobby" | "minigame">("lobby");
 let minigameId = $state<string | null>(null);
-let kickReason = $state("An unexpected error has occured.");
 let allowLeavingPage = $state(true);
 
 // Warning when you try to leave the page
@@ -39,11 +41,7 @@ onMount(() => {
       baseUrl: VITE_BASE_API,
     });
 
-    if (!success) {
-      kickReason = `Failed to connect to matchmaking: ${MessageCodesToText[code]}`;
-      scene = "kicked";
-      return;
-    }
+    if (!success) return kick(`Failed to connect to matchmaking: ${MessageCodesToText[code]}`);
 
     if (closed) return; // Prevent race-condition isssue.
 
@@ -57,7 +55,6 @@ onMount(() => {
 
     // TODO: Refactor WebSocket to either a state or class which has event handlers and keeps the room state
 
-    let connected = false;
     const ws = new RoomWebsocket({
       debug: true, // TODO: Disable this.
       url: matchmaking.data.room.server.url,
@@ -77,16 +74,14 @@ onMount(() => {
       if (!connected) {
         try {
           const { code } = JSON.parse(evt.reason) as APIResponse;
-          kickReason = `Failed to connect to matchmaking: ${MessageCodesToText[code]}`;
+          return kick(`Failed to connect to server: ${MessageCodesToText[code]}`);
         } catch (err) {
           console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
-          kickReason = `Failed to connect to matchmaking: ${evt.reason}`;
+          return kick(`Failed to connect to server: ${evt.reason}`);
         }
       } else {
-        kickReason = "Disconnected!";
+        return kick("Disconnected!");
       }
-
-      scene = "kicked";
     };
   })();
 
@@ -95,21 +90,16 @@ onMount(() => {
     ws?.close();
   };
 });
+
+function kick(reason: string) {
+  allowLeavingPage = true;
+  $kickedReason = reason;
+  goto("/");
+}
 </script>
-    
-  <main>
-    {#if scene === "loading"}
-      <p>Loading...</p>
-    {:else if scene === "kicked"}
-      <p>{kickReason}</p>
-    {:else if scene === "lobby"}
-      <LobbyContainer />
-    {:else if scene === "minigame"}
-      {#if minigameId}
-        <MinigameContainer minigameId={minigameId} />
-      {:else}
-        <p>Missing minigame ID.</p>
-      {/if}
-    {/if}
-  </main>
-  
+
+{#if scene === "lobby"}
+  <LobbyContainer />
+{:else if scene === "minigame" && minigameId}
+  <MinigameContainer minigameId={minigameId} /> 
+{/if}
