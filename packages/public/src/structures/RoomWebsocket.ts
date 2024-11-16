@@ -15,6 +15,7 @@ import type { z } from "zod";
 export class RoomWebsocket {
   ws: WebSocket;
   send: ReturnType<typeof RoomWebsocket.createSendMessage>;
+  onclose?: ((evt: CloseEvent) => any) | null;
 
   private emitter = new EventEmitter<ServerOpcodesStringKeys>();
   messageType: "Json" | "Oppack";
@@ -80,7 +81,7 @@ export class RoomWebsocket {
 
     this.ws.onclose = (evt) => {
       if (debug) console.debug("[WEBSOCKET] Disconnected.");
-      return this.emit(ServerOpcodes.Disconnected, evt);
+      return this.onclose?.(evt);
     };
   }
 

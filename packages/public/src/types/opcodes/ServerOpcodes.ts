@@ -4,7 +4,6 @@ import type { EnumValueStrings } from "./utils";
  * These are the opcodes the server sends to the parent page
  */
 export enum ServerOpcodes {
-  Disconnected = -1, // This isn't actually ever sent through the WebSocket but it's intended for ease
   // Ping = 0,
   Error = 1,
   GetInformation = 2, // Send the room and player information, along with the room and player states.

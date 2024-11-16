@@ -66,12 +66,14 @@ onMount(() => {
     });
 
     ws.once(ServerOpcodes.GetInformation, (evt) => {
+      connected = true;
+
       scene = "lobby";
       // minigameId = "1";
       // scene = "minigame";
     });
 
-    ws.once(ServerOpcodes.Disconnected, (evt) => {
+    ws.onclose = (evt) => {
       if (!connected) {
         try {
           const { code } = JSON.parse(evt.reason) as APIResponse;
@@ -80,10 +82,12 @@ onMount(() => {
           console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
           kickReason = `Failed to connect to matchmaking: ${evt.reason}`;
         }
-        scene = "kicked";
-        return;
+      } else {
+        kickReason = "Disconnected!";
       }
-    });
+
+      scene = "kicked";
+    };
   })();
 
   return () => {
