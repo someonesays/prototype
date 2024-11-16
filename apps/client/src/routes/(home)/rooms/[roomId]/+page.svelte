@@ -29,7 +29,7 @@ onMount(() => {
   const roomId = $page.params.roomId;
 
   (async () => {
-    // Get room from matchmakign
+    // Get room from matchmaking
     const {
       success,
       code,
