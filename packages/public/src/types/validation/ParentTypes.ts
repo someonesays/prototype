@@ -28,10 +28,6 @@ export interface ParentTypes {
   [ParentOpcodes.ReceivedGameMessage]: {
     message: State;
   };
-  [ParentOpcodes.ReceivedPlayerMessage]: {
-    user: string;
-    message: State;
-  };
   [ParentOpcodes.ReceivedPrivateMessage]: {
     user: string;
     message: State;

@@ -9,7 +9,15 @@ import { room, roomWs } from "$lib/components/stores/roomState";
 import { displayName } from "$lib/components/stores/displayName";
 import { kickedReason } from "$lib/components/stores/kickedReason";
 
-import { MessageCodesToText, RoomWebsocket, ParentSdk, ServerOpcodes, GameStatus, type APIResponse } from "@/public";
+import {
+  MessageCodesToText,
+  RoomWebsocket,
+  ParentSdk,
+  ServerOpcodes,
+  GameStatus,
+  type APIResponse,
+  MinigameEndReason,
+} from "@/public";
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
@@ -77,28 +85,91 @@ onMount(() => {
     $roomWs.on(ServerOpcodes.PlayerLeft, (evt) => {
       const player = $room?.players.find((p) => p.id === evt.user);
       if (!player) throw new Error("Cannot find the player who left the room");
+
       $room?.players.splice($room?.players.indexOf(player), 1);
     });
     $roomWs.on(ServerOpcodes.TransferHost, (evt) => {
       if (!$room) throw new Error("Cannot find $room on transfer host event");
+
       $room.room.host = evt.user;
     });
     $roomWs.on(ServerOpcodes.UpdatedRoomSettings, (evt) => {
-      if (!$room) throw new Error("Cannot find $room on transfer host event");
+      if (!$room) throw new Error("Cannot find $room on updated room settings event");
+
       $room.minigame = evt.minigame;
       $room.pack = evt.pack;
     });
 
     // TODO: Handle minigame
-    $roomWs.on(ServerOpcodes.LoadMinigame, (evt) => {});
-    $roomWs.on(ServerOpcodes.EndMinigame, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigamePlayerReady, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameStartGame, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameSetGameState, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameSetPlayerState, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameSendGameMessage, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameSendPlayerMessage, (evt) => {});
-    $roomWs.on(ServerOpcodes.MinigameSendPrivateMessage, (evt) => {});
+    $roomWs.on(ServerOpcodes.LoadMinigame, (evt) => {
+      if (!$room) throw new Error("Cannot find $room on load minigame");
+      $room.status = GameStatus.WaitingForPlayersToLoadMinigame;
+      $room.players = evt.players;
+    });
+    $roomWs.on(ServerOpcodes.EndMinigame, (evt) => {
+      if (!$room) throw new Error("Cannot find $room on end minigame");
+
+      $room.status = GameStatus.Lobby;
+      $room.room.state = null;
+      $room.players = evt.players;
+
+      // TODO: Do somethign with evt.reason
+      switch (evt.reason) {
+        case MinigameEndReason.MinigameEnded: {
+          // TODO: Do something with evt.prizes
+          break;
+        }
+        case MinigameEndReason.ForcefulEnd: {
+          break;
+        }
+        case MinigameEndReason.HostLeft: {
+          break;
+        }
+        case MinigameEndReason.FailedToSatisfyMinimumPlayersToStart: {
+          break;
+        }
+      }
+    });
+    $roomWs.on(ServerOpcodes.MinigamePlayerReady, (evt) => {
+      if (!$room) throw new Error("Cannot find $room on end minigame");
+
+      const player = $room.players.find((p) => p.id === evt.user);
+      if (!player) throw new Error("Cannot find the player who readied up");
+
+      player.ready = true;
+
+      // TODO: Alert minigame that a player is ready.
+    });
+    $roomWs.on(ServerOpcodes.MinigameStartGame, () => {
+      if (!$room) throw new Error("Cannot find $room on start minigame");
+
+      $room.status = GameStatus.Started;
+
+      // TODO: Alert minigame that the game has started!
+    });
+    $roomWs.on(ServerOpcodes.MinigameSetGameState, (evt) => {
+      if (!$room) throw new Error("Cannot find $room on start minigame");
+
+      $room.room.state = evt.state;
+
+      // TODO: Alert minigame that the room's state has changed
+    });
+    $roomWs.on(ServerOpcodes.MinigameSetPlayerState, (evt) => {
+      if (!$room) throw new Error("Cannot find $room on start minigame");
+
+      const player = $room.players.find((p) => p.id === evt.user);
+      if (!player) throw new Error("Cannot find the player who set player state");
+
+      player.state = evt.state;
+
+      // TODO: Alert minigame that the player's state has changed
+    });
+    $roomWs.on(ServerOpcodes.MinigameSendGameMessage, (evt) => {
+      // TODO: Alert minigame that the game has sent a message
+    });
+    $roomWs.on(ServerOpcodes.MinigameSendPrivateMessage, (evt) => {
+      // TODO: Alert minigame that the player has sent a private message
+    });
 
     // Handles WebSocket closure
     $roomWs.onclose = (evt) => {

@@ -63,8 +63,11 @@ export function endGame(
   // Remove ready timer
   removeReadyTimerGame(opts.room);
 
-  // Unready everyone
+  // Unreadies everyone and resets their user states
   unreadyPlayersGame(opts.room);
+
+  // Reset states
+  opts.room.room.state = null;
 
   // Broadcast minigame ended
   broadcastMessage({
@@ -94,5 +97,6 @@ export function removeReadyTimerGame(room: ServerRoom) {
 export function unreadyPlayersGame(room: ServerRoom) {
   for (const player of room.players.values()) {
     player.ready = false;
+    player.state = null;
   }
 }

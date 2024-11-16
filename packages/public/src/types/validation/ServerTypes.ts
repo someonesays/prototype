@@ -37,7 +37,6 @@ export interface ServerTypes {
   };
   [ServerOpcodes.LoadMinigame]: {
     players: GamePlayer[];
-    minigame: Minigame;
   };
   [ServerOpcodes.EndMinigame]:
     | {
@@ -67,10 +66,6 @@ export interface ServerTypes {
   [ServerOpcodes.MinigameSendGameMessage]: {
     message: State;
   };
-  [ServerOpcodes.MinigameSendPlayerMessage]: {
-    user: string;
-    message: State;
-  };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
     fromUser: string; // User who sent it
     toUser: string; // Who it was sent by (mainly for the host)
@@ -97,5 +92,4 @@ export type ServerOpcodeAndDatas =
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSendGameMessage>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSendPrivateMessage>;

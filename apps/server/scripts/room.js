@@ -23,8 +23,7 @@ const ClientOpcodes = {
   MinigameSetGameState: 7,
   MinigameSetPlayerState: 8,
   MinigameSendGameMessage: 9,
-  MinigameSendPlayerMessage: 10,
-  MinigameSendPrivateMessage: 11, // Player message to host only
+  MinigameSendPrivateMessage: 10, // Player message to host only
 };
 
 const ServerOpcodes = {
@@ -41,8 +40,7 @@ const ServerOpcodes = {
   MinigameSetGameState: 11,
   MinigameSetPlayerState: 12,
   MinigameSendGameMessage: 13,
-  MinigameSendPlayerMessage: 14,
-  MinigameSendPrivateMessage: 15,
+  MinigameSendPrivateMessage: 14,
 };
 
 const GamePrizeType = {
@@ -101,7 +99,6 @@ send({
   },
 });
 send({ opcode: ClientOpcodes.MinigameSendGameMessage, data: { message: "this is a message the game sends to everyone" } });
-send({ opcode: ClientOpcodes.MinigameSendPlayerMessage, data: { user: "player id", message: "this is a user message!" } });
 send({
   opcode: ClientOpcodes.MinigameSendPrivateMessage,
   data: {

@@ -241,7 +241,7 @@ rooms.get(
                   "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
                 );
 
-              // Set everyone's ready state as false
+              // Set everyone's ready state and user state as false
               unreadyPlayersGame(state.serverRoom);
 
               // Set status as waiting for players to load minigame
@@ -253,7 +253,6 @@ rooms.get(
                 opcode: ServerOpcodes.LoadMinigame,
                 data: {
                   players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayer(p)),
-                  minigame: state.serverRoom.minigame,
                 },
               });
 
@@ -412,22 +411,6 @@ rooms.get(
                 readyOnly: true,
                 opcode: ServerOpcodes.MinigameSendGameMessage,
                 data: {
-                  message: data.message,
-                },
-              });
-
-              return;
-            }
-            case ClientOpcodes.MinigameSendPlayerMessage: {
-              if (!isStarted(state)) return sendError(state.user, "Cannot send player message when game hasn't started");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to send player message");
-
-              broadcastMessage({
-                room: state.serverRoom,
-                readyOnly: true,
-                opcode: ServerOpcodes.MinigameSendPlayerMessage,
-                data: {
-                  user: state.user.id,
                   message: data.message,
                 },
               });

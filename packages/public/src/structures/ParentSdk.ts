@@ -122,9 +122,6 @@ export class ParentSdk {
   sendGameMessage(payload: ParentTypes[ParentOpcodes.ReceivedGameMessage]) {
     this.postMessage(ParentOpcodes.ReceivedGameMessage, payload);
   }
-  sendPlayerMessage(payload: ParentTypes[ParentOpcodes.ReceivedPlayerMessage]) {
-    this.postMessage(ParentOpcodes.ReceivedPlayerMessage, payload);
-  }
   sendPrivateMessage(payload: ParentTypes[ParentOpcodes.ReceivedPrivateMessage]) {
     this.postMessage(ParentOpcodes.ReceivedPrivateMessage, payload);
   }
