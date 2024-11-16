@@ -76,7 +76,7 @@ rooms.get(
             displayName: user.displayName,
             ready: false,
             state: null,
-            points: Math.floor(Math.random() * 10),
+            points: 0,
           } as ServerPlayer,
           serverRoom: gameRooms.get(room.id) as ServerRoom,
         };
