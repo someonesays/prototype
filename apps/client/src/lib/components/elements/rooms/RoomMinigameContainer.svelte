@@ -2,7 +2,7 @@
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
-import { ParentSdk, MinigameOpcodes } from "@/public";
+import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
 import { room, roomWs } from "$lib/components/stores/roomState";
 
@@ -64,8 +64,14 @@ onMount(() => {
   };
 });
 
-function leaveGame() {
-  $roomWs?.close();
+function leaveOrEndGame() {
+  if ($room && $room.room.host === $room.user) {
+    return $roomWs?.send({
+      opcode: ClientOpcodes.MinigameEndGame,
+      data: {},
+    });
+  }
+  return $roomWs?.close();
 }
 </script>
 
@@ -86,7 +92,13 @@ function leaveGame() {
         <br>
         <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
         <br>
-        <button class="leave-button" onclick={() => leaveGame()}>Leave room</button>
+        <button class="leave-button" onclick={() => leaveOrEndGame()}>
+          {#if $room && $room.room.host === $room.user}
+            End minigame
+          {:else}
+            Leave room
+          {/if}
+        </button>
       </div>
     </div>
     <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
