@@ -6,7 +6,7 @@ export default {
   FrontendUrl: process.env.FRONTEND_URL as string,
 
   VitePort: Number(process.env.VITE_PORT),
-  ViteBaseApi: process.env.VITE_BASE_API as string,
+  ViteBaseApi: process.env.VITE_BASE_API || "",
 
   RoomAuthorization: process.env.ROOMS_AUTHORIZATION as string,
   ServerId: Number(process.env.SERVER_ID),
@@ -18,4 +18,8 @@ export default {
   JWTAlgorithm: process.env.JWT_ALGORITHM as "HS256" | "RS256",
 
   CuidFingerprint: process.env.CUID_FINGERPRINT as string,
+
+  DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
+  DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+  DiscordToken: process.env.DISCORD_TOKEN as string,
 };

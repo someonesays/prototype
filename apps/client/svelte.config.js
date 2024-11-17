@@ -9,13 +9,4 @@ export default {
       fallback: "index.html",
     }),
   },
-  csp: {
-    directives: {
-      "script-src": ["self"],
-    },
-    reportOnly: {
-      "script-src": ["self"],
-      "report-to": ["self"],
-    },
-  },
 };

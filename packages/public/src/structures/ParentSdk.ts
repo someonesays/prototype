@@ -8,6 +8,7 @@ import {
   type ParentTypes,
   type APIResponse,
   type APIMatchmakingResponse,
+  MatchmakingType,
 } from "../types";
 import type { z } from "zod";
 
@@ -24,16 +25,21 @@ export class ParentSdk {
   private targetOrigin = "*";
 
   static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
-    const res = await fetch(`${baseUrl}/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
+    const res = await fetch(`${baseUrl}/.proxy/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
     return res.status === 200;
   }
 
-  static async getMatchmaking({ roomId, displayName, baseUrl }: { roomId?: string; displayName: string; baseUrl: string }) {
+  static async getMatchmaking({
+    type,
+    roomId,
+    displayName,
+    baseUrl,
+  }: { type: MatchmakingType; roomId?: string; displayName: string; baseUrl: string }) {
     try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+      const res = await fetch(`${baseUrl}/.proxy/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ room_id: roomId, display_name: displayName }),
+        body: JSON.stringify({ type, room_id: roomId, display_name: displayName }),
       });
       const data = await res.json();
 

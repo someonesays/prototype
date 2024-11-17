@@ -34,7 +34,7 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
     prompt: minigame.prompt,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
     reportable: minigame.reportable,
-    url: `${env.ViteBaseApi}/api/proxy/${minigame.id}/`,
+    url: `${env.ViteBaseApi}/.proxy/api/proxy/${minigame.id}/`,
     createdAt: minigame.createdAt,
     updatedAt: minigame.updatedAt,
   };

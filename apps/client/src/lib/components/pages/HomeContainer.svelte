@@ -32,7 +32,7 @@ function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElem
     
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
-      <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="2" maxlength="32" required>
+      <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="1" maxlength="32" required>
       <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}>
     </form>
 

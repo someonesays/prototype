@@ -31,6 +31,7 @@ proxy.use(route, async (c, next) => {
       frameAncestors: ["'self'", env.FrontendUrl],
       baseUri: ["'self'"],
     },
+    xFrameOptions: "",
     crossOriginResourcePolicy: "",
   })(c, next);
 });
@@ -67,13 +68,23 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   const minigame = await getMinigame(minigameId);
   if (!minigame) throw new Error("Invalid minigame ID");
 
-  const path = minigame.pathType === MinigamePathType.Original ? c.req.path.slice(minigameId.length + 12) : c.req.path;
+  const absolutePath = `/.proxy/api/proxy/${minigame.id}/`;
+  const query = Object.entries(c.req.query()).length ? `?${new URLSearchParams(c.req.query())}` : "";
+
+  let path: string;
+  if (c.req.path.startsWith("/.proxy")) {
+    // Normal implementation
+    path = minigame.pathType === MinigamePathType.Original ? c.req.path.slice(absolutePath.length) : c.req.path;
+  } else {
+    // Discord implementation
+    path =
+      minigame.pathType === MinigamePathType.Original
+        ? c.req.path.slice(absolutePath.length - "/.proxy".length)
+        : `/.proxy${c.req.path}`;
+  }
 
   const http = minigame.urlSecure ? "https" : "http";
   // const ws = minigame.urlSecure ? "wss" : "ws";
-
-  const absolutePath = `/api/proxy/${minigame.id}/`;
-  const query = Object.entries(c.req.query()).length ? `?${new URLSearchParams(c.req.query())}` : "";
 
   const href = `${http}://${minigame.urlHost}`;
   const url = `${href}${path}${query}`;

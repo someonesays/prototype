@@ -2,10 +2,11 @@ export enum MessageCodes {
   HelloWorld = "hello_world",
   NotFound = "not_found",
   UnexpectedError = "unexpected_error",
-  MissingAuthorization = "missing_authorization",
+  InvalidAuthorization = "missing_authorization",
 
   RoomNotFound = "room_not_found",
   ServersBusy = "servers_busy",
+  NotImplemented = "not_implemented",
 
   AlreadyInGame = "already_in_game",
   ReachedMaximumPlayerLimit = "reached_maximum_player_limit",
@@ -16,10 +17,11 @@ export const MessageCodesToText = {
   [MessageCodes.HelloWorld]: "Hello world!",
   [MessageCodes.NotFound]: "Not found.",
   [MessageCodes.UnexpectedError]: "An unexpected error has occurred.",
-  [MessageCodes.MissingAuthorization]: "Missing authorization token!",
+  [MessageCodes.InvalidAuthorization]: "Invalid authorization token!",
 
   [MessageCodes.RoomNotFound]: "The room could not be found.",
   [MessageCodes.ServersBusy]: "The servers are currently busy! Please try again later.",
+  [MessageCodes.NotImplemented]: "This has not been implemented.",
 
   [MessageCodes.AlreadyInGame]: "A player with given ID is already in the game.",
   [MessageCodes.ReachedMaximumPlayerLimit]: "Reached maximum player limit in this room.",

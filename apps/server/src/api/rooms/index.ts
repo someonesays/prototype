@@ -42,7 +42,7 @@ export const rooms = new Hono();
 
 rooms.get("/:id", async (c) => {
   if (c.req.header("Authorization") !== env.RoomAuthorization) {
-    return c.json({ code: MessageCodes.MissingAuthorization }, 401);
+    return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
   }
 
   const roomId = c.req.param("id");
@@ -128,7 +128,7 @@ rooms.get(
 
           if (opcode === ClientOpcodes.Ping) return;
 
-          console.log("WebSocket message", opcode, data);
+          console.debug("WebSocket message", opcode, data);
           switch (opcode) {
             case ClientOpcodes.KickPlayer: {
               if (isNotHost(state)) return sendError(state.user, "Only host can kick players");

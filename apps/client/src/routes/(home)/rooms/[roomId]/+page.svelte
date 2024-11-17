@@ -16,6 +16,7 @@ import {
   GameStatus,
   type APIResponse,
   MinigameEndReason,
+  MatchmakingType,
 } from "@/public";
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
@@ -49,6 +50,7 @@ onMount(() => {
       code,
       data: matchmaking,
     } = await ParentSdk.getMatchmaking({
+      type: MatchmakingType.Normal,
       roomId: roomId === "new" ? undefined : roomId,
       displayName: $displayName,
       baseUrl: VITE_BASE_API,
