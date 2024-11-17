@@ -22,6 +22,7 @@ import {
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
 import { volumeValue } from "$lib/components/stores/settings";
+import { launcher } from "$lib/components/stores/launcher";
 
 // Get params
 const roomId = $page.params.roomId;
@@ -53,7 +54,7 @@ onMount(() => {
       type: MatchmakingType.Normal,
       roomId: roomId === "new" ? undefined : roomId,
       displayName: $displayName,
-      baseUrl: VITE_BASE_API,
+      baseUrl: $launcher === "normal" ? VITE_BASE_API : "./proxy",
     });
 
     if (exitedPage) return; // Prevent race-condition isssue.
