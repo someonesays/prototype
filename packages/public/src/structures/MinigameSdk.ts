@@ -62,6 +62,9 @@ export class MinigameSdk {
   endGame(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.EndGame]>) {
     this.postMessage(MinigameOpcodes.EndGame, payload);
   }
+  setClientPrompt(prompt: string) {
+    this.postMessage(MinigameOpcodes.SetClientPrompt, { prompt });
+  }
   setGameState(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SetGameState]>) {
     this.postMessage(MinigameOpcodes.SetGameState, payload);
   }

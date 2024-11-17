@@ -141,12 +141,28 @@ function leaveOrEndGame() {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: calc(4px + 0.5vh);
     opacity: 0;
     text-align: center;
     height: calc(40px + 0.5vh);
+    padding: calc(4px + 0.5vh);
     max-height: calc(40px + 0.5vh);
     font-size: calc(16px + 0.25vh);
+    overflow: auto;
+    overflow-wrap: anywhere;
+  }
+  .minigame-text p {
+    margin: 0px;
+  }
+  .minigame-text::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .minigame-text::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+  .minigame-text::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
   }
   .minigame-iframe {
     background-color: black;

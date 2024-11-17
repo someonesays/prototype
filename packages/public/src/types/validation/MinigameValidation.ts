@@ -7,7 +7,7 @@ export const MinigameValidation = {
     prizes: GamePrizeArrayZod,
   }),
   [MinigameOpcodes.SetClientPrompt]: z.object({
-    prompt: z.string(),
+    prompt: z.string().min(1).max(500),
   }),
   [MinigameOpcodes.SetGameState]: z.object({
     state: StateZod,
