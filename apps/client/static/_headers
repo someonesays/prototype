@@ -1,6 +1,6 @@
 /*
   Access-Control-Allow-Credentials: true
-  Content-Security-Policy: default-src 'self'; script-src http://localhost:3001 'self' 'unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' blob:; img-src 'self' blob: data:; font-src 'self' data:; connect-src http://localhost:3001 data: blob:; media-src 'self' blob: data:; frame-src http://localhost:3001; child-src http://localhost:3001 blob:; worker-src http://localhost:3001 blob:; frame-ancestors 'none'; base-uri 'none'
+  Content-Security-Policy: "default-src 'self'; script-src http://localhost:3001 'self' 'unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' blob:; img-src 'self' blob: data:; font-src 'self' data:; connect-src http://localhost:3001 ws://localhost:3001 data: blob:; media-src 'self' blob: data:; frame-src http://localhost:3001; child-src http://localhost:3001 blob:; worker-src http://localhost:3001 blob:; frame-ancestors 'none'; base-uri 'none'"
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
   Origin-Agent-Cluster: ?1
@@ -9,6 +9,6 @@
   X-Content-Type-Options: nosniff
   X-Dns-Prefetch-Control: off
   X-Download-Options: noopen
-  X-Frame-Options: SAMEORIGIN
+  X-Frame-Options: 
   X-Permitted-Cross-Domain-Policies: none
   X-Xss-Protection: 0
