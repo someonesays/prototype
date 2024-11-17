@@ -27,7 +27,6 @@ const roomId = $page.params.roomId;
 
 // States
 let connected = $state(false);
-let minigameId = $state<string | null>(null);
 let allowExitingPage = $state(true);
 let exitedPage = $state(false);
 
@@ -212,9 +211,5 @@ function kick(reason: string) {
 {#if !$room || $room.status === GameStatus.Lobby}
   <LobbyContainer />
 {:else if $room.status === GameStatus.Started || $room.status === GameStatus.WaitingForPlayersToLoadMinigame}
-  {#if minigameId}
-    <MinigameContainer minigameId={minigameId} /> 
-  {:else}
-    <p>Missing minigame ID.</p>
-  {/if}
+  <MinigameContainer /> 
 {/if}

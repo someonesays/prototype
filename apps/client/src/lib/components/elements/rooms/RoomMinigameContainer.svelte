@@ -5,7 +5,7 @@ import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes } from "@/public";
 import { VITE_BASE_API } from "$lib/utils/env";
 
-const { minigameId }: { minigameId: string } = $props();
+import { room, roomWs } from "$lib/components/stores/roomState";
 
 let container: HTMLDivElement;
 let authorText = $state("Someone");
@@ -16,6 +16,8 @@ let volumeValue = $state(100);
 let isSettingsOpen = $state(false);
 
 onMount(() => {
+  if (!$room?.minigame) throw new Error("Missing room or minigame");
+
   const iframe = document.createElement("iframe") as HTMLIFrameElement;
   iframe.referrerPolicy = "origin";
   iframe.allow = "autoplay; encrypted-media";
@@ -51,17 +53,11 @@ onMount(() => {
     });
   });
 
-  (async () => {
-    // TODO: Stop using getMinigame() and use data from WebSocket instead.
-    const { success, data: minigame } = await ParentSdk.getMinigame({ minigameId, baseUrl: VITE_BASE_API });
-    if (!success || !minigame) throw new Error("The minigame with the given ID doesn't exist");
+  authorText = $room.minigame.author.name;
+  minigamePromptText = $room.minigame.prompt;
+  minigameTextOpacity = 1;
 
-    authorText = minigame.author.name;
-    minigamePromptText = minigame.prompt;
-    minigameTextOpacity = 1;
-
-    iframe.src = minigame.url;
-  })();
+  iframe.src = $room.minigame.url;
 
   return () => {
     sdk.destroy();
