@@ -25,7 +25,7 @@ export class ParentSdk {
   private targetOrigin = "*";
 
   static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
-    const res = await fetch(`${baseUrl}/.proxy/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
+    const res = await fetch(`${baseUrl}/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
     return res.status === 200;
   }
 
@@ -36,7 +36,7 @@ export class ParentSdk {
     baseUrl,
   }: { type: MatchmakingType; roomId?: string; displayName: string; baseUrl: string }) {
     try {
-      const res = await fetch(`${baseUrl}/.proxy/api/matchmaking`, {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ type, room_id: roomId, display_name: displayName }),

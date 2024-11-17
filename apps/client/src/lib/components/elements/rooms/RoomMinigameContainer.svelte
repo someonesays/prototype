@@ -70,7 +70,7 @@ onMount(() => {
   minigamePromptText = $room.minigame.prompt;
   minigameTextOpacity = 1;
 
-  iframe.src = $room.minigame.url;
+  iframe.src = `/.proxy/api/proxy/${$room.minigame.id}/`;
 
   return () => {
     sdk.destroy();

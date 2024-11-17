@@ -15,7 +15,6 @@ export interface Minigame {
   prompt: string;
   minimumPlayersToStart: number;
   reportable: boolean;
-  url: string;
   createdAt: string;
   updatedAt: string;
 }

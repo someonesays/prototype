@@ -122,7 +122,7 @@ matchmaking.post(
         roomId = `discord:${instance.instance_id}`;
 
         // TODO: Add a proper way to assign a server here
-        server = { id: env.ServerId, url: `wss://${env.DiscordClientId}.discordsays.com/.proxy/api/rooms` };
+        server = { id: env.ServerId, url: `/.proxy/api/rooms` };
 
         break;
       }
