@@ -3,7 +3,7 @@
  */
 export enum ClientOpcodes {
   Ping = 0,
-  KickPlayer = 1,
+  KickPlayer = 1, // (Disallow running this mid-game)
   TransferHost = 2, // (Disallow running this mid-game)
   SetRoomSettings = 3,
   BeginGame = 4, // Actually begins the game (not a minigame)

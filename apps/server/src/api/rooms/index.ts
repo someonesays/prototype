@@ -132,6 +132,7 @@ rooms.get(
           switch (opcode) {
             case ClientOpcodes.KickPlayer: {
               if (isNotHost(state)) return sendError(state.user, "Only host can kick players");
+              if (!isLobby(state)) return sendError(state.user, "Cannot kick players during game");
               if (state.user.id === data.user) return sendError(state.user, "Cannot kick yourself");
 
               state.serverRoom.players.get(data.user)?.ws.close(1003, JSON.stringify({ code: MessageCodes.KickedFromRoom }));
@@ -421,18 +422,18 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (!data.to_user) data.to_user = state.serverRoom.room.host;
+              if (!data.user) data.user = state.serverRoom.room.host;
 
               if (!isStarted(state)) return sendError(state.user, "Cannot send private message when game hasn't started");
               if (!isReady(state)) return sendError(state.user, "Must be ready to send private message");
-              if (isNotHost(state) && data.to_user !== state.serverRoom.room.host)
+              if (isNotHost(state) && data.user !== state.serverRoom.room.host)
                 return sendError(state.user, "Only host can set any toUser to send it to");
-              if (!isUserReady(state, data.to_user))
+              if (!isUserReady(state, data.user))
                 return sendError(state.user, "Cannot find ready player with given id to send a message to");
 
               // Get host and the toUser
               const host = state.serverRoom.players.get(state.serverRoom.room.host);
-              const toUser = state.serverRoom.players.get(data.to_user);
+              const toUser = state.serverRoom.players.get(data.user);
               if (!host?.ready || !toUser?.ready) return;
 
               // Payload to send

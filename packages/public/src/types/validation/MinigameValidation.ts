@@ -20,7 +20,7 @@ export const MinigameValidation = {
     message: StateZod,
   }),
   [MinigameOpcodes.SendPrivateMessage]: z.object({
-    user: z.string().min(1).max(50),
+    user: z.string().min(1).max(50).optional(),
     message: StateZod,
   }),
 };
