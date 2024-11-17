@@ -3,7 +3,6 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes } from "@/public";
-import { VITE_BASE_API } from "$lib/utils/env";
 
 import { room, roomWs } from "$lib/components/stores/roomState";
 
@@ -64,6 +63,10 @@ onMount(() => {
     container.removeChild(iframe);
   };
 });
+
+function leaveGame() {
+  $roomWs?.close();
+}
 </script>
 
 <div class="minigame-container">
@@ -82,6 +85,8 @@ onMount(() => {
         </div>
         <br>
         <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
+        <br>
+        <button class="leave-button" onclick={() => leaveGame()}>Leave room</button>
       </div>
     </div>
     <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
@@ -217,6 +222,19 @@ onMount(() => {
     .volume-slider {
       --slider_colormix: var(--slider_activecolor);
     }
+  }
+  .leave-button {
+    background-color: var(--error-button);
+    color: var(--secondary);
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin-top: 8px;
+    padding: 10px;
+    width: 100%;
+  }
+  .leave-button:hover {
+    background-color: var(--error-button-hover);
   }
   @media (hover: hover) {
     .minigame-settings-button:hover {

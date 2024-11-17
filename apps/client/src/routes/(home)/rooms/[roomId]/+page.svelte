@@ -83,7 +83,7 @@ onMount(() => {
     });
     $roomWs.on(ServerOpcodes.PlayerLeft, (evt) => {
       const player = $room?.players.find((p) => p.id === evt.user);
-      if (!player) throw new Error("Cannot find the player who left the room");
+      if (!player) return; // !player will be true when the host leaves the room during a game
 
       $room?.players.splice($room?.players.indexOf(player), 1);
     });

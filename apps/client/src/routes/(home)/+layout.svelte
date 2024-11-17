@@ -4,13 +4,15 @@ let { children } = $props();
 
 <style>
   :root {
-    --primary-background: #ece2fc;
-    --secondary-background: #fafafa;
+    --primary: #ece2fc;
+    --secondary: #fafafa;
     
     --primary-button: #5812e2;
     --success-button: #23a55a;
     --error-button: #aa0e32;
     --secondary-button: #4c5660;
+
+    --error-button-hover: #850725;
 
     --primary-text: #000000;
     --secondary-text: #242424;
