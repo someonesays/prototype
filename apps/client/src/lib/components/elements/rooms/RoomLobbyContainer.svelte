@@ -36,6 +36,10 @@ function copyInviteLink() {
 function startGame() {
   $roomWs?.send({ opcode: ClientOpcodes.BeginGame, data: {} });
 }
+
+function leaveGame() {
+  return $roomWs?.close();
+}
 </script>
 
 {#if $room}
@@ -71,6 +75,7 @@ function startGame() {
   <p>
     <button onclick={() => copyInviteLink()}>Invite</button>
     <button onclick={() => startGame()} disabled={$room.room.host !== $room.user}>Start</button>
+    <button onclick={() => leaveGame()}>Leave room</button>
   </p>
 {:else}
   <p>TODO: Make a loading screen animation of the lobby here!</p>
