@@ -81,6 +81,7 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
   eventSelect.onchange = () => {
     if (!eventSelect.value) {
       sendButton.style.display = "none";
+      optionsSpan.innerHTML = "";
       return;
     }
 
