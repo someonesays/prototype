@@ -6,6 +6,8 @@ import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
 import { room, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
+import { VITE_BASE_API } from "$lib/utils/env";
+import { isEmbedded } from "$lib/utils/discord";
 
 let container: HTMLDivElement;
 let authorText = $state("Someone");
@@ -70,7 +72,9 @@ onMount(() => {
   minigamePromptText = $room.minigame.prompt;
   minigameTextOpacity = 1;
 
-  iframe.src = `/.proxy/api/proxy/${$room.minigame.id}/`;
+  iframe.src = !isEmbedded
+    ? `${VITE_BASE_API}/.proxy/api/proxy/${$room.minigame.id}/`
+    : `/.proxy/api/proxy/${$room.minigame.id}/`;
 
   return () => {
     sdk.destroy();
