@@ -15,7 +15,7 @@ export const minigames = [
     urlHost: "localhost:5173",
     urlSecure: false,
     pathType: MinigamePathType.WholePath,
-    minimumPlayersToStart: 2, // (there's nothing stopping a player from leaving after a game starts)
+    minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },

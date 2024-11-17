@@ -5,9 +5,8 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
-import { room, roomWs } from "$lib/components/stores/roomState";
-import { displayName } from "$lib/components/stores/displayName";
-import { kickedReason } from "$lib/components/stores/kickedReason";
+import { room, roomParentSdk, roomWs } from "$lib/components/stores/roomState";
+import { displayName, kickedReason } from "$lib/components/stores/lobby";
 
 import {
   MessageCodesToText,
@@ -21,12 +20,14 @@ import {
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
+import { volumeValue } from "$lib/components/stores/settings";
 
 // Get params
 const roomId = $page.params.roomId;
 
 // States
 let connected = $state(false);
+let minigameReady = $state(false);
 let allowExitingPage = $state(true);
 let exitedPage = $state(false);
 
@@ -85,6 +86,11 @@ onMount(() => {
       const player = $room?.players.find((p) => p.id === evt.user);
       if (!player) return; // !player will be true when the host leaves the room during a game
 
+      if (minigameReady) {
+        // If the host leave, sending remove player is unnecessary because the game will end anyways
+        $roomParentSdk?.removePlayer(evt);
+      }
+
       $room?.players.splice($room?.players.indexOf(player), 1);
     });
     $roomWs.on(ServerOpcodes.TransferHost, (evt) => {
@@ -112,6 +118,8 @@ onMount(() => {
       $room.room.state = null;
       $room.players = evt.players;
 
+      minigameReady = false;
+
       // TODO: Do something with evt.reason
       switch (evt.reason) {
         case MinigameEndReason.MinigameEnded: {
@@ -137,21 +145,72 @@ onMount(() => {
 
       player.ready = true;
 
-      // TODO: Alert minigame that a player is ready.
+      if ($room.user === player.id) {
+        // Confirm the handshake
+        // The point of the JSON.parse(JSON.stringify()) is because Svelte uses proxies so it'll break without that
+        $roomParentSdk?.confirmHandshake(
+          JSON.parse(
+            JSON.stringify({
+              settings: {
+                language: "en-US",
+                volume: $volumeValue,
+              },
+              user: $room.user,
+              room: {
+                host: $room.room.host,
+                state: $room.room.state,
+              },
+              players: $room.players
+                .filter((p) => p.ready)
+                .map((p) => ({
+                  id: p.id,
+                  displayName: p.displayName,
+                  state: p.state,
+                })),
+            }),
+          ),
+        );
+
+        // Send minigame start game with joined_late if it already started
+        if ($room.status === GameStatus.Started) {
+          $roomParentSdk?.setGameStarted({ joined_late: true });
+        }
+
+        // Set minigameReady = true to start recieving events through the SDK
+        minigameReady = true;
+      } else {
+        // Sends to minigame that the player is ready
+        // You should never recieve a readyPlayer event of yourself
+        // Also, the point of the JSON.parse(JSON.stringify()) is because Svelte uses proxies so it'll break without that
+        $roomParentSdk?.readyPlayer(
+          JSON.parse(
+            JSON.stringify({
+              player: {
+                id: player.id,
+                displayName: player.displayName,
+                state: player.state,
+              },
+              joined_late: $room.status === GameStatus.Started,
+            }),
+          ),
+        );
+      }
     });
     $roomWs.on(ServerOpcodes.MinigameStartGame, () => {
       if (!$room) throw new Error("Cannot find $room on start minigame");
 
       $room.status = GameStatus.Started;
 
-      // TODO: Alert minigame that the game has started!
+      if (!minigameReady) return;
+      $roomParentSdk?.setGameStarted({ joined_late: false });
     });
     $roomWs.on(ServerOpcodes.MinigameSetGameState, (evt) => {
       if (!$room) throw new Error("Cannot find $room on start minigame");
 
       $room.room.state = evt.state;
 
-      // TODO: Alert minigame that the room's state has changed
+      if (!minigameReady) return;
+      $roomParentSdk?.updateGameState(evt);
     });
     $roomWs.on(ServerOpcodes.MinigameSetPlayerState, (evt) => {
       if (!$room) throw new Error("Cannot find $room on start minigame");
@@ -161,13 +220,16 @@ onMount(() => {
 
       player.state = evt.state;
 
-      // TODO: Alert minigame that the player's state has changed
+      if (!minigameReady) return;
+      $roomParentSdk?.updatePlayerState(evt);
     });
     $roomWs.on(ServerOpcodes.MinigameSendGameMessage, (evt) => {
-      // TODO: Alert minigame that the game has sent a message
+      if (!minigameReady) return;
+      $roomParentSdk?.sendGameMessage(evt);
     });
     $roomWs.on(ServerOpcodes.MinigameSendPrivateMessage, (evt) => {
-      // TODO: Alert minigame that the player has sent a private message
+      if (!minigameReady) return;
+      $roomParentSdk?.sendPrivateMessage(evt);
     });
 
     // Handles WebSocket closure
@@ -196,6 +258,7 @@ onMount(() => {
     // Close WebSocket and remove it from stores
     $roomWs?.close();
     $roomWs = null;
+    $roomParentSdk = null;
   };
 });
 

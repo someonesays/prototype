@@ -4,13 +4,13 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
-import { room, roomWs } from "$lib/components/stores/roomState";
+import { room, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
+import { volumeValue } from "$lib/components/stores/settings";
 
 let container: HTMLDivElement;
 let authorText = $state("Someone");
 let minigamePromptText = $state("");
 let minigameTextOpacity = $state(0);
-let volumeValue = $state(100);
 
 let isSettingsOpen = $state(false);
 
@@ -24,31 +24,45 @@ onMount(() => {
   container.appendChild(iframe);
 
   const sdk = new ParentSdk({ iframe });
-
-  // TODO: Make sure to get states from events and save ready EVEN when the player isn't ready!!
+  $roomParentSdk = sdk;
 
   sdk.once(MinigameOpcodes.Handshake, () => {
-    sdk.confirmHandshake({
-      // TODO: Remove these placeholder messages
-      started: false,
-      settings: {
-        language: "en-US",
-        volume: 1,
-      },
-      user: "mock_user_id",
-      room: {
-        host: "mock_user_id",
-        state: null,
-      },
-      players: [
-        {
-          id: "mock_user_id",
-          displayName: "mock display name",
-          ready: false,
-          points: 0,
-          state: null,
-        },
-      ],
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameHandshake,
+      data: {},
+    });
+  });
+  sdk.on(MinigameOpcodes.EndGame, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameEndGame,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SetClientPrompt, (evt) => {
+    minigamePromptText = evt.prompt;
+  });
+  sdk.on(MinigameOpcodes.SetGameState, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameSetGameState,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SetPlayerState, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameSetPlayerState,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SendGameMessage, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameSendGameMessage,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SendPrivateMessage, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameSendPrivateMessage,
+      data: evt,
     });
   });
 
@@ -60,6 +74,7 @@ onMount(() => {
 
   return () => {
     sdk.destroy();
+    $roomParentSdk = null;
     container.removeChild(iframe);
   };
 });
@@ -87,10 +102,10 @@ function leaveOrEndGame() {
       <div>
         <div>
           <p class="volume-text-left">Volume</p>
-          <p class="volume-text-right">{volumeValue}%</p>
+          <p class="volume-text-right">{$volumeValue}%</p>
         </div>
         <br>
-        <input class="volume-slider" type="range" min="0" max="100" bind:value={volumeValue} />
+        <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
         <br>
         <button class="leave-button" onclick={() => leaveOrEndGame()}>
           {#if $room && $room.room.host === $room.user}

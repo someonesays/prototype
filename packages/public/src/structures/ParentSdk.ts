@@ -104,8 +104,8 @@ export class ParentSdk {
   updateSettings(payload: ParentTypes[ParentOpcodes.UpdateSettings]) {
     this.postMessage(ParentOpcodes.UpdateSettings, payload);
   }
-  setGameStarted() {
-    this.postMessage(ParentOpcodes.StartGame, {});
+  setGameStarted(payload: ParentTypes[ParentOpcodes.StartGame]) {
+    this.postMessage(ParentOpcodes.StartGame, payload);
   }
   readyPlayer(payload: ParentTypes[ParentOpcodes.MinigamePlayerReady]) {
     this.postMessage(ParentOpcodes.MinigamePlayerReady, payload);

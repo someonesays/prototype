@@ -54,7 +54,6 @@ export interface ServerTypes {
   [ServerOpcodes.MinigamePlayerReady]: {
     user: string;
   };
-  // biome-ignore lint/complexity/noBannedTypes: Doesn't need to send anything over
   [ServerOpcodes.MinigameStartGame]: {};
   [ServerOpcodes.MinigameSetGameState]: {
     state: State;
@@ -67,8 +66,8 @@ export interface ServerTypes {
     message: State;
   };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
-    fromUser: string; // User who sent it
-    toUser: string; // Who it was sent by (mainly for the host)
+    from_user: string; // User who sent it
+    to_user: string; // Who it was sent by (mainly for the host)
     message: State;
   };
 }

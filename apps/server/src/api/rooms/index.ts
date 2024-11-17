@@ -160,31 +160,31 @@ rooms.get(
             case ClientOpcodes.SetRoomSettings: {
               if (isNotHost(state)) return sendError(state.user, "Only host can change room settings");
               if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
-              if (data.minigameId === undefined && data.packId === undefined) {
+              if (data.minigame_id === undefined && data.pack_id === undefined) {
                 return sendError(state.user, "Missing options to change room settings");
               }
 
               const newSettings: { pack?: Pack | null; minigame?: Minigame | null } = {};
 
-              if (data.packId) {
+              if (data.pack_id) {
                 // Get minigame pack
-                const pack = await getPackPublic({ id: data.packId });
+                const pack = await getPackPublic({ id: data.pack_id });
                 if (!pack) return sendError(state.user, "Failed to find pack");
 
                 // Set pack in new settings
                 newSettings.pack = pack;
-              } else if (data.packId === null) {
+              } else if (data.pack_id === null) {
                 newSettings.pack = null;
               }
 
-              if (data.minigameId) {
+              if (data.minigame_id) {
                 // Get minigame
-                const minigame = await getMinigamePublic(data.minigameId);
+                const minigame = await getMinigamePublic(data.minigame_id);
                 if (!minigame) return sendError(state.user, "Failed to find minigame");
 
                 // Set pack in new settings
                 newSettings.minigame = minigame;
-              } else if (data.minigameId === null) {
+              } else if (data.minigame_id === null) {
                 newSettings.minigame = null;
               }
 
@@ -262,8 +262,10 @@ rooms.get(
               if (isLobby(state)) return sendError(state.user, "Cannot handshake when a game is not ongoing");
               if (isReady(state)) return sendError(state.user, "Cannot handshake if already ready");
 
+              // Set ready value of player to true
               state.user.ready = true;
 
+              // Broadcast to everyone that the player is ready
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.MinigamePlayerReady,
@@ -271,6 +273,7 @@ rooms.get(
               });
 
               // Ignore actions below if game already started
+              // If the user joined after the game already started, send the minigame start game event!
               if (state.serverRoom.status === GameStatus.Started) return;
 
               // Start game if everyone is ready.
@@ -418,24 +421,24 @@ rooms.get(
               return;
             }
             case ClientOpcodes.MinigameSendPrivateMessage: {
-              if (!data.toUser) data.toUser = state.serverRoom.room.host;
+              if (!data.to_user) data.to_user = state.serverRoom.room.host;
 
               if (!isStarted(state)) return sendError(state.user, "Cannot send private message when game hasn't started");
               if (!isReady(state)) return sendError(state.user, "Must be ready to send private message");
-              if (isNotHost(state) && data.toUser !== state.serverRoom.room.host)
+              if (isNotHost(state) && data.to_user !== state.serverRoom.room.host)
                 return sendError(state.user, "Only host can set any toUser to send it to");
-              if (!isUserReady(state, data.toUser))
+              if (!isUserReady(state, data.to_user))
                 return sendError(state.user, "Cannot find ready player with given id to send a message to");
 
               // Get host and the toUser
               const host = state.serverRoom.players.get(state.serverRoom.room.host);
-              const toUser = state.serverRoom.players.get(data.toUser);
+              const toUser = state.serverRoom.players.get(data.to_user);
               if (!host?.ready || !toUser?.ready) return;
 
               // Payload to send
               const payload = {
-                fromUser: state.user.id,
-                toUser: toUser.id,
+                from_user: state.user.id,
+                to_user: toUser.id,
                 message: data.message,
               };
 

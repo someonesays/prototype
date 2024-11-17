@@ -1,25 +1,27 @@
-import type { ParentOpcodes, State, GamePlayer, GameRoom, GameSettings } from "../../types";
+import type { ParentOpcodes, State, MinigamePlayer, GameRoom, GameSettings } from "../../types";
 
 export interface ParentTypes {
   [ParentOpcodes.Ready]: {
-    started: boolean;
     settings: GameSettings;
     user: string;
     room: GameRoom;
-    players: GamePlayer[];
+    players: MinigamePlayer[];
   };
   [ParentOpcodes.UpdateSettings]: {
     settings: GameSettings;
   };
-  [ParentOpcodes.StartGame]: {};
+  [ParentOpcodes.StartGame]: {
+    joined_late: boolean;
+  };
   [ParentOpcodes.MinigamePlayerReady]: {
-    player: GamePlayer;
+    player: MinigamePlayer;
+    joined_late: boolean;
   };
   [ParentOpcodes.PlayerLeft]: {
     user: string;
   };
   [ParentOpcodes.UpdatedGameState]: {
-    room: GameRoom;
+    state: State;
   };
   [ParentOpcodes.UpdatedPlayerState]: {
     user: string;
@@ -29,7 +31,8 @@ export interface ParentTypes {
     message: State;
   };
   [ParentOpcodes.ReceivedPrivateMessage]: {
-    user: string;
+    from_user: string;
+    to_user: string;
     message: State;
   };
 }

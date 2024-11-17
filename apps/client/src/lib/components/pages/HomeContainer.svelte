@@ -3,9 +3,7 @@ import { beforeNavigate, goto } from "$app/navigation";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 
-import { roomIdToJoin } from "$lib/components/stores/roomIdToJoin";
-import { displayName } from "$lib/components/stores/displayName";
-import { kickedReason } from "$lib/components/stores/kickedReason";
+import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
 
 // Remove kicked reason if you leave the page

@@ -10,8 +10,8 @@ export const ClientValidation = {
     user: z.string().min(1).max(50),
   }),
   [ClientOpcodes.SetRoomSettings]: z.object({
-    packId: z.string().min(1).max(50).nullable().optional(),
-    minigameId: z.string().min(1).max(50).nullable().optional(),
+    pack_id: z.string().min(1).max(50).nullable().optional(),
+    minigame_id: z.string().min(1).max(50).nullable().optional(),
   }),
   [ClientOpcodes.BeginGame]: z.object({}),
   [ClientOpcodes.MinigameHandshake]: z.object({}),
@@ -29,7 +29,7 @@ export const ClientValidation = {
     message: StateZod,
   }),
   [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
-    toUser: z.string().min(1).max(50).optional(), // Defaults to host
+    to_user: z.string().min(1).max(50).optional(), // Defaults to host
     message: StateZod,
   }),
 };

@@ -23,11 +23,46 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
 
-import { MinigameSdk } from "@/public";
+import { MinigameSdk, ParentOpcodes } from "@/public";
+
+window.oncontextmenu = (evt) => evt.preventDefault();
 
 (async () => {
   const sdk = new MinigameSdk();
-  const ready = await sdk.ready();
+  console.debug("[PROMPT] SDK", sdk);
 
-  console.log("ready response", ready);
+  const minigame = await sdk.ready();
+  console.debug("[PROMPT] Ready", minigame);
+
+  sdk.on(ParentOpcodes.UpdateSettings, (evt) => {
+    console.debug("[PROMPT] UpdateSettings", evt);
+  });
+
+  sdk.on(ParentOpcodes.StartGame, (evt) => {
+    console.debug("[PROMPT] StartGame", evt);
+  });
+
+  sdk.on(ParentOpcodes.MinigamePlayerReady, (evt) => {
+    console.debug("[PROMPT] MinigamePlayerReady", evt);
+  });
+
+  sdk.on(ParentOpcodes.PlayerLeft, (evt) => {
+    console.debug("[PROMPT] PlayerLeft", evt);
+  });
+
+  sdk.on(ParentOpcodes.UpdatedGameState, (evt) => {
+    console.debug("[PROMPT] UpdatedGameState", evt);
+  });
+
+  sdk.on(ParentOpcodes.UpdatedPlayerState, (evt) => {
+    console.debug("[PROMPT] UpdatedPlayerState", evt);
+  });
+
+  sdk.on(ParentOpcodes.ReceivedGameMessage, (evt) => {
+    console.debug("[PROMPT] ReceivedGameMessage", evt);
+  });
+
+  sdk.on(ParentOpcodes.ReceivedPrivateMessage, (evt) => {
+    console.debug("[PROMPT] ReceivedPrivateMessage", evt);
+  });
 })();

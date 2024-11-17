@@ -12,8 +12,8 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
   $roomWs?.send({
     opcode: ClientOpcodes.SetRoomSettings,
     data: {
-      packId,
-      minigameId,
+      pack_id: packId,
+      minigame_id: minigameId,
     },
   });
 }

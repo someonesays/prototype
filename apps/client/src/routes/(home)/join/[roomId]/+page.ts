@@ -4,8 +4,7 @@ import { goto } from "$app/navigation";
 
 import { MessageCodes, MessageCodesToText, ParentSdk } from "@/public";
 
-import { roomIdToJoin } from "$lib/components/stores/roomIdToJoin";
-import { kickedReason } from "$lib/components/stores/kickedReason";
+import { roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 
 export async function load({ params }) {
   const roomId = params.roomId;
