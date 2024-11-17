@@ -25,6 +25,13 @@ function kickPlayer(user: string) {
   });
 }
 
+function transferHost(user: string) {
+  $roomWs?.send({
+    opcode: ClientOpcodes.TransferHost,
+    data: { user },
+  });
+}
+
 function copyInviteLink() {
   try {
     navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
@@ -53,6 +60,9 @@ function leaveGame() {
         {#if $room.room.host === $room.user && $room.user !== player.id}
           <button onclick={() => kickPlayer(player.id)}>
             Kick
+          </button>
+          <button onclick={() => transferHost(player.id)}>
+            Transfer Host
           </button>
         {/if}
       </li>
