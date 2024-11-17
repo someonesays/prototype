@@ -1,10 +1,13 @@
 <script lang="ts">
 import { beforeNavigate, goto } from "$app/navigation";
-
-import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
+import { MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
+import { VITE_BASE_API } from "$lib/utils/env";
+
+import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
+import { launcherMatchmaking } from "../stores/launcher";
 
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
@@ -13,13 +16,34 @@ beforeNavigate(() => {
 });
 
 // Handle joining room
-function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
+async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
 
   const form = new FormData(evt.target as HTMLFormElement);
   $displayName = form.get("display_name") as string;
 
   setCookie("display_name", $displayName);
+
+  // Get room from matchmaking
+  const {
+    success,
+    code,
+    data: matchmaking,
+  } = await ParentSdk.getMatchmaking({
+    roomId: $roomIdToJoin ?? undefined,
+    displayName: $displayName,
+    baseUrl: VITE_BASE_API,
+  });
+
+  if (!success) {
+    $kickedReason = `Failed to connect to matchmaking: ${MessageCodesToText[code]}`;
+    return goto("/");
+  }
+
+  // Set matchmaking JWT
+  $launcherMatchmaking = matchmaking;
+
+  // Goto to room page
   goto(`/rooms/${encodeURIComponent($roomIdToJoin ?? "new")}`);
 }
 </script>

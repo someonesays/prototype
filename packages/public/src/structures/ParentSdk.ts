@@ -34,7 +34,7 @@ export class ParentSdk {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.Normal, room_id: roomId, display_name: displayName }),
+        body: JSON.stringify({ type: MatchmakingType.Guest, room_id: roomId, display_name: displayName }),
       });
       const data = await res.json();
 

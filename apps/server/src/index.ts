@@ -39,7 +39,6 @@ app.use(
 );
 
 app.route("/api", api);
-app.route("/.proxy/api", api);
 
 Bun.serve({
   port: env.Port,

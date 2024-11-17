@@ -14,7 +14,10 @@ export async function verifyDiscordOAuth2Token(code: string) {
     }),
   });
 
-  if (res.status !== 200) return null;
+  if (res.status !== 200) {
+    console.error("Failed to verify Discord OAuth2 token", await res.json());
+    return null;
+  }
 
   return (await res.json()) as {
     access_token: string;
@@ -31,7 +34,10 @@ export async function getDiscordUser(accessToken: string) {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  if (res.status !== 200) return null;
+  if (res.status !== 200) {
+    console.error("Failed to get Discord user", await res.json());
+    return null;
+  }
   return (await res.json()) as {
     id: string;
     username: string;
@@ -62,7 +68,10 @@ export async function getDiscordMember({ guildId, accessToken }: { guildId: stri
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  if (res.status !== 200) return null;
+  if (res.status !== 200) {
+    console.error("Failed to get Discord member", await res.json());
+    return null;
+  }
   return (await res.json()) as {
     user?: Awaited<ReturnType<typeof getDiscordUser>>;
     nick?: string;
@@ -78,11 +87,14 @@ export async function getDiscordMember({ guildId, accessToken }: { guildId: stri
 export async function getActivityInstance(instanceId: string) {
   const res = await fetch(`https://discord.com/api/applications/${env.DiscordClientId}/activity-instances/${instanceId}`, {
     headers: {
-      authorization: env.DiscordToken,
+      authorization: `Bot ${env.DiscordToken}`,
       "content-type": "application/json",
     },
   });
-  if (res.status !== 200) return null;
+  if (res.status !== 200) {
+    console.error("Failed to get Discord activity instance", await res.json());
+    return null;
+  }
   return (await res.json()) as {
     application_id: string;
     instance_id: string;

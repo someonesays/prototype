@@ -1,6 +1,8 @@
 <script lang="ts">
+import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
 import { room, roomWs } from "$lib/components/stores/roomState";
 import { ClientOpcodes } from "@/public";
+import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
@@ -32,9 +34,26 @@ function transferHost(user: string) {
   });
 }
 
-function copyInviteLink() {
+async function copyInviteLink() {
   try {
-    navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
+    switch ($launcher) {
+      case "normal": {
+        navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
+        break;
+      }
+      case "discord": {
+        if (!$launcherDiscordSdk) throw new Error("Missing DiscordSDK. This should never happen.");
+
+        const { permissions } = await $launcherDiscordSdk.commands.getChannelPermissions();
+        if (PermissionUtils.can(Permissions.CREATE_INSTANT_INVITE, permissions)) {
+          await $launcherDiscordSdk.commands.openInviteDialog();
+        } else {
+          console.warn("User doesn't have CREATE_INSTANT_INVITE permissions!");
+        }
+
+        break;
+      }
+    }
   } catch (err) {
     console.error(err);
   }
@@ -85,7 +104,9 @@ function leaveGame() {
   <p>
     <button onclick={() => copyInviteLink()}>Invite</button>
     <button onclick={() => startGame()} disabled={$room.room.host !== $room.user}>Start</button>
-    <button onclick={() => leaveGame()}>Leave room</button>
+    {#if $launcher === "normal"}
+      <button onclick={() => leaveGame()}>Leave room</button>
+    {/if}
   </p>
 {:else}
   <p>TODO: Make a loading screen animation of the lobby here!</p>

@@ -28,7 +28,7 @@ export function createWebSocketMiddleware<
       if (c.req.header("upgrade") !== "websocket") return await next();
 
       const events = await middleware(c);
-      if (!events) return c.newResponse(null);
+      if (!events) return c.newResponse(null, { status: 500 });
 
       return upgradeWebSocket(() => ({
         onOpen: (evt, ws) => events.open?.({ evt, ws }),
@@ -38,7 +38,7 @@ export function createWebSocketMiddleware<
       }))(c, next);
     } catch (err) {
       console.error(err);
-      return c.newResponse(null);
+      return c.newResponse(null, 500);
     }
   });
 }

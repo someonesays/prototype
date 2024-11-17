@@ -3,7 +3,13 @@ import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { zValidator } from "@hono/zod-validator";
 import { createCuid, encodeRoomId, decodeRoomId } from "@/utils";
-import { MatchmakingType, MessageCodes, type MatchmakingDataJWT } from "@/public";
+import {
+  MatchmakingType,
+  MessageCodes,
+  type APIMatchmakingResponse,
+  type APIMatchmakingResponseMetadata,
+  type MatchmakingDataJWT,
+} from "@/public";
 import {
   checkIfRoomExists,
   getActivityInstance,
@@ -31,13 +37,17 @@ matchmaking.post(
     "json",
     z.union([
       z.object({
-        type: z.literal(MatchmakingType.Normal),
+        type: z.literal(MatchmakingType.Guest),
         display_name: z.string().min(1).max(32),
         room_id: z.string().length(8).optional(),
       }),
       z.object({
+        // TOOD: Add authentication for people who have accounts
+        type: z.literal(MatchmakingType.Authenticated),
+      }),
+      z.object({
         type: z.literal(MatchmakingType.Discord),
-        activity_id: z.string().min(1),
+        instance_id: z.string().min(1),
         code: z.string().min(1),
       }),
     ]),
@@ -55,8 +65,12 @@ matchmaking.post(
     let displayName: string | null = null;
     let server: MatchmakingDataJWT["room"]["server"] | null = null;
 
+    // Discord
+    let discordAccessToken: string | null = null;
+
+    // Get server to make the room in
     switch (type) {
-      case MatchmakingType.Normal: {
+      case MatchmakingType.Guest: {
         // Set display name
         displayName = payload.display_name;
 
@@ -91,22 +105,29 @@ matchmaking.post(
 
         break;
       }
+      case MatchmakingType.Authenticated: {
+        // TODO: Add authenication for people who have accounts
+        return c.json({ code: MessageCodes.NotImplemented }, 501);
+      }
       case MatchmakingType.Discord: {
         if (!env.DiscordClientId || !env.DiscordClientSecret || !env.DiscordToken) {
           return c.json({ code: MessageCodes.NotImplemented }, 501);
         }
 
-        const { activity_id: activityId, code } = payload;
+        const { instance_id: instanceId, code } = payload;
 
         const oauth2 = await verifyDiscordOAuth2Token(code);
-        if (oauth2?.scope !== "guilds.members.read identify") {
+        if (!oauth2) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
+
+        const scopes = oauth2.scope.split(" ");
+        if (!scopes.includes("identify") || !scopes.includes("guilds") || !scopes.includes("guilds.members.read")) {
           return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
         }
 
         const user = await getDiscordUser(oauth2.access_token);
-        if (!user) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
+        if (!user) return c.json({ code: MessageCodes.InternalError }, 500);
 
-        const instance = await getActivityInstance(activityId);
+        const instance = await getActivityInstance(instanceId);
         if (!instance) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
 
         displayName = user.global_name || user.username || user.id;
@@ -114,12 +135,14 @@ matchmaking.post(
         const guildId = instance.location.guild_id;
         if (guildId) {
           const member = await getDiscordMember({ guildId, accessToken: oauth2.access_token });
-          if (!member) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
+          if (!member) return c.json({ code: MessageCodes.InternalError }, 500);
 
           displayName = member.nick || displayName;
         }
 
+        // Set the room ID and access_token
         roomId = `discord:${instance.instance_id}`;
+        discordAccessToken = oauth2.access_token;
 
         // TODO: Add a proper way to assign a server here
         server = { id: env.ServerId, url: `/.proxy/api/rooms` };
@@ -143,8 +166,24 @@ matchmaking.post(
     const data: MatchmakingDataJWT = { user, room, exp };
     const authorization = await sign(data, env.JWTSecret, env.JWTAlgorithm);
 
+    // Set metadata
+    let metadata: APIMatchmakingResponseMetadata;
+    switch (type) {
+      case MatchmakingType.Discord:
+        if (!discordAccessToken) throw new Error("Missing Discord access_token on matchmaking. This should never happen.");
+        metadata = { type, access_token: discordAccessToken };
+        break;
+      default:
+        metadata = { type };
+        break;
+    }
+
     // Send response
-    return c.json({ authorization, data });
+    return c.json({
+      authorization,
+      data,
+      metadata,
+    } as APIMatchmakingResponse);
   },
 );
 

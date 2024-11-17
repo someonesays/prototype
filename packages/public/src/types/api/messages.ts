@@ -3,6 +3,7 @@ export enum MessageCodes {
   NotFound = "not_found",
   UnexpectedError = "unexpected_error",
   InvalidAuthorization = "missing_authorization",
+  InternalError = "internal_error",
 
   RoomNotFound = "room_not_found",
   ServersBusy = "servers_busy",
@@ -17,7 +18,8 @@ export const MessageCodesToText = {
   [MessageCodes.HelloWorld]: "Hello world!",
   [MessageCodes.NotFound]: "Not found.",
   [MessageCodes.UnexpectedError]: "An unexpected error has occurred.",
-  [MessageCodes.InvalidAuthorization]: "Invalid authorization token!",
+  [MessageCodes.InvalidAuthorization]: "Invalid authorization!",
+  [MessageCodes.InternalError]: "An internal error has occurred.",
 
   [MessageCodes.RoomNotFound]: "The room could not be found.",
   [MessageCodes.ServersBusy]: "The servers are currently busy! Please try again later.",
