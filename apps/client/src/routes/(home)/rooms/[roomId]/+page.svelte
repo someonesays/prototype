@@ -105,7 +105,7 @@ onMount(() => {
       $room.pack = evt.pack;
     });
 
-    // TODO: Handle minigame
+    // Handle minigame
     $roomWs.on(ServerOpcodes.LoadMinigame, (evt) => {
       if (!$room) throw new Error("Cannot find $room on load minigame");
       $room.status = GameStatus.WaitingForPlayersToLoadMinigame;
