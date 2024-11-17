@@ -29,17 +29,28 @@ export class ParentSdk {
     return res.status === 200;
   }
 
-  static async getMatchmaking({
-    type,
-    roomId,
-    displayName,
-    baseUrl,
-  }: { type: MatchmakingType; roomId?: string; displayName: string; baseUrl: string }) {
+  static async getMatchmaking({ roomId, displayName, baseUrl }: { roomId?: string; displayName: string; baseUrl: string }) {
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type, room_id: roomId, display_name: displayName }),
+        body: JSON.stringify({ type: MatchmakingType.Normal, room_id: roomId, display_name: displayName }),
+      });
+      const data = await res.json();
+
+      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      return { success: true as true, data: data as APIMatchmakingResponse };
+    } catch (err) {
+      return { success: false as false, code: MessageCodes.UnexpectedError };
+    }
+  }
+
+  static async getMatchmakingDiscord({ instanceId, code, baseUrl }: { instanceId: string; code: string; baseUrl: string }) {
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "post",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: MatchmakingType.Discord, instance_id: instanceId, code }),
       });
       const data = await res.json();
 

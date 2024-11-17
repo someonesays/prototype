@@ -19,7 +19,7 @@ export default {
 
   CuidFingerprint: process.env.CUID_FINGERPRINT as string,
 
-  DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
+  DiscordClientId: process.env.VITE_DISCORD_CLIENT_ID as string,
   DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
   DiscordToken: process.env.DISCORD_TOKEN as string,
 };
