@@ -16,6 +16,7 @@ export const minigames = [
     urlSecure: false,
     pathType: MinigamePathType.WholePath,
     minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
+    reportable: false, // official minigames shouldn't be reportable
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },
@@ -34,6 +35,7 @@ export const minigames = [
     urlSecure: true,
     pathType: MinigamePathType.Original,
     minimumPlayersToStart: 1,
+    reportable: true,
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },

@@ -4,6 +4,9 @@ export interface Minigame {
   id: string;
   name: string;
   description: string;
+  author: {
+    name: string;
+  };
   previewImage: {
     url: string;
     placeholder: string;
@@ -11,9 +14,7 @@ export interface Minigame {
   visibility: MinigameVisibility;
   prompt: string;
   minimumPlayersToStart: number;
-  author: {
-    name: string;
-  };
+  reportable: boolean;
   url: string;
   createdAt: string;
   updatedAt: string;

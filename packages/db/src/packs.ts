@@ -13,6 +13,7 @@ export const packs = [
       name: "Someone",
     },
     minigames: [minigames[0], minigames[1]],
+    reportable: false, // official minigame packs shouldn't be reportable
     createdAt: new Date().toString(),
     updatedAt: new Date().toString(),
   },

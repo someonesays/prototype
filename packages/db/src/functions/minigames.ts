@@ -20,6 +20,9 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
     id: minigame.id,
     name: minigame.name,
     description: minigame.description,
+    author: {
+      name: minigame.author.name,
+    },
     previewImage:
       minigame.previewImage && minigame.previewPlaceholderImage
         ? {
@@ -30,9 +33,7 @@ export async function getMinigamePublic(id: string): Promise<Minigame | null> {
     visibility: minigame.visibility,
     prompt: minigame.prompt,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
-    author: {
-      name: minigame.author.name,
-    },
+    reportable: minigame.reportable,
     url: `${env.ViteBaseApi}/api/proxy/${minigame.id}/`,
     createdAt: minigame.createdAt,
     updatedAt: minigame.updatedAt,
