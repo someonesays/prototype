@@ -12,7 +12,6 @@ export class MinigameSdk {
 
   constructor() {
     try {
-      // https://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
       if (window.self === window.top) throw new Error();
     } catch (e) {
       throw new Error("Failed to initiate MinigameSdk. Are you running this minigame inside the game?");
