@@ -7,6 +7,7 @@ import { MatchmakingType, MessageCodesToText, ParentSdk } from "@/public";
 
 import { goto } from "$app/navigation";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
+import { setCookie } from "$lib/utils/cookies";
 
 let failed = $state(false);
 

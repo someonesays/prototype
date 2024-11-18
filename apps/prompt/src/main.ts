@@ -159,6 +159,6 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
     }
   };
 
-  const res = await fetch("/.proxy/api");
-  console.log(res.status, await res.json());
+  // const res = await fetch("/.proxy/api");
+  // console.log(res.status, await res.json());
 })();

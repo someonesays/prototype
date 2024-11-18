@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "DOM",
+      "ESNext",
+      "DOM.Iterable"
+    ],
+    "module": "esnext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "rootDir": "src",
+    // TODO: Enable this check. It is stricter.
+    // https://app.asana.com/0/1202090529698493/1205406173366739/f
+    "noUncheckedIndexedAccess": false,
+    // TODO(gabemeola): Enable this check to ensure type imports are clear
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true
+  },
+  "include": ["src"],
+  "exclude": ["**/__tests__/*", "node_modules"]
+}
