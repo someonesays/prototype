@@ -1,3 +1,0 @@
-[submodule "packages/embedded-app-sdk"]
-	path = packages/embedded-app-sdk
-	url = https://github.com/real2two/embedded-app-sdk
