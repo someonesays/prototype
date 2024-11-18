@@ -74,13 +74,16 @@ export class ParentSdk {
     }
   }
 
-  constructor({ iframe }: { iframe: HTMLIFrameElement }) {
+  constructor({ iframe, targetOrigin = "*" }: { iframe: HTMLIFrameElement; targetOrigin?: string }) {
     this.iframe = iframe;
-    this.handleMessage = this.handleMessage.bind(this);
+    this.targetOrigin = targetOrigin;
 
+    this.handleMessage = this.handleMessage.bind(this);
     window.addEventListener("message", this.handleMessage, false);
   }
-  private handleMessage({ data }: MessageEvent) {
+  private handleMessage({ source, data }: MessageEvent) {
+    if (source !== this.iframe.contentWindow) return;
+
     if (!Array.isArray(data) || data.length !== 2 || !Object.values(MinigameOpcodes).includes(data[0])) {
       return console.error("Received an invalid data from the iframe:", data);
     }
