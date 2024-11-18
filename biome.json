@@ -4,7 +4,7 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["dist/", "build/", ".svelte-kit/", ".next/"]
+    "ignore": ["dist/", "build/", ".svelte-kit/", ".next/", "packages/embedded-app-sdk/"]
   },
   "formatter": {
     "indentStyle": "space",
