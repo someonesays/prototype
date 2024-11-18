@@ -26,7 +26,7 @@ export const matchmaking = new Hono();
 
 matchmaking.get("/", async (c) => {
   let roomId = c.req.query("room_id");
-  if (roomId?.length !== 8) return c.json({ code: MessageCodes.RoomNotFound }, 404);
+  if (roomId?.length !== 10) return c.json({ code: MessageCodes.RoomNotFound }, 404);
 
   const server = await findServerByRoomIfExists(roomId);
   if (!server) return c.json({ code: MessageCodes.RoomNotFound }, 404);
@@ -188,18 +188,18 @@ async function handlePostMatchmaking({
 }
 
 async function findServerByRoomIfExists(roomId: string) {
-  const decodedRoomId = decodeRoomId(roomId);
-  if (!decodedRoomId) return null;
+  const serverId = decodeRoomId(roomId);
+  if (!serverId) return null;
 
   // TODO: Finish joining rooms
   // - Get the room from the database
   // - Make sure the WebSocket URL is the URL from the database
   // - Check if the room ID is valid
 
-  if (decodedRoomId.serverId !== env.ServerId) return null;
+  if (serverId !== env.ServerId) return null;
 
   const { exists } = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
   if (!exists) return null;
 
-  return { id: decodedRoomId.serverId, url: `ws://localhost:${env.Port}/api/rooms` };
+  return { id: serverId, url: `ws://localhost:${env.Port}/api/rooms` };
 }

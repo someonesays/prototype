@@ -9,7 +9,7 @@ export default {
   ViteBaseApi: process.env.VITE_BASE_API || "",
 
   RoomAuthorization: process.env.ROOMS_AUTHORIZATION as string,
-  ServerId: Number(process.env.SERVER_ID),
+  ServerId: process.env.SERVER_ID as string,
   MaxRooms: Number(process.env.MAX_ROOMS),
 
   AllowedWsOrigins: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],

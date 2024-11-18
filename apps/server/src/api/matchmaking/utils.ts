@@ -11,7 +11,7 @@ export const zodPostMatchmakingValidator = z.union([
   z.object({
     type: z.literal(MatchmakingType.Guest),
     display_name: z.string().min(1).max(32),
-    room_id: z.string().length(8).optional(),
+    room_id: z.string().length(10).optional(),
   }),
   z.object({
     // TOOD: Add authentication for people who have accounts
