@@ -20,10 +20,10 @@ export class MinigameSdk {
     window.addEventListener("message", this.handleMessage.bind(this), false);
   }
   private handleMessage<O extends ParentOpcodes>({
-    origin,
+    source,
     data,
-  }: { origin: MessageEvent["origin"] } & { data: [O, ParentTypes[O]] }) {
-    if (new URL(origin).pathname !== new URL(this.targetOrigin).pathname) return;
+  }: { source: MessageEvent["source"] } & { data: [O, ParentTypes[O]] }) {
+    if (this.source !== source) return;
 
     const [opcode, payload] = data;
     switch (opcode) {
