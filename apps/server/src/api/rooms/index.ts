@@ -74,6 +74,7 @@ rooms.get(
             ws,
             messageType,
             displayName: user.displayName,
+            avatar: user.avatar,
             ready: false,
             state: null,
             points: 0,

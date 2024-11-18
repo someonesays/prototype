@@ -64,6 +64,7 @@ async function handlePostMatchmaking({
   // Get room ID
   let roomId: string | null = null;
   let displayName: string | null = null;
+  let avatar: string | null = null;
   let server: MatchmakingDataJWT["room"]["server"] | null = null;
 
   // Discord
@@ -74,6 +75,7 @@ async function handlePostMatchmaking({
     case MatchmakingType.Guest: {
       // Set display name
       displayName = payload.display_name;
+      avatar = `${env.FrontendUrl}/avatars/default.png`;
 
       // Handle finding/creating room
       if (payload.room_id) {
@@ -132,6 +134,9 @@ async function handlePostMatchmaking({
       if (!instance) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
 
       displayName = user.global_name || user.username || user.id;
+      avatar = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
+        : `https://cdn.discordapp.com/embed/avatars/${(BigInt(user.id) >> 22n) % 6n}.png`;
 
       const guildId = instance.location.guild_id;
       if (guildId) {
@@ -139,6 +144,9 @@ async function handlePostMatchmaking({
         if (!member) return c.json({ code: MessageCodes.InternalError }, 500);
 
         displayName = member.nick || displayName;
+        avatar = member.avatar
+          ? `https://cdn.discordapp.com/guilds/${guildId}/users/${user.id}/avatars/${member.avatar}`
+          : avatar;
       }
 
       // Set the room ID and access_token
@@ -154,12 +162,12 @@ async function handlePostMatchmaking({
 
   // server.url = `wss://${env.DiscordClientId}.discordsays.com/.proxy/api/rooms`; // TODO: DELETE THIS TEST FOR DISCORD
 
-  if (!server || !roomId || !displayName) {
+  if (!server || !roomId || !displayName || !avatar) {
     throw new Error("Either server, roomId or displayName is not defined. This should never happen.");
   }
 
   // Get user and room information
-  const user = { id: createCuid(), displayName };
+  const user = { id: createCuid(), displayName, avatar };
   const room = { id: roomId, server };
 
   // Create authorization token

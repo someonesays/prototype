@@ -11,6 +11,7 @@ export interface MatchmakingData {
   user: {
     id: string;
     displayName: string;
+    avatar: string;
   };
   room: {
     id: string;

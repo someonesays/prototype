@@ -73,6 +73,7 @@ function leaveGame() {
   <ul>
     {#each $room.players.sort((a, b) => b.points - a.points) as player}
       <li>
+        <img src={player.avatar} width="50" height="50" alt="{player.displayName}'s avatar" />
         {player.displayName}{$room.room.host === player.id ? " [HOST]" : ""}:
         {player.points} point{player.points === 1 ? "": "s"}
 

@@ -9,6 +9,7 @@ export function transformToGamePlayer(player: ServerPlayer): GamePlayer {
   return {
     id: player.id,
     displayName: player.displayName,
+    avatar: player.avatar,
     points: player.points,
     ready: player.ready,
     state: player.state,
