@@ -145,14 +145,10 @@ function leaveOrEndGame() {
     color: white;
   }
   .minigame-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     opacity: 0;
     text-align: center;
     height: calc(40px + 0.5vh);
     padding: calc(4px + 0.5vh);
-    max-height: calc(40px + 0.5vh);
     font-size: calc(16px + 0.25vh);
     overflow: auto;
     overflow-wrap: anywhere;

@@ -22,7 +22,7 @@ let { children } = $props();
     --report-flag: #ff0000;
 
     --bg-gradient-1: #611ded;
-    --bg-gradient-2: #f588c1;
+    --bg-gradient-2: #89cad9;
     --bg-checkers: #ffffff14;
     --bg-glow: #ff93f880;
   }
