@@ -40,6 +40,7 @@ matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), async (c)
   // TODO: Create a proper matchmaking system
   const payload = c.req.valid("json");
 
+  // TODO: Add rate limit middleware
   // TODO: Add captcha
 
   return handlePostMatchmaking({ c, payload });
@@ -75,7 +76,7 @@ async function handlePostMatchmaking({
     case MatchmakingType.Guest: {
       // Set display name
       displayName = payload.display_name;
-      avatar = `${env.FrontendUrl}/avatars/default.png`;
+      avatar = `${env.BaseFrontend}/avatars/default.png`;
 
       // Handle finding/creating room
       if (payload.room_id) {
@@ -96,14 +97,15 @@ async function handlePostMatchmaking({
           roomId = encodeRoomId(env.ServerId);
 
           // Check if room ID is already taken on the server
-          const { exists } = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
+          const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:3002`, roomId });
+          if (!success) return c.json({ code: MessageCodes.ServersBusy }, 500);
           if (!exists) break;
 
           // If it fails to retry 3 times, return MessageCodes.ServersBusy
           if (++retries === maxRetries) return c.json({ code: MessageCodes.ServersBusy }, 500);
         }
 
-        server = { id: env.ServerId, url: `ws://localhost:${env.Port}/api/rooms` };
+        server = { id: env.ServerId, url: `ws://localhost:3002/api/rooms/ws` };
       }
 
       break;
@@ -154,7 +156,7 @@ async function handlePostMatchmaking({
       discordAccessToken = oauth2.access_token;
 
       // TODO: Add a proper way to assign a server here
-      server = { id: env.ServerId, url: `/.proxy/api/rooms` };
+      server = { id: env.ServerId, url: `/.proxy/api/rooms/ws` };
 
       break;
     }
@@ -171,9 +173,9 @@ async function handlePostMatchmaking({
   const room = { id: roomId, server };
 
   // Create authorization token
-  const exp = Date.now() / 1000 + 300; // 5 minutes
+  const exp = Math.trunc(Date.now() / 1000 + 300); // 5 minutes
   const data: MatchmakingDataJWT = { user, room, exp };
-  const authorization = await sign(data, env.JWTSecret, env.JWTAlgorithm);
+  const authorization = await sign(data, env.RoomJwtSecret);
 
   // Set metadata
   let metadata: APIMatchmakingResponseMetadata;
@@ -206,8 +208,8 @@ async function findServerByRoomIfExists(roomId: string) {
 
   if (serverId !== env.ServerId) return null;
 
-  const { exists } = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
-  if (!exists) return null;
+  const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
+  if (!success || !exists) return null;
 
   return { id: serverId, url: `ws://localhost:${env.Port}/api/rooms` };
 }

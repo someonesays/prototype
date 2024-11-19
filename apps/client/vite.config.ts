@@ -14,6 +14,12 @@ export default defineConfig({
         secure: false,
         ws: true,
       },
+      "/api/rooms/000": {
+        target: "http://localhost:3002/api/rooms",
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
     },
   },
   preview: { port },

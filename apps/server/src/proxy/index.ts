@@ -48,7 +48,7 @@ proxy.use(route, async (c, next) => {
       frameSrc: [proxyHref],
       childSrc: [proxyHref, "blob:"],
       workerSrc: [proxyHref, "blob:"],
-      frameAncestors: ["'self'", env.FrontendUrl],
+      frameAncestors: ["'self'", env.BaseFrontend],
       baseUri: ["'self'"],
     },
     xFrameOptions: "",
@@ -108,7 +108,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
 
   const href = `${http}://${minigame.urlHost}`;
   const url = `${href}${path}${query}`;
-  const proxyHref = `${env.ViteBaseApi}${absolutePath}`;
+  const proxyHref = `${env.BaseApi}${absolutePath}`;
 
   return { proxyHref, url };
 }

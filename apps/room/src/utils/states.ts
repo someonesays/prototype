@@ -1,7 +1,7 @@
 import { MinigameEndReason, GameStatus, ServerOpcodes, type GamePrize } from "@/public";
 import { broadcastMessage } from "./messages";
 import { transformToGamePlayers } from "./transform";
-import type { ServerRoom, WSState } from "../types/rooms";
+import type { ServerRoom, WSState } from "./types";
 
 export function isNotHost(state: WSState) {
   return state.serverRoom.room.host !== state.user.id;

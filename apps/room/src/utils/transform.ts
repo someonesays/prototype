@@ -1,5 +1,5 @@
 import type { GamePlayer } from "@/public";
-import type { ServerPlayer } from "../types/rooms";
+import type { ServerPlayer } from "./types";
 
 export function transformToGamePlayers(players: ServerPlayer[] | Map<string, ServerPlayer>): GamePlayer[] {
   return [...players.values()].map((p) => transformToGamePlayer(p));

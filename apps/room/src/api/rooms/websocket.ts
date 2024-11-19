@@ -1,8 +1,22 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
+import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
 import {
-  gameRooms,
+  ClientOpcodes,
+  ServerOpcodes,
+  GameStatus,
+  MinigameEndReason,
+  GamePrizeType,
+  GamePrizePoints,
+  MessageCodes,
+  type GamePrize,
+  type MatchmakingDataJWT,
+  type Pack,
+  type Minigame,
+} from "@/public";
+import {
+  rooms,
   createWebSocketMiddleware,
   broadcastMessage,
   recieveMessage,
@@ -23,33 +37,10 @@ import {
   type WebSocketMiddlewareEvents,
   type WSState,
 } from "../../utils";
-import {
-  ClientOpcodes,
-  ServerOpcodes,
-  GameStatus,
-  MinigameEndReason,
-  GamePrizeType,
-  GamePrizePoints,
-  MessageCodes,
-  type GamePrize,
-  type MatchmakingDataJWT,
-  type Pack,
-  type Minigame,
-} from "@/public";
-import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
 
-export const rooms = new Hono();
+export const websocket = new Hono();
 
-rooms.get("/:id", async (c) => {
-  if (c.req.header("Authorization") !== env.RoomAuthorization) {
-    return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
-  }
-
-  const roomId = c.req.param("id");
-  return c.json({ exists: !!gameRooms.get(roomId) });
-});
-
-rooms.get(
+websocket.get(
   "/",
   createWebSocketMiddleware(async (c) => {
     const origin = c.req.header("origin");
@@ -61,7 +52,8 @@ rooms.get(
     let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
     if (!["Json", "Oppack"].includes(messageType)) return;
 
-    const { user, room } = (await verify(authorization.trim(), env.JWTSecret, env.JWTAlgorithm)) as MatchmakingDataJWT;
+    const { user, room } = (await verify(authorization.trim(), env.RoomJwtSecret)) as MatchmakingDataJWT;
+
     if (room.server.id !== env.ServerId) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
@@ -79,7 +71,7 @@ rooms.get(
             state: null,
             points: 0,
           } as ServerPlayer,
-          serverRoom: gameRooms.get(room.id) as ServerRoom,
+          serverRoom: rooms.get(room.id) as ServerRoom,
         };
 
         if (state.serverRoom) {
@@ -97,7 +89,7 @@ rooms.get(
           state.serverRoom.players.set(state.user.id, state.user);
         } else {
           // If the server is full, disallow the creation of new rooms
-          if (gameRooms.size > env.MaxRooms) {
+          if (rooms.size > env.MaxRooms) {
             return ws.close(1003, JSON.stringify({ code: MessageCodes.ServersBusy }));
           }
 
@@ -117,7 +109,7 @@ rooms.get(
             players,
           };
 
-          gameRooms.set(room.id, state.serverRoom);
+          rooms.set(room.id, state.serverRoom);
         }
 
         // Handle messages
@@ -479,7 +471,7 @@ rooms.get(
 
           // Delete the room if there's no more players in it
           if (!state.serverRoom.players.size) {
-            return gameRooms.delete(state.serverRoom.room.id);
+            return rooms.delete(state.serverRoom.room.id);
           }
 
           // If host left, assign new host
