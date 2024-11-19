@@ -34,7 +34,7 @@ app.use(
   }),
 );
 
-app.route(`/api`, api);
+app.route("/api", api);
 
 Bun.serve({
   port: env.Port,

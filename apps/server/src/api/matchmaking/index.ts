@@ -22,6 +22,10 @@ import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from 
 
 export const matchmaking = new Hono();
 
+// Testing values
+const testServerId = "000";
+const testServerPort = 3002;
+
 // Find if a room exists
 
 matchmaking.get("/", async (c) => {
@@ -94,10 +98,10 @@ async function handlePostMatchmaking({
 
         while (true) {
           // Generate new room ID based on the server ID
-          roomId = encodeRoomId(env.ServerId);
+          roomId = encodeRoomId(testServerId);
 
           // Check if room ID is already taken on the server
-          const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:3002`, roomId });
+          const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${testServerPort}`, roomId });
           if (!success) return c.json({ code: MessageCodes.ServersBusy }, 500);
           if (!exists) break;
 
@@ -105,7 +109,7 @@ async function handlePostMatchmaking({
           if (++retries === maxRetries) return c.json({ code: MessageCodes.ServersBusy }, 500);
         }
 
-        server = { id: env.ServerId, url: `ws://localhost:3002/api/rooms/ws` };
+        server = { id: testServerId, url: `ws://localhost:${testServerPort}/api/rooms` };
       }
 
       break;
@@ -156,7 +160,7 @@ async function handlePostMatchmaking({
       discordAccessToken = oauth2.access_token;
 
       // TODO: Add a proper way to assign a server here
-      server = { id: env.ServerId, url: `/.proxy/api/rooms/ws` };
+      server = { id: testServerId, url: `/.proxy/api/rooms/${testServerId}` };
 
       break;
     }
@@ -206,10 +210,10 @@ async function findServerByRoomIfExists(roomId: string) {
   // - Make sure the WebSocket URL is the URL from the database
   // - Check if the room ID is valid
 
-  if (serverId !== env.ServerId) return null;
+  if (serverId !== testServerId) return null;
 
-  const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${env.Port}`, roomId });
+  const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${testServerPort}`, roomId });
   if (!success || !exists) return null;
 
-  return { id: serverId, url: `ws://localhost:${env.Port}/api/rooms` };
+  return { id: serverId, url: `ws://localhost:${testServerPort}/api/rooms` };
 }

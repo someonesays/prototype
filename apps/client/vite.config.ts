@@ -8,14 +8,15 @@ export default defineConfig({
   server: {
     port,
     proxy: {
-      "/api": {
-        target: "http://localhost:3001",
+      "/api/rooms/000": {
+        target: "http://localhost:3002/api/rooms",
         changeOrigin: true,
         secure: false,
         ws: true,
+        rewrite: (path) => path.slice("/api/rooms/000".length),
       },
-      "/api/rooms/000": {
-        target: "http://localhost:3002/api/rooms",
+      "/api": {
+        target: "http://localhost:3001",
         changeOrigin: true,
         secure: false,
         ws: true,
