@@ -3,18 +3,12 @@ let { children } = $props();
 </script>
 
 <style>
-  .black-bg {
-    position: absolute;
-    background: #000000;
-    width: 100%;
-    height: 100%;
-  }
   .container {
     position: absolute;
+    background: linear-gradient(90deg, var(--bg-gradient-primary-1) 0%, var(--bg-gradient-primary-2) 100%);
     width: 100%;
     height: 100%;
 
-    /* animation-name: container-fade-out; */
     animation-duration: 2s;
     animation-fill-mode: forwards;
   }
@@ -24,16 +18,6 @@ let { children } = $props();
     height: 100%;
     top: 0;
     overflow: auto;
-  }
-  .primary-bg {
-    position: absolute;
-    background: linear-gradient(90deg, var(--bg-gradient-primary-1) 0%, var(--bg-gradient-primary-2) 100%);
-    width: 100%;
-    height: 100%;
-
-    /* animation-name: primary-bg-fade-out; */
-    animation-duration: 2s;
-    animation-fill-mode: forwards;
   }
   .pattern {
     position: relative;
@@ -55,9 +39,10 @@ let { children } = $props();
     background-position: center;
     mask-image: radial-gradient(#000000, #0000004d);
     
-    /* animation-name: pattern-fade-out; */
-    animation-duration: 2s;
+    animation-name: pattern-fade-in;
+    animation-duration: 1.5s;
     animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   .glow {
     position: absolute;
@@ -67,20 +52,14 @@ let { children } = $props();
     height: 100%;
     overflow: auto;
   }
-  @keyframes container-fade-out {
-    from {
-      opacity: 100%;
+  @keyframes pattern-fade-in {
+    0% {
+      background-color: #000000;
+      transform: scale(1.5);
     }
-    to {
-      opacity: 0%;
-    }
-  }
-  @keyframes primary-bg-fade-out {
-    from {
-      opacity: 100%;
-    }
-    to {
-      opacity: 0%;
+    100% {
+      background-color: #ffffff;
+      transform: scale(1);
     }
   }
   @keyframes pattern-fade-out {
@@ -95,13 +74,9 @@ let { children } = $props();
   }
 </style>
 
-<div class="black-bg"></div>
-
 <div class="container">
-  <div class="primary-bg">
-    <div class="glow"></div>
-  </div>
   <div class="pattern"></div>
+  <div class="glow"></div>
 
   <div class="child-container">
     {@render children()}
