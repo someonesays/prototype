@@ -33,4 +33,8 @@ import "$lib/styles/index.css";
     --bg-checkers: #ffffff14;
     --bg-glow: #ff93f880;
   }
+  :global(body) {
+    background-color: #000000;
+    color: #ffffff;
+  }
 </style>
