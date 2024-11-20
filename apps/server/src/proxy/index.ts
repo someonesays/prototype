@@ -103,10 +103,7 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
         : `/.proxy${c.req.path}`;
   }
 
-  const http = minigame.urlSecure ? "https" : "http";
-  // const ws = minigame.urlSecure ? "wss" : "ws";
-
-  const href = `${http}://${minigame.urlHost}`;
+  const href = minigame.proxyUrl;
   const url = `${href}${path}${query}`;
   const proxyHref = `${env.BaseApi}${absolutePath}`;
 

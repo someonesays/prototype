@@ -14,8 +14,7 @@ export const minigames = [
     author: {
       name: "Someone",
     },
-    urlHost: "localhost:5173",
-    urlSecure: false,
+    proxyUrl: "http://localhost:5173",
     pathType: MinigamePathType.WholePath,
     minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
     reportable: false, // official minigames shouldn't be reportable
@@ -35,8 +34,7 @@ export const minigames = [
     author: {
       name: "Nobody",
     },
-    urlHost: "example.com",
-    urlSecure: true,
+    proxyUrl: "https://example.com",
     pathType: MinigamePathType.Original,
     minimumPlayersToStart: 1,
     reportable: true,
