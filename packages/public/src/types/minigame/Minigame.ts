@@ -12,6 +12,10 @@ export interface Minigame {
     placeholder: string;
   } | null;
   visibility: MinigameVisibility;
+  legal: {
+    terms: string | null;
+    privacy: string | null;
+  };
   prompt: string;
   minimumPlayersToStart: number;
   reportable: boolean;

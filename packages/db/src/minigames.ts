@@ -9,6 +9,8 @@ export const minigames = [
     previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
     prompt: "Someone says **click the buttons**",
+    legalTermsUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    legalPrivacyUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     author: {
       name: "Someone",
     },
@@ -28,6 +30,8 @@ export const minigames = [
     previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
     prompt: "Someone says **kill yourself**",
+    legalTermsUrl: null,
+    legalPrivacyUrl: null,
     author: {
       name: "Nobody",
     },
