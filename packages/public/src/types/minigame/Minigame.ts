@@ -5,6 +5,7 @@ export interface Minigame {
   name: string;
   description: string;
   author: {
+    id: string;
     name: string;
   };
   previewImage: {
@@ -18,7 +19,5 @@ export interface Minigame {
   };
   prompt: string;
   minimumPlayersToStart: number;
-  reportable: boolean;
   createdAt: string;
-  updatedAt: string;
 }

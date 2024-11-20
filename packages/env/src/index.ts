@@ -9,6 +9,13 @@ export default {
   RoomAuthorization: process.env.ROOMS_AUTHORIZATION as string,
   RoomJwtSecret: process.env.ROOM_JWT_SECRET as string,
 
+  DatabaseHost: process.env.DATABASE_HOST as string,
+  DatabasePort: Number(process.env.DATABASE_PORT),
+  DatabaseUser: process.env.DATABASE_USER as string,
+  DatabasePassword: process.env.DATABASE_PASSWORD as string,
+  DatabaseName: process.env.DATABASE_NAME as string,
+  DatabaseSsl: process.env.DATABASE_SSL?.toLowerCase() === "true",
+
   // Room-only
   ServerId: process.env.SERVER_ID as string,
   MaxRooms: Number(process.env.MAX_ROOMS),

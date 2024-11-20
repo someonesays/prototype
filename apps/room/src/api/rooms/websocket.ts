@@ -195,7 +195,7 @@ websocket.get(
                 pack &&
                 minigame &&
                 !(await isMinigameInPack({
-                  id: pack.id,
+                  packId: pack.id,
                   minigameId: minigame.id,
                 }))
               ) {

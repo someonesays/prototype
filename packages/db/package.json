@@ -1,10 +1,21 @@
 {
   "name": "@/db",
   "type": "module",
-  "private": true,
-  "main": "src/index.ts",
+  "main": "src/main/index.ts",
+  "scripts": {
+    "schema/push": "bun --env-file=../../apps/server/.env drizzle-kit push",
+    "schema/generate": "drizzle-kit generate",
+    "schema/migrate": "bun --env-file=../../apps/server/.env drizzle-kit migrate",
+    "schema/create-test-rows": "bun --env-file ../../apps/server/.env utils/createTestRows.ts",
+    "schema/test": "bun test --env-file ../../apps/server/.env"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.28.1"
+  },
   "dependencies": {
     "@/env": "workspace:*",
-    "@/public": "workspace:*"
+    "drizzle-orm": "^0.36.3",
+    "pg": "^8.13.1"
   }
 }

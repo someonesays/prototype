@@ -15,7 +15,10 @@
     "start": "turbo run start",
     "dev": "turbo run dev",
     "preview": "turbo run preview",
-    "format": "biome format --write ./"
+    "format": "biome format --write ./",
+    "schema/push": "cd packages/db && bun schema/push",
+    "schema/generate": "cd packages/db && bun schema/generate",
+    "schema/migrate": "cd packages/db && bun schema/migrate"
   },
   "workspaces": ["apps/*", "packages/*"]
 }

@@ -5,6 +5,7 @@ export interface Pack {
   name: string;
   description: string;
   author: {
+    id: string;
     name: string;
   };
   iconImage: {
@@ -12,7 +13,6 @@ export interface Pack {
     placeholder: string;
   } | null;
   visibility: PackVisibility;
-  reportable: boolean;
   minigames: {
     data: Minigame[];
     offset: number;
@@ -20,5 +20,4 @@ export interface Pack {
     total: number;
   };
   createdAt: string;
-  updatedAt: string;
 }
