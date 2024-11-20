@@ -4,6 +4,7 @@ import { addMinigameToPack, createMinigame, createPack, createUser } from "../sr
 const authorId = await createUser({ name: "Two" });
 
 const minigameId = await createMinigame({
+  id: "whwj9rs8vvd6alyznh",
   name: "Click the buttons",
   authorId,
   description: "The objective of this game is to click the buttons.",
@@ -19,6 +20,7 @@ const minigameId = await createMinigame({
 });
 
 const packId = await createPack({
+  id: "aq23ndwgztlt16vjwz",
   authorId,
   name: "Example pack name",
   description: "This is the pack's description.",
