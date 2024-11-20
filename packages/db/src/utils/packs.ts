@@ -54,9 +54,6 @@ export async function getPackPublic({ id, offset = 0, limit = 50 }: { id: string
   if (!pack) return null;
 
   const { offset: actualOffset, limit: actualLimit, total, minigames } = await getPackMinigamesPublic({ id, offset, limit });
-
-  if (!pack.author) throw new Error("Missing pack author");
-
   return {
     id: pack.id,
     name: pack.name,

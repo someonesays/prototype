@@ -19,3 +19,12 @@ export function getUser(id: string) {
     where: eq(schema.users.id, id),
   });
 }
+
+export async function getUserPublic(id: string) {
+  const user = await getUser(id);
+  if (!user) return null;
+  return {
+    id: user.id,
+    name: user.name,
+  };
+}

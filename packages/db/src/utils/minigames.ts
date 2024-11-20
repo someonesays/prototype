@@ -51,8 +51,6 @@ export async function getMinigamesByIdsPublic(ids: string[]) {
 
 function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof getMinigame>>): Minigame {
   if (!minigame) throw new Error("Missing minigame");
-  if (!minigame.author) throw new Error("Missing minigame author");
-
   return {
     id: minigame.id,
     name: minigame.name,
