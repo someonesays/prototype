@@ -158,7 +158,6 @@ function leaveOrEndGame() {
   }
   .minigame-text .minigame-text-content {
     margin: 0px;
-    /* flex-basis: calc(40px + 0.5vh); */
   }
   .minigame-text::-webkit-scrollbar {
     width: 4px;
