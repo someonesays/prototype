@@ -98,7 +98,7 @@ function leaveOrEndGame() {
 <div class="minigame-container">
   <div class="minigame-row">
     <div class="minigame-text" style="opacity:{minigameTextOpacity}">
-      <p>{authorText} says <b>{minigamePromptText}</b></p>
+      <div class="minigame-text-content">{authorText} says <b>{minigamePromptText}</b></div>
     </div>
   </div>
   <div class="minigame-iframe" bind:this={container}></div>
@@ -145,16 +145,20 @@ function leaveOrEndGame() {
     color: white;
   }
   .minigame-text {
+    display: grid;
     opacity: 0;
     text-align: center;
+    align-items: center;
+    vertical-align: middle;
     height: calc(40px + 0.5vh);
     padding: calc(4px + 0.5vh);
     font-size: calc(16px + 0.25vh);
     overflow: auto;
     overflow-wrap: anywhere;
   }
-  .minigame-text p {
+  .minigame-text .minigame-text-content {
     margin: 0px;
+    /* flex-basis: calc(40px + 0.5vh); */
   }
   .minigame-text::-webkit-scrollbar {
     width: 4px;
