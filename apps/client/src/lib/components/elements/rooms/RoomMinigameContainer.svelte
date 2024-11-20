@@ -8,9 +8,9 @@ import { room, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
 import { VITE_BASE_API } from "$lib/utils/env";
+import { parseMd } from "$lib/utils/parseMd";
 
 let container: HTMLDivElement;
-let authorText = $state("Someone");
 let minigamePromptText = $state("");
 let minigameTextOpacity = $state(0);
 
@@ -41,7 +41,7 @@ onMount(() => {
     });
   });
   sdk.on(MinigameOpcodes.SetClientPrompt, (evt) => {
-    minigamePromptText = evt.prompt;
+    minigamePromptText = parseMd(evt.prompt);
   });
   sdk.on(MinigameOpcodes.SetGameState, (evt) => {
     $roomWs?.send({
@@ -68,8 +68,7 @@ onMount(() => {
     });
   });
 
-  authorText = $room.minigame.author.name;
-  minigamePromptText = $room.minigame.prompt;
+  minigamePromptText = parseMd($room.minigame.prompt);
   minigameTextOpacity = 1;
 
   iframe.src =
@@ -98,7 +97,7 @@ function leaveOrEndGame() {
 <div class="minigame-container">
   <div class="minigame-row">
     <div class="minigame-text" style="opacity:{minigameTextOpacity}">
-      <div class="minigame-text-content">{authorText} says <b>{minigamePromptText}</b></div>
+      <div class="minigame-text-content">{@html minigamePromptText}</div>
     </div>
   </div>
   <div class="minigame-iframe" bind:this={container}></div>

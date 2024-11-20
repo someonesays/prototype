@@ -6,6 +6,6 @@ import { marked } from "marked";
  * @param md The markdown to parse
  * @returns The compiled HTML
  */
-export async function parseMd(md: string) {
-  return DOMPurify.sanitize(await marked.parse(md));
+export function parseMd(md: string) {
+  return DOMPurify.sanitize(marked.parse(md, { async: false }));
 }

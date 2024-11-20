@@ -37,4 +37,8 @@ import "$lib/styles/index.css";
     background-color: #000000;
     color: #ffffff;
   }
+  /* On the minigame text content, it removes the margin. */
+  :global(.minigame-text-content p) {
+    margin: 0;
+  }
 </style>

@@ -8,7 +8,7 @@ export const minigames = [
     previewImage: null,
     previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
-    prompt: "click the buttons",
+    prompt: "Someone says **click the buttons**",
     author: {
       name: "Someone",
     },
@@ -27,7 +27,7 @@ export const minigames = [
     previewImage: null,
     previewPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
     visibility: MinigameVisibility.Public,
-    prompt: "kill yourself",
+    prompt: "Someone says **kill yourself**",
     author: {
       name: "Nobody",
     },
