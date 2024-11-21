@@ -1,5 +1,5 @@
 {
-  "id": "caacb8b7-d1c0-4f92-b6c5-ed3a0b0e5b28",
+  "id": "b198bff3-7a82-42f3-99f5-06aef59456ab",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -244,6 +244,12 @@
           "name": "id",
           "type": "varchar(3)",
           "primaryKey": true,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "url": {

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { beforeNavigate, goto } from "$app/navigation";
-import { MessageCodesToText, ParentSdk } from "@/public";
+import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
@@ -30,6 +30,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     code,
     data: matchmaking,
   } = await ParentSdk.getMatchmaking({
+    location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
     displayName: $displayName,
     baseUrl: VITE_BASE_API,

@@ -6,6 +6,7 @@ export enum MessageCodes {
   RateLimited = "rate_limited",
   InternalError = "internal_error",
 
+  MissingLocation = "missing_location",
   RoomNotFound = "room_not_found",
   ServersBusy = "servers_busy",
   NotImplemented = "not_implemented",
@@ -23,6 +24,7 @@ export const MessageCodesToText = {
   [MessageCodes.RateLimited]: "You are currently being rate limited. Please try again in a bit.",
   [MessageCodes.InternalError]: "An internal error has occurred.",
 
+  [MessageCodes.MissingLocation]: "Missing location.",
   [MessageCodes.RoomNotFound]: "The room could not be found.",
   [MessageCodes.ServersBusy]: "The servers are currently busy! Please try again later.",
   [MessageCodes.NotImplemented]: "This has not been implemented.",

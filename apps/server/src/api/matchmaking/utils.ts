@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MatchmakingType } from "@/public";
+import { MatchmakingLocation, MatchmakingType } from "@/public";
 
 export const zodPostMatchmakingValidatorDiscord = z.object({
   type: z.literal(MatchmakingType.Discord),
@@ -8,14 +8,17 @@ export const zodPostMatchmakingValidatorDiscord = z.object({
 });
 
 export const zodPostMatchmakingValidator = z.union([
+  // Create or join the room as a guest
   z.object({
     type: z.literal(MatchmakingType.Guest),
     display_name: z.string().min(1).max(32),
+    location: z.nativeEnum(MatchmakingLocation).optional(),
     room_id: z.string().length(10).optional(),
   }),
+  // TODO: Join room as an authenticated user
   z.object({
-    // TOOD: Add authentication for people who have accounts
     type: z.literal(MatchmakingType.Authenticated),
   }),
+  // Join room through Discord activity
   zodPostMatchmakingValidatorDiscord,
 ]);

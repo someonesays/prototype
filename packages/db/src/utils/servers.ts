@@ -1,9 +1,15 @@
 import schema from "../main/schema";
 import { and, asc, eq, lt, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
+import { MatchmakingLocation } from "@/public";
 
 function validateServer(server: Partial<typeof schema.servers.$inferSelect>) {
-  // Disallow trailing slash
+  // Force the server ID to be 3 characters long
+  if (server.id?.length !== 3) throw new Error("'id' must be 3 characters long");
+  // Force the location to be part of the MatchmakingLocation enum
+  if (server.location && !Object.values(MatchmakingLocation).includes(server.location))
+    throw new Error("'location' must be a valid location in the MatchmakingLocation enum");
+  // Disallow trailing slash on URLs
   if (server.url?.endsWith("/")) throw new Error("'url' should not have a trailing slash");
   if (server.ws?.endsWith("/")) throw new Error("'ws' should not have a trailing slash");
   if (server.wsDiscord?.endsWith("/")) throw new Error("'wsDiscord' should not have a trailing slash");
@@ -32,17 +38,17 @@ export function getServerById(id: string) {
   });
 }
 
-export function findBestServer() {
+export function findBestServerByLocation(location: MatchmakingLocation) {
   return db.query.servers.findFirst({
-    where: lt(schema.servers.currentRooms, schema.servers.maxRooms),
+    where: and(eq(schema.servers.location, location), lt(schema.servers.currentRooms, schema.servers.maxRooms)),
     orderBy: asc(schema.servers.currentRooms),
   });
 }
 
-export async function findBestServerDiscord(snowflake: bigint) {
+export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
   // What's the point of this?
   // - I didn't want to store the room IDs/instance IDs corresponding to the server IDs on the database
-  // - This supports adding in servers anytime without breaking the algorithm to find which server to select.
+  // - This supports adding in servers anytime without breaking the algorithm to find which server to select
 
   // How this works:
 
@@ -53,14 +59,15 @@ export async function findBestServerDiscord(snowflake: bigint) {
 
   // It determines the server you get using 'launch_id % max(index)' and '== index' is used to get the correct row/server
 
-  // This will break if servers are deleted when people are still in them.
-  // Servers must be properly shut down, have a currentRoom = 0 and removed from the database in order to be deleted.
+  // This will break if servers are deleted when people are still in them
+  // Servers must be properly shut down, have a currentRoom = 0 and removed from the database in order to be deleted
 
   const server = (
     await db
       .select({
         // Select all the values from the .from(...)
         id: sql`id`,
+        location: sql`location`,
         url: sql`url`,
         ws: sql`ws`,
         wsDiscord: sql`ws_discord`,
@@ -70,14 +77,14 @@ export async function findBestServerDiscord(snowflake: bigint) {
       })
       .from(
         // Add an 'index' to each row while only selecting servers created before the created_at date
-        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) + 1 as total_index from ${schema.servers} where created_at < ${convertSnowflakeToDate(snowflake)}) as indexed_servers`,
+        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) as max_index from ${schema.servers} where created_at < ${convertSnowflakeToDate(snowflake)}) as indexed_servers`,
       )
       .where(
         and(
           // Checks if the room is full
           lt(sql`current_rooms`, sql`max_rooms`),
           // snowflake % max(index) == index
-          eq(sql`mod(cast(${snowflake} as bigint), total_index)`, sql`index`),
+          eq(sql`mod(cast(${snowflake} as bigint), max_index)`, sql`index`),
         ),
       )
   )[0] as typeof schema.servers.$inferSelect | undefined;

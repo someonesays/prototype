@@ -19,7 +19,7 @@ import {
   verifyDiscordOAuth2Token,
 } from "../../utils";
 import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
-import { findBestServer, findBestServerDiscord, getServerById } from "@/db";
+import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
 
 export const matchmaking = new Hono();
 
@@ -84,12 +84,14 @@ async function handlePostMatchmaking({
         server = await findServerByRoomIfExists(roomId);
         if (!server) return c.json({ code: MessageCodes.RoomNotFound }, 404);
       } else {
+        if (!payload.location) return c.json({ code: MessageCodes.MissingLocation }, 400);
+
         const maxRetries = 3;
         let retries = 0;
 
         while (true) {
           // Find the best server to use
-          const bestServer = await findBestServer();
+          const bestServer = await findBestServerByLocation(payload.location);
           if (!bestServer) return c.json({ code: MessageCodes.ServersBusy }, 500);
 
           // Generate new room ID based on the server ID
@@ -99,7 +101,7 @@ async function handlePostMatchmaking({
           const [success, { exists }] = await checkIfRoomExists({ url: bestServer.url, roomId });
           if (!success) return c.json({ code: MessageCodes.ServersBusy }, 500);
           if (!exists) {
-            server = { id: bestServer.id, url: bestServer.ws };
+            server = { id: bestServer.id, url: bestServer.ws, location: bestServer.location };
             break;
           }
 
@@ -156,9 +158,9 @@ async function handlePostMatchmaking({
       discordAccessToken = oauth2.access_token;
 
       // Assign the server based off the launch ID
-      const bestServer = await findBestServerDiscord(BigInt(instance.launch_id));
+      const bestServer = await findBestServerByDiscordLaunchId(BigInt(instance.launch_id));
       if (!bestServer) return c.json({ code: MessageCodes.ServersBusy }, 401);
-      server = { id: bestServer.id, url: bestServer.wsDiscord };
+      server = { id: bestServer.id, url: bestServer.wsDiscord, location: bestServer.location };
 
       break;
     }
@@ -207,5 +209,5 @@ async function findServerByRoomIfExists(roomId: string) {
   const [success, { exists }] = await checkIfRoomExists({ url: server.url, roomId });
   if (!success || !exists) return null;
 
-  return { id: serverId, url: server.ws };
+  return { id: serverId, url: server.ws, location: server.location };
 }

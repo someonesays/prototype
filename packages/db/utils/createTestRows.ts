@@ -1,4 +1,4 @@
-import { MinigamePathType, MinigameVisibility, PackVisibility } from "@/public";
+import { MatchmakingLocation, MinigamePathType, MinigameVisibility, PackVisibility } from "@/public";
 import { addMinigameToPack, createMinigame, createPack, createServer, createUser } from "../src/utils";
 
 const authorId = await createUser({ name: "Two" });
@@ -33,8 +33,11 @@ await addMinigameToPack({ packId, minigameId });
 
 await createServer({
   id: "000",
+  location: MatchmakingLocation.USA,
   url: "http://localhost:3002",
   ws: "ws://localhost:3002/api/rooms",
   wsDiscord: "/.proxy/api/rooms/000",
   maxRooms: 100,
 });
+
+process.exit();

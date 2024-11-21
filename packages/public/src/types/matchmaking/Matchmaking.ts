@@ -18,6 +18,7 @@ export interface MatchmakingData {
     server: {
       id: string;
       url: string;
+      location: string;
     };
   };
   exp: number;
