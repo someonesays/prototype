@@ -1,7 +1,7 @@
 import { createCuid } from "@/utils";
 import { MinigamePathType, MinigameVisibility } from "@/public";
-import { text, smallint, pgTable, date } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { text, smallint, pgTable, timestamp } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 
 import { users } from "./users";
 
@@ -24,7 +24,7 @@ export const minigames = pgTable("minigames", {
   proxyUrl: text("proxy_url"),
   pathType: smallint("path_type").$type<MinigamePathType>().notNull(),
   minimumPlayersToStart: smallint("minimum_players_to_start").notNull().default(1),
-  createdAt: date("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
 });
 
 export const minigamesRelations = relations(minigames, ({ one }) => ({

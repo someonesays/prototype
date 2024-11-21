@@ -1,6 +1,6 @@
 import { createCuid } from "@/utils";
-import { text, date, pgTable } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 
 import { minigames } from "./minigames";
 import { packs } from "./packs";
@@ -11,7 +11,7 @@ export const users = pgTable("users", {
     .primaryKey()
     .$defaultFn(() => createCuid()),
   name: text("name").notNull(),
-  createdAt: date("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

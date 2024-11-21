@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"proxy_url" text,
 	"path_type" smallint NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
-	"created_at" date DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "packs_minigames" (
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"icon_image" text,
 	"icon_placeholder_image" text,
 	"visibility" smallint NOT NULL,
-	"created_at" date DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "servers" (
@@ -38,13 +38,14 @@ CREATE TABLE IF NOT EXISTS "servers" (
 	"ws" text NOT NULL,
 	"ws_discord" text NOT NULL,
 	"current_rooms" integer DEFAULT 0 NOT NULL,
-	"max_rooms" integer NOT NULL
+	"max_rooms" integer NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"created_at" date DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 DO $$ BEGIN

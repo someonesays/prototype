@@ -1,5 +1,5 @@
 import schema from "../main/schema";
-import { asc, eq, lt } from "drizzle-orm";
+import { and, asc, eq, lt, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 
 function validateServer(server: Partial<typeof schema.servers.$inferSelect>) {
@@ -22,7 +22,8 @@ export async function updateServer(server: Partial<typeof schema.servers.$inferS
 }
 
 export async function deleteServer(id: string) {
-  await db.delete(schema.servers).where(eq(schema.servers.id, id));
+  // The server should only be deleted if there's nobody in the room and the server is down
+  await db.delete(schema.servers).where(and(eq(schema.servers.id, id), eq(schema.servers.currentRooms, 0)));
 }
 
 export function getServerById(id: string) {
@@ -36,4 +37,41 @@ export function findBestServer() {
     where: lt(schema.servers.currentRooms, schema.servers.maxRooms),
     orderBy: asc(schema.servers.currentRooms),
   });
+}
+
+export async function findBestServerDiscord(snowflake: bigint) {
+  const server = (
+    await db
+      .select({
+        // Select all the values from the .from(...)
+        id: sql`id`,
+        url: sql`url`,
+        ws: sql`ws`,
+        wsDiscord: sql`ws_discord`,
+        currentRooms: sql`current_rooms`,
+        maxRooms: sql`max_rooms`,
+        createdAt: sql`created_at`,
+      })
+      .from(
+        // Add an 'index' to each row while only selecting servers created before the created_at date
+        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) + 1 as total_index from ${schema.servers} where created_at < ${convertSnowflakeToDate(snowflake)}) as indexed_servers`,
+      )
+      .where(
+        and(
+          // Checks if the room is full
+          lt(sql`current_rooms`, sql`max_rooms`),
+          // snowflake % max(index) == index
+          eq(sql`mod(cast(${snowflake} as bigint), total_index)`, sql`index`),
+        ),
+      )
+  )[0] as typeof schema.servers.$inferSelect | undefined;
+  if (!server) return undefined;
+
+  server.createdAt = new Date(server.createdAt);
+  return server;
+}
+
+export function convertSnowflakeToDate(snowflake: bigint) {
+  const dateBits = Number(BigInt.asUintN(64, snowflake) >> 22n);
+  return new Date(dateBits + 1420070400000);
 }

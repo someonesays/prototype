@@ -19,7 +19,7 @@ import {
   verifyDiscordOAuth2Token,
 } from "../../utils";
 import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
-import { findBestServer, getServerById } from "@/db";
+import { findBestServer, findBestServerDiscord, getServerById } from "@/db";
 
 export const matchmaking = new Hono();
 
@@ -130,7 +130,7 @@ async function handlePostMatchmaking({
       }
 
       const user = await getDiscordUser(oauth2.access_token);
-      if (!user) return c.json({ code: MessageCodes.InternalError }, 500);
+      if (!user) return c.json({ code: MessageCodes.RateLimited }, 500);
 
       const instance = await getActivityInstance(instanceId);
       if (!instance) return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
@@ -143,7 +143,7 @@ async function handlePostMatchmaking({
       const guildId = instance.location.guild_id;
       if (guildId) {
         const member = await getDiscordMember({ guildId, accessToken: oauth2.access_token });
-        if (!member) return c.json({ code: MessageCodes.InternalError }, 500);
+        if (!member) return c.json({ code: MessageCodes.RateLimited }, 500);
 
         displayName = member.nick || displayName;
         avatar = member.avatar
@@ -155,10 +155,10 @@ async function handlePostMatchmaking({
       roomId = `discord:${instance.instance_id}`;
       discordAccessToken = oauth2.access_token;
 
-      // TODO: Add a proper way to assign a server for Discord activities here
-      // ---> MAKE SURE TO UPDATE THIS!! I DIDN'T EVEN ADD PROPER ROOM CHECKS TO IT!!!!! <--
-      const bestServer = await getServerById("000");
-      server = { id: bestServer!.id, url: bestServer!.wsDiscord };
+      // Assign the server based off the launch ID
+      const bestServer = await findBestServerDiscord(BigInt(instance.launch_id));
+      if (!bestServer) return c.json({ code: MessageCodes.ServersBusy }, 401);
+      server = { id: bestServer.id, url: bestServer.wsDiscord };
 
       break;
     }
