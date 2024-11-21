@@ -64,6 +64,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
       <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}>
     </form>
 
+    <p><a href="/credits">Credits</a></p>
     <p><a href="/terms">Terms of Services</a></p>
     <p><a href="/privacy">Privacy Policy</a></p>
   </BaseCard>
