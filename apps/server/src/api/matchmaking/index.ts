@@ -175,7 +175,7 @@ async function handlePostMatchmaking({
   const room = { id: roomId, server };
 
   // Create authorization token
-  const exp = Math.trunc(Date.now() / 1000 + 300); // 5 minutes
+  const exp = Math.trunc(Date.now() / 1000 + 60); // 1 minute
   const data: MatchmakingDataJWT = { user, room, exp };
   const authorization = await sign(data, env.RoomJwtSecret);
 
