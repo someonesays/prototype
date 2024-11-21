@@ -42,7 +42,10 @@ onMount(() => {
           code: matchmakingCode,
           data: matchmaking,
         } = await ParentSdk.getMatchmakingDiscord({ instanceId, code, baseUrl: "/.proxy" });
-        if (!matchmakingSuccess) return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, MessageCodesToText[matchmakingCode]);
+        if (!matchmakingSuccess) {
+          console.error("[MATCHMAKING] Failed to connect to matchmaking:", MessageCodesToText[matchmakingCode]);
+          return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, MessageCodesToText[matchmakingCode]);
+        }
 
         // Set access_token
         if (matchmaking.metadata.type !== MatchmakingType.Discord)

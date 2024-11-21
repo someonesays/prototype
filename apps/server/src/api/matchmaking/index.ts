@@ -204,7 +204,7 @@ async function findServerByRoomIfExists(roomId: string) {
   if (!serverId) return null;
 
   const server = await getServerById(serverId);
-  if (!server) return null;
+  if (!server?.ws) return null; // Checks for .ws because it can be null
 
   const [success, { exists }] = await checkIfRoomExists({ url: server.url, roomId });
   if (!success || !exists) return null;

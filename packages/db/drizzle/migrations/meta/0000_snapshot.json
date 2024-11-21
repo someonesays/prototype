@@ -1,5 +1,5 @@
 {
-  "id": "b198bff3-7a82-42f3-99f5-06aef59456ab",
+  "id": "33619cbd-eec3-4102-8494-66d986ebae62",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -262,13 +262,13 @@
           "name": "ws",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "ws_discord": {
           "name": "ws_discord",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "current_rooms": {
           "name": "current_rooms",

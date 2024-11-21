@@ -1,7 +1,7 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { getMinigamePublic, getPackPublic, isMinigameInPack, updateServer } from "@/db";
+import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
 import {
   ClientOpcodes,
   ServerOpcodes,
@@ -37,6 +37,7 @@ import {
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
   type WSState,
+  setCurrentRooms,
 } from "../../utils";
 
 export const websocket = new Hono();
@@ -113,7 +114,7 @@ websocket.get(
           rooms.set(room.id, state.serverRoom);
 
           // Update the new room count (purposely not awaited)
-          updateServer({ id: env.ServerId, currentRooms: rooms.size });
+          setCurrentRooms(rooms.size);
         }
 
         // Handle messages
@@ -478,7 +479,7 @@ websocket.get(
             rooms.delete(state.serverRoom.room.id);
 
             // Update the new room count (unnecessary to await)
-            return updateServer({ id: env.ServerId, currentRooms: rooms.size });
+            return setCurrentRooms(rooms.size);
           }
 
           // If host left, assign new host

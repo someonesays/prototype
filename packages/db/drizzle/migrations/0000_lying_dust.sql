@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS "servers" (
 	"id" varchar(3) PRIMARY KEY NOT NULL,
 	"location" text NOT NULL,
 	"url" text NOT NULL,
-	"ws" text NOT NULL,
-	"ws_discord" text NOT NULL,
+	"ws" text,
+	"ws_discord" text,
 	"current_rooms" integer DEFAULT 0 NOT NULL,
 	"max_rooms" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL

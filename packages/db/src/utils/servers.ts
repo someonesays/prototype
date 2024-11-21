@@ -1,5 +1,5 @@
 import schema from "../main/schema";
-import { and, asc, eq, lt, sql } from "drizzle-orm";
+import { and, asc, eq, isNotNull, lt, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { MatchmakingLocation } from "@/public";
 
@@ -24,6 +24,9 @@ export async function createServer(server: typeof schema.servers.$inferInsert) {
 
 export async function updateServer(server: Partial<typeof schema.servers.$inferSelect> & { id: string }) {
   validateServer(server);
+  if (server.wsDiscord)
+    throw new Error("'wsDiscord' should not be modified or else it can break the matchmaking on Discord activites");
+
   await db.update(schema.servers).set(server).where(eq(schema.servers.id, server.id));
 }
 
@@ -40,9 +43,13 @@ export function getServerById(id: string) {
 
 export function findBestServerByLocation(location: MatchmakingLocation) {
   return db.query.servers.findFirst({
-    where: and(eq(schema.servers.location, location), lt(schema.servers.currentRooms, schema.servers.maxRooms)),
+    where: and(
+      isNotNull(schema.servers.ws),
+      eq(schema.servers.location, location),
+      lt(schema.servers.currentRooms, schema.servers.maxRooms),
+    ),
     orderBy: asc(schema.servers.currentRooms),
-  });
+  }) as Promise<(typeof schema.servers.$inferSelect & { ws: string }) | undefined>;
 }
 
 export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
@@ -62,6 +69,9 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
   // This will break if servers are deleted when people are still in them
   // Servers must be properly shut down, have a currentRoom = 0 and removed from the database in order to be deleted
 
+  // This will also break if you change the value of 'ws_discord' so don't change this value
+  // If I want to change this value, create a completely new server and shut the old one down
+
   const server = (
     await db
       .select({
@@ -77,7 +87,7 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
       })
       .from(
         // Add an 'index' to each row while only selecting servers created before the created_at date
-        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) as max_index from ${schema.servers} where created_at < ${convertSnowflakeToDate(snowflake)}) as indexed_servers`,
+        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) as max_index from ${schema.servers} where ws_discord is not null and created_at < ${convertSnowflakeToDate(snowflake)}) as indexed_servers`,
       )
       .where(
         and(
@@ -87,7 +97,7 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
           eq(sql`mod(cast(${snowflake} as bigint), max_index)`, sql`index`),
         ),
       )
-  )[0] as typeof schema.servers.$inferSelect | undefined;
+  )[0] as (typeof schema.servers.$inferSelect & { wsDiscord: string }) | undefined;
   if (!server) return undefined;
 
   server.createdAt = new Date(server.createdAt);
