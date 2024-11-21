@@ -40,6 +40,22 @@ export function findBestServer() {
 }
 
 export async function findBestServerDiscord(snowflake: bigint) {
+  // What's the point of this?
+  // - I didn't want to store the room IDs/instance IDs corresponding to the server IDs on the database
+  // - This supports adding in servers anytime without breaking the algorithm to find which server to select.
+
+  // How this works:
+
+  // I decided to use this basic formula: launch_id % max(index) == index
+  // -> launch_id is the "snowflake" given from Discord's API - also happens to be a timestamp of when the activity started
+  // -> max(index) is the total servers length that was created before the date given from the launch_id "snowflake"
+  // -> index is the index of the server ordered by the server ID based on the servers created before the launch_id "snowflake"
+
+  // It determines the server you get using 'launch_id % max(index)' and '== index' is used to get the correct row/server
+
+  // This will break if servers are deleted when people are still in them.
+  // Servers must be properly shut down, have a currentRoom = 0 and removed from the database in order to be deleted.
+
   const server = (
     await db
       .select({
