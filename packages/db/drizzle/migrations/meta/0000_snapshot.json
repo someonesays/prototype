@@ -1,5 +1,5 @@
 {
-  "id": "9f7d44b5-7808-4890-94d9-0d625d34fc67",
+  "id": "81e98ac8-98b3-48ae-8a96-062f270c765e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -230,6 +230,56 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.servers": {
+      "name": "servers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(3)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ws": {
+          "name": "ws",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ws_discord": {
+          "name": "ws_discord",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_rooms": {
+          "name": "current_rooms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "max_rooms": {
+          "name": "max_rooms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

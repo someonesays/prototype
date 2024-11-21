@@ -1,5 +1,5 @@
 import { MinigamePathType, MinigameVisibility, PackVisibility } from "@/public";
-import { addMinigameToPack, createMinigame, createPack, createUser } from "../src/utils";
+import { addMinigameToPack, createMinigame, createPack, createServer, createUser } from "../src/utils";
 
 const authorId = await createUser({ name: "Two" });
 
@@ -30,3 +30,11 @@ const packId = await createPack({
 });
 
 await addMinigameToPack({ packId, minigameId });
+
+await createServer({
+  id: "000",
+  url: "http://localhost:3002",
+  ws: "ws://localhost:3002/api/rooms",
+  wsDiscord: "/.proxy/api/rooms/000",
+  maxRooms: 100,
+});

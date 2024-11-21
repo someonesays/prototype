@@ -32,6 +32,15 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"created_at" date DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "servers" (
+	"id" varchar(3) PRIMARY KEY NOT NULL,
+	"url" text NOT NULL,
+	"ws" text NOT NULL,
+	"ws_discord" text NOT NULL,
+	"current_rooms" integer DEFAULT 0 NOT NULL,
+	"max_rooms" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,

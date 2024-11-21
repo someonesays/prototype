@@ -6,8 +6,7 @@
     "schema/push": "bun --env-file=../../apps/server/.env drizzle-kit push",
     "schema/generate": "drizzle-kit generate",
     "schema/migrate": "bun --env-file=../../apps/server/.env drizzle-kit migrate",
-    "schema/create-test-rows": "bun --env-file ../../apps/server/.env utils/createTestRows.ts",
-    "schema/test": "bun test --env-file ../../apps/server/.env"
+    "schema/create-test-rows": "bun --env-file ../../apps/server/.env utils/createTestRows.ts"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",

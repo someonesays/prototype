@@ -95,8 +95,8 @@ function leaveGame() {
 
   {#if $room.room.host === $room.user}
     <form onsubmit={setSettings}>
-      <input type="text" name="pack_id" placeholder="Pack ID">
-      <input type="text" name="minigame_id" placeholder="Minigame ID">
+      <input type="text" name="pack_id" placeholder="Pack ID" value="aq23ndwgztlt16vjwz">
+      <input type="text" name="minigame_id" placeholder="Minigame ID" value="whwj9rs8vvd6alyznh">
       <input type="submit" value="Set pack/minigame">
     </form>
   {/if}

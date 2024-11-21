@@ -36,8 +36,11 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   });
 
   if (!success) {
+    // Set kick reason
     $kickedReason = `Failed to connect to matchmaking: ${MessageCodesToText[code]}`;
-    return goto("/");
+    // Redirect page to "/" if it's not already that
+    if (location.pathname !== "/") goto("/");
+    return;
   }
 
   // Set matchmaking JWT

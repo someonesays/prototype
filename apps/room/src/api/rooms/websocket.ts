@@ -1,7 +1,7 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
+import { getMinigamePublic, getPackPublic, isMinigameInPack, updateServer } from "@/db";
 import {
   ClientOpcodes,
   ServerOpcodes,
@@ -17,6 +17,7 @@ import {
 } from "@/public";
 import {
   rooms,
+  maxRooms,
   createWebSocketMiddleware,
   broadcastMessage,
   recieveMessage,
@@ -89,7 +90,7 @@ websocket.get(
           state.serverRoom.players.set(state.user.id, state.user);
         } else {
           // If the server is full, disallow the creation of new rooms
-          if (rooms.size > env.MaxRooms) {
+          if (rooms.size >= maxRooms) {
             return ws.close(1003, JSON.stringify({ code: MessageCodes.ServersBusy }));
           }
 
@@ -110,6 +111,9 @@ websocket.get(
           };
 
           rooms.set(room.id, state.serverRoom);
+
+          // Update the new room count (purposely not awaited)
+          updateServer({ id: env.ServerId, currentRooms: rooms.size });
         }
 
         // Handle messages
@@ -471,7 +475,10 @@ websocket.get(
 
           // Delete the room if there's no more players in it
           if (!state.serverRoom.players.size) {
-            return rooms.delete(state.serverRoom.room.id);
+            rooms.delete(state.serverRoom.room.id);
+
+            // Update the new room count (unnecessary to await)
+            return updateServer({ id: env.ServerId, currentRooms: rooms.size });
           }
 
           // If host left, assign new host

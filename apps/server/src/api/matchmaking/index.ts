@@ -19,12 +19,9 @@ import {
   verifyDiscordOAuth2Token,
 } from "../../utils";
 import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
+import { findBestServer, getServerById } from "@/db";
 
 export const matchmaking = new Hono();
-
-// Testing values
-const testServerId = "000";
-const testServerPort = 3002;
 
 // Find if a room exists
 
@@ -41,7 +38,6 @@ matchmaking.get("/", async (c) => {
 // Create or join a room
 
 matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), async (c) => {
-  // TODO: Create a proper matchmaking system
   const payload = c.req.valid("json");
 
   // TODO: Add rate limit middleware
@@ -88,28 +84,28 @@ async function handlePostMatchmaking({
         server = await findServerByRoomIfExists(roomId);
         if (!server) return c.json({ code: MessageCodes.RoomNotFound }, 404);
       } else {
-        // TODO: Finish creating rooms
-        // - Find the server with the least amount of rooms (aka least amount of load- using SQL) based off location
-        // - If the servers are full, respond with "Servers are full. Please try again later." error
-        // - Create and set the room ID and server information (fix WebSocket URL)
-
         const maxRetries = 3;
         let retries = 0;
 
         while (true) {
+          // Find the best server to use
+          const bestServer = await findBestServer();
+          if (!bestServer) return c.json({ code: MessageCodes.ServersBusy }, 500);
+
           // Generate new room ID based on the server ID
-          roomId = encodeRoomId(testServerId);
+          roomId = encodeRoomId(bestServer.id);
 
           // Check if room ID is already taken on the server
-          const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${testServerPort}`, roomId });
+          const [success, { exists }] = await checkIfRoomExists({ url: bestServer.url, roomId });
           if (!success) return c.json({ code: MessageCodes.ServersBusy }, 500);
-          if (!exists) break;
+          if (!exists) {
+            server = { id: bestServer.id, url: bestServer.ws };
+            break;
+          }
 
           // If it fails to retry 3 times, return MessageCodes.ServersBusy
           if (++retries === maxRetries) return c.json({ code: MessageCodes.ServersBusy }, 500);
         }
-
-        server = { id: testServerId, url: `ws://localhost:${testServerPort}/api/rooms` };
       }
 
       break;
@@ -159,14 +155,14 @@ async function handlePostMatchmaking({
       roomId = `discord:${instance.instance_id}`;
       discordAccessToken = oauth2.access_token;
 
-      // TODO: Add a proper way to assign a server here
-      server = { id: testServerId, url: `/.proxy/api/rooms/${testServerId}` };
+      // TODO: Add a proper way to assign a server for Discord activities here
+      // ---> MAKE SURE TO UPDATE THIS!! I DIDN'T EVEN ADD PROPER ROOM CHECKS TO IT!!!!! <--
+      const bestServer = await getServerById("000");
+      server = { id: bestServer!.id, url: bestServer!.wsDiscord };
 
       break;
     }
   }
-
-  // server.url = `wss://${env.DiscordClientId}.discordsays.com/.proxy/api/rooms`; // TODO: DELETE THIS TEST FOR DISCORD
 
   if (!server || !roomId || !displayName || !avatar) {
     throw new Error("Either server, roomId or displayName is not defined. This should never happen.");
@@ -205,15 +201,11 @@ async function findServerByRoomIfExists(roomId: string) {
   const serverId = decodeRoomId(roomId);
   if (!serverId) return null;
 
-  // TODO: Finish joining rooms
-  // - Get the room from the database
-  // - Make sure the WebSocket URL is the URL from the database
-  // - Check if the room ID is valid
+  const server = await getServerById(serverId);
+  if (!server) return null;
 
-  if (serverId !== testServerId) return null;
-
-  const [success, { exists }] = await checkIfRoomExists({ url: `http://localhost:${testServerPort}`, roomId });
+  const [success, { exists }] = await checkIfRoomExists({ url: server.url, roomId });
   if (!success || !exists) return null;
 
-  return { id: serverId, url: `ws://localhost:${testServerPort}/api/rooms` };
+  return { id: serverId, url: server.ws };
 }

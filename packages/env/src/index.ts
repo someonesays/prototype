@@ -18,7 +18,6 @@ export default {
 
   // Room-only
   ServerId: process.env.SERVER_ID as string,
-  MaxRooms: Number(process.env.MAX_ROOMS),
 
   AllowedWsOrigins: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],
 
