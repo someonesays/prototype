@@ -38,7 +38,10 @@ export class ParentSdk {
     baseUrl,
   }: {
     auth?: string;
-    captcha: string;
+    captcha: {
+      type: "invisible" | "managed";
+      token: string;
+    };
     displayName: string;
     location?: MatchmakingLocation;
     roomId?: string;
@@ -50,7 +53,8 @@ export class ParentSdk {
         method: "post",
         headers: {
           "content-type": "application/json",
-          "x-captcha": captcha,
+          "x-captcha-type": captcha.type,
+          "x-captcha-token": captcha.token,
         },
         body: JSON.stringify({
           type: MatchmakingType.Normal,

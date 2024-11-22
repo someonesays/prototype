@@ -23,7 +23,8 @@ export default {
 
   CuidFingerprint: process.env.CUID_FINGERPRINT as string,
 
-  turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY as string,
+  turnstileSecretKeyInvisible: process.env.TURNSTILE_SECRET_KEY_INVISIBLE as string,
+  turnstileSecretKeyManaged: process.env.TURNSTILE_SECRET_KEY_MANAGED as string,
 
   DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
   DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,

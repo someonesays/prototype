@@ -6,10 +6,13 @@ import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
-import { VITE_BASE_API, VITE_TURNSTILE_SITE_KEY } from "$lib/utils/env";
+import { VITE_BASE_API, VITE_TURNSTILE_SITE_KEY_INVISIBLE, VITE_TURNSTILE_SITE_KEY_MANAGED } from "$lib/utils/env";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
+
+let visibleCaptcha = $state(false);
+let enableJoinButton = $state(false);
 
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
@@ -22,7 +25,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   evt.preventDefault();
 
   const form = new FormData(evt.target as HTMLFormElement);
-  const captcha = form.get("cf-turnstile-response") as string;
+  const token = form.get("cf-turnstile-response") as string;
 
   $displayName = form.get("display_name") as string;
   setCookie("display_name", $displayName);
@@ -33,7 +36,10 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     code,
     data: matchmaking,
   } = await ParentSdk.getMatchmaking({
-    captcha,
+    captcha: {
+      type: visibleCaptcha ? "managed" : "invisible",
+      token,
+    },
     displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
@@ -54,6 +60,15 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   // Goto to room page
   goto(`/rooms/${encodeURIComponent($roomIdToJoin ?? "new")}`);
 }
+
+function showCaptcha() {
+  visibleCaptcha = true;
+  setJoinButtonState(true);
+}
+
+function setJoinButtonState(state: boolean) {
+  enableJoinButton = state;
+}
 </script>
 
 <div style="width: 50%; height: 300px;">
@@ -65,8 +80,12 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
       <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="1" maxlength="32" required>
-      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
-      <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY}  />
+      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={!enableJoinButton}><br>
+      {#if visibleCaptcha}
+        <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_MANAGED} />
+      {:else}
+        <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
+      {/if}
     </form>
 
     <p><a href="/credits">Credits</a></p>

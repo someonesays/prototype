@@ -76,7 +76,15 @@ async function handlePostMatchmaking({
   switch (payload.type) {
     case MatchmakingType.Normal: {
       // Check captcha
-      if (!(await verifyCaptcha(c.req.header("X-Captcha") || ""))) return c.json({ code: MessageCodes.FailedCaptcha }, 429);
+      const captchaType = c.req.header("X-Captcha-Type") || "invisible";
+      if (
+        !["invisible", "managed"].includes(captchaType) ||
+        !(await verifyCaptcha({
+          token: c.req.header("X-Captcha-Token") || "",
+          secretKey: captchaType === "invisible" ? env.turnstileSecretKeyInvisible : env.turnstileSecretKeyManaged,
+        }))
+      )
+        return c.json({ code: MessageCodes.FailedCaptcha }, 429);
 
       // Set display name
       displayName = payload.display_name;
