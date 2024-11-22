@@ -24,6 +24,8 @@ export default {
   // Server-only
   BaseApi: process.env.BASE_API || "",
 
+  turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY as string,
+
   DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
   DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
   DiscordToken: process.env.DISCORD_TOKEN as string,

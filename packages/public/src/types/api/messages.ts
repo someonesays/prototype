@@ -5,6 +5,7 @@ export enum MessageCodes {
   InvalidAuthorization = "missing_authorization",
   RateLimited = "rate_limited",
   InternalError = "internal_error",
+  FailedCaptcha = "failed_captcha",
 
   MissingLocation = "missing_location",
   RoomNotFound = "room_not_found",
@@ -23,6 +24,7 @@ export const MessageCodesToText = {
   [MessageCodes.InvalidAuthorization]: "Invalid authorization!",
   [MessageCodes.RateLimited]: "You are currently being rate limited. Please try again in a bit.",
   [MessageCodes.InternalError]: "An internal error has occurred.",
+  [MessageCodes.FailedCaptcha]: "Failed to validate captcha.",
 
   [MessageCodes.MissingLocation]: "Missing location.",
   [MessageCodes.RoomNotFound]: "The room could not be found.",

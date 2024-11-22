@@ -31,17 +31,18 @@ export class ParentSdk {
   }
 
   static async getMatchmaking({
+    captcha,
+    displayName,
     location,
     roomId,
-    displayName,
     baseUrl,
-  }: { location?: MatchmakingLocation; roomId?: string; displayName: string; baseUrl: string }) {
+  }: { captcha: string; displayName: string; location?: MatchmakingLocation; roomId?: string; baseUrl: string }) {
     if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.Guest, location, room_id: roomId, display_name: displayName }),
+        body: JSON.stringify({ type: MatchmakingType.Guest, captcha, location, room_id: roomId, display_name: displayName }),
       });
       const data = await res.json();
 

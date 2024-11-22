@@ -3,7 +3,17 @@ import { z } from "zod";
 import { Hono, type Context } from "hono";
 import { sign } from "hono/jwt";
 import { zValidator } from "@hono/zod-validator";
-import { createCuid, encodeRoomId, decodeRoomId } from "@/utils";
+import {
+  createCuid,
+  encodeRoomId,
+  decodeRoomId,
+  checkIfRoomExists,
+  getActivityInstance,
+  getDiscordMember,
+  getDiscordUser,
+  verifyDiscordOAuth2Token,
+  verifyCaptcha,
+} from "@/utils";
 import {
   MatchmakingType,
   MessageCodes,
@@ -11,13 +21,6 @@ import {
   type APIMatchmakingResponseMetadata,
   type MatchmakingDataJWT,
 } from "@/public";
-import {
-  checkIfRoomExists,
-  getActivityInstance,
-  getDiscordMember,
-  getDiscordUser,
-  verifyDiscordOAuth2Token,
-} from "../../utils";
 import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
 import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
 
@@ -74,6 +77,9 @@ async function handlePostMatchmaking({
   // Get server to make the room in
   switch (payload.type) {
     case MatchmakingType.Guest: {
+      // Check captcha
+      if (!(await verifyCaptcha(payload.captcha))) return c.json({ code: MessageCodes.FailedCaptcha }, 429);
+
       // Set display name
       displayName = payload.display_name;
       avatar = `${env.BaseFrontend}/avatars/default.png`;

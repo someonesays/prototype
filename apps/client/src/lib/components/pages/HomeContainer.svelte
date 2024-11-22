@@ -1,10 +1,12 @@
 <script lang="ts">
+import { Turnstile } from "svelte-turnstile";
+
 import { beforeNavigate, goto } from "$app/navigation";
 import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
-import { VITE_BASE_API } from "$lib/utils/env";
+import { VITE_BASE_API, VITE_TURNSTILE_SITE_KEY } from "$lib/utils/env";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
@@ -20,8 +22,9 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   evt.preventDefault();
 
   const form = new FormData(evt.target as HTMLFormElement);
-  $displayName = form.get("display_name") as string;
+  const captcha = form.get("cf-turnstile-response") as string;
 
+  $displayName = form.get("display_name") as string;
   setCookie("display_name", $displayName);
 
   // Get room from matchmaking
@@ -30,9 +33,10 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     code,
     data: matchmaking,
   } = await ParentSdk.getMatchmaking({
+    captcha,
+    displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
-    displayName: $displayName,
     baseUrl: VITE_BASE_API,
   });
 
@@ -61,7 +65,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
       <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="1" maxlength="32" required>
-      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}>
+      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
+      <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY}  />
     </form>
 
     <p><a href="/credits">Credits</a></p>
