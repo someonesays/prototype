@@ -1,4 +1,4 @@
-import { MatchmakingLocation, MinigamePathType, MinigameVisibility, PackVisibility } from "@/public";
+import { MatchmakingLocation, MinigamePathType, MinigamePublishType, PackPublishType } from "@/public";
 import { addMinigameToPack, createMinigame, createPack, createServer, createUser } from "../src/utils";
 
 const authorId = await createUser({ name: "Two" });
@@ -10,7 +10,7 @@ const minigameId = await createMinigame({
   description: "The objective of this game is to click the buttons.",
   previewImage: null,
   previewPlaceholderImage: null,
-  visibility: MinigameVisibility.Public,
+  publishType: MinigamePublishType.PublicOfficial,
   prompt: "Someone says **click the buttons**",
   legalTermsUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   legalPrivacyUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -26,7 +26,7 @@ const packId = await createPack({
   description: "This is the pack's description.",
   iconImage: null,
   iconPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
-  visibility: PackVisibility.Public,
+  publishType: PackPublishType.Public,
 });
 
 await addMinigameToPack({ packId, minigameId });

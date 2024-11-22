@@ -62,21 +62,21 @@ export async function getPackPublic({ id, offset = 0, limit = 50 }: { id: string
       id: pack.author.id,
       name: pack.author.name,
     },
-    iconImage:
+    icon_image:
       pack.iconImage && pack.iconPlaceholderImage
         ? {
             url: pack.iconImage,
             placeholder: pack.iconPlaceholderImage,
           }
         : null,
-    visibility: pack.visibility,
+    publish_type: pack.publishType,
     minigames: {
       data: minigames,
       offset: actualOffset,
       limit: actualLimit,
       total,
     },
-    createdAt: pack.createdAt,
+    created_at: pack.createdAt.toString(),
   } as Pack;
 }
 

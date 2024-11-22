@@ -67,7 +67,7 @@ websocket.get(
             id: user.id,
             ws,
             messageType,
-            displayName: user.displayName,
+            display_name: user.display_name,
             avatar: user.avatar,
             ready: false,
             state: null,
@@ -234,7 +234,7 @@ websocket.get(
               if (!state.serverRoom.minigame) return sendError(state.user, "Cannot start game without selecting a minigame");
 
               // Check minigame's minimum players
-              if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart)
+              if (state.serverRoom.players.size < state.serverRoom.minigame.minimum_players_to_start)
                 return sendError(
                   state.user,
                   "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
@@ -285,7 +285,7 @@ websocket.get(
                 state.serverRoom.minigame &&
                 state.serverRoom.players.get(state.serverRoom.room.host)?.ready &&
                 [...state.serverRoom.players.values()].filter((p) => p.ready).length >=
-                  state.serverRoom.minigame.minimumPlayersToStart &&
+                  state.serverRoom.minigame.minimum_players_to_start &&
                 !state.serverRoom.readyTimer
               ) {
                 state.serverRoom.readyTimer = setTimeout(() => startGame(state.serverRoom), 120000);
@@ -525,9 +525,9 @@ websocket.get(
           });
 
           // Check minigame's minimum players if the game is still loading
-          // Keep in mind minimumPlayersToStart will not be forced when the game actually starts
+          // Keep in mind minimum_players_to_start will not be forced when the game actually starts
           if (state.serverRoom.status === GameStatus.WaitingForPlayersToLoadMinigame && state.serverRoom.minigame) {
-            if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart) {
+            if (state.serverRoom.players.size < state.serverRoom.minigame.minimum_players_to_start) {
               return endGame({
                 room: state.serverRoom,
                 reason: MinigameEndReason.FailedToSatisfyMinimumPlayersToStart,
@@ -537,7 +537,7 @@ websocket.get(
             if (
               state.serverRoom.readyTimer &&
               [...state.serverRoom.players.values()].filter((p) => p.ready).length <
-                state.serverRoom.minigame.minimumPlayersToStart
+                state.serverRoom.minigame.minimum_players_to_start
             ) {
               clearTimeout(state.serverRoom.readyTimer);
               state.serverRoom.readyTimer = undefined;

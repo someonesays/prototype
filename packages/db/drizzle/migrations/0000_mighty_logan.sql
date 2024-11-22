@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"description" text DEFAULT '' NOT NULL,
 	"preview_image" text,
 	"preview_placeholder_image" text,
-	"visibility" smallint NOT NULL,
+	"publish_type" smallint NOT NULL,
 	"prompt" text NOT NULL,
 	"legal_terms_url" text NOT NULL,
 	"legal_privacy_url" text NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"description" text DEFAULT '' NOT NULL,
 	"icon_image" text,
 	"icon_placeholder_image" text,
-	"visibility" smallint NOT NULL,
+	"publish_type" smallint NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

@@ -59,20 +59,20 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
       id: minigame.author.id,
       name: minigame.author.name,
     },
-    previewImage:
+    preview_image:
       minigame.previewImage && minigame.previewPlaceholderImage
         ? {
             url: minigame.previewImage,
             placeholder: minigame.previewPlaceholderImage,
           }
         : null,
-    visibility: minigame.visibility,
+    publish_type: minigame.publishType,
     prompt: minigame.prompt,
     legal: {
       privacy: minigame.legalPrivacyUrl,
       terms: minigame.legalTermsUrl,
     },
-    minimumPlayersToStart: minigame.minimumPlayersToStart,
-    createdAt: minigame.createdAt,
+    minimum_players_to_start: minigame.minimumPlayersToStart,
+    created_at: minigame.createdAt.toString(),
   };
 }

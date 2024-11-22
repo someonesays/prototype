@@ -1,4 +1,4 @@
-import type { Minigame, PackVisibility } from "../../types";
+import type { Minigame, PackPublishType } from "../../types";
 
 export interface Pack {
   id: string;
@@ -8,16 +8,16 @@ export interface Pack {
     id: string;
     name: string;
   };
-  iconImage: {
+  icon_image: {
     url: string;
     placeholder: string;
   } | null;
-  visibility: PackVisibility;
+  publish_type: PackPublishType;
   minigames: {
     data: Minigame[];
     offset: number;
     limit: number;
     total: number;
   };
-  createdAt: string;
+  created_at: string;
 }

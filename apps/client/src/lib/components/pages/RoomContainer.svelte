@@ -141,7 +141,7 @@ onMount(() => {
               .filter((p) => p.ready)
               .map((p) => ({
                 id: p.id,
-                displayName: p.displayName,
+                displayName: p.display_name,
                 state: p.state,
               })),
           }),
@@ -164,7 +164,7 @@ onMount(() => {
           JSON.stringify({
             player: {
               id: player.id,
-              displayName: player.displayName,
+              displayName: player.display_name,
               state: player.state,
             },
             joined_late: $room.status === GameStatus.Started,

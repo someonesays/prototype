@@ -1,5 +1,5 @@
 {
-  "id": "33619cbd-eec3-4102-8494-66d986ebae62",
+  "id": "4dd2795f-fc32-4b35-8015-631adb2de120",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -45,8 +45,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "visibility": {
-          "name": "visibility",
+        "publish_type": {
+          "name": "publish_type",
           "type": "smallint",
           "primaryKey": false,
           "notNull": true
@@ -204,8 +204,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "visibility": {
-          "name": "visibility",
+        "publish_type": {
+          "name": "publish_type",
           "type": "smallint",
           "primaryKey": false,
           "notNull": true

@@ -1,7 +1,7 @@
 import { createCuid } from "@/utils";
 import { text, smallint, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
-import type { PackVisibility } from "@/public";
+import type { PackPublishType } from "@/public";
 
 import { users } from "./users";
 
@@ -17,7 +17,7 @@ export const packs = pgTable("packs", {
   description: text("description").notNull().default(""),
   iconImage: text("icon_image"),
   iconPlaceholderImage: text("icon_placeholder_image"),
-  visibility: smallint("visibility").$type<PackVisibility>().notNull(),
+  publishType: smallint("publish_type").$type<PackPublishType>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
 });
 

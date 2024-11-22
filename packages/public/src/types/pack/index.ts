@@ -1,2 +1,2 @@
 export type * from "./Pack";
-export * from "./PackVisibility";
+export * from "./PackPublishType";

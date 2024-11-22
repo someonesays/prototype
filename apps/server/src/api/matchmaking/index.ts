@@ -177,7 +177,7 @@ async function handlePostMatchmaking({
   }
 
   // Get user and room information
-  const user = { id: createCuid(), displayName, avatar };
+  const user = { id: createCuid(), display_name: displayName, avatar };
   const room = { id: roomId, server };
 
   // Create authorization token

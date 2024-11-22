@@ -1,5 +1,5 @@
 import { createCuid } from "@/utils";
-import { MinigamePathType, MinigameVisibility } from "@/public";
+import { MinigamePathType, MinigamePublishType } from "@/public";
 import { text, smallint, pgTable, timestamp } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -17,7 +17,7 @@ export const minigames = pgTable("minigames", {
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
   previewPlaceholderImage: text("preview_placeholder_image"), // data:// URL (ThumbHash)
-  visibility: smallint("visibility").$type<MinigameVisibility>().notNull(),
+  publishType: smallint("publish_type").$type<MinigamePublishType>().notNull(),
   prompt: text("prompt").notNull(),
   legalTermsUrl: text("legal_terms_url").notNull(),
   legalPrivacyUrl: text("legal_privacy_url").notNull(),

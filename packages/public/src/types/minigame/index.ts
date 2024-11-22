@@ -1,4 +1,4 @@
 export type * from "./Minigame";
 export * from "./MinigameEndReason";
 export * from "./MinigamePathType";
-export * from "./MinigameVisibility";
+export * from "./MinigamePublishType";

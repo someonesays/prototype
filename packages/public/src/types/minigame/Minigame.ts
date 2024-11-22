@@ -1,4 +1,4 @@
-import type { MinigameVisibility } from "../../types";
+import type { MinigamePublishType } from "../../types";
 
 export interface Minigame {
   id: string;
@@ -8,16 +8,16 @@ export interface Minigame {
     id: string;
     name: string;
   };
-  previewImage: {
+  preview_image: {
     url: string;
     placeholder: string;
   } | null;
-  visibility: MinigameVisibility;
+  publish_type: MinigamePublishType;
   legal: {
     terms: string | null;
     privacy: string | null;
   };
   prompt: string;
-  minimumPlayersToStart: number;
-  createdAt: string;
+  minimum_players_to_start: number;
+  created_at: string;
 }
