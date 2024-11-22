@@ -67,10 +67,12 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
   // It determines the server you get using 'launch_id % max(index)' and '== index' is used to get the correct row/server
 
   // This will break if servers are deleted when people are still in them
-  // Servers must be properly shut down, have a currentRoom = 0 and removed from the database in order to be deleted
+  // Servers must be properly shut down, have maxRooms = 0, currentRoom = 0 and removed from the database in order to be deleted
+  // Additionally, MAKE SURE EVERY ROOM CREATED BY THE DISCORD ACTIVITY MADE BEFORE the latest launch_id IS DESTROYED.
+  // When in doubt, don't delete servers.
 
-  // This will also break if you change the value of 'ws_discord' so don't change this value
-  // If I want to change this value, create a completely new server and shut the old one down
+  // This will also break if you change the value of 'ws_discord' from NULL to a string or vice-versa so don't change this value
+  // If I want to change this value from NULL to a string or vice-versa, create a completely new server and shut the old one down
 
   const server = (
     await db
