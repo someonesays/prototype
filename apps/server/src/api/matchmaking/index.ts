@@ -76,7 +76,10 @@ async function handlePostMatchmaking({
 
   // Get server to make the room in
   switch (payload.type) {
-    case MatchmakingType.Guest: {
+    case MatchmakingType.Normal: {
+      // TODO: Implement authentication in matchmaking
+      if (payload.auth) return c.json({ code: MessageCodes.NotImplemented }, 400);
+
       // Check captcha
       if (!(await verifyCaptcha(payload.captcha))) return c.json({ code: MessageCodes.FailedCaptcha }, 429);
 
@@ -117,10 +120,6 @@ async function handlePostMatchmaking({
       }
 
       break;
-    }
-    case MatchmakingType.Authenticated: {
-      // TODO: Add authenication for people who have accounts
-      return c.json({ code: MessageCodes.NotImplemented }, 501);
     }
     case MatchmakingType.Discord: {
       if (!env.DiscordClientId || !env.DiscordClientSecret || !env.DiscordToken) {

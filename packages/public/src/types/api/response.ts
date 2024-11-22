@@ -13,7 +13,7 @@ export interface APIMatchmakingResponse {
 export type APIMatchmakingResponseMetadata = APIMatchmakingResponseNormal | APIMatchmakingResponseMetadataDiscord;
 
 export interface APIMatchmakingResponseNormal {
-  type: MatchmakingType.Guest | MatchmakingType.Authenticated;
+  type: MatchmakingType.Normal;
 }
 
 export interface APIMatchmakingResponseMetadataDiscord {

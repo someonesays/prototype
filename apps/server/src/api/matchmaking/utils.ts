@@ -8,17 +8,14 @@ export const zodPostMatchmakingValidatorDiscord = z.object({
 });
 
 export const zodPostMatchmakingValidator = z.union([
-  // Create or join the room as a guest
+  // Create or join the room normally
   z.object({
-    type: z.literal(MatchmakingType.Guest),
+    type: z.literal(MatchmakingType.Normal),
+    auth: z.string().optional(),
     captcha: z.string(),
     display_name: z.string().min(1).max(32),
     location: z.nativeEnum(MatchmakingLocation).optional(),
     room_id: z.string().length(10).optional(),
-  }),
-  // TODO: Join room as an authenticated user
-  z.object({
-    type: z.literal(MatchmakingType.Authenticated),
   }),
   // Join room through Discord activity
   zodPostMatchmakingValidatorDiscord,
