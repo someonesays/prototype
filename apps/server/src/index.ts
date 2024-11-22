@@ -1,45 +1,20 @@
 import env from "@/env";
-import { Hono } from "hono";
-import { secureHeaders } from "hono/secure-headers";
-import { cors } from "hono/cors";
-import { api } from "./api";
-import { proxy } from "./proxy";
+import cluster from "node:cluster";
 
-const app = new Hono();
-
-app.route("/", proxy);
-app.route("/.proxy", proxy);
-
-app.use(
-  cors({
-    origin: env.BaseFrontend,
-    maxAge: 600,
-    credentials: true,
-  }),
-);
-
-app.use(
-  secureHeaders({
-    contentSecurityPolicy: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [env.BaseFrontend],
-      styleSrc: [],
-      imgSrc: [],
-      fontSrc: [],
-      connectSrc: [env.BaseFrontend],
-      mediaSrc: [],
-      frameSrc: [env.BaseFrontend],
-      childSrc: [env.BaseFrontend],
-      workerSrc: [env.BaseFrontend],
-      frameAncestors: ["'none'"],
-      baseUri: ["'none'"],
-    },
-  }),
-);
-
-app.route("/api", api);
-
-Bun.serve({
-  port: env.Port,
-  fetch: app.fetch,
+cluster.setupPrimary({
+  exec: "src/server.ts",
 });
+
+cluster.on("exit", (worker) => {
+  console.log(`#${worker.process.pid} The worker died.`);
+  createCluster();
+});
+
+for (let i = 0; i < env.Clusters; ++i) {
+  createCluster();
+}
+
+function createCluster() {
+  const worker = cluster.fork();
+  console.log(`#${worker.process.pid} A worker has spawned.`);
+}

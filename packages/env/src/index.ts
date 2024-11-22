@@ -24,6 +24,8 @@ export default {
   // Server-only
   BaseApi: process.env.BASE_API || "",
 
+  Clusters: process.env.CLUSTERS?.toLowerCase() === "auto" ? navigator.hardwareConcurrency : Number(process.env.CLUSTERS),
+
   turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY as string,
 
   DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
