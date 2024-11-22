@@ -28,6 +28,9 @@ export const ClientValidation = {
   [ClientOpcodes.MinigameSendGameMessage]: z.object({
     message: StateZod,
   }),
+  [ClientOpcodes.MinigameSendPlayerMessage]: z.object({
+    message: StateZod,
+  }),
   [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
     user: z.string().min(1).max(50).optional(), // Defaults to host
     message: StateZod,
@@ -50,4 +53,5 @@ export type ClientOpcodeAndDatas =
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerState>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSendGameMessage>
+  | ClientOpcodeAndData<ClientOpcodes.MinigameSendPlayerMessage>
   | ClientOpcodeAndData<ClientOpcodes.MinigameSendPrivateMessage>;

@@ -419,6 +419,22 @@ websocket.get(
 
               return;
             }
+            case ClientOpcodes.MinigameSendPlayerMessage: {
+              if (!isStarted(state)) return sendError(state.user, "Cannot send game message when game hasn't started");
+              if (!isReady(state)) return sendError(state.user, "Must be ready to send game message");
+
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: true,
+                opcode: ServerOpcodes.MinigameSendPlayerMessage,
+                data: {
+                  user: state.user.id,
+                  message: data.message,
+                },
+              });
+
+              break;
+            }
             case ClientOpcodes.MinigameSendPrivateMessage: {
               if (!data.user) data.user = state.serverRoom.room.host;
 

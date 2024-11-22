@@ -61,6 +61,12 @@ onMount(() => {
       data: evt,
     });
   });
+  sdk.on(MinigameOpcodes.SendPlayerMessage, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MinigameSendPlayerMessage,
+      data: evt,
+    });
+  });
   sdk.on(MinigameOpcodes.SendPrivateMessage, (evt) => {
     $roomWs?.send({
       opcode: ClientOpcodes.MinigameSendPrivateMessage,

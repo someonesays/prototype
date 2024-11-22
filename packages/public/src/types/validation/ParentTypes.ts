@@ -30,6 +30,10 @@ export interface ParentTypes {
   [ParentOpcodes.ReceivedGameMessage]: {
     message: State;
   };
+  [ParentOpcodes.ReceivedPlayerMessage]: {
+    user: string;
+    message: State;
+  };
   [ParentOpcodes.ReceivedPrivateMessage]: {
     from_user: string;
     to_user: string;

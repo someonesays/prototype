@@ -65,6 +65,10 @@ export interface ServerTypes {
   [ServerOpcodes.MinigameSendGameMessage]: {
     message: State;
   };
+  [ServerOpcodes.MinigameSendPlayerMessage]: {
+    user: string;
+    message: State;
+  };
   [ServerOpcodes.MinigameSendPrivateMessage]: {
     from_user: string; // User who sent it
     to_user: string; // Who it was sent by (mainly for the host)
@@ -91,4 +95,5 @@ export type ServerOpcodeAndDatas =
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSendGameMessage>
+  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>
   | ServerOpcodeAndData<ServerOpcodes.MinigameSendPrivateMessage>;

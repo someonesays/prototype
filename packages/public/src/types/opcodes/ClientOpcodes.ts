@@ -12,5 +12,6 @@ export enum ClientOpcodes {
   MinigameSetGameState = 7,
   MinigameSetPlayerState = 8,
   MinigameSendGameMessage = 9,
-  MinigameSendPrivateMessage = 10, // Player message to host only
+  MinigameSendPlayerMessage = 10,
+  MinigameSendPrivateMessage = 11, // Player message to host only
 }

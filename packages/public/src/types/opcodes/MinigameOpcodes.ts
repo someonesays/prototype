@@ -43,6 +43,10 @@ and it will display the leaderboards.
    */
   SendGameMessage = "send_game_message", // Host only
   /**
+   * Send a player message (one-time, think of it like a system message).
+   */
+  SendPlayerMessage = "send_player_message",
+  /**
    * Send a private player message to another player (host by default).
    *
    * The host can force anyone to send a message.

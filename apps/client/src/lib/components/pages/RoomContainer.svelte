@@ -45,7 +45,7 @@ onMount(() => {
     debug: true,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
-    messageType: "Oppack",
+    messageType: "Json",
   });
 
   // TODO: Handle error
@@ -203,6 +203,10 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.MinigameSendGameMessage, (evt) => {
     if (!minigameReady) return;
     $roomParentSdk?.sendGameMessage(evt);
+  });
+  $roomWs.on(ServerOpcodes.MinigameSendPlayerMessage, (evt) => {
+    if (!minigameReady) return;
+    $roomParentSdk?.sendPlayerMessage(evt);
   });
   $roomWs.on(ServerOpcodes.MinigameSendPrivateMessage, (evt) => {
     if (!minigameReady) return;

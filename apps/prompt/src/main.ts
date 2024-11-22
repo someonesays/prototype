@@ -14,6 +14,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
         <option value="setGameState">setGameState</option>
         <option value="setPlayerState">setPlayerState</option>
         <option value="sendGameMessage">sendGameMessage</option>
+        <option value="sendPlayerMessage">sendPlayerMessage</option>
         <option value="sendPrivateMessage">sendPrivateMessage</option>
       </select><br>
       <span id="options"></span><br>
@@ -74,6 +75,10 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
     logEvent("ReceivedGameMessage", evt);
   });
 
+  sdk.on(ParentOpcodes.ReceivedPlayerMessage, (evt) => {
+    logEvent("ReceivedPlayerMessage", evt);
+  });
+
   sdk.on(ParentOpcodes.ReceivedPrivateMessage, (evt) => {
     logEvent("ReceivedPrivateMessage", evt);
   });
@@ -106,6 +111,9 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
         `;
         break;
       case "sendGameMessage":
+        optionsSpan.innerHTML = `Message: <input id="message">`;
+        break;
+      case "sendPlayerMessage":
         optionsSpan.innerHTML = `Message: <input id="message">`;
         break;
       case "sendPrivateMessage":
@@ -147,6 +155,13 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
           message = JSON.parse(message);
         } catch (err) {}
         return sdk.sendGameMessage({ message });
+      }
+      case "sendPlayerMessage": {
+        let message = (document.getElementById("message") as HTMLInputElement).value;
+        try {
+          message = JSON.parse(message);
+        } catch (err) {}
+        return sdk.sendPlayerMessage({ message });
       }
       case "sendPrivateMessage": {
         const user = (document.getElementById("user") as HTMLInputElement).value || undefined;

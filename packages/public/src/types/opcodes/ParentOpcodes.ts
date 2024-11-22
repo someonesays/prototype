@@ -48,6 +48,10 @@ export enum ParentOpcodes {
    */
   ReceivedGameMessage = "received_game_message",
   /**
+   * A player has sent a one-time message (think of it like a system message).
+   */
+  ReceivedPlayerMessage = "received_player_message",
+  /**
    * A host has recieved a one-time private player message.
    */
   ReceivedPrivateMessage = "received_private_message",
