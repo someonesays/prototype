@@ -60,7 +60,7 @@ onMount(() => {
         // Set matchmaking store
         $launcherMatchmaking = matchmaking;
 
-        // TODO: Go to rooms page
+        // Go to rooms page
         goto(`/rooms/${encodeURIComponent(matchmaking.data.room.id)}`);
       } catch (err) {
         console.error(err);

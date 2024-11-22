@@ -44,10 +44,6 @@ matchmaking.get("/", async (c) => {
 
 matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), async (c) => {
   const payload = c.req.valid("json");
-
-  // TODO: Add rate limit middleware
-  // TODO: Add captcha
-
   return handlePostMatchmaking({ c, payload });
 });
 
