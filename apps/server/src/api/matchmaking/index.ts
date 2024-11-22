@@ -78,7 +78,8 @@ async function handlePostMatchmaking({
   switch (payload.type) {
     case MatchmakingType.Normal: {
       // TODO: Implement authentication in matchmaking
-      if (c.req.header("Authorization")) return c.json({ code: MessageCodes.NotImplemented }, 400);
+      const authorization = c.req.header("Authorization");
+      if (authorization) return c.json({ code: MessageCodes.NotImplemented }, 400);
 
       // Check captcha
       if (!(await verifyCaptcha(c.req.header("X-Captcha")))) return c.json({ code: MessageCodes.FailedCaptcha }, 429);
