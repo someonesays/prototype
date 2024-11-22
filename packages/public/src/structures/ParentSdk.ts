@@ -31,7 +31,6 @@ export class ParentSdk {
   }
 
   static async getMatchmaking({
-    auth,
     captcha,
     displayName,
     location,
@@ -47,15 +46,12 @@ export class ParentSdk {
   }) {
     if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
     try {
-      const headers: HeadersInit = {
-        "content-type": "application/json",
-        "x-captcha": captcha,
-      };
-      if (auth) headers.authorization = auth;
-
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
-        headers,
+        headers: {
+          "content-type": "application/json",
+          "x-captcha": captcha,
+        },
         body: JSON.stringify({
           type: MatchmakingType.Normal,
           location,
