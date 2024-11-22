@@ -5,7 +5,7 @@ import env from "@/env";
  * @param token The token sent alongside the request.
  * @returns `true` or `false`, depending on whether the token is valid.
  */
-export async function verifyCaptcha(token = "0") {
+export async function verifyCaptcha(token: string) {
   if (typeof token !== "string") return false;
   if (!token.length) return false;
 
