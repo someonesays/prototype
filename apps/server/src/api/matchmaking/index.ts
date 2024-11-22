@@ -1,6 +1,7 @@
 import env from "@/env";
 import { z } from "zod";
 import { Hono, type Context } from "hono";
+import { getConnInfo } from "hono/bun";
 import { sign } from "hono/jwt";
 import { zValidator } from "@hono/zod-validator";
 import {
@@ -21,8 +22,9 @@ import {
   type APIMatchmakingResponseMetadata,
   type MatchmakingDataJWT,
 } from "@/public";
-import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
 import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
+import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
+import { roomCreationRateLimit } from "../../utils";
 
 export const matchmaking = new Hono();
 
@@ -96,6 +98,12 @@ async function handlePostMatchmaking({
       } else {
         if (!payload.location) return c.json({ code: MessageCodes.MissingLocation }, 400);
 
+        // Check rate limiting for room creation
+        const { address: ip } = getConnInfo(c).remote;
+        const success = await roomCreationRateLimit.check(`ip:${ip}`);
+        if (!success) return c.json({ code: MessageCodes.RateLimited }, 400);
+
+        // Attempt to select the server to use
         const maxRetries = 3;
         let retries = 0;
 

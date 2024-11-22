@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@/db": "workspace:*",
+    "@/redis": "workspace:*",
     "@/public": "workspace:*",
     "@/utils": "workspace:*",
     "@hono/zod-validator": "^0.4.1",

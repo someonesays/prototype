@@ -16,15 +16,12 @@ export default {
   DatabaseName: process.env.DATABASE_NAME as string,
   DatabaseSsl: process.env.DATABASE_SSL?.toLowerCase() === "true",
 
-  // Room-only
-  ServerId: process.env.SERVER_ID as string,
-
-  AllowedWsOrigins: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],
-
   // Server-only
   BaseApi: process.env.BASE_API || "",
 
   Clusters: process.env.CLUSTERS?.toLowerCase() === "auto" ? navigator.hardwareConcurrency : Number(process.env.CLUSTERS),
+
+  CuidFingerprint: process.env.CUID_FINGERPRINT as string,
 
   turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY as string,
 
@@ -32,5 +29,14 @@ export default {
   DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
   DiscordToken: process.env.DISCORD_TOKEN as string,
 
-  CuidFingerprint: process.env.CUID_FINGERPRINT as string,
+  RedisPort: Number(process.env.REDIS_PORT || "6379"),
+  RedisHost: process.env.REDIS_HOST ?? "127.0.0.1",
+  RedisUsername: process.env.REDIS_USERNAME,
+  RedisPassword: process.env.REDIS_PASSWORD,
+  RedisDatabase: Number(process.env.REDIS_DB ?? "0"),
+
+  // Room-only
+  ServerId: process.env.SERVER_ID as string,
+
+  AllowedWsOrigins: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],
 };
