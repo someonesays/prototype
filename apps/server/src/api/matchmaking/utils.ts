@@ -11,8 +11,6 @@ export const zodPostMatchmakingValidator = z.union([
   // Create or join the room normally
   z.object({
     type: z.literal(MatchmakingType.Normal),
-    auth: z.string().optional(),
-    captcha: z.string(),
     display_name: z.string().min(1).max(32),
     location: z.nativeEnum(MatchmakingLocation).optional(),
     room_id: z.string().length(10).optional(),
