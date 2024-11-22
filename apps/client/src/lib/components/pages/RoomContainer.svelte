@@ -45,7 +45,7 @@ onMount(() => {
     debug: true,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
-    messageType: "Json",
+    messageType: "Oppack",
   });
 
   // TODO: Handle error

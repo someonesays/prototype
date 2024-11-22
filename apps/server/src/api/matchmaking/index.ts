@@ -19,7 +19,7 @@ import {
   MatchmakingType,
   MessageCodes,
   type APIMatchmakingResponse,
-  type APIMatchmakingResponseMetadata,
+  type MatchmakingResponseMetadata,
   type MatchmakingDataJWT,
 } from "@/public";
 import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
@@ -180,22 +180,22 @@ async function handlePostMatchmaking({
   const user = { id: createCuid(), display_name: displayName, avatar };
   const room = { id: roomId, server };
 
-  // Create authorization token
-  const exp = Math.trunc(Date.now() / 1000 + 60); // 1 minute
-  const data: MatchmakingDataJWT = { user, room, exp };
-  const authorization = await sign(data, env.RoomJwtSecret);
-
   // Set metadata
-  let metadata: APIMatchmakingResponseMetadata;
+  let metadata: MatchmakingResponseMetadata;
   switch (payload.type) {
     case MatchmakingType.Discord:
       if (!discordAccessToken) throw new Error("Missing Discord access_token on matchmaking. This should never happen.");
       metadata = { type: payload.type, access_token: discordAccessToken };
       break;
     default:
-      metadata = { type: payload.type };
+      metadata = { type: payload.type, creating: !payload.room_id };
       break;
   }
+
+  // Create authorization token
+  const exp = Math.trunc(Date.now() / 1000 + 60); // 1 minute
+  const data: MatchmakingDataJWT = { user, room, metadata, exp };
+  const authorization = await sign(data, env.RoomJwtSecret);
 
   // Send response
   return c.json({

@@ -10,6 +10,7 @@ import {
   GamePrizeType,
   GamePrizePoints,
   MessageCodes,
+  MatchmakingType,
   type GamePrize,
   type MatchmakingDataJWT,
   type Pack,
@@ -54,8 +55,7 @@ websocket.get(
     let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
     if (!["Json", "Oppack"].includes(messageType)) return;
 
-    const { user, room } = (await verify(authorization.trim(), env.RoomJwtSecret)) as MatchmakingDataJWT;
-
+    const { user, room, metadata } = (await verify(authorization.trim(), env.RoomJwtSecret)) as MatchmakingDataJWT;
     if (room.server.id !== env.ServerId) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
@@ -77,6 +77,12 @@ websocket.get(
         };
 
         if (state.serverRoom) {
+          // If the matchmaking type is normal, check if the JWT was meant to create a room
+          // This prevents a race-condition in matchmaking (36^9 chance) where 2 players are assigned the same room ID
+          if (metadata.type === MatchmakingType.Normal && metadata.creating) {
+            return ws.close(1003, JSON.stringify({ code: MessageCodes.ServersBusy }));
+          }
+
           // Check if the player with the given user ID is already in the room
           if (state.serverRoom.players.get(user.id)) {
             return ws.close(1003, JSON.stringify({ code: MessageCodes.AlreadyInGame }));
