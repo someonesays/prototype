@@ -204,8 +204,8 @@ async function handlePostMatchmaking({
 
   // Create authorization token
   const exp = Math.trunc(Date.now() / 1000 + 60); // 1 minute
-  const data: MatchmakingDataJWT = { user, room, metadata, exp };
-  const authorization = await sign(data, env.RoomJwtSecret);
+  const data: MatchmakingDataJWT = { type: "matchmaking", user, room, metadata, exp };
+  const authorization = await sign(data, env.JwtSecret);
 
   // Send response
   return c.json({

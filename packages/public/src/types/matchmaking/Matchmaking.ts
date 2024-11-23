@@ -9,6 +9,7 @@ export interface MatchmakingResponse {
 }
 
 export interface MatchmakingData {
+  type: "matchmaking";
   user: {
     id: string;
     display_name: string;

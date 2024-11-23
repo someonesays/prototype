@@ -20,6 +20,12 @@ export function getUser(id: string) {
   });
 }
 
+export function getUserByDiscordId(discordId: string) {
+  return db.query.users.findFirst({
+    where: eq(schema.users.discordId, discordId),
+  });
+}
+
 export async function getUserPublic(id: string) {
   const user = await getUser(id);
   if (!user) return null;

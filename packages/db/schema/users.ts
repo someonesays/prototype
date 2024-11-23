@@ -12,6 +12,8 @@ export const users = pgTable("users", {
     .$defaultFn(() => createCuid()),
   name: text("name").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
+
+  discordId: text("discord_id").unique(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

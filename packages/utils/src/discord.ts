@@ -9,6 +9,7 @@ export async function verifyDiscordOAuth2Token(code: string) {
     body: new URLSearchParams({
       client_id: env.DiscordClientId,
       client_secret: env.DiscordClientSecret,
+      redirect_uri: env.DiscordRedirectUri,
       grant_type: "authorization_code",
       code,
     }),

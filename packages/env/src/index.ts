@@ -6,8 +6,9 @@ export default {
 
   BaseFrontend: process.env.FRONTEND_URL as string,
 
+  JwtSecret: process.env.JWT_SECRET as string,
+
   RoomAuthorization: process.env.ROOMS_AUTHORIZATION as string,
-  RoomJwtSecret: process.env.ROOM_JWT_SECRET as string,
 
   DatabaseHost: process.env.DATABASE_HOST as string,
   DatabasePort: Number(process.env.DATABASE_PORT),
@@ -23,11 +24,14 @@ export default {
 
   CuidFingerprint: process.env.CUID_FINGERPRINT as string,
 
+  CookieSignature: process.env.COOKIE_SIGNATURE as string,
+
   turnstileSecretKeyInvisible: process.env.TURNSTILE_SECRET_KEY_INVISIBLE as string,
   turnstileSecretKeyManaged: process.env.TURNSTILE_SECRET_KEY_MANAGED as string,
 
   DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
   DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+  DiscordRedirectUri: process.env.DISCORD_REDIRECT_URI as string,
   DiscordToken: process.env.DISCORD_TOKEN as string,
 
   RedisPort: Number(process.env.REDIS_PORT || "6379"),
