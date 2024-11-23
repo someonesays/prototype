@@ -3,12 +3,12 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "start": "wrangler pages dev build --port 3000",
     "dev": "vite dev",
     "build": "NODE_ENV=production bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
     "build/staging": "NODE_ENV=staging bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
     "build/dev": "NODE_ENV=development bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
     "preview": "vite preview",
-    "cf": "wrangler pages dev build --port 3000",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
