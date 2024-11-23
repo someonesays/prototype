@@ -6,13 +6,18 @@ import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
-import { VITE_BASE_API, VITE_TURNSTILE_SITE_KEY_INVISIBLE, VITE_TURNSTILE_SITE_KEY_MANAGED } from "$lib/utils/env";
+import {
+  VITE_IS_PROD,
+  VITE_BASE_API,
+  VITE_TURNSTILE_SITE_KEY_INVISIBLE,
+  VITE_TURNSTILE_SITE_KEY_MANAGED,
+} from "$lib/utils/env";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
 
 let visibleCaptcha = $state(false);
-let enableJoinButton = $state(false);
+let enableJoinButton = $state(!VITE_IS_PROD);
 
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
@@ -81,10 +86,12 @@ function setJoinButtonState(state: boolean) {
     <form onsubmit={joinRoom}>
       <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="1" maxlength="32" required>
       <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={!enableJoinButton}><br>
-      {#if visibleCaptcha}
-        <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_MANAGED} />
-      {:else}
-        <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
+      {#if VITE_IS_PROD}
+        {#if visibleCaptcha}
+          <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_MANAGED} />
+        {:else}
+          <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
+        {/if}
       {/if}
     </form>
 
