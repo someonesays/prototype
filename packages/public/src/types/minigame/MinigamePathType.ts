@@ -1,4 +1,4 @@
 export enum MinigamePathType {
-  Original = 0,
-  WholePath = 1,
+  ORIGINAL = 0,
+  WHOLE_PATH = 1,
 }

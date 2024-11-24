@@ -12,24 +12,24 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
   const minigameId = (form.get("minigame_id") as string) || null;
 
   $roomWs?.send({
-    opcode: ClientOpcodes.SetRoomSettings,
+    opcode: ClientOpcodes.SET_ROOM_SETTINGS,
     data: {
-      pack_id: packId,
-      minigame_id: minigameId,
+      packId,
+      minigameId,
     },
   });
 }
 
 function kickPlayer(user: string) {
   $roomWs?.send({
-    opcode: ClientOpcodes.KickPlayer,
+    opcode: ClientOpcodes.KICK_PLAYER,
     data: { user },
   });
 }
 
 function transferHost(user: string) {
   $roomWs?.send({
-    opcode: ClientOpcodes.TransferHost,
+    opcode: ClientOpcodes.TRANSFER_HOST,
     data: { user },
   });
 }
@@ -60,7 +60,7 @@ async function copyInviteLink() {
 }
 
 function startGame() {
-  $roomWs?.send({ opcode: ClientOpcodes.BeginGame, data: {} });
+  $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: {} });
 }
 
 function leaveGame() {
@@ -73,8 +73,8 @@ function leaveGame() {
   <ul>
     {#each $room.players.sort((a, b) => b.points - a.points) as player}
       <li>
-        <img src={player.avatar} width="50" height="50" alt="{player.display_name}'s avatar" />
-        {player.display_name}{$room.room.host === player.id ? " [HOST]" : ""}:
+        <img src={player.avatar} width="50" height="50" alt="{player.displayName}'s avatar" />
+        {player.displayName}{$room.room.host === player.id ? " [HOST]" : ""}:
         {player.points} point{player.points === 1 ? "": "s"}
 
         {#if $room.room.host === $room.user && $room.user !== player.id}

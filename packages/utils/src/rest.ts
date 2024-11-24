@@ -11,7 +11,7 @@ export async function checkIfRoomExists({
   roomId,
 }: { url: string; roomId: string }): Promise<[boolean, APIRoomExists]> {
   const res = await fetch(`${url}/api/rooms/${encodeURIComponent(roomId)}`, {
-    headers: { authorization: env.RoomAuthorization },
+    headers: { authorization: env.ROOMS_AUTHORIZATION },
   });
   try {
     return [true, (await res.json()) as APIRoomExists];

@@ -1,4 +1,6 @@
 <script lang="ts">
+import env from "$lib/utils/env";
+
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
@@ -6,18 +8,12 @@ import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
-import {
-  VITE_IS_PROD,
-  VITE_BASE_API,
-  VITE_TURNSTILE_SITE_KEY_INVISIBLE,
-  VITE_TURNSTILE_SITE_KEY_MANAGED,
-} from "$lib/utils/env";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
 
 let visibleCaptcha = $state(false);
-let enableJoinButton = $state(!VITE_IS_PROD);
+let enableJoinButton = $state(!env.VITE_IS_PROD);
 
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
@@ -32,8 +28,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   const form = new FormData(evt.target as HTMLFormElement);
   const token = form.get("cf-turnstile-response") as string;
 
-  $displayName = form.get("display_name") as string;
-  setCookie("display_name", $displayName);
+  $displayName = form.get("displayName") as string;
+  setCookie("displayName", $displayName);
 
   // Get room from matchmaking
   const {
@@ -48,7 +44,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
-    baseUrl: VITE_BASE_API,
+    baseUrl: env.VITE_BASE_API,
   });
 
   if (!success) {
@@ -84,13 +80,13 @@ function setJoinButtonState(state: boolean) {
     
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
-      <input type="text" name="display_name" value={$displayName || getCookie("display_name")} placeholder="Nickname" minlength="1" maxlength="32" required>
+      <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
       <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={!enableJoinButton}><br>
-      {#if VITE_IS_PROD}
+      {#if env.VITE_IS_PROD}
         {#if visibleCaptcha}
-          <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_MANAGED} />
+          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_MANAGED} />
         {:else}
-          <Turnstile siteKey={VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
+          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
         {/if}
       {/if}
     </form>

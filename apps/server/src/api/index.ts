@@ -17,5 +17,5 @@ api.route("/minigames", minigames);
 api.route("/packs", packs);
 api.route("/matchmaking", matchmaking);
 
-api.get("/", (c) => c.json({ code: MessageCodes.HelloWorld }));
-api.get("/*", (c) => c.json({ code: MessageCodes.NotFound }, 404));
+api.get("/", (c) => c.json({ code: MessageCodes.HELLO_WORLD }));
+api.get("/*", (c) => c.json({ code: MessageCodes.NOT_FOUND }, 404));

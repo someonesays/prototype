@@ -11,10 +11,10 @@ import type {
 } from "../../types";
 
 export interface ServerTypes {
-  [ServerOpcodes.Error]: {
+  [ServerOpcodes.ERROR]: {
     message: string;
   };
-  [ServerOpcodes.GetInformation]: {
+  [ServerOpcodes.GET_INFORMATION]: {
     status: GameStatus;
     user: string; // (user = player id)
     room: GameRoomPrivate;
@@ -22,56 +22,56 @@ export interface ServerTypes {
     minigame: Minigame | null;
     players: GamePlayer[];
   };
-  [ServerOpcodes.PlayerJoin]: {
+  [ServerOpcodes.PLAYER_JOIN]: {
     player: GamePlayer;
   };
-  [ServerOpcodes.PlayerLeft]: {
+  [ServerOpcodes.PLAYER_LEFT]: {
     user: string;
   };
-  [ServerOpcodes.TransferHost]: {
+  [ServerOpcodes.TRANSFER_HOST]: {
     user: string;
   };
-  [ServerOpcodes.UpdatedRoomSettings]: {
+  [ServerOpcodes.UPDATED_ROOM_SETTINGS]: {
     pack: Pack | null;
     minigame: Minigame | null;
   };
-  [ServerOpcodes.LoadMinigame]: {
+  [ServerOpcodes.LOAD_MINIGAME]: {
     players: GamePlayer[];
   };
-  [ServerOpcodes.EndMinigame]:
+  [ServerOpcodes.END_MINIGAME]:
     | {
         players: GamePlayer[];
         reason:
-          | MinigameEndReason.ForcefulEnd
-          | MinigameEndReason.HostLeft
-          | MinigameEndReason.FailedToSatisfyMinimumPlayersToStart;
+          | MinigameEndReason.FORCEFUL_END
+          | MinigameEndReason.HOST_LEFT
+          | MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START;
       }
     | {
         players: GamePlayer[];
-        reason: MinigameEndReason.MinigameEnded;
+        reason: MinigameEndReason.MINIGAME_ENDED;
         prizes: GamePrize[];
       };
-  [ServerOpcodes.MinigamePlayerReady]: {
+  [ServerOpcodes.MINIGAME_PLAYER_READY]: {
     user: string;
   };
-  [ServerOpcodes.MinigameStartGame]: {};
-  [ServerOpcodes.MinigameSetGameState]: {
+  [ServerOpcodes.MINIGAME_START_GAME]: {};
+  [ServerOpcodes.MINIGAME_SET_GAME_STATE]: {
     state: State;
   };
-  [ServerOpcodes.MinigameSetPlayerState]: {
+  [ServerOpcodes.MINIGAME_SET_PLAYER_STATE]: {
     user: string;
     state: State;
   };
-  [ServerOpcodes.MinigameSendGameMessage]: {
+  [ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE]: {
     message: State;
   };
-  [ServerOpcodes.MinigameSendPlayerMessage]: {
+  [ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: {
     user: string;
     message: State;
   };
-  [ServerOpcodes.MinigameSendPrivateMessage]: {
-    from_user: string; // User who sent it
-    to_user: string; // Who it was sent by (mainly for the host)
+  [ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: {
+    fromUser: string; // User who sent it
+    toUser: string; // Who it was sent by (mainly for the host)
     message: State;
   };
 }
@@ -82,18 +82,18 @@ export interface ServerOpcodeAndData<O extends ServerOpcodes> {
 }
 
 export type ServerOpcodeAndDatas =
-  | ServerOpcodeAndData<ServerOpcodes.Error>
-  | ServerOpcodeAndData<ServerOpcodes.GetInformation>
-  | ServerOpcodeAndData<ServerOpcodes.PlayerJoin>
-  | ServerOpcodeAndData<ServerOpcodes.PlayerLeft>
-  | ServerOpcodeAndData<ServerOpcodes.TransferHost>
-  | ServerOpcodeAndData<ServerOpcodes.UpdatedRoomSettings>
-  | ServerOpcodeAndData<ServerOpcodes.LoadMinigame>
-  | ServerOpcodeAndData<ServerOpcodes.EndMinigame>
-  | ServerOpcodeAndData<ServerOpcodes.MinigamePlayerReady>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameStartGame>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSetGameState>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSetPlayerState>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSendGameMessage>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPlayerMessage>
-  | ServerOpcodeAndData<ServerOpcodes.MinigameSendPrivateMessage>;
+  | ServerOpcodeAndData<ServerOpcodes.ERROR>
+  | ServerOpcodeAndData<ServerOpcodes.GET_INFORMATION>
+  | ServerOpcodeAndData<ServerOpcodes.PLAYER_JOIN>
+  | ServerOpcodeAndData<ServerOpcodes.PLAYER_LEFT>
+  | ServerOpcodeAndData<ServerOpcodes.TRANSFER_HOST>
+  | ServerOpcodeAndData<ServerOpcodes.UPDATED_ROOM_SETTINGS>
+  | ServerOpcodeAndData<ServerOpcodes.LOAD_MINIGAME>
+  | ServerOpcodeAndData<ServerOpcodes.END_MINIGAME>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_PLAYER_READY>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_START_GAME>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SET_GAME_STATE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SET_PLAYER_STATE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>;

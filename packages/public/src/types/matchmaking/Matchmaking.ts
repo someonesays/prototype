@@ -12,7 +12,7 @@ export interface MatchmakingData {
   type: "matchmaking";
   user: {
     id: string;
-    display_name: string;
+    displayName: string;
     avatar: string;
   };
   room: {
@@ -30,7 +30,7 @@ export interface MatchmakingData {
 export type MatchmakingResponseMetadata = MatchmakingResponseNormal | MatchmakingResponseMetadataDiscord;
 
 export interface MatchmakingResponseNormal {
-  type: MatchmakingType.Normal;
+  type: MatchmakingType.NORMAL;
 
   // This doesn't enforce if a JWT can be used to create or join a room
   // It only prevents a race-condition in matchmaking where 2 people can be assigned to the same room when creating one
@@ -39,6 +39,6 @@ export interface MatchmakingResponseNormal {
 }
 
 export interface MatchmakingResponseMetadataDiscord {
-  type: MatchmakingType.Discord;
-  access_token: string;
+  type: MatchmakingType.DISCORD;
+  accessToken: string;
 }

@@ -10,12 +10,12 @@ const minigameId = await createMinigame({
   description: "The objective of this game is to click the buttons.",
   previewImage: null,
   previewPlaceholderImage: null,
-  publishType: MinigamePublishType.PublicOfficial,
+  publishType: MinigamePublishType.PUBLIC_OFFICIAL,
   prompt: "Someone says **click the buttons**",
   legalTermsUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   legalPrivacyUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   proxyUrl: "http://localhost:5173",
-  pathType: MinigamePathType.WholePath,
+  pathType: MinigamePathType.WHOLE_PATH,
   minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
 });
 
@@ -26,7 +26,7 @@ const packId = await createPack({
   description: "This is the pack's description.",
   iconImage: null,
   iconPlaceholderImage: null, // This is meant for stuff such as ThumbHash.
-  publishType: PackPublishType.Public,
+  publishType: PackPublishType.PUBLIC,
 });
 
 await addMinigameToPack({ packId, minigameId });

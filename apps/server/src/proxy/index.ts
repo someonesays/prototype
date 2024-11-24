@@ -48,7 +48,7 @@ proxy.use(route, async (c, next) => {
       frameSrc: [proxyHref],
       childSrc: [proxyHref, "blob:"],
       workerSrc: [proxyHref, "blob:"],
-      frameAncestors: ["'self'", env.BaseFrontend],
+      frameAncestors: ["'self'", env.BASE_FRONTEND],
       baseUri: ["'self'"],
     },
     xFrameOptions: "",
@@ -94,18 +94,18 @@ async function getProxy(c: Context<BlankEnv, typeof route>) {
   let path: string;
   if (c.req.path.startsWith("/.proxy")) {
     // Normal implementation
-    path = minigame.pathType === MinigamePathType.Original ? c.req.path.slice(absolutePath.length) : c.req.path;
+    path = minigame.pathType === MinigamePathType.ORIGINAL ? c.req.path.slice(absolutePath.length) : c.req.path;
   } else {
     // Discord implementation
     path =
-      minigame.pathType === MinigamePathType.Original
+      minigame.pathType === MinigamePathType.ORIGINAL
         ? c.req.path.slice(absolutePath.length - "/.proxy".length)
         : `/.proxy${c.req.path}`;
   }
 
   const href = minigame.proxyUrl;
   const url = `${href}${path}${query}`;
-  const proxyHref = `${env.BaseApi}${absolutePath}`;
+  const proxyHref = `${env.BASE_API}${absolutePath}`;
 
   return { proxyHref, url };
 }

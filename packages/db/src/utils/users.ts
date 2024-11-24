@@ -36,6 +36,6 @@ export function transformToUserPublic(user: typeof schema.users.$inferSelect) {
   return {
     id: user.id,
     name: user.name,
-    created_at: user.createdAt.toString(),
+    createdAt: user.createdAt.toString(),
   };
 }

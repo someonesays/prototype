@@ -10,23 +10,23 @@ export const authMiddleware = createMiddleware<{
     user: typeof schema.users.$inferSelect;
   };
 }>(async (c, next) => {
-  const authorization = (await getSignedCookie(c, env.CookieSignature, "token")) || "";
+  const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
 
   try {
-    const { type, cid } = (await verify(authorization, env.JwtSecret)) as { type: "token"; cid: string };
-    if (type !== "token") return c.json({ code: MessageCodes.InvalidAuthorization });
+    const { type, cid } = (await verify(authorization, env.JWT_SECRET)) as { type: "token"; cid: string };
+    if (type !== "token") return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
 
     try {
       const user = await getUser(cid);
-      if (!user) return c.json({ code: MessageCodes.InvalidAuthorization });
+      if (!user) return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
 
       c.set("user", user);
       return await next();
     } catch (err2) {
       console.error(err2);
-      return c.json({ code: MessageCodes.InternalError });
+      return c.json({ code: MessageCodes.INTERNAL_ERROR });
     }
   } catch (err) {
-    return c.json({ code: MessageCodes.InvalidAuthorization });
+    return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
   }
 });

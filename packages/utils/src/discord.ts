@@ -7,9 +7,9 @@ export async function verifyDiscordOAuth2Token(code: string) {
       "content-type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({
-      client_id: env.DiscordClientId,
-      client_secret: env.DiscordClientSecret,
-      redirect_uri: env.DiscordRedirectUri,
+      client_id: env.DISCORD_CLIENT_ID,
+      client_secret: env.DISCORD_CLIENT_SECRET,
+      redirect_uri: env.DISCORD_REDIRECT_URI,
       grant_type: "authorization_code",
       code,
     }),
@@ -86,9 +86,9 @@ export async function getDiscordMember({ guildId, accessToken }: { guildId: stri
 }
 
 export async function getActivityInstance(instanceId: string) {
-  const res = await fetch(`https://discord.com/api/applications/${env.DiscordClientId}/activity-instances/${instanceId}`, {
+  const res = await fetch(`https://discord.com/api/applications/${env.DISCORD_CLIENT_ID}/activity-instances/${instanceId}`, {
     headers: {
-      authorization: `Bot ${env.DiscordToken}`,
+      authorization: `Bot ${env.DISCORD_TOKEN}`,
       "content-type": "application/json",
     },
   });

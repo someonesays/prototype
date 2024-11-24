@@ -1,4 +1,4 @@
 export enum MatchmakingType {
-  Normal = 0,
-  Discord = 1,
+  NORMAL = 0,
+  DISCORD = 1,
 }

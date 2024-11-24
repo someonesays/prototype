@@ -9,8 +9,8 @@ import { rooms, maxRooms, setMaxRooms } from "../../utils";
 export const state = new Hono();
 
 const authMiddleware = createMiddleware(async (c, next) => {
-  if (c.req.header("Authorization") === env.RoomAuthorization) return next();
-  return c.json({ code: MessageCodes.InvalidAuthorization }, 401);
+  if (c.req.header("Authorization") === env.ROOMS_AUTHORIZATION) return next();
+  return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
 });
 
 // Update max rooms

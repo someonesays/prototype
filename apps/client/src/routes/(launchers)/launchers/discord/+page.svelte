@@ -1,5 +1,5 @@
 <script>
-import { VITE_DISCORD_CLIENT_ID } from "$lib/utils/env";
+import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { DiscordSDK, RPCCloseCodes } from "@discord/embedded-app-sdk";
@@ -7,14 +7,13 @@ import { MatchmakingType, MessageCodesToText, ParentSdk } from "@/public";
 
 import { goto } from "$app/navigation";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
-import { setCookie } from "$lib/utils/cookies";
 
 let failed = $state(false);
 
 onMount(() => {
   try {
     // Load Discord SDK
-    const discordSdk = new DiscordSDK(VITE_DISCORD_CLIENT_ID);
+    const discordSdk = new DiscordSDK(env.VITE_DISCORD_CLIENT_ID);
 
     (async () => {
       try {
@@ -23,7 +22,7 @@ onMount(() => {
 
         // OAuth2
         const { code } = await discordSdk.commands.authorize({
-          client_id: VITE_DISCORD_CLIENT_ID,
+          client_id: env.VITE_DISCORD_CLIENT_ID,
           response_type: "code",
           state: "",
           prompt: "none",
@@ -48,10 +47,10 @@ onMount(() => {
         }
 
         // Set access_token
-        if (matchmaking.metadata.type !== MatchmakingType.Discord)
+        if (matchmaking.data.metadata.type !== MatchmakingType.DISCORD)
           throw new Error("Metadata type is not 'discord'. This should never happen.");
 
-        await discordSdk.commands.authenticate({ access_token: matchmaking.metadata.access_token });
+        await discordSdk.commands.authenticate({ access_token: matchmaking.data.metadata.accessToken });
 
         // Set launcher information
         $launcher = "discord";

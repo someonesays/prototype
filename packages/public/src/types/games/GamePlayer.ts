@@ -2,7 +2,7 @@ import type { State } from "../../types";
 
 export interface MinigamePlayer {
   id: string;
-  display_name: string;
+  displayName: string;
   avatar: string;
   state: State;
 }

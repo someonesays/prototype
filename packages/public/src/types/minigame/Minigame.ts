@@ -7,17 +7,18 @@ export interface Minigame {
   author: {
     id: string;
     name: string;
+    createdAt: string;
   };
-  preview_image: {
+  previewImage: {
     url: string;
     placeholder: string;
   } | null;
-  publish_type: MinigamePublishType;
+  publishType: MinigamePublishType;
   legal: {
     terms: string | null;
     privacy: string | null;
   };
   prompt: string;
-  minimum_players_to_start: number;
-  created_at: string;
+  minimumPlayersToStart: number;
+  createdAt: string;
 }

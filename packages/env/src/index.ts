@@ -1,47 +1,47 @@
 export default {
   // Global
-  NodeEnv: process.env.NODE_ENV as "production" | "staging" | "development",
+  NODE_ENV: process.env.NODE_ENV as "production" | "staging" | "development",
 
-  Port: Number(process.env.PORT),
+  PORT: Number(process.env.PORT),
 
-  BaseFrontend: process.env.FRONTEND_URL as string,
+  BASE_FRONTEND: process.env.BASE_FRONTEND as string,
 
-  JwtSecret: process.env.JWT_SECRET as string,
+  JWT_SECRET: process.env.JWT_SECRET as string,
 
-  RoomAuthorization: process.env.ROOMS_AUTHORIZATION as string,
+  ROOMS_AUTHORIZATION: process.env.ROOMS_AUTHORIZATION as string,
 
-  DatabaseHost: process.env.DATABASE_HOST as string,
-  DatabasePort: Number(process.env.DATABASE_PORT),
-  DatabaseUser: process.env.DATABASE_USER as string,
-  DatabasePassword: process.env.DATABASE_PASSWORD as string,
-  DatabaseName: process.env.DATABASE_NAME as string,
-  DatabaseSsl: process.env.DATABASE_SSL?.toLowerCase() === "true",
+  DATABASE_HOST: process.env.DATABASE_HOST as string,
+  DATABASE_PORT: Number(process.env.DATABASE_PORT),
+  DATABASE_USER: process.env.DATABASE_USER as string,
+  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD as string,
+  DATABASE_NAME: process.env.DATABASE_NAME as string,
+  DATABASE_SSL: process.env.DATABASE_SSL?.toLowerCase() === "true",
 
   // Server-only
-  BaseApi: process.env.BASE_API || "",
+  BASE_API: process.env.BASE_API || "",
 
-  Clusters: process.env.CLUSTERS?.toLowerCase() === "auto" ? navigator.hardwareConcurrency : Number(process.env.CLUSTERS),
+  CLUSTERS: process.env.CLUSTERS?.toLowerCase() === "auto" ? navigator.hardwareConcurrency : Number(process.env.CLUSTERS),
 
-  CuidFingerprint: process.env.CUID_FINGERPRINT as string,
+  CUID_FINGERPRINT: process.env.CUID_FINGERPRINT as string,
 
-  CookieSignature: process.env.COOKIE_SIGNATURE as string,
+  COOKIE_SIGNATURE: process.env.COOKIE_SIGNATURE as string,
 
-  turnstileSecretKeyInvisible: process.env.TURNSTILE_SECRET_KEY_INVISIBLE as string,
-  turnstileSecretKeyManaged: process.env.TURNSTILE_SECRET_KEY_MANAGED as string,
+  TURNSTILE_SECRET_KEY_INVISIBLE: process.env.TURNSTILE_SECRET_KEY_INVISIBLE as string,
+  TURNSTILE_SECRET_KEY_MANAGED: process.env.TURNSTILE_SECRET_KEY_MANAGED as string,
 
-  DiscordClientId: process.env.DISCORD_CLIENT_ID as string,
-  DiscordClientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-  DiscordRedirectUri: process.env.DISCORD_REDIRECT_URI as string,
-  DiscordToken: process.env.DISCORD_TOKEN as string,
+  DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID as string,
+  DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string,
+  DISCORD_REDIRECT_URI: process.env.DISCORD_REDIRECT_URI as string,
+  DISCORD_TOKEN: process.env.DISCORD_TOKEN as string,
 
-  RedisPort: Number(process.env.REDIS_PORT || "6379"),
-  RedisHost: process.env.REDIS_HOST ?? "127.0.0.1",
-  RedisUsername: process.env.REDIS_USERNAME,
-  RedisPassword: process.env.REDIS_PASSWORD,
-  RedisDatabase: Number(process.env.REDIS_DB ?? "0"),
+  REDIS_PORT: Number(process.env.REDIS_PORT || "6379"),
+  REDIS_HOST: process.env.REDIS_HOST ?? "127.0.0.1",
+  REDIS_USERNAME: process.env.REDIS_USERNAME,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+  REDIS_DB: Number(process.env.REDIS_DB ?? "0"),
 
   // Room-only
-  ServerId: process.env.SERVER_ID as string,
+  SERVER_ID: process.env.SERVER_ID as string,
 
-  AllowedWsOrigins: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],
+  ALLOWED_WS_ORIGINS: process.env.ALLOWED_WS_ORIGINS?.split(",").map((o) => o.trim()) || [],
 };

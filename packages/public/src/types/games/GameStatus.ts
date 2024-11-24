@@ -1,5 +1,5 @@
 export enum GameStatus {
-  Lobby = 0,
-  WaitingForPlayersToLoadMinigame = 1,
-  Started = 2,
+  LOBBY = 0,
+  WAITING_PLAYERS_TO_LOAD_MINIGAME = 1,
+  STARTED = 2,
 }

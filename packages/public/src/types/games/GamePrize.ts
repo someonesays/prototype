@@ -1,17 +1,17 @@
 import { z } from "zod";
 
 export enum GamePrizeType {
-  Participation = 0,
-  Winner = 1,
-  Second = 2,
-  Third = 3,
+  PARTICIPATION = 0,
+  WINNER = 1,
+  SECOND = 2,
+  THIRD = 3,
 }
 
 export const GamePrizePoints = {
-  [GamePrizeType.Participation]: 1,
-  [GamePrizeType.Winner]: 5,
-  [GamePrizeType.Second]: 4,
-  [GamePrizeType.Third]: 3,
+  [GamePrizeType.PARTICIPATION]: 1,
+  [GamePrizeType.WINNER]: 5,
+  [GamePrizeType.SECOND]: 4,
+  [GamePrizeType.THIRD]: 3,
 };
 
 export type GamePrize = z.infer<typeof GamePrizeZod>;

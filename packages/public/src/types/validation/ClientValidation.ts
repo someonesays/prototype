@@ -2,36 +2,36 @@ import z from "zod";
 import { ClientOpcodes, GamePrizeArrayZod, StateZod } from "../../types";
 
 export const ClientValidation = {
-  [ClientOpcodes.Ping]: z.object({}),
-  [ClientOpcodes.KickPlayer]: z.object({
+  [ClientOpcodes.PING]: z.object({}),
+  [ClientOpcodes.KICK_PLAYER]: z.object({
     user: z.string().min(1).max(50),
   }),
-  [ClientOpcodes.TransferHost]: z.object({
+  [ClientOpcodes.TRANSFER_HOST]: z.object({
     user: z.string().min(1).max(50),
   }),
-  [ClientOpcodes.SetRoomSettings]: z.object({
-    pack_id: z.string().min(1).max(50).nullable().optional(),
-    minigame_id: z.string().min(1).max(50).nullable().optional(),
+  [ClientOpcodes.SET_ROOM_SETTINGS]: z.object({
+    packId: z.string().min(1).max(50).nullable().optional(),
+    minigameId: z.string().min(1).max(50).nullable().optional(),
   }),
-  [ClientOpcodes.BeginGame]: z.object({}),
-  [ClientOpcodes.MinigameHandshake]: z.object({}),
-  [ClientOpcodes.MinigameEndGame]: z.object({
+  [ClientOpcodes.BEGIN_GAME]: z.object({}),
+  [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({}),
+  [ClientOpcodes.MINIGAME_END_GAME]: z.object({
     prizes: GamePrizeArrayZod.optional(),
   }),
-  [ClientOpcodes.MinigameSetGameState]: z.object({
+  [ClientOpcodes.MINIGAME_SET_GAME_STATE]: z.object({
     state: StateZod,
   }),
-  [ClientOpcodes.MinigameSetPlayerState]: z.object({
+  [ClientOpcodes.MINIGAME_SET_PLAYER_STATE]: z.object({
     user: z.string().min(1).max(50),
     state: StateZod,
   }),
-  [ClientOpcodes.MinigameSendGameMessage]: z.object({
+  [ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE]: z.object({
     message: StateZod,
   }),
-  [ClientOpcodes.MinigameSendPlayerMessage]: z.object({
+  [ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: z.object({
     message: StateZod,
   }),
-  [ClientOpcodes.MinigameSendPrivateMessage]: z.object({
+  [ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: z.object({
     user: z.string().min(1).max(50).optional(), // Defaults to host
     message: StateZod,
   }),
@@ -43,15 +43,15 @@ export interface ClientOpcodeAndData<O extends ClientOpcodes> {
 }
 
 export type ClientOpcodeAndDatas =
-  | ClientOpcodeAndData<ClientOpcodes.Ping>
-  | ClientOpcodeAndData<ClientOpcodes.KickPlayer>
-  | ClientOpcodeAndData<ClientOpcodes.TransferHost>
-  | ClientOpcodeAndData<ClientOpcodes.SetRoomSettings>
-  | ClientOpcodeAndData<ClientOpcodes.BeginGame>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameHandshake>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameEndGame>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSetGameState>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSetPlayerState>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSendGameMessage>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSendPlayerMessage>
-  | ClientOpcodeAndData<ClientOpcodes.MinigameSendPrivateMessage>;
+  | ClientOpcodeAndData<ClientOpcodes.PING>
+  | ClientOpcodeAndData<ClientOpcodes.KICK_PLAYER>
+  | ClientOpcodeAndData<ClientOpcodes.TRANSFER_HOST>
+  | ClientOpcodeAndData<ClientOpcodes.SET_ROOM_SETTINGS>
+  | ClientOpcodeAndData<ClientOpcodes.BEGIN_GAME>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_HANDSHAKE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_END_GAME>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SET_GAME_STATE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SET_PLAYER_STATE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>;

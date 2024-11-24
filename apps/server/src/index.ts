@@ -10,7 +10,7 @@ cluster.on("exit", (worker) => {
   createCluster();
 });
 
-for (let i = 0; i < env.Clusters; ++i) {
+for (let i = 0; i < env.CLUSTERS; ++i) {
   createCluster();
 }
 

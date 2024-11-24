@@ -1,4 +1,4 @@
-import { VITE_BASE_API } from "$lib/utils/env";
+import env from "$lib/utils/env";
 import { goto } from "$app/navigation";
 import { MessageCodes, MessageCodesToText, ParentSdk } from "@/public";
 import { roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
@@ -9,10 +9,10 @@ export async function load({ params }) {
     roomId,
     // You'll never run into /join/[roomId] unless you connect to the website to it,
     // so I don't need to worry about changing the 'launcher' store value.
-    baseUrl: VITE_BASE_API,
+    baseUrl: env.VITE_BASE_API,
   });
   if (!exists) {
-    kickedReason.set(MessageCodesToText[MessageCodes.RoomNotFound]);
+    kickedReason.set(MessageCodesToText[MessageCodes.ROOM_NOT_FOUND]);
     return goto("/");
   }
   roomIdToJoin.set(roomId);

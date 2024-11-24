@@ -1,6 +1,6 @@
 export enum MinigameEndReason {
-  MinigameEnded = 0,
-  ForcefulEnd = 1,
-  HostLeft = 2,
-  FailedToSatisfyMinimumPlayersToStart = 4,
+  MINIGAME_ENDED = 0,
+  FORCEFUL_END = 1,
+  HOST_LEFT = 2,
+  FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START = 4,
 }

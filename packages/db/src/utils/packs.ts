@@ -31,7 +31,7 @@ export async function getPack(id: string) {
     where: eq(schema.packs.id, id),
     with: {
       author: {
-        columns: { id: true, name: true },
+        columns: { id: true, name: true, createdAt: true },
       },
     },
   });
@@ -49,7 +49,11 @@ export function getPackMinigameCount(id: string) {
   return db.$count(schema.packsMinigames, eq(schema.packsMinigames.packId, id));
 }
 
-export async function getPackPublic({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
+export async function getPackPublic({
+  id,
+  offset = 0,
+  limit = 50,
+}: { id: string; offset?: number; limit?: number }): Promise<Pack | null> {
   const pack = await getPack(id);
   if (!pack) return null;
 
@@ -61,23 +65,24 @@ export async function getPackPublic({ id, offset = 0, limit = 50 }: { id: string
     author: {
       id: pack.author.id,
       name: pack.author.name,
+      createdAt: pack.author.createdAt.toString(),
     },
-    icon_image:
+    iconImage:
       pack.iconImage && pack.iconPlaceholderImage
         ? {
             url: pack.iconImage,
             placeholder: pack.iconPlaceholderImage,
           }
         : null,
-    publish_type: pack.publishType,
+    publishType: pack.publishType,
     minigames: {
       data: minigames,
       offset: actualOffset,
       limit: actualLimit,
       total,
     },
-    created_at: pack.createdAt.toString(),
-  } as Pack;
+    createdAt: pack.createdAt.toString(),
+  };
 }
 
 export async function getPackMinigamesPublic({

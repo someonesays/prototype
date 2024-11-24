@@ -20,7 +20,7 @@ export function getMinigamesByIds(ids: string[]) {
     where: inArray(schema.minigames.id, ids),
     with: {
       author: {
-        columns: { id: true, name: true },
+        columns: { id: true, name: true, createdAt: true },
       },
     },
   });
@@ -31,7 +31,7 @@ export function getMinigame(id: string) {
     where: eq(schema.minigames.id, id),
     with: {
       author: {
-        columns: { id: true, name: true },
+        columns: { id: true, name: true, createdAt: true },
       },
     },
   });
@@ -58,21 +58,22 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
     author: {
       id: minigame.author.id,
       name: minigame.author.name,
+      createdAt: minigame.author.createdAt.toString(),
     },
-    preview_image:
+    previewImage:
       minigame.previewImage && minigame.previewPlaceholderImage
         ? {
             url: minigame.previewImage,
             placeholder: minigame.previewPlaceholderImage,
           }
         : null,
-    publish_type: minigame.publishType,
+    publishType: minigame.publishType,
     prompt: minigame.prompt,
     legal: {
       privacy: minigame.legalPrivacyUrl,
       terms: minigame.legalTermsUrl,
     },
-    minimum_players_to_start: minigame.minimumPlayersToStart,
-    created_at: minigame.createdAt.toString(),
+    minimumPlayersToStart: minigame.minimumPlayersToStart,
+    createdAt: minigame.createdAt.toString(),
   };
 }

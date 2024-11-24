@@ -1,4 +1,5 @@
 <script lang="ts">
+import env from "$lib/utils/env";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
@@ -7,7 +8,6 @@ import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 import { room, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
-import { VITE_BASE_API } from "$lib/utils/env";
 import { parseMd } from "$lib/utils/parseMd";
 
 let container: HTMLDivElement;
@@ -28,48 +28,48 @@ onMount(() => {
   const sdk = new ParentSdk({ iframe });
   $roomParentSdk = sdk;
 
-  sdk.once(MinigameOpcodes.Handshake, () => {
+  sdk.once(MinigameOpcodes.HANDSHAKE, () => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameHandshake,
+      opcode: ClientOpcodes.MINIGAME_HANDSHAKE,
       data: {},
     });
   });
-  sdk.on(MinigameOpcodes.EndGame, (evt) => {
+  sdk.on(MinigameOpcodes.END_GAME, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameEndGame,
+      opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: evt,
     });
   });
-  sdk.on(MinigameOpcodes.SetClientPrompt, (evt) => {
+  sdk.on(MinigameOpcodes.SET_CLIENT_PROMPT, (evt) => {
     minigamePromptText = parseMd(evt.prompt);
   });
-  sdk.on(MinigameOpcodes.SetGameState, (evt) => {
+  sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameSetGameState,
+      opcode: ClientOpcodes.MINIGAME_SET_GAME_STATE,
       data: evt,
     });
   });
-  sdk.on(MinigameOpcodes.SetPlayerState, (evt) => {
+  sdk.on(MinigameOpcodes.SET_PLAYER_STATE, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameSetPlayerState,
+      opcode: ClientOpcodes.MINIGAME_SET_PLAYER_STATE,
       data: evt,
     });
   });
-  sdk.on(MinigameOpcodes.SendGameMessage, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_GAME_MESSAGE, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameSendGameMessage,
+      opcode: ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE,
       data: evt,
     });
   });
-  sdk.on(MinigameOpcodes.SendPlayerMessage, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_PLAYER_MESSAGE, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameSendPlayerMessage,
+      opcode: ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE,
       data: evt,
     });
   });
-  sdk.on(MinigameOpcodes.SendPrivateMessage, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_PRIVATE_MESSAGE, (evt) => {
     $roomWs?.send({
-      opcode: ClientOpcodes.MinigameSendPrivateMessage,
+      opcode: ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
       data: evt,
     });
   });
@@ -79,7 +79,7 @@ onMount(() => {
 
   iframe.src =
     $launcher === "normal"
-      ? `${VITE_BASE_API}/.proxy/api/proxy/${$room.minigame.id}/`
+      ? `${env.VITE_BASE_API}/.proxy/api/proxy/${$room.minigame.id}/`
       : `/.proxy/api/proxy/${$room.minigame.id}/`;
 
   return () => {
@@ -92,7 +92,7 @@ onMount(() => {
 function leaveOrEndGame() {
   if ($room && $room.room.host === $room.user) {
     return $roomWs?.send({
-      opcode: ClientOpcodes.MinigameEndGame,
+      opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: {},
     });
   }

@@ -1,5 +1,5 @@
 export enum MinigamePublishType {
-  Unlisted = 0,
-  PublicOfficial = 1,
-  PublicUnofficial = 2,
+  UNLISTED = 0,
+  PUBLIC_OFFICIAL = 1,
+  PUBLIC_UNOFFICIAL = 2,
 }

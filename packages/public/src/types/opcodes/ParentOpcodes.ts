@@ -6,11 +6,11 @@ export enum ParentOpcodes {
    * Sent the room and player information, including the game's state and all player states.
    * This should also include player settings, such as volume and language.
    */
-  Ready = "ready",
+  READY = "ready",
   /**
    * Updated player's settings
    */
-  UpdateSettings = "update_settings",
+  UPDATE_SETTINGS = "update_settings",
   /**
    * The game has started.
    *
@@ -20,13 +20,13 @@ export enum ParentOpcodes {
    *
    * Also, it's necessary for the host to join to start the game, because they'll be treated like the "server" in a sense.
    */
-  StartGame = "start_game",
+  START_GAME = "start_game",
   /**
    * A player readied the minigame (consider this as a player join event on minigames).
    *
    * When a player readies a minigame, the player joined event is given to all clients who are readied as well.
    */
-  MinigamePlayerReady = "player_ready",
+  MINIGAME_PLAYER_READY = "player_ready",
   /**
    * If a player leaves, a player left state will be given.
    *
@@ -34,25 +34,25 @@ export enum ParentOpcodes {
    *
    * The minigame will end with "no winner" and nobody will gain points.
    */
-  PlayerLeft = "player_left",
+  PLAYER_LEFT = "player_left",
   /**
    * The game's state has been updated.
    */
-  UpdatedGameState = "updated_game_state",
+  UPDATED_GAME_STATE = "updated_game_state",
   /**
    * The player's state has been updated.
    */
-  UpdatedPlayerState = "updated_player_state",
+  UPDATED_PLAYER_STATE = "updated_player_state",
   /**
    * The game's host has sent a one-time message (think of it like a system message).
    */
-  ReceivedGameMessage = "received_game_message",
+  RECEIVED_GAME_MESSAGE = "received_game_message",
   /**
    * A player has sent a one-time message (think of it like a system message).
    */
-  ReceivedPlayerMessage = "received_player_message",
+  RECEIVED_PLAYER_MESSAGE = "received_player_message",
   /**
    * A host has recieved a one-time private player message.
    */
-  ReceivedPrivateMessage = "received_private_message",
+  RECEIVED_PRIVATE_MESSAGE = "received_private_message",
 }

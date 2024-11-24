@@ -7,17 +7,18 @@ export interface Pack {
   author: {
     id: string;
     name: string;
+    createdAt: string;
   };
-  icon_image: {
+  iconImage: {
     url: string;
     placeholder: string;
   } | null;
-  publish_type: PackPublishType;
+  publishType: PackPublishType;
   minigames: {
     data: Minigame[];
     offset: number;
     limit: number;
     total: number;
   };
-  created_at: string;
+  createdAt: string;
 }

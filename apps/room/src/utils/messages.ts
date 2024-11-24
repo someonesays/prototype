@@ -50,7 +50,7 @@ export function sendMessage<O extends ServerOpcodes>({
 export function sendError(user: ServerPlayer, message: string) {
   return sendMessage({
     user,
-    opcode: ServerOpcodes.Error,
+    opcode: ServerOpcodes.ERROR,
     data: { message },
   });
 }

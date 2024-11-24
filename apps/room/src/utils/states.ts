@@ -8,11 +8,11 @@ export function isNotHost(state: WSState) {
 }
 
 export function isLobby(state: WSState) {
-  return state.serverRoom.status === GameStatus.Lobby;
+  return state.serverRoom.status === GameStatus.LOBBY;
 }
 
 export function isStarted(state: WSState) {
-  return state.serverRoom.status === GameStatus.Started;
+  return state.serverRoom.status === GameStatus.STARTED;
 }
 
 export function isReady(state: WSState) {
@@ -33,7 +33,7 @@ export function isUserReady(state: WSState, user: string) {
 
 export function startGame(room: ServerRoom) {
   // Set room status to started
-  room.status = GameStatus.Started;
+  room.status = GameStatus.STARTED;
 
   // Remove ready timer
   removeReadyTimerGame(room);
@@ -41,7 +41,7 @@ export function startGame(room: ServerRoom) {
   // Broadcast minigame started
   return broadcastMessage({
     room,
-    opcode: ServerOpcodes.MinigameStartGame,
+    opcode: ServerOpcodes.MINIGAME_START_GAME,
     data: {},
   });
 }
@@ -51,14 +51,14 @@ export function endGame(
     | {
         room: ServerRoom;
         reason:
-          | MinigameEndReason.ForcefulEnd
-          | MinigameEndReason.HostLeft
-          | MinigameEndReason.FailedToSatisfyMinimumPlayersToStart;
+          | MinigameEndReason.FORCEFUL_END
+          | MinigameEndReason.HOST_LEFT
+          | MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START;
       }
-    | { room: ServerRoom; reason: MinigameEndReason.MinigameEnded; prizes: GamePrize[] },
+    | { room: ServerRoom; reason: MinigameEndReason.MINIGAME_ENDED; prizes: GamePrize[] },
 ) {
   // Set room state to lobby
-  opts.room.status = GameStatus.Lobby;
+  opts.room.status = GameStatus.LOBBY;
 
   // Remove ready timer
   removeReadyTimerGame(opts.room);
@@ -72,9 +72,9 @@ export function endGame(
   // Broadcast minigame ended
   broadcastMessage({
     room: opts.room,
-    opcode: ServerOpcodes.EndMinigame,
+    opcode: ServerOpcodes.END_MINIGAME,
     data:
-      opts.reason === MinigameEndReason.MinigameEnded
+      opts.reason === MinigameEndReason.MINIGAME_ENDED
         ? {
             players: transformToGamePlayers(opts.room.players),
             reason: opts.reason,

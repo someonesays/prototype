@@ -9,7 +9,7 @@ import {
   type Minigame,
   type ParentTypes,
   type APIResponse,
-  type APIMatchmakingResponse,
+  type MatchmakingResponse,
 } from "../types";
 import type { z } from "zod";
 
@@ -26,7 +26,7 @@ export class ParentSdk {
   private targetOrigin = "*";
 
   static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
-    const res = await fetch(`${baseUrl}/api/matchmaking?room_id=${encodeURIComponent(roomId)}`);
+    const res = await fetch(`${baseUrl}/api/matchmaking?roomId=${encodeURIComponent(roomId)}`);
     return res.status === 200;
   }
 
@@ -57,18 +57,18 @@ export class ParentSdk {
           "x-captcha-token": captcha.token,
         },
         body: JSON.stringify({
-          type: MatchmakingType.Normal,
+          type: MatchmakingType.NORMAL,
           location,
-          room_id: roomId,
-          display_name: displayName,
+          roomId,
+          displayName: displayName,
         }),
       });
       const data = await res.json();
 
       if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
-      return { success: true as true, data: data as APIMatchmakingResponse };
+      return { success: true as true, data: data as MatchmakingResponse };
     } catch (err) {
-      return { success: false as false, code: MessageCodes.UnexpectedError };
+      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
     }
   }
 
@@ -77,14 +77,14 @@ export class ParentSdk {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "post",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.Discord, instance_id: instanceId, code }),
+        body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code }),
       });
       const data = await res.json();
 
       if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
-      return { success: true as true, data: data as APIMatchmakingResponse };
+      return { success: true as true, data: data as MatchmakingResponse };
     } catch (err) {
-      return { success: false as false, code: MessageCodes.UnexpectedError };
+      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
     }
   }
 
@@ -97,7 +97,7 @@ export class ParentSdk {
       return { success: true as true, data: data as Minigame };
     } catch (err) {
       console.error(err);
-      return { success: false as false, code: MessageCodes.UnexpectedError };
+      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
     }
   }
 
@@ -120,10 +120,10 @@ export class ParentSdk {
     if (!success) return console.error("Received an invalid payload from the iframe:", data);
 
     switch (opcode) {
-      case MinigameOpcodes.Handshake:
+      case MinigameOpcodes.HANDSHAKE:
         if (this.isReady) return console.error("Already recieved handshake from this minigame");
         this.isReady = true;
-        this.emitter.emit(MinigameOpcodes.Handshake, payload);
+        this.emitter.emit(MinigameOpcodes.HANDSHAKE, payload);
         break;
       default:
         if (!this.isReady) return console.error("Recieved payload from minigame before handshake");
@@ -145,35 +145,35 @@ export class ParentSdk {
     return this.emitter.off(evt, listener);
   }
 
-  confirmHandshake(payload: ParentTypes[ParentOpcodes.Ready]) {
-    this.postMessage(ParentOpcodes.Ready, payload);
+  confirmHandshake(payload: ParentTypes[ParentOpcodes.READY]) {
+    this.postMessage(ParentOpcodes.READY, payload);
   }
-  updateSettings(payload: ParentTypes[ParentOpcodes.UpdateSettings]) {
-    this.postMessage(ParentOpcodes.UpdateSettings, payload);
+  updateSettings(payload: ParentTypes[ParentOpcodes.UPDATE_SETTINGS]) {
+    this.postMessage(ParentOpcodes.UPDATE_SETTINGS, payload);
   }
-  setGameStarted(payload: ParentTypes[ParentOpcodes.StartGame]) {
-    this.postMessage(ParentOpcodes.StartGame, payload);
+  setGameStarted(payload: ParentTypes[ParentOpcodes.START_GAME]) {
+    this.postMessage(ParentOpcodes.START_GAME, payload);
   }
-  readyPlayer(payload: ParentTypes[ParentOpcodes.MinigamePlayerReady]) {
-    this.postMessage(ParentOpcodes.MinigamePlayerReady, payload);
+  readyPlayer(payload: ParentTypes[ParentOpcodes.MINIGAME_PLAYER_READY]) {
+    this.postMessage(ParentOpcodes.MINIGAME_PLAYER_READY, payload);
   }
-  removePlayer(payload: ParentTypes[ParentOpcodes.PlayerLeft]) {
-    this.postMessage(ParentOpcodes.PlayerLeft, payload);
+  removePlayer(payload: ParentTypes[ParentOpcodes.PLAYER_LEFT]) {
+    this.postMessage(ParentOpcodes.PLAYER_LEFT, payload);
   }
-  updateGameState(payload: ParentTypes[ParentOpcodes.UpdatedGameState]) {
-    this.postMessage(ParentOpcodes.UpdatedGameState, payload);
+  updateGameState(payload: ParentTypes[ParentOpcodes.UPDATED_GAME_STATE]) {
+    this.postMessage(ParentOpcodes.UPDATED_GAME_STATE, payload);
   }
-  updatePlayerState(payload: ParentTypes[ParentOpcodes.UpdatedPlayerState]) {
-    this.postMessage(ParentOpcodes.UpdatedPlayerState, payload);
+  updatePlayerState(payload: ParentTypes[ParentOpcodes.UPDATED_PLAYER_STATE]) {
+    this.postMessage(ParentOpcodes.UPDATED_PLAYER_STATE, payload);
   }
-  sendGameMessage(payload: ParentTypes[ParentOpcodes.ReceivedGameMessage]) {
-    this.postMessage(ParentOpcodes.ReceivedGameMessage, payload);
+  sendGameMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_GAME_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_GAME_MESSAGE, payload);
   }
-  sendPlayerMessage(payload: ParentTypes[ParentOpcodes.ReceivedPlayerMessage]) {
-    this.postMessage(ParentOpcodes.ReceivedPlayerMessage, payload);
+  sendPlayerMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_PLAYER_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_PLAYER_MESSAGE, payload);
   }
-  sendPrivateMessage(payload: ParentTypes[ParentOpcodes.ReceivedPrivateMessage]) {
-    this.postMessage(ParentOpcodes.ReceivedPrivateMessage, payload);
+  sendPrivateMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_PRIVATE_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_PRIVATE_MESSAGE, payload);
   }
 
   destroy() {

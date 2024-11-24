@@ -8,7 +8,7 @@ export function transformToGamePlayers(players: ServerPlayer[] | Map<string, Ser
 export function transformToGamePlayer(player: ServerPlayer): GamePlayer {
   return {
     id: player.id,
-    display_name: player.display_name,
+    displayName: player.displayName,
     avatar: player.avatar,
     points: player.points,
     ready: player.ready,

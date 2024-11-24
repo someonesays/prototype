@@ -1,42 +1,42 @@
 import type { ParentOpcodes, State, MinigamePlayer, GameRoom, GameSettings } from "../../types";
 
 export interface ParentTypes {
-  [ParentOpcodes.Ready]: {
+  [ParentOpcodes.READY]: {
     settings: GameSettings;
     user: string;
     room: GameRoom;
     players: MinigamePlayer[];
   };
-  [ParentOpcodes.UpdateSettings]: {
+  [ParentOpcodes.UPDATE_SETTINGS]: {
     settings: GameSettings;
   };
-  [ParentOpcodes.StartGame]: {
-    joined_late: boolean;
+  [ParentOpcodes.START_GAME]: {
+    joinedLate: boolean;
   };
-  [ParentOpcodes.MinigamePlayerReady]: {
+  [ParentOpcodes.MINIGAME_PLAYER_READY]: {
     player: MinigamePlayer;
-    joined_late: boolean;
+    joinedLate: boolean;
   };
-  [ParentOpcodes.PlayerLeft]: {
+  [ParentOpcodes.PLAYER_LEFT]: {
     user: string;
   };
-  [ParentOpcodes.UpdatedGameState]: {
+  [ParentOpcodes.UPDATED_GAME_STATE]: {
     state: State;
   };
-  [ParentOpcodes.UpdatedPlayerState]: {
+  [ParentOpcodes.UPDATED_PLAYER_STATE]: {
     user: string;
     state: State;
   };
-  [ParentOpcodes.ReceivedGameMessage]: {
+  [ParentOpcodes.RECEIVED_GAME_MESSAGE]: {
     message: State;
   };
-  [ParentOpcodes.ReceivedPlayerMessage]: {
+  [ParentOpcodes.RECEIVED_PLAYER_MESSAGE]: {
     user: string;
     message: State;
   };
-  [ParentOpcodes.ReceivedPrivateMessage]: {
-    from_user: string;
-    to_user: string;
+  [ParentOpcodes.RECEIVED_PRIVATE_MESSAGE]: {
+    fromUser: string;
+    toUser: string;
     message: State;
   };
 }

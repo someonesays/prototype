@@ -6,11 +6,11 @@ export default defineConfig({
   out: "./drizzle/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    host: env.DatabaseHost,
-    port: env.DatabasePort,
-    user: env.DatabaseUser,
-    password: env.DatabasePassword,
-    database: env.DatabaseName,
-    ssl: env.DatabaseSsl,
+    host: env.DATABASE_HOST,
+    port: env.DATABASE_PORT,
+    user: env.DATABASE_USER,
+    password: env.DATABASE_PASSWORD,
+    database: env.DATABASE_NAME,
+    ssl: env.DATABASE_SSL,
   },
 });

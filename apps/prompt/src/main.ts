@@ -47,39 +47,39 @@ const sendButton = document.getElementById("send") as HTMLButtonElement;
   const minigame = await sdk.ready();
   logEvent("Ready", minigame);
 
-  sdk.on(ParentOpcodes.UpdateSettings, (evt) => {
+  sdk.on(ParentOpcodes.UPDATE_SETTINGS, (evt) => {
     logEvent("UpdateSettings", evt);
   });
 
-  sdk.on(ParentOpcodes.StartGame, (evt) => {
+  sdk.on(ParentOpcodes.START_GAME, (evt) => {
     logEvent("StartGame", evt);
   });
 
-  sdk.on(ParentOpcodes.MinigamePlayerReady, (evt) => {
+  sdk.on(ParentOpcodes.MINIGAME_PLAYER_READY, (evt) => {
     logEvent("MinigamePlayerReady", evt);
   });
 
-  sdk.on(ParentOpcodes.PlayerLeft, (evt) => {
+  sdk.on(ParentOpcodes.PLAYER_LEFT, (evt) => {
     logEvent("PlayerLeft", evt);
   });
 
-  sdk.on(ParentOpcodes.UpdatedGameState, (evt) => {
+  sdk.on(ParentOpcodes.UPDATED_GAME_STATE, (evt) => {
     logEvent("UpdatedGameState", evt);
   });
 
-  sdk.on(ParentOpcodes.UpdatedPlayerState, (evt) => {
+  sdk.on(ParentOpcodes.UPDATED_PLAYER_STATE, (evt) => {
     logEvent("UpdatedPlayerState", evt);
   });
 
-  sdk.on(ParentOpcodes.ReceivedGameMessage, (evt) => {
+  sdk.on(ParentOpcodes.RECEIVED_GAME_MESSAGE, (evt) => {
     logEvent("ReceivedGameMessage", evt);
   });
 
-  sdk.on(ParentOpcodes.ReceivedPlayerMessage, (evt) => {
+  sdk.on(ParentOpcodes.RECEIVED_PLAYER_MESSAGE, (evt) => {
     logEvent("ReceivedPlayerMessage", evt);
   });
 
-  sdk.on(ParentOpcodes.ReceivedPrivateMessage, (evt) => {
+  sdk.on(ParentOpcodes.RECEIVED_PRIVATE_MESSAGE, (evt) => {
     logEvent("ReceivedPrivateMessage", evt);
   });
 

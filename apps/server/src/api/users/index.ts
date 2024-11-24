@@ -11,6 +11,6 @@ users.get("/@me", authMiddleware, async (c) => {
 
 users.get("/:id", async (c) => {
   const user = await getUserPublic(c.req.param("id"));
-  if (!user) return c.json({ code: MessageCodes.NotFound });
+  if (!user) return c.json({ code: MessageCodes.NOT_FOUND });
   return c.json({ user });
 });

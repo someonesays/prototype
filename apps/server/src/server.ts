@@ -12,7 +12,7 @@ app.route("/.proxy", proxy);
 
 app.use(
   cors({
-    origin: env.BaseFrontend,
+    origin: env.BASE_FRONTEND,
     maxAge: 600,
     credentials: true,
   }),
@@ -22,15 +22,15 @@ app.use(
   secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
-      scriptSrc: [env.BaseFrontend],
+      scriptSrc: [env.BASE_FRONTEND],
       styleSrc: [],
       imgSrc: [],
       fontSrc: [],
-      connectSrc: [env.BaseFrontend],
+      connectSrc: [env.BASE_FRONTEND],
       mediaSrc: [],
-      frameSrc: [env.BaseFrontend],
-      childSrc: [env.BaseFrontend],
-      workerSrc: [env.BaseFrontend],
+      frameSrc: [env.BASE_FRONTEND],
+      childSrc: [env.BASE_FRONTEND],
+      workerSrc: [env.BASE_FRONTEND],
       frameAncestors: ["'none'"],
       baseUri: ["'none'"],
     },
@@ -40,6 +40,6 @@ app.use(
 app.route("/api", api);
 
 Bun.serve({
-  port: env.Port,
+  port: env.PORT,
   fetch: app.fetch,
 });
