@@ -3,7 +3,10 @@ import type { Context } from "hono";
 
 export async function sendProxiedImage(c: Context, image: string) {
   try {
-    const res = await fetch(image, { headers: { "user-agent": "Someone Says" } });
+    const res = await fetch(image, {
+      headers: { "user-agent": "Someone Says" },
+      signal: AbortSignal.timeout(3000), // 3 seconds to complete the request
+    });
     if (!res.ok) return c.json({ code: MessageCodes.INTERNAL_ERROR }, 500);
 
     const contentType = res.headers.get("content-type") ?? "";
