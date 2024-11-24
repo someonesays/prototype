@@ -61,21 +61,11 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
       name: minigame.author.name,
       createdAt: minigame.author.createdAt.toString(),
     },
-    previewImage:
-      minigame.previewImage && minigame.previewPlaceholderImage
-        ? {
-            url: minigame.previewImage,
-            placeholder: minigame.previewPlaceholderImage,
-          }
-        : null,
-    opts: {
-      prompt: minigame.prompt,
-      minimumPlayersToStart: minigame.minimumPlayersToStart,
-    },
-    legal: {
-      privacy: minigame.legalPrivacyUrl,
-      terms: minigame.legalTermsUrl,
-    },
+    previewImage: minigame.previewImage,
+    prompt: minigame.prompt,
+    minimumPlayersToStart: minigame.minimumPlayersToStart,
+    privacyPolicy: minigame.privacyPolicy,
+    termsOfServices: minigame.termsOfServices,
     createdAt: minigame.createdAt.toString(),
   };
 }

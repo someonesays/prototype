@@ -1,5 +1,5 @@
 {
-  "id": "b1963893-c573-4a67-bc62-8461a5ce78c0",
+  "id": "08326bbe-10ec-40e8-91a8-0c3a2f15455e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,12 +39,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "preview_placeholder_image": {
-          "name": "preview_placeholder_image",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "publish_type": {
           "name": "publish_type",
           "type": "smallint",
@@ -57,14 +51,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "legal_terms_url": {
-          "name": "legal_terms_url",
+        "terms_of_services": {
+          "name": "terms_of_services",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "legal_privacy_url": {
-          "name": "legal_privacy_url",
+        "privacy_policy": {
+          "name": "privacy_policy",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -194,12 +188,6 @@
         },
         "icon_image": {
           "name": "icon_image",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "icon_placeholder_image": {
-          "name": "icon_placeholder_image",
           "type": "text",
           "primaryKey": false,
           "notNull": false

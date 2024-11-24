@@ -16,11 +16,10 @@ export const minigames = pgTable("minigames", {
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
-  previewPlaceholderImage: text("preview_placeholder_image"), // data:// URL (ThumbHash)
   publishType: smallint("publish_type").$type<MinigamePublishType>().notNull(),
   prompt: text("prompt").notNull(),
-  legalTermsUrl: text("legal_terms_url").notNull(),
-  legalPrivacyUrl: text("legal_privacy_url").notNull(),
+  termsOfServices: text("terms_of_services").notNull(),
+  privacyPolicy: text("privacy_policy").notNull(),
   proxyUrl: text("proxy_url"),
   pathType: smallint("path_type").$type<MinigamePathType>().notNull(),
   minimumPlayersToStart: smallint("minimum_players_to_start").notNull().default(1),

@@ -68,13 +68,7 @@ export async function getPackPublic({
       name: pack.author.name,
       createdAt: pack.author.createdAt.toString(),
     },
-    iconImage:
-      pack.iconImage && pack.iconPlaceholderImage
-        ? {
-            url: pack.iconImage,
-            placeholder: pack.iconPlaceholderImage,
-          }
-        : null,
+    iconImage: pack.iconImage,
     minigames: {
       data: minigames,
       offset: actualOffset,

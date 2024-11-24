@@ -10,10 +10,7 @@ export interface Pack {
     name: string;
     createdAt: string;
   };
-  iconImage: {
-    url: string;
-    placeholder: string;
-  } | null;
+  iconImage: string | null;
   minigames: {
     data: Minigame[];
     offset: number;

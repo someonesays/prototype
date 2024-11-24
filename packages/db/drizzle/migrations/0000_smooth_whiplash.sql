@@ -4,11 +4,10 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"name" text NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
 	"preview_image" text,
-	"preview_placeholder_image" text,
 	"publish_type" smallint NOT NULL,
 	"prompt" text NOT NULL,
-	"legal_terms_url" text NOT NULL,
-	"legal_privacy_url" text NOT NULL,
+	"terms_of_services" text NOT NULL,
+	"privacy_policy" text NOT NULL,
 	"proxy_url" text,
 	"path_type" smallint NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
@@ -27,7 +26,6 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"name" text NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
 	"icon_image" text,
-	"icon_placeholder_image" text,
 	"publish_type" smallint NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );

@@ -10,17 +10,10 @@ export interface Minigame {
     name: string;
     createdAt: string;
   };
-  previewImage: {
-    url: string;
-    placeholder: string;
-  } | null;
-  opts: {
-    prompt: string;
-    minimumPlayersToStart: number;
-  };
-  legal: {
-    terms: string | null;
-    privacy: string | null;
-  };
+  previewImage: string | null;
+  prompt: string;
+  minimumPlayersToStart: number;
+  privacyPolicy: string | null;
+  termsOfServices: string | null;
   createdAt: string;
 }

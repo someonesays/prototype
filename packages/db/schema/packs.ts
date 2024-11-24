@@ -16,7 +16,6 @@ export const packs = pgTable("packs", {
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
   iconImage: text("icon_image"),
-  iconPlaceholderImage: text("icon_placeholder_image"),
   publishType: smallint("publish_type").$type<PackPublishType>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
 });
