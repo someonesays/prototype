@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
-import { getUserPublic, transformToUserPublic } from "@/db";
+import { getUserPublic, transformUserToUserPublic } from "@/db";
 import { MessageCodes } from "@/public";
 
 export const users = new Hono();
 
 users.get("/@me", authMiddleware, async (c) => {
-  return c.json({ user: transformToUserPublic(c.var.user) });
+  return c.json({ user: transformUserToUserPublic(c.var.user) });
 });
 
 users.get("/:id", async (c) => {

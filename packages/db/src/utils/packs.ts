@@ -62,6 +62,7 @@ export async function getPackPublic({
     id: pack.id,
     name: pack.name,
     description: pack.description,
+    publishType: pack.publishType,
     author: {
       id: pack.author.id,
       name: pack.author.name,
@@ -74,7 +75,6 @@ export async function getPackPublic({
             placeholder: pack.iconPlaceholderImage,
           }
         : null,
-    publishType: pack.publishType,
     minigames: {
       data: minigames,
       offset: actualOffset,

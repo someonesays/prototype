@@ -74,7 +74,7 @@ onMount(() => {
     });
   });
 
-  minigamePromptText = parseMd($room.minigame.prompt);
+  minigamePromptText = parseMd($room.minigame.opts.prompt);
   minigameTextOpacity = 1;
 
   iframe.src =

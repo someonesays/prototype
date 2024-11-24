@@ -4,6 +4,7 @@ export interface Pack {
   id: string;
   name: string;
   description: string;
+  publishType: PackPublishType;
   author: {
     id: string;
     name: string;
@@ -13,7 +14,6 @@ export interface Pack {
     url: string;
     placeholder: string;
   } | null;
-  publishType: PackPublishType;
   minigames: {
     data: Minigame[];
     offset: number;

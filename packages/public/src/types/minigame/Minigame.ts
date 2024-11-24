@@ -4,6 +4,7 @@ export interface Minigame {
   id: string;
   name: string;
   description: string;
+  publishType: MinigamePublishType;
   author: {
     id: string;
     name: string;
@@ -13,12 +14,13 @@ export interface Minigame {
     url: string;
     placeholder: string;
   } | null;
-  publishType: MinigamePublishType;
+  opts: {
+    prompt: string;
+    minimumPlayersToStart: number;
+  };
   legal: {
     terms: string | null;
     privacy: string | null;
   };
-  prompt: string;
-  minimumPlayersToStart: number;
   createdAt: string;
 }

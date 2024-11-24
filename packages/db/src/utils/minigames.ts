@@ -55,6 +55,7 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
     id: minigame.id,
     name: minigame.name,
     description: minigame.description,
+    publishType: minigame.publishType,
     author: {
       id: minigame.author.id,
       name: minigame.author.name,
@@ -67,13 +68,14 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
             placeholder: minigame.previewPlaceholderImage,
           }
         : null,
-    publishType: minigame.publishType,
-    prompt: minigame.prompt,
+    opts: {
+      prompt: minigame.prompt,
+      minimumPlayersToStart: minigame.minimumPlayersToStart,
+    },
     legal: {
       privacy: minigame.legalPrivacyUrl,
       terms: minigame.legalTermsUrl,
     },
-    minimumPlayersToStart: minigame.minimumPlayersToStart,
     createdAt: minigame.createdAt.toString(),
   };
 }
