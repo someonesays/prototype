@@ -10,7 +10,10 @@ export interface Pack {
     name: string;
     createdAt: string;
   };
-  iconImage: string | null;
+  iconImage: {
+    normal: string;
+    discord: string;
+  } | null;
   minigames: {
     data: Minigame[];
     offset: number;

@@ -77,10 +77,7 @@ onMount(() => {
   minigamePromptText = parseMd($room.minigame.prompt);
   minigameTextOpacity = 1;
 
-  iframe.src =
-    $launcher === "normal"
-      ? `${env.VITE_BASE_API}/.proxy/api/proxy/${$room.minigame.id}/`
-      : `/.proxy/api/proxy/${$room.minigame.id}/`;
+  iframe.src = $launcher === "normal" ? $room.minigame.proxies.normal : $room.minigame.proxies.discord;
 
   return () => {
     sdk.destroy();

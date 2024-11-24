@@ -93,6 +93,28 @@ function leaveGame() {
   <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
   <p>Minigame: {$room.minigame ? JSON.stringify($room.minigame) : "None"}</p>
 
+  {#if $room.pack?.iconImage}
+    <p>Pack icon image:</p>
+    <p>
+      <img alt="pack preview" src={
+        $launcher === "normal"
+          ? $room.pack.iconImage.normal
+          : $room.pack.iconImage.discord
+      } width="100" height="100" crossorigin="anonymous" />
+    </p>
+  {/if}
+
+  {#if $room.minigame?.previewImage}
+    <p>Minigame preview image:</p>
+    <p>
+      <img alt="minigame preview" src={
+        $launcher === "normal"
+          ? $room.minigame.previewImage.normal
+          : $room.minigame.previewImage.discord
+      } width="100" height="100" crossorigin="anonymous" />
+    </p>
+  {/if}
+
   {#if $room.room.host === $room.user}
     <form onsubmit={setSettings}>
       <input type="text" name="pack_id" placeholder="Pack ID" value="aq23ndwgztlt16vjwz">

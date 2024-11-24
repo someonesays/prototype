@@ -7,6 +7,9 @@ export enum MessageCodes {
   INTERNAL_ERROR = "internal_error",
   FAILED_CAPTCHA = "failed_captcha",
 
+  FAILED_TO_FETCH = "failed_to_fetch",
+  INVALID_CONTENT_TYPE = "invalid_content_type",
+
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
   SERVERS_BUSY = "servers_busy",
@@ -25,6 +28,8 @@ export const MessageCodesToText = {
   [MessageCodes.RATE_LIMITED]: "You are currently being rate limited. Please try again in a bit.",
   [MessageCodes.INTERNAL_ERROR]: "An internal error has occurred.",
   [MessageCodes.FAILED_CAPTCHA]: "Failed to validate captcha.",
+
+  [MessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
 
   [MessageCodes.MISSING_LOCATION]: "Missing location.",
   [MessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",

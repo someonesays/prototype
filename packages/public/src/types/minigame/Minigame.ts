@@ -10,7 +10,14 @@ export interface Minigame {
     name: string;
     createdAt: string;
   };
-  previewImage: string | null;
+  previewImage: {
+    normal: string;
+    discord: string;
+  } | null;
+  proxies: {
+    normal: string;
+    discord: string;
+  };
   prompt: string;
   minimumPlayersToStart: number;
   privacyPolicy: string | null;

@@ -8,7 +8,7 @@ const minigameId = await createMinigame({
   name: "Click the buttons",
   authorId,
   description: "The objective of this game is to click the buttons.",
-  previewImage: null,
+  previewImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/PlaceholderLC.png",
   publishType: MinigamePublishType.PUBLIC_OFFICIAL,
   prompt: "Someone says **click the buttons**",
   termsOfServices: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -23,7 +23,7 @@ const packId = await createPack({
   authorId,
   name: "Example pack name",
   description: "This is the pack's description.",
-  iconImage: null,
+  iconImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/PlaceholderLC.png",
   publishType: PackPublishType.PUBLIC,
 });
 

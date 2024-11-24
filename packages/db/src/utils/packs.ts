@@ -1,3 +1,4 @@
+import env from "@/env";
 import schema from "../main/schema";
 import { and, eq } from "drizzle-orm";
 import { db } from "../connectors/pool";
@@ -68,7 +69,12 @@ export async function getPackPublic({
       name: pack.author.name,
       createdAt: pack.author.createdAt.toString(),
     },
-    iconImage: pack.iconImage,
+    iconImage: pack.iconImage
+      ? {
+          normal: `${env.BASE_API}/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
+        }
+      : null,
     minigames: {
       data: minigames,
       offset: actualOffset,

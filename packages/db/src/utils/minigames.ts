@@ -1,3 +1,4 @@
+import env from "@/env";
 import schema from "../main/schema";
 import { eq, inArray } from "drizzle-orm";
 import { db } from "../connectors/pool";
@@ -61,7 +62,16 @@ function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof g
       name: minigame.author.name,
       createdAt: minigame.author.createdAt.toString(),
     },
-    previewImage: minigame.previewImage,
+    proxies: {
+      normal: `${env.BASE_API}/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
+      discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
+    },
+    previewImage: minigame.previewImage
+      ? {
+          normal: `${env.BASE_API}/api/minigames/${encodeURIComponent(minigame.id)}/images/preview`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/minigames/${encodeURIComponent(minigame.id)}/images/preview`,
+        }
+      : null,
     prompt: minigame.prompt,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
     privacyPolicy: minigame.privacyPolicy,
