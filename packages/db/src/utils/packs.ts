@@ -51,7 +51,26 @@ export async function getPack(id: string) {
   });
 }
 
+export async function getPackByAuthorId({ id, authorId }: { id: string; authorId: string }) {
+  return db.query.packs.findFirst({
+    where: and(eq(schema.packs.id, id), eq(schema.packs.authorId, authorId)),
+    with: {
+      author: {
+        columns: { id: true, name: true, createdAt: true },
+      },
+    },
+  });
+}
+
 export function getPackMinigames({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
+  return db.query.packsMinigames.findMany({
+    offset,
+    limit,
+    where: eq(schema.packsMinigames.packId, id),
+  });
+}
+
+export function getPackMinigamesByAuthorId({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
   return db.query.packsMinigames.findMany({
     offset,
     limit,
