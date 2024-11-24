@@ -29,8 +29,13 @@ export function getUserByDiscordId(discordId: string) {
 export async function getUserPublic(id: string) {
   const user = await getUser(id);
   if (!user) return null;
+  return transformToUserPublic(user);
+}
+
+export function transformToUserPublic(user: typeof schema.users.$inferSelect) {
   return {
     id: user.id,
     name: user.name,
+    created_at: user.createdAt.toString(),
   };
 }

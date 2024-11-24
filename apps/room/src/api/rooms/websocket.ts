@@ -55,8 +55,8 @@ websocket.get(
     let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
     if (!["Json", "Oppack"].includes(messageType)) return;
 
-    const { user, room, metadata } = (await verify(authorization.trim(), env.JwtSecret)) as MatchmakingDataJWT;
-    if (room.server.id !== env.ServerId) return;
+    const { type, user, room, metadata } = (await verify(authorization.trim(), env.JwtSecret)) as MatchmakingDataJWT;
+    if (type !== "matchmaking" || room.server.id !== env.ServerId) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
       async open({ ws }) {

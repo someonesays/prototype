@@ -42,14 +42,14 @@ matchmaking.get("/", async (c) => {
 
 // Create or join a room
 
-matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), async (c) => {
+matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), (c) => {
   const payload = c.req.valid("json");
   return handlePostMatchmaking({ c, payload });
 });
 
 // The extra "/" on "/discord/" is necessary due to how Hono works.
 // Hono will not accept "/discord" as "/discord/".
-matchmaking.post("/discord/", zValidator("json", zodPostMatchmakingValidatorDiscord), async (c) => {
+matchmaking.post("/discord/", zValidator("json", zodPostMatchmakingValidatorDiscord), (c) => {
   const payload = c.req.valid("json");
   return handlePostMatchmaking({ c, payload });
 });
