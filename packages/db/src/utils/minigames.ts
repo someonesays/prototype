@@ -1,6 +1,6 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import type { Minigame } from "@/public";
 
@@ -12,8 +12,21 @@ export async function updateMinigame(minigame: Partial<typeof schema.minigames.$
   await db.update(schema.minigames).set(minigame).where(eq(schema.minigames.id, minigame.id));
 }
 
+export async function updateMinigameWithAuthorId(
+  minigame: Partial<typeof schema.minigames.$inferSelect> & { id: string; authorId: string },
+) {
+  await db
+    .update(schema.minigames)
+    .set(minigame)
+    .where(and(eq(schema.minigames.id, minigame.id), eq(schema.minigames.authorId, minigame.authorId)));
+}
+
 export async function deleteMinigame(id: string) {
   await db.delete(schema.minigames).where(eq(schema.minigames.id, id));
+}
+
+export async function deleteMinigameWithAuthorId({ id, authorId }: { id: string; authorId: string }) {
+  await db.delete(schema.minigames).where(and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)));
 }
 
 export function getMinigamesByIds(ids: string[]) {

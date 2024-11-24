@@ -24,7 +24,7 @@ const packId = await createPack({
   name: "Example pack name",
   description: "This is the pack's description.",
   iconImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/PlaceholderLC.png",
-  publishType: PackPublishType.PUBLIC,
+  publishType: PackPublishType.PUBLIC_OFFICIAL,
 });
 
 await addMinigameToPack({ packId, minigameId });

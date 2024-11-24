@@ -13,8 +13,21 @@ export async function updatePack(pack: Partial<typeof schema.packs.$inferSelect>
   await db.update(schema.packs).set(pack).where(eq(schema.packs.id, pack.id));
 }
 
+export async function updatePackWithAuthorId(
+  pack: Partial<typeof schema.packs.$inferSelect> & { id: string; authorId: string },
+) {
+  await db
+    .update(schema.packs)
+    .set(pack)
+    .where(and(eq(schema.packs.id, pack.id), eq(schema.packs.authorId, pack.authorId)));
+}
+
 export async function deletePack(id: string) {
   await db.delete(schema.packs).where(eq(schema.packs.id, id));
+}
+
+export async function deletePackWithAuthorId({ id, authorId }: { id: string; authorId: string }) {
+  await db.delete(schema.packs).where(and(eq(schema.packs.id, id), eq(schema.packs.authorId, authorId)));
 }
 
 export function addMinigameToPack({ packId, minigameId }: { packId: string; minigameId: string }) {
@@ -58,31 +71,8 @@ export async function getPackPublic({
   const pack = await getPack(id);
   if (!pack) return null;
 
-  const { offset: actualOffset, limit: actualLimit, total, minigames } = await getPackMinigamesPublic({ id, offset, limit });
-  return {
-    id: pack.id,
-    name: pack.name,
-    description: pack.description,
-    publishType: pack.publishType,
-    author: {
-      id: pack.author.id,
-      name: pack.author.name,
-      createdAt: pack.author.createdAt.toString(),
-    },
-    iconImage: pack.iconImage
-      ? {
-          normal: `${env.BASE_API}/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
-          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
-        }
-      : null,
-    minigames: {
-      data: minigames,
-      offset: actualOffset,
-      limit: actualLimit,
-      total,
-    },
-    createdAt: pack.createdAt.toString(),
-  };
+  const minigamesPublic = await getPackMinigamesPublic({ id, offset, limit });
+  return transformPackToPackPublic({ pack, minigamesPublic });
 }
 
 export async function getPackMinigamesPublic({
@@ -104,4 +94,37 @@ export async function isMinigameInPack({ packId, minigameId }: { packId: string;
   return !!(await db.query.packsMinigames.findFirst({
     where: and(eq(schema.packsMinigames.packId, packId), eq(schema.packsMinigames.minigameId, minigameId)),
   }));
+}
+
+function transformPackToPackPublic({
+  pack,
+  minigamesPublic,
+}: {
+  pack: Exclude<Awaited<ReturnType<typeof getPack>>, undefined>;
+  minigamesPublic: Awaited<ReturnType<typeof getPackMinigamesPublic>>;
+}): Pack {
+  return {
+    id: pack.id,
+    name: pack.name,
+    description: pack.description,
+    publishType: pack.publishType,
+    author: {
+      id: pack.author.id,
+      name: pack.author.name,
+      createdAt: pack.author.createdAt.toString(),
+    },
+    iconImage: pack.iconImage
+      ? {
+          normal: `${env.BASE_API}/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
+        }
+      : null,
+    minigames: {
+      data: minigamesPublic.minigames,
+      offset: minigamesPublic.offset,
+      limit: minigamesPublic.limit,
+      total: minigamesPublic.total,
+    },
+    createdAt: pack.createdAt.toString(),
+  };
 }
