@@ -67,7 +67,7 @@ proxy.all(route, async (c) => {
         ...c.req.raw.headers,
         "user-agent": "Someone Says",
       },
-      signal: AbortSignal.timeout(30000), // 30 seconds to complete the request
+      signal: AbortSignal.timeout(60000), // 1 minute to complete the request
     });
     if (res.status === 101) return c.newResponse(null);
 
