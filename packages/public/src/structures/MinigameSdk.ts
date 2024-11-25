@@ -81,9 +81,6 @@ export class MinigameSdk {
     this.postMessage(MinigameOpcodes.SEND_PRIVATE_MESSAGE, payload);
   }
 
-  /**
-   * Destroy the MinigameSDK
-   */
   destroy(): void {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
