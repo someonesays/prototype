@@ -76,11 +76,6 @@ export function getMinigame(id: string) {
 export function getMinigameByAuthorId({ id, authorId }: { id: string; authorId: string }) {
   return db.query.minigames.findFirst({
     where: and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)),
-    // with: {
-    //   author: {
-    //     columns: { id: true, name: true, createdAt: true },
-    //   },
-    // },
   });
 }
 

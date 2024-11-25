@@ -1,6 +1,5 @@
 export enum PackPublishType {
-  DISABLED = 0,
-  UNLISTED = 1,
-  PUBLIC_OFFICIAL = 2,
-  PUBLIC_UNOFFICIAL = 3,
+  UNLISTED = 0,
+  PUBLIC_OFFICIAL = 1,
+  PUBLIC_UNOFFICIAL = 2,
 }

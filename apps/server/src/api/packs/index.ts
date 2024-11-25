@@ -1,17 +1,28 @@
 import { Hono } from "hono";
-import { MessageCodes, PackPublishType } from "@/public";
+import { MessageCodes } from "@/public";
 import { getPack, getPackPublic } from "@/db";
-import { sendProxiedImage } from "../../utils";
+import { sendProxiedImage, getOffsetAndLimit } from "../../utils";
 
 export const packs = new Hono();
 
 packs.get("/:id", async (c) => {
   const id = c.req.param("id");
+  const { offset, limit } = getOffsetAndLimit(c);
 
-  const pack = await getPackPublic({ id });
-  if (!pack || pack.publishType === PackPublishType.DISABLED) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+  const pack = await getPackPublic({ id, offset, limit });
+  if (!pack) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
 
   return c.json(pack);
+});
+
+packs.get("/:id/minigames", async (c) => {
+  const id = c.req.param("id");
+  const { offset, limit } = getOffsetAndLimit(c);
+
+  const pack = await getPackPublic({ id, offset, limit });
+  if (!pack) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
+  return c.json(pack.minigames);
 });
 
 packs.get("/:id/images/icon", async (c) => {

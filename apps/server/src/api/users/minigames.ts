@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { MessageCodes, MinigamePathType, MinigamePublishType } from "@/public";
+import { MessageCodes, MinigamePathType } from "@/public";
 import {
   createMinigame,
   deleteMinigameWithAuthorId,
@@ -11,7 +11,7 @@ import {
 } from "@/db";
 import { validateUrl } from "@/utils";
 import { authMiddleware } from "../../middleware";
-import { validateImageUrl } from "../../utils";
+import { getOffsetAndLimit, validateImageUrl } from "../../utils";
 
 export const userMinigames = new Hono();
 
@@ -28,15 +28,7 @@ const userMinigameZod = z.object({
 });
 
 userMinigames.get("/", authMiddleware, async (c) => {
-  let offset = Number.parseInt(c.req.query("offset") || "0") || 0;
-  let limit = Number.parseInt(c.req.query("limit") || "50") || 50;
-
-  if (offset < 0) offset = 0;
-  if (offset > Number.MAX_SAFE_INTEGER) offset = Number.MAX_SAFE_INTEGER;
-
-  if (limit < 1) limit = 1;
-  if (limit > 50) limit = 50;
-
+  const { offset, limit } = getOffsetAndLimit(c);
   return c.json(await getMinigamesByAuthorId({ authorId: c.var.user.id, offset, limit }));
 });
 
@@ -48,11 +40,7 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
   }
 
-  const id = await createMinigame({
-    authorId: c.var.user.id,
-    ...values,
-  });
-
+  const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });
 });
 
@@ -74,18 +62,13 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
   }
 
-  await updateMinigameWithAuthorId({
-    id,
-    authorId: c.var.user.id,
-    ...values,
-  });
-
-  return c.json({ code: MessageCodes.SUCCESS });
+  await updateMinigameWithAuthorId({ id, authorId: c.var.user.id, ...values });
+  return c.json({});
 });
 
 userMinigames.delete("/:id", authMiddleware, async (c) => {
   const id = c.req.param("id");
   await deleteMinigameWithAuthorId({ id, authorId: c.var.user.id });
 
-  return c.json({ code: MessageCodes.SUCCESS });
+  return c.json({});
 });

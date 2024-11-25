@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"name" text NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
 	"icon_image" text,
-	"publish_type" smallint NOT NULL,
+	"publish_type" smallint DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

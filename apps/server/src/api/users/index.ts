@@ -1,15 +1,18 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
-import { getUserPublic, transformUserToUserPublic } from "@/db";
+import { getUserPublic } from "@/db";
 import { MessageCodes } from "@/public";
+
 import { userMinigames } from "./minigames";
+import { userPacks } from "./packs";
 
 export const users = new Hono();
 
 users.route("/@me/minigames", userMinigames);
+users.route("/@me/packs", userPacks);
 
 users.get("/@me", authMiddleware, async (c) => {
-  return c.json({ user: transformUserToUserPublic(c.var.user) });
+  return c.json({ user: c.var.user });
 });
 
 users.get("/:id", async (c) => {

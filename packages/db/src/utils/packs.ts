@@ -40,6 +40,28 @@ export function removeMinigameFromPack({ packId, minigameId }: { packId: string;
     .where(and(eq(schema.packsMinigames.packId, packId), eq(schema.packsMinigames.minigameId, minigameId)));
 }
 
+export async function getPacksByAuthorId({
+  authorId,
+  offset = 0,
+  limit = 50,
+}: { authorId: string; offset?: number; limit?: number }) {
+  const packs = await db.query.packs.findMany({
+    offset,
+    limit,
+    where: eq(schema.packs.authorId, authorId),
+  });
+  return {
+    offset,
+    limit,
+    total: await getPackCountByAuthorId(authorId),
+    packs,
+  };
+}
+
+export function getPackCountByAuthorId(authorId: string) {
+  return db.$count(schema.packs, eq(schema.packs.authorId, authorId));
+}
+
 export async function getPack(id: string) {
   return db.query.packs.findFirst({
     where: eq(schema.packs.id, id),
@@ -54,11 +76,6 @@ export async function getPack(id: string) {
 export async function getPackByAuthorId({ id, authorId }: { id: string; authorId: string }) {
   return db.query.packs.findFirst({
     where: and(eq(schema.packs.id, id), eq(schema.packs.authorId, authorId)),
-    with: {
-      author: {
-        columns: { id: true, name: true, createdAt: true },
-      },
-    },
   });
 }
 

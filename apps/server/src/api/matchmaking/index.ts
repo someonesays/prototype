@@ -23,7 +23,7 @@ import {
   type MatchmakingDataJWT,
 } from "@/public";
 import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
-import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
+import { zodPostMatchmakingValidatorNormal, zodPostMatchmakingValidatorDiscord } from "./utils";
 import { roomCreationRateLimit } from "../../utils";
 
 export const matchmaking = new Hono();
@@ -42,7 +42,7 @@ matchmaking.get("/", async (c) => {
 
 // Create or join a room
 
-matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), (c) => {
+matchmaking.post("/", zValidator("json", zodPostMatchmakingValidatorNormal), (c) => {
   const payload = c.req.valid("json");
   return handlePostMatchmaking({ c, payload });
 });

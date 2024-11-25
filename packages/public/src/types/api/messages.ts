@@ -10,8 +10,6 @@ export enum MessageCodes {
   FAILED_TO_FETCH = "failed_to_fetch",
   INVALID_CONTENT_TYPE = "invalid_content_type",
 
-  SUCCESS = "success",
-
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
   SERVERS_BUSY = "servers_busy",
@@ -33,8 +31,6 @@ export const MessageCodesToText = {
 
   [MessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
   [MessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
-
-  [MessageCodes.SUCCESS]: "Success!",
 
   [MessageCodes.MISSING_LOCATION]: "Missing location.",
   [MessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
