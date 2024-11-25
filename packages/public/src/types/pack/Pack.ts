@@ -14,11 +14,5 @@ export interface Pack {
     normal: string;
     discord: string;
   } | null;
-  minigames: {
-    data: Minigame[];
-    offset: number;
-    limit: number;
-    total: number;
-  };
   createdAt: string;
 }

@@ -1,9 +1,9 @@
-import { type MessageCodes } from "../../types";
+import { type ErrorMessageCodes } from "../../types";
 
-export interface APIResponse {
-  code: MessageCodes;
+export interface ApiErrorResponse {
+  code: ErrorMessageCodes;
 }
 
-export interface APIRoomExists {
+export interface ApiRoomExists {
   exists: boolean;
 }

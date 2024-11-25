@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { DiscordSDK, RPCCloseCodes } from "@discord/embedded-app-sdk";
-import { MatchmakingType, MessageCodesToText, ParentSdk } from "@/public";
+import { MatchmakingType, ErrorMessageCodesToText, ParentSdk } from "@/public";
 
 import { goto } from "$app/navigation";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
@@ -42,8 +42,8 @@ onMount(() => {
           data: matchmaking,
         } = await ParentSdk.getMatchmakingDiscord({ instanceId, code, baseUrl: "/.proxy" });
         if (!matchmakingSuccess) {
-          console.error("[MATCHMAKING] Failed to connect to matchmaking:", MessageCodesToText[matchmakingCode]);
-          return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, MessageCodesToText[matchmakingCode]);
+          console.error("[MATCHMAKING] Failed to connect to matchmaking:", ErrorMessageCodesToText[matchmakingCode]);
+          return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, ErrorMessageCodesToText[matchmakingCode]);
         }
 
         // Set access_token

@@ -1,5 +1,4 @@
-export enum MessageCodes {
-  HELLO_WORLD = "hello_world",
+export enum ErrorMessageCodes {
   NOT_FOUND = "not_found",
   UNEXPECTED_ERROR = "unexpected_error",
   INVALID_AUTHORIZATION = "missing_authorization",
@@ -23,27 +22,26 @@ export enum MessageCodes {
   KICKED_FROM_ROOM = "kicked_from_room",
 }
 
-export const MessageCodesToText = {
-  [MessageCodes.HELLO_WORLD]: "Hello world!",
-  [MessageCodes.NOT_FOUND]: "Not found.",
-  [MessageCodes.UNEXPECTED_ERROR]: "An unexpected error has occurred.",
-  [MessageCodes.INVALID_AUTHORIZATION]: "Invalid authorization!",
-  [MessageCodes.RATE_LIMITED]: "You are currently being rate limited. Please try again in a bit.",
-  [MessageCodes.INTERNAL_ERROR]: "An internal error has occurred.",
-  [MessageCodes.FAILED_CAPTCHA]: "Failed to validate captcha.",
+export const ErrorMessageCodesToText = {
+  [ErrorMessageCodes.NOT_FOUND]: "Not found.",
+  [ErrorMessageCodes.UNEXPECTED_ERROR]: "An unexpected error has occurred.",
+  [ErrorMessageCodes.INVALID_AUTHORIZATION]: "Invalid authorization!",
+  [ErrorMessageCodes.RATE_LIMITED]: "You are currently being rate limited. Please try again in a bit.",
+  [ErrorMessageCodes.INTERNAL_ERROR]: "An internal error has occurred.",
+  [ErrorMessageCodes.FAILED_CAPTCHA]: "Failed to validate captcha.",
 
-  [MessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
-  [MessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
+  [ErrorMessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
+  [ErrorMessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
 
-  [MessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
-  [MessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
+  [ErrorMessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
+  [ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
 
-  [MessageCodes.MISSING_LOCATION]: "Missing location.",
-  [MessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
-  [MessageCodes.SERVERS_BUSY]: "The servers are currently busy! Please try again later.",
-  [MessageCodes.NOT_IMPLEMENTED]: "This has not been implemented.",
+  [ErrorMessageCodes.MISSING_LOCATION]: "Missing location.",
+  [ErrorMessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
+  [ErrorMessageCodes.SERVERS_BUSY]: "The servers are currently busy! Please try again later.",
+  [ErrorMessageCodes.NOT_IMPLEMENTED]: "This has not been implemented.",
 
-  [MessageCodes.ALREADY_IN_GAME]: "A player with given ID is already in the game.",
-  [MessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT]: "Reached maximum player limit in this room.",
-  [MessageCodes.KICKED_FROM_ROOM]: "You've been kicked from the room!",
+  [ErrorMessageCodes.ALREADY_IN_GAME]: "A player with given ID is already in the game.",
+  [ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT]: "Reached maximum player limit in this room.",
+  [ErrorMessageCodes.KICKED_FROM_ROOM]: "You've been kicked from the room!",
 };

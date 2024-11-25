@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { MessageCodes, MinigamePathType } from "@/public";
+import { ErrorMessageCodes, MinigamePathType } from "@/public";
 import {
   createMinigame,
   deleteMinigameWithAuthorId,
@@ -16,8 +16,8 @@ import { getOffsetAndLimit, validateImageUrl } from "../../utils";
 export const userMinigames = new Hono();
 
 const userMinigameZod = z.object({
-  name: z.string().min(1).max(32),
-  description: z.string().min(0).max(32).default(""),
+  name: z.string().min(1).max(100),
+  description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
   prompt: z.string().min(1).max(500),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
@@ -48,7 +48,7 @@ userMinigames.get("/:id", authMiddleware, async (c) => {
   const id = c.req.param("id");
 
   const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
-  if (!minigame) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
   return c.json({ minigame });
 });
@@ -58,7 +58,7 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
   const values = c.req.valid("json");
 
   const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
-  if (!minigame) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
   if (values.previewImage) {
     const canAccessPage = await validateImageUrl(values.previewImage);
@@ -66,15 +66,15 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
   }
 
   await updateMinigameWithAuthorId({ id, authorId: c.var.user.id, ...values });
-  return c.json({});
+  return c.json({ success: true });
 });
 
 userMinigames.delete("/:id", authMiddleware, async (c) => {
   const id = c.req.param("id");
 
   const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
-  if (!minigame) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
   await deleteMinigameWithAuthorId({ id, authorId: c.var.user.id });
-  return c.json({});
+  return c.json({ success: true });
 });

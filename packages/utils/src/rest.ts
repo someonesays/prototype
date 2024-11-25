@@ -1,5 +1,5 @@
 import env from "@/env";
-import type { APIRoomExists } from "@/public";
+import type { ApiRoomExists } from "@/public";
 
 /**
  * Check if a room with the given room ID exists
@@ -9,12 +9,12 @@ import type { APIRoomExists } from "@/public";
 export async function checkIfRoomExists({
   url,
   roomId,
-}: { url: string; roomId: string }): Promise<[boolean, APIRoomExists]> {
+}: { url: string; roomId: string }): Promise<[boolean, ApiRoomExists]> {
   const res = await fetch(`${url}/api/rooms/${encodeURIComponent(roomId)}`, {
     headers: { authorization: env.ROOMS_AUTHORIZATION },
   });
   try {
-    return [true, (await res.json()) as APIRoomExists];
+    return [true, (await res.json()) as ApiRoomExists];
   } catch (err) {
     console.error(err);
     return [false, { exists: false }];

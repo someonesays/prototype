@@ -17,7 +17,7 @@ import {
 } from "@/utils";
 import {
   MatchmakingType,
-  MessageCodes,
+  ErrorMessageCodes,
   type MatchmakingResponse,
   type MatchmakingResponseMetadata,
   type MatchmakingDataJWT,
@@ -32,10 +32,10 @@ export const matchmaking = new Hono();
 
 matchmaking.get("/", async (c) => {
   let roomId = c.req.query("roomId");
-  if (roomId?.length !== 10) return c.json({ code: MessageCodes.ROOM_NOT_FOUND }, 404);
+  if (roomId?.length !== 10) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
 
   const server = await findServerByRoomIfExists(roomId);
-  if (!server) return c.json({ code: MessageCodes.ROOM_NOT_FOUND }, 404);
+  if (!server) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
 
   return c.json({ success: true });
 });
@@ -61,7 +61,7 @@ async function handlePostMatchmaking({
   payload,
 }: {
   c: Context;
-  payload: z.infer<typeof zodPostMatchmakingValidator>;
+  payload: z.infer<typeof zodPostMatchmakingValidatorNormal | typeof zodPostMatchmakingValidatorDiscord>;
 }) {
   // Get room ID
   let roomId: string | null = null;
@@ -85,7 +85,7 @@ async function handlePostMatchmaking({
             secretKey: captchaType === "invisible" ? env.TURNSTILE_SECRET_KEY_INVISIBLE : env.TURNSTILE_SECRET_KEY_MANAGED,
           }))
         )
-          return c.json({ code: MessageCodes.FAILED_CAPTCHA }, 429);
+          return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
       }
 
       // Set display name
@@ -96,14 +96,14 @@ async function handlePostMatchmaking({
       if (payload.roomId) {
         roomId = payload.roomId;
         server = await findServerByRoomIfExists(roomId);
-        if (!server) return c.json({ code: MessageCodes.ROOM_NOT_FOUND }, 404);
+        if (!server) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
       } else {
-        if (!payload.location) return c.json({ code: MessageCodes.MISSING_LOCATION }, 400);
+        if (!payload.location) return c.json({ code: ErrorMessageCodes.MISSING_LOCATION }, 400);
 
         // Check rate limiting for room creation
         const { address: ip } = getConnInfo(c).remote;
         const success = await roomCreationRateLimit.check(`ip:${ip}`);
-        if (!success) return c.json({ code: MessageCodes.RATE_LIMITED }, 400);
+        if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 400);
 
         // Attempt to select the server to use
         const maxRetries = 3;
@@ -112,21 +112,21 @@ async function handlePostMatchmaking({
         while (true) {
           // Find the best server to use
           const bestServer = await findBestServerByLocation(payload.location);
-          if (!bestServer) return c.json({ code: MessageCodes.SERVERS_BUSY }, 500);
+          if (!bestServer) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 500);
 
           // Generate new room ID based on the server ID
           roomId = encodeRoomId(bestServer.id);
 
           // Check if room ID is already taken on the server
           const [success, { exists }] = await checkIfRoomExists({ url: bestServer.url, roomId });
-          if (!success) return c.json({ code: MessageCodes.SERVERS_BUSY }, 500);
+          if (!success) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 500);
           if (!exists) {
             server = { id: bestServer.id, url: bestServer.ws, location: bestServer.location };
             break;
           }
 
-          // If it fails to retry 3 times, return MessageCodes.SERVERS_BUSY
-          if (++retries === maxRetries) return c.json({ code: MessageCodes.SERVERS_BUSY }, 500);
+          // If it fails to retry 3 times, return ErrorMessageCodes.SERVERS_BUSY
+          if (++retries === maxRetries) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 500);
         }
       }
 
@@ -134,24 +134,24 @@ async function handlePostMatchmaking({
     }
     case MatchmakingType.DISCORD: {
       if (!env.DISCORD_CLIENT_ID || !env.DISCORD_CLIENT_SECRET || !env.DISCORD_TOKEN) {
-        return c.json({ code: MessageCodes.NOT_IMPLEMENTED }, 501);
+        return c.json({ code: ErrorMessageCodes.NOT_IMPLEMENTED }, 501);
       }
 
       const { instanceId, code } = payload;
 
       const oauth2 = await verifyDiscordOAuth2Token(code);
-      if (!oauth2) return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+      if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       const scopes = oauth2.scope.split(" ");
       if (!scopes.includes("identify") || !scopes.includes("guilds") || !scopes.includes("guilds.members.read")) {
-        return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+        return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
       }
 
       const user = await getDiscordUser(oauth2.access_token);
-      if (!user) return c.json({ code: MessageCodes.RATE_LIMITED }, 500);
+      if (!user) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
 
       const instance = await getActivityInstance(instanceId);
-      if (!instance) return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+      if (!instance) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       displayName = user.global_name || user.username || user.id;
       avatar = user.avatar
@@ -161,7 +161,7 @@ async function handlePostMatchmaking({
       const guildId = instance.location.guild_id;
       if (guildId) {
         const member = await getDiscordMember({ guildId, accessToken: oauth2.access_token });
-        if (!member) return c.json({ code: MessageCodes.RATE_LIMITED }, 500);
+        if (!member) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
 
         displayName = member.nick || displayName;
         avatar = member.avatar
@@ -175,7 +175,7 @@ async function handlePostMatchmaking({
 
       // Assign the server based off the launch ID
       const bestServer = await findBestServerByDiscordLaunchId(BigInt(instance.launch_id));
-      if (!bestServer) return c.json({ code: MessageCodes.SERVERS_BUSY }, 401);
+      if (!bestServer) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 401);
       server = { id: bestServer.id, url: bestServer.wsDiscord, location: bestServer.location };
 
       break;

@@ -2,7 +2,7 @@ import env from "@/env";
 
 export async function verifyDiscordOAuth2Token(code: string) {
   const res = await fetch("https://discord.com/api/oauth2/token", {
-    method: "post",
+    method: "POST",
     headers: {
       "content-type": "application/x-www-form-urlencoded",
     },

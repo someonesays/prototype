@@ -3,14 +3,14 @@ import { z } from "zod";
 import { Hono } from "hono";
 import { createMiddleware } from "hono/factory";
 import { zValidator } from "@hono/zod-validator";
-import { MessageCodes } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 import { rooms, maxRooms, setMaxRooms } from "../../utils";
 
 export const state = new Hono();
 
 const authMiddleware = createMiddleware(async (c, next) => {
   if (c.req.header("Authorization") === env.ROOMS_AUTHORIZATION) return next();
-  return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+  return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 });
 
 // Update max rooms

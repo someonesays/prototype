@@ -3,12 +3,12 @@ import {
   ParentOpcodes,
   MinigameOpcodes,
   MinigameValidation,
-  MessageCodes,
+  ErrorMessageCodes,
   MatchmakingType,
   MatchmakingLocation,
   type Minigame,
   type ParentTypes,
-  type APIResponse,
+  type ApiErrorResponse,
   type MatchmakingResponse,
 } from "../types";
 import type { z } from "zod";
@@ -50,7 +50,7 @@ export class ParentSdk {
     if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
-        method: "post",
+        method: "POST",
         headers: {
           "content-type": "application/json",
           "x-captcha-type": captcha.type,
@@ -65,26 +65,26 @@ export class ParentSdk {
       });
       const data = await res.json();
 
-      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
       return { success: true as true, data: data as MatchmakingResponse };
     } catch (err) {
-      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
     }
   }
 
   static async getMatchmakingDiscord({ instanceId, code, baseUrl }: { instanceId: string; code: string; baseUrl: string }) {
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
-        method: "post",
+        method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code }),
       });
       const data = await res.json();
 
-      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
       return { success: true as true, data: data as MatchmakingResponse };
     } catch (err) {
-      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
     }
   }
 
@@ -93,11 +93,11 @@ export class ParentSdk {
       const res = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
       const data = await res.json();
 
-      if (res.status !== 200) return { success: false as false, code: (data as APIResponse).code };
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
       return { success: true as true, data: data as Minigame };
     } catch (err) {
       console.error(err);
-      return { success: false as false, code: MessageCodes.UNEXPECTED_ERROR };
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
     }
   }
 

@@ -9,7 +9,7 @@ import {
   MinigameEndReason,
   GamePrizeType,
   GamePrizePoints,
-  MessageCodes,
+  ErrorMessageCodes,
   MatchmakingType,
   type GamePrize,
   type MatchmakingDataJWT,
@@ -80,17 +80,17 @@ websocket.get(
           // If the matchmaking type is normal, check if the JWT was meant to create a room
           // This prevents a race-condition in matchmaking (36^9 chance) where 2 players are assigned the same room ID
           if (metadata.type === MatchmakingType.NORMAL && metadata.creating) {
-            return ws.close(1003, JSON.stringify({ code: MessageCodes.SERVERS_BUSY }));
+            return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVERS_BUSY }));
           }
 
           // Check if the player with the given user ID is already in the room
           if (state.serverRoom.players.get(user.id)) {
-            return ws.close(1003, JSON.stringify({ code: MessageCodes.ALREADY_IN_GAME }));
+            return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.ALREADY_IN_GAME }));
           }
 
           // Disallow over 25 people in a game
           if (state.serverRoom.players.size >= 25) {
-            return ws.close(1003, JSON.stringify({ code: MessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT }));
+            return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT }));
           }
 
           // Join room
@@ -98,7 +98,7 @@ websocket.get(
         } else {
           // If the server is full, disallow the creation of new rooms
           if (rooms.size >= maxRooms) {
-            return ws.close(1003, JSON.stringify({ code: MessageCodes.SERVERS_BUSY }));
+            return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVERS_BUSY }));
           }
 
           // Create room
@@ -141,7 +141,7 @@ websocket.get(
 
               state.serverRoom.players
                 .get(data.user)
-                ?.ws.close(1003, JSON.stringify({ code: MessageCodes.KICKED_FROM_ROOM }));
+                ?.ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.KICKED_FROM_ROOM }));
               return;
             }
             case ClientOpcodes.TRANSFER_HOST: {
@@ -175,7 +175,7 @@ websocket.get(
 
               if (data.packId) {
                 // Get minigame pack
-                const pack = await getPackPublic({ id: data.packId });
+                const pack = await getPackPublic(data.packId);
                 if (!pack) return sendError(state.user, "Failed to find pack");
 
                 // Set pack in new settings

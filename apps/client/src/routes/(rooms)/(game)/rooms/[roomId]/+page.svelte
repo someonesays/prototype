@@ -5,4 +5,3 @@ import RoomContainer from "$lib/components/pages/RoomContainer.svelte";
 <main>
   <RoomContainer />
 </main>
-  

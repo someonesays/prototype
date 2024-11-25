@@ -115,7 +115,7 @@ function leaveOrEndGame() {
         <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
         <br>
         {#if $launcher !== "discord" || $room && $room.room.host === $room.user}
-          <button class="leave-button" onclick={() => leaveOrEndGame()}>
+          <button class="leave-button" onclick={leaveOrEndGame}>
             {#if $room && $room.room.host === $room.user}
               End minigame
             {:else}

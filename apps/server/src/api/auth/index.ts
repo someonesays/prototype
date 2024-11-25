@@ -2,7 +2,7 @@ import env from "@/env";
 import { Hono } from "hono";
 import { getSignedCookie, setSignedCookie, deleteCookie } from "hono/cookie";
 import { sign } from "hono/jwt";
-import { MessageCodes } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 import { createCode, getDiscordUser, verifyDiscordOAuth2Token } from "@/utils";
 import { createUser, getUserByDiscordId } from "@/db";
 
@@ -29,15 +29,15 @@ auth.get("/discord/callback", async (c) => {
   if (!code || !state || (!signedState && signedState !== state)) return c.redirect(env.BASE_FRONTEND);
 
   const oauth2 = await verifyDiscordOAuth2Token(code);
-  if (!oauth2) return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+  if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
   const scopes = oauth2.scope.split(" ");
   if (!scopes.includes("identify") || !scopes.includes("email")) {
-    return c.json({ code: MessageCodes.INVALID_AUTHORIZATION }, 401);
+    return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 
   const discordUser = await getDiscordUser(oauth2.access_token);
-  if (!discordUser) return c.json({ code: MessageCodes.RATE_LIMITED }, 500);
+  if (!discordUser) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
 
   let cid = (await getUserByDiscordId(discordUser.id))?.id;
   if (!cid) {
@@ -54,5 +54,5 @@ auth.get("/discord/callback", async (c) => {
     expires: new Date(exp * 1000),
   });
 
-  return c.redirect(env.BASE_FRONTEND);
+  return c.redirect(`${env.BASE_FRONTEND}/developers`);
 });

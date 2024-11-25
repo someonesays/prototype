@@ -4,7 +4,7 @@ import env from "$lib/utils/env";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
-import { MatchmakingLocation, MessageCodesToText, ParentSdk } from "@/public";
+import { MatchmakingLocation, ErrorMessageCodesToText, ParentSdk } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
@@ -49,7 +49,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   if (!success) {
     // Set kick reason
-    $kickedReason = `Failed to connect to matchmaking: ${MessageCodesToText[code]}`;
+    $kickedReason = `Failed to connect to matchmaking: ${ErrorMessageCodesToText[code]}`;
     // Redirect page to "/" if it's not already that
     if (location.pathname !== "/") goto("/");
     return;
@@ -91,6 +91,7 @@ function setJoinButtonState(state: boolean) {
       {/if}
     </form>
 
+    <p><a href="/developers">Developer Portal</a></p>
     <p><a href="/credits">Credits</a></p>
     <p><a href="/terms">Terms of Services</a></p>
     <p><a href="/privacy">Privacy Policy</a></p>

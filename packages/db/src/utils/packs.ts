@@ -105,16 +105,11 @@ export function getPackMinigameCount(id: string) {
   return db.$count(schema.packsMinigames, eq(schema.packsMinigames.packId, id));
 }
 
-export async function getPackPublic({
-  id,
-  offset = 0,
-  limit = 50,
-}: { id: string; offset?: number; limit?: number }): Promise<Pack | null> {
+export async function getPackPublic(id: string): Promise<Pack | null> {
   const pack = await getPack(id);
   if (!pack) return null;
 
-  const minigamesPublic = await getPackMinigamesPublic({ id, offset, limit });
-  return transformPackToPackPublic({ pack, minigamesPublic });
+  return transformPackToPackPublic(pack);
 }
 
 export async function getPackMinigamesPublic({
@@ -137,13 +132,7 @@ export async function isMinigameInPack({ packId, minigameId }: { packId: string;
   }));
 }
 
-function transformPackToPackPublic({
-  pack,
-  minigamesPublic,
-}: {
-  pack: Exclude<Awaited<ReturnType<typeof getPack>>, undefined>;
-  minigamesPublic: Awaited<ReturnType<typeof getPackMinigamesPublic>>;
-}): Pack {
+function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeof getPack>>, undefined>): Pack {
   return {
     id: pack.id,
     name: pack.name,
@@ -160,12 +149,6 @@ function transformPackToPackPublic({
           discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
         }
       : null,
-    minigames: {
-      data: minigamesPublic.minigames,
-      offset: minigamesPublic.offset,
-      limit: minigamesPublic.limit,
-      total: minigamesPublic.total,
-    },
     createdAt: pack.createdAt.toString(),
   };
 }

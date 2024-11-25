@@ -1,7 +1,7 @@
 import env from "@/env";
 import { verify } from "hono/jwt";
 import { createMiddleware } from "hono/factory";
-import { MessageCodes } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 import { getUser, type schema } from "@/db";
 import { getSignedCookie } from "hono/cookie";
 
@@ -14,19 +14,19 @@ export const authMiddleware = createMiddleware<{
     const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
 
     const { type, cid } = (await verify(authorization, env.JWT_SECRET)) as { type: "token"; cid: string };
-    if (type !== "token") return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
+    if (type !== "token") return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
     try {
       const user = await getUser(cid);
-      if (!user) return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
+      if (!user) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       c.set("user", user);
       return await next();
     } catch (err2) {
       console.error(err2);
-      return c.json({ code: MessageCodes.INTERNAL_ERROR });
+      return c.json({ code: ErrorMessageCodes.INTERNAL_ERROR }, 500);
     }
   } catch (err) {
-    return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
+    return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 });

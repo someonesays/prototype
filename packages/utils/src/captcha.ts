@@ -8,7 +8,7 @@ export async function verifyCaptcha({ token, secretKey }: { token: string; secre
   if (!token.length) return false;
 
   const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-    method: "post",
+    method: "POST",
     headers: {
       "content-type": "application/x-www-form-urlencoded",
     },

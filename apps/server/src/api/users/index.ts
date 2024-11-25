@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
 import { getUserPublic } from "@/db";
-import { MessageCodes } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 
 import { userMinigames } from "./minigames";
 import { userPacks } from "./packs";
@@ -17,6 +17,6 @@ users.get("/@me", authMiddleware, async (c) => {
 
 users.get("/:id", async (c) => {
   const user = await getUserPublic(c.req.param("id"));
-  if (!user) return c.json({ code: MessageCodes.NOT_FOUND });
+  if (!user) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
   return c.json({ user });
 });

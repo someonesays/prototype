@@ -8,6 +8,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@/db": "workspace:*",
     "hono": "^4.6.11"
   }
 }

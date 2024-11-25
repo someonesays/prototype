@@ -6,7 +6,14 @@ import { page } from "$app/stores";
 import { room, roomParentSdk, roomWs } from "$lib/components/stores/roomState";
 import { kickedReason } from "$lib/components/stores/lobby";
 
-import { MessageCodesToText, RoomWebsocket, ServerOpcodes, GameStatus, MinigameEndReason, type APIResponse } from "@/public";
+import {
+  ErrorMessageCodesToText,
+  RoomWebsocket,
+  ServerOpcodes,
+  GameStatus,
+  MinigameEndReason,
+  type ApiErrorResponse,
+} from "@/public";
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
@@ -216,10 +223,10 @@ onMount(() => {
   // Handles WebSocket closure
   $roomWs.onclose = (evt) => {
     try {
-      const { code } = JSON.parse(evt.reason) as APIResponse;
+      const { code } = JSON.parse(evt.reason) as ApiErrorResponse;
 
-      if (connected) return kick(MessageCodesToText[code]);
-      return kick(`Failed to connect to server: ${MessageCodesToText[code]}`);
+      if (connected) return kick(ErrorMessageCodesToText[code]);
+      return kick(`Failed to connect to server: ${ErrorMessageCodesToText[code]}`);
     } catch (err) {
       if (connected) return kick("Disconnected!");
 

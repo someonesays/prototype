@@ -1,6 +1,6 @@
 import env from "@/env";
 import { getMinigame } from "@/db";
-import { MessageCodes, MinigamePathType } from "@/public";
+import { ErrorMessageCodes, MinigamePathType } from "@/public";
 import { Hono, type Context } from "hono";
 import { NONCE, secureHeaders } from "hono/secure-headers";
 import type { BlankEnv } from "hono/types";
@@ -80,7 +80,7 @@ proxy.all(route, async (c) => {
       },
     });
   } catch (err) {
-    return c.json({ code: MessageCodes.FAILED_TO_FETCH }, 500);
+    return c.json({ code: ErrorMessageCodes.FAILED_TO_FETCH }, 500);
   }
 });
 

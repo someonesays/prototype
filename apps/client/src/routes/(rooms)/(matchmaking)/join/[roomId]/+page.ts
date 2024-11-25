@@ -1,6 +1,6 @@
 import env from "$lib/utils/env";
 import { goto } from "$app/navigation";
-import { MessageCodes, MessageCodesToText, ParentSdk } from "@/public";
+import { ErrorMessageCodes, ErrorMessageCodesToText, ParentSdk } from "@/public";
 import { roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 
 export async function load({ params }) {
@@ -12,7 +12,7 @@ export async function load({ params }) {
     baseUrl: env.VITE_BASE_API,
   });
   if (!exists) {
-    kickedReason.set(MessageCodesToText[MessageCodes.ROOM_NOT_FOUND]);
+    kickedReason.set(ErrorMessageCodesToText[ErrorMessageCodes.ROOM_NOT_FOUND]);
     return goto("/");
   }
   roomIdToJoin.set(roomId);

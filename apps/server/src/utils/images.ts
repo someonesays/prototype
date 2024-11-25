@@ -1,9 +1,9 @@
-import { MessageCodes } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 import type { Context } from "hono";
 
 export async function validateImageUrl(
   imageUrl: string,
-): Promise<{ success: true } | { success: false; status: 400 | 500; code: MessageCodes }> {
+): Promise<{ success: true } | { success: false; status: 400 | 500; code: ErrorMessageCodes }> {
   try {
     const res = await fetch(imageUrl, {
       headers: { "user-agent": "Someone Says" },
@@ -13,12 +13,12 @@ export async function validateImageUrl(
 
     const contentType = res.headers.get("content-type") ?? "";
     if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(contentType)) {
-      return { success: false, status: 400, code: MessageCodes.INVALID_CONTENT_TYPE };
+      return { success: false, status: 400, code: ErrorMessageCodes.INVALID_CONTENT_TYPE };
     }
 
     return { success: true };
   } catch (err) {
-    return { success: false, status: 500, code: MessageCodes.FAILED_TO_FETCH };
+    return { success: false, status: 500, code: ErrorMessageCodes.FAILED_TO_FETCH };
   }
 }
 
@@ -32,7 +32,7 @@ export async function sendProxiedImage(c: Context, imageUrl: string) {
 
     const contentType = res.headers.get("content-type") ?? "";
     if (!["image/jpeg", "image/png", "image/gif", "image/webp"].includes(contentType)) {
-      return c.json({ code: MessageCodes.INVALID_CONTENT_TYPE }, 400);
+      return c.json({ code: ErrorMessageCodes.INVALID_CONTENT_TYPE }, 400);
     }
 
     return c.newResponse(res.body, {
@@ -42,6 +42,6 @@ export async function sendProxiedImage(c: Context, imageUrl: string) {
       },
     });
   } catch (err) {
-    return c.json({ code: MessageCodes.FAILED_TO_FETCH }, 500);
+    return c.json({ code: ErrorMessageCodes.FAILED_TO_FETCH }, 500);
   }
 }

@@ -125,10 +125,10 @@ function leaveGame() {
 
   <h2>Actions</h2>
   <p>
-    <button onclick={() => copyInviteLink()}>Invite</button>
-    <button onclick={() => startGame()} disabled={$room.room.host !== $room.user}>Start</button>
+    <button onclick={copyInviteLink}>Invite</button>
+    <button onclick={startGame} disabled={$room.room.host !== $room.user}>Start</button>
     {#if $launcher === "normal"}
-      <button onclick={() => leaveGame()}>Leave room</button>
+      <button onclick={leaveGame}>Leave room</button>
     {/if}
   </p>
 {:else}
