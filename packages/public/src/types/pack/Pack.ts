@@ -1,4 +1,4 @@
-import type { Minigame, PackPublishType } from "../../types";
+import type { PackPublishType } from "../../types";
 
 export interface Pack {
   id: string;
