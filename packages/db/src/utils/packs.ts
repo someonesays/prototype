@@ -30,6 +30,12 @@ export async function deletePackWithAuthorId({ id, authorId }: { id: string; aut
   await db.delete(schema.packs).where(and(eq(schema.packs.id, id), eq(schema.packs.authorId, authorId)));
 }
 
+export function getMinigameInPack({ packId, minigameId }: { packId: string; minigameId: string }) {
+  return db.query.packsMinigames.findFirst({
+    where: and(eq(schema.packsMinigames.packId, packId), eq(schema.packsMinigames.minigameId, minigameId)),
+  });
+}
+
 export function addMinigameToPack({ packId, minigameId }: { packId: string; minigameId: string }) {
   return db.insert(schema.packsMinigames).values({ packId, minigameId });
 }

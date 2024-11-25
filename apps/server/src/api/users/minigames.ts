@@ -57,6 +57,9 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
   const id = c.req.param("id");
   const values = c.req.valid("json");
 
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
   if (values.previewImage) {
     const canAccessPage = await validateImageUrl(values.previewImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
@@ -68,7 +71,10 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
 
 userMinigames.delete("/:id", authMiddleware, async (c) => {
   const id = c.req.param("id");
-  await deleteMinigameWithAuthorId({ id, authorId: c.var.user.id });
 
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
+  await deleteMinigameWithAuthorId({ id, authorId: c.var.user.id });
   return c.json({});
 });

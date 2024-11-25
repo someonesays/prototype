@@ -7,6 +7,8 @@ import {
   addMinigameToPack,
   createPack,
   deletePackWithAuthorId,
+  getMinigameInPack,
+  getMinigamePublic,
   getPackByAuthorId,
   getPackMinigamesPublic,
   getPacksByAuthorId,
@@ -54,6 +56,9 @@ userPacks.patch("/:id", authMiddleware, zValidator("json", userPackZod), async (
   const id = c.req.param("id");
   const values = c.req.valid("json");
 
+  const pack = await getPackByAuthorId({ id, authorId: c.var.user.id });
+  if (!pack) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
   if (values.iconImage) {
     const canAccessPage = await validateImageUrl(values.iconImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
@@ -65,6 +70,10 @@ userPacks.patch("/:id", authMiddleware, zValidator("json", userPackZod), async (
 
 userPacks.delete("/:id", authMiddleware, async (c) => {
   const id = c.req.param("id");
+
+  const pack = await getPackByAuthorId({ id, authorId: c.var.user.id });
+  if (!pack) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
   await deletePackWithAuthorId({ id, authorId: c.var.user.id });
 
   return c.json({});
@@ -87,6 +96,12 @@ userPacks.post("/:id/minigames/:minigameId", authMiddleware, async (c) => {
 
   const pack = await getPackByAuthorId({ id, authorId: c.var.user.id });
   if (!pack) return c.json({ code: MessageCodes.NOT_FOUND }, 404);
+
+  const minigame = await getMinigamePublic(minigameId);
+  if (!minigame) return c.json({ code: MessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK }, 404);
+
+  const alreadyInPack = await getMinigameInPack({ packId: pack.id, minigameId: minigame.id });
+  if (alreadyInPack) return c.json({ code: MessageCodes.MINIGAME_ALREADY_IN_PACK }, 409);
 
   try {
     await addMinigameToPack({ packId: pack.id, minigameId });

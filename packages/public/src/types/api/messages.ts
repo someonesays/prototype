@@ -10,6 +10,9 @@ export enum MessageCodes {
   FAILED_TO_FETCH = "failed_to_fetch",
   INVALID_CONTENT_TYPE = "invalid_content_type",
 
+  CANNOT_FIND_MINIGAME_FOR_PACK = "cannot_find_minigame_for_pack",
+  MINIGAME_ALREADY_IN_PACK = "minigame_already_in_pack",
+
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
   SERVERS_BUSY = "servers_busy",
@@ -31,6 +34,9 @@ export const MessageCodesToText = {
 
   [MessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
   [MessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
+
+  [MessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
+  [MessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
 
   [MessageCodes.MISSING_LOCATION]: "Missing location.",
   [MessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
