@@ -1,5 +1,5 @@
 {
-  "id": "08326bbe-10ec-40e8-91a8-0c3a2f15455e",
+  "id": "795cfe08-9277-4d55-b31a-442a6512051b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -43,7 +43,8 @@
           "name": "publish_type",
           "type": "smallint",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 0
         },
         "prompt": {
           "name": "prompt",
@@ -55,13 +56,13 @@
           "name": "terms_of_services",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "privacy_policy": {
           "name": "privacy_policy",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "proxy_url": {
           "name": "proxy_url",
@@ -73,7 +74,8 @@
           "name": "path_type",
           "type": "smallint",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 1
         },
         "minimum_players_to_start": {
           "name": "minimum_players_to_start",

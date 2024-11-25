@@ -16,14 +16,14 @@ export const minigames = pgTable("minigames", {
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
-  publishType: smallint("publish_type").$type<MinigamePublishType>().notNull(),
+  publishType: smallint("publish_type").$type<MinigamePublishType>().notNull().default(MinigamePublishType.UNLISTED),
   prompt: text("prompt").notNull(),
-  termsOfServices: text("terms_of_services").notNull(),
-  privacyPolicy: text("privacy_policy").notNull(),
+  termsOfServices: text("terms_of_services"),
+  privacyPolicy: text("privacy_policy"),
   proxyUrl: text("proxy_url"),
-  pathType: smallint("path_type").$type<MinigamePathType>().notNull(),
+  pathType: smallint("path_type").$type<MinigamePathType>().notNull().default(MinigamePathType.WHOLE_PATH),
   minimumPlayersToStart: smallint("minimum_players_to_start").notNull().default(1),
-  createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
 });
 
 export const minigamesRelations = relations(minigames, ({ one }) => ({

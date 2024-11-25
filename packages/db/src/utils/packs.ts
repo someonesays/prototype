@@ -101,7 +101,6 @@ export async function getPackMinigamesPublic({
 }: { id: string; offset?: number; limit?: number }) {
   const minigameIds = await getPackMinigames({ id, offset, limit });
   return {
-    id,
     offset,
     limit,
     total: await getPackMinigameCount(id),

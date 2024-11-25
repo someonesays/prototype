@@ -4,12 +4,12 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"name" text NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
 	"preview_image" text,
-	"publish_type" smallint NOT NULL,
+	"publish_type" smallint DEFAULT 0 NOT NULL,
 	"prompt" text NOT NULL,
-	"terms_of_services" text NOT NULL,
-	"privacy_policy" text NOT NULL,
+	"terms_of_services" text,
+	"privacy_policy" text,
 	"proxy_url" text,
-	"path_type" smallint NOT NULL,
+	"path_type" smallint DEFAULT 1 NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );

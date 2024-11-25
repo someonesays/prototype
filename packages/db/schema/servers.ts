@@ -10,5 +10,5 @@ export const servers = pgTable("servers", {
   wsDiscord: text("ws_discord"),
   currentRooms: integer("current_rooms").notNull().default(0),
   maxRooms: integer("max_rooms").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
 });

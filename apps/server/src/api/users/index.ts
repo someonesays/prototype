@@ -2,8 +2,11 @@ import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
 import { getUserPublic, transformUserToUserPublic } from "@/db";
 import { MessageCodes } from "@/public";
+import { userMinigames } from "./minigames";
 
 export const users = new Hono();
+
+users.route("/@me/minigames", userMinigames);
 
 users.get("/@me", authMiddleware, async (c) => {
   return c.json({ user: transformUserToUserPublic(c.var.user) });

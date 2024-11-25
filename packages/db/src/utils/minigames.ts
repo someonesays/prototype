@@ -40,6 +40,28 @@ export function getMinigamesByIds(ids: string[]) {
   });
 }
 
+export async function getMinigamesByAuthorId({
+  authorId,
+  offset = 0,
+  limit = 50,
+}: { authorId: string; offset?: number; limit?: number }) {
+  const minigames = await db.query.minigames.findMany({
+    offset,
+    limit,
+    where: eq(schema.minigames.authorId, authorId),
+  });
+  return {
+    offset,
+    limit,
+    total: await getMinigameCountByAuthorId(authorId),
+    minigames,
+  };
+}
+
+export function getMinigameCountByAuthorId(authorId: string) {
+  return db.$count(schema.minigames, eq(schema.minigames.authorId, authorId));
+}
+
 export function getMinigame(id: string) {
   return db.query.minigames.findFirst({
     where: eq(schema.minigames.id, id),
@@ -54,11 +76,11 @@ export function getMinigame(id: string) {
 export function getMinigameByAuthorId({ id, authorId }: { id: string; authorId: string }) {
   return db.query.minigames.findFirst({
     where: and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)),
-    with: {
-      author: {
-        columns: { id: true, name: true, createdAt: true },
-      },
-    },
+    // with: {
+    //   author: {
+    //     columns: { id: true, name: true, createdAt: true },
+    //   },
+    // },
   });
 }
 

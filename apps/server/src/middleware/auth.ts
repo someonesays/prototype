@@ -10,9 +10,9 @@ export const authMiddleware = createMiddleware<{
     user: typeof schema.users.$inferSelect;
   };
 }>(async (c, next) => {
-  const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
-
   try {
+    const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
+
     const { type, cid } = (await verify(authorization, env.JWT_SECRET)) as { type: "token"; cid: string };
     if (type !== "token") return c.json({ code: MessageCodes.INVALID_AUTHORIZATION });
 

@@ -3,3 +3,4 @@ export * from "./discord";
 export * from "./random";
 export * from "./rest";
 export * from "./rooms";
+export * from "./urls";
