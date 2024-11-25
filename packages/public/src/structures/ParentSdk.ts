@@ -178,7 +178,6 @@ export class ParentSdk {
 
   destroy() {
     if (this.isDestroyed) return;
-
     this.isDestroyed = true;
 
     this.emitter.removeAllListeners();

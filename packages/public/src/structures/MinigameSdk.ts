@@ -5,6 +5,7 @@ import type { z } from "zod";
 export class MinigameSdk {
   private isReady = false;
   private isWaiting = false;
+  private isDestroyed = false;
 
   private emitter = new EventEmitter<ParentOpcodes>();
   private source = window.parent.opener ?? window.parent;
@@ -78,5 +79,16 @@ export class MinigameSdk {
   }
   sendPrivateMessage(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.SEND_PRIVATE_MESSAGE]>) {
     this.postMessage(MinigameOpcodes.SEND_PRIVATE_MESSAGE, payload);
+  }
+
+  /**
+   * Destroy the MinigameSDK
+   */
+  destroy(): void {
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
+
+    this.emitter.removeAllListeners();
+    window.removeEventListener("message", this.handleMessage);
   }
 }
