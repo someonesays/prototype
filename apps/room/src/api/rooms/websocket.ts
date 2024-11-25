@@ -288,7 +288,7 @@ websocket.get(
                 return startGame(state.serverRoom);
               }
 
-              // Set ready timer (2 minutes to ready up) once host is ready
+              // Set ready timer (30 seconds to ready up) once host is ready
               if (
                 state.serverRoom.minigame &&
                 state.serverRoom.players.get(state.serverRoom.room.host)?.ready &&
@@ -296,7 +296,7 @@ websocket.get(
                   state.serverRoom.minigame.minimumPlayersToStart &&
                 !state.serverRoom.readyTimer
               ) {
-                state.serverRoom.readyTimer = setTimeout(() => startGame(state.serverRoom), 120000);
+                state.serverRoom.readyTimer = setTimeout(() => startGame(state.serverRoom), 30000);
                 return;
               }
 

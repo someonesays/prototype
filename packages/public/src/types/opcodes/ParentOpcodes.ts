@@ -3,7 +3,7 @@
  */
 export enum ParentOpcodes {
   /**
-   * Sent the room and player information, including the game's state and all player states.
+   * Sends the room and player information, including the game's state and all player states.
    * This should also include player settings, such as volume and language.
    */
   READY = "ready",
@@ -14,7 +14,7 @@ export enum ParentOpcodes {
   /**
    * The game has started.
    *
-   * The minigame's game will "start" when everyone is readied.
+   * The minigame's game will "start" when everyone is readied (aka sent the HANDSHAKE).
    * The host needs to have the minigame loaded in for the game started.
    * If anyone takes over 30 seconds longer than the host to load the minigame, the game will start before they successfully load the minigame and will be treated as a player who joined the game mid-game.
    *
@@ -22,7 +22,7 @@ export enum ParentOpcodes {
    */
   START_GAME = "start_game",
   /**
-   * A player readied the minigame (consider this as a player join event on minigames).
+   * A player readied the minigame (consider this as a player join event for minigames).
    *
    * When a player readies a minigame, the player joined event is given to all clients who are readied as well.
    */
