@@ -10,6 +10,7 @@ import {
   getMinigameInPack,
   getMinigamePublic,
   getPackByAuthorId,
+  getPackCountByAuthorId,
   getPackMinigamesPublic,
   getPacksByAuthorId,
   removeMinigameFromPack,
@@ -41,6 +42,10 @@ userPacks.post("/", authMiddleware, zValidator("json", userPackZod), async (c) =
 
   const success = await packCreationLimit.check(c.var.user.id);
   if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
+
+  // TODO: Remove hard-coded pack limit of 50
+  const count = await getPackCountByAuthorId(c.var.user.id);
+  if (count >= 50) return c.json({ code: ErrorMessageCodes.REACHED_PACK_LIMIT }, 429);
 
   const id = await createPack({ authorId: c.var.user.id, ...values });
   return c.json({ id });
