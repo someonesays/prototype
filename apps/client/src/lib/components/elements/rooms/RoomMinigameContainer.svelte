@@ -112,7 +112,7 @@ function leaveOrEndGame() {
           <p class="volume-text-right">{$volumeValue}%</p>
         </div>
         <br>
-        <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
+        <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} onchange={() => $roomParentSdk?.updateSettings({ settings: { volume: $volumeValue } })} />
         <br>
         {#if $launcher !== "discord" || $room && $room.room.host === $room.user}
           <button class="leave-button" onclick={leaveOrEndGame}>

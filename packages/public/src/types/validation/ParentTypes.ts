@@ -8,7 +8,7 @@ export interface ParentTypes {
     players: MinigamePlayer[];
   };
   [ParentOpcodes.UPDATE_SETTINGS]: {
-    settings: GameSettings;
+    settings: Partial<GameSettings>;
   };
   [ParentOpcodes.START_GAME]: {
     joinedLate: boolean;
