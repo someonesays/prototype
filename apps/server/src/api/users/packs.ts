@@ -15,7 +15,7 @@ import {
   removeMinigameFromPack,
   updatePackWithAuthorId,
 } from "@/db";
-import { validateImageUrl, getOffsetAndLimit } from "../../utils";
+import { validateImageUrl, getOffsetAndLimit, packCreationLimit } from "../../utils";
 import { validateUrl } from "@/utils";
 
 export const userPacks = new Hono();
@@ -38,6 +38,9 @@ userPacks.post("/", authMiddleware, zValidator("json", userPackZod), async (c) =
     const canAccessPage = await validateImageUrl(values.iconImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
   }
+
+  const success = await packCreationLimit.check(c.var.user.id);
+  if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
   const id = await createPack({ authorId: c.var.user.id, ...values });
   return c.json({ id });

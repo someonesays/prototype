@@ -11,7 +11,7 @@ import {
 } from "@/db";
 import { validateUrl } from "@/utils";
 import { authMiddleware } from "../../middleware";
-import { getOffsetAndLimit, validateImageUrl } from "../../utils";
+import { getOffsetAndLimit, minigameCreationLimit, validateImageUrl } from "../../utils";
 
 export const userMinigames = new Hono();
 
@@ -39,6 +39,9 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
     const canAccessPage = await validateImageUrl(values.previewImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
   }
+
+  const success = await minigameCreationLimit.check(c.var.user.id);
+  if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });

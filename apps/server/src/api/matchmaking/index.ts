@@ -103,7 +103,7 @@ async function handlePostMatchmaking({
         // Check rate limiting for room creation
         const { address: ip } = getConnInfo(c).remote;
         const success = await roomCreationRateLimit.check(`ip:${ip}`);
-        if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 400);
+        if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
         // Attempt to select the server to use
         const maxRetries = 3;
@@ -148,7 +148,7 @@ async function handlePostMatchmaking({
       }
 
       const user = await getDiscordUser(oauth2.access_token);
-      if (!user) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
+      if (!user) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
       const instance = await getActivityInstance(instanceId);
       if (!instance) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
@@ -161,7 +161,7 @@ async function handlePostMatchmaking({
       const guildId = instance.location.guild_id;
       if (guildId) {
         const member = await getDiscordMember({ guildId, accessToken: oauth2.access_token });
-        if (!member) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
+        if (!member) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
         displayName = member.nick || displayName;
         avatar = member.avatar

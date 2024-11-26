@@ -37,7 +37,7 @@ auth.get("/discord/callback", async (c) => {
   }
 
   const discordUser = await getDiscordUser(oauth2.access_token);
-  if (!discordUser) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 500);
+  if (!discordUser) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
   let cid = (await getUserByDiscordId(discordUser.id))?.id;
   if (!cid) {
