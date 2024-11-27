@@ -37,7 +37,7 @@ state.delete("/", authMiddleware, async (c) => {
   }
 
   // Reset server started date (to check "iat" on the JWT)
-  resetServerStartedDate(Date.now() + 2000);
+  resetServerStartedDate(Date.now());
 
   // Enable the server (if it wasn't disabled originally)
   if (!room.disabled) await setDisabled(false);
