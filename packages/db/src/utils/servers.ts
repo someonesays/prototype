@@ -43,12 +43,18 @@ export function getServerById(id: string) {
 
 export function findBestServerByLocation(location: MatchmakingLocation) {
   return db.query.servers.findFirst({
+    extras: {
+      currentToMaxServersRatio:
+        sql`cast(${schema.servers.currentRooms} as float) / cast(${schema.servers.maxRooms} as float)`.as(
+          "current_to_max_servers_ratio",
+        ),
+    },
     where: and(
       isNotNull(schema.servers.ws),
       eq(schema.servers.location, location),
       lt(schema.servers.currentRooms, schema.servers.maxRooms),
     ),
-    orderBy: asc(schema.servers.currentRooms),
+    orderBy: asc(sql`current_to_max_servers_ratio`),
   }) as Promise<(typeof schema.servers.$inferSelect & { ws: string }) | undefined>;
 }
 
