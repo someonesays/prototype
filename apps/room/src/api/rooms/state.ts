@@ -4,7 +4,8 @@ import { Hono } from "hono";
 import { createMiddleware } from "hono/factory";
 import { zValidator } from "@hono/zod-validator";
 import { ErrorMessageCodes } from "@/public";
-import { rooms, maxRooms, setMaxRooms, resetServerStartedDate } from "../../utils";
+import { getServerById } from "@/db";
+import { rooms, maxRooms, setMaxRooms, resetServerStartedDate, setDisabled } from "../../utils";
 
 export const state = new Hono();
 
@@ -21,14 +22,26 @@ state.post("/", authMiddleware, zValidator("json", z.object({ maxRooms: z.number
 
 // Kill all rooms
 state.delete("/", authMiddleware, async (c) => {
-  // Reset server started date (to check "iat" on the JWT)
-  resetServerStartedDate();
+  // Check if the server is already disabled
+  const room = await getServerById(env.SERVER_ID);
+  if (!room) throw new Error("Cannot find room in the database");
+
+  // Disable the server (if it's not already disabled)
+  if (!room.disabled) await setDisabled(true);
+
   // Close all players
   for (const room of rooms.values()) {
     for (const player of room.players.values()) {
       player.ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVER_SHUTDOWN }));
     }
   }
+
+  // Reset server started date (to check "iat" on the JWT)
+  resetServerStartedDate(Date.now() + 2000);
+
+  // Enable the server (if it wasn't disabled originally)
+  if (!room.disabled) await setDisabled(false);
+
   // Send response
   return c.json({ success: true });
 });

@@ -12,20 +12,18 @@ export let serverStarted = Math.trunc(Date.now() / 1000);
 setCurrentRooms(0); // Reset max rooms count to 0
 
 export function setCurrentRooms(rooms: number) {
-  return updateServer({
-    id: env.SERVER_ID,
-    currentRooms: rooms,
-  });
+  return updateServer({ id: env.SERVER_ID, currentRooms: rooms });
 }
 
-export function resetServerStartedDate() {
-  serverStarted = Math.trunc(Date.now() / 1000);
+export function resetServerStartedDate(date: number) {
+  serverStarted = Math.trunc(date / 1000);
 }
 
 export function setMaxRooms(rooms: number) {
   maxRooms = rooms;
-  return updateServer({
-    id: env.SERVER_ID,
-    maxRooms,
-  });
+  return updateServer({ id: env.SERVER_ID, maxRooms });
+}
+
+export function setDisabled(disabled: boolean) {
+  return updateServer({ id: env.SERVER_ID, disabled });
 }
