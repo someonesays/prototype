@@ -168,12 +168,7 @@ websocket.get(
 
           // Disallow opcdes for testing rooms
           if (
-            [
-              ClientOpcodes.KICK_PLAYER,
-              ClientOpcodes.TRANSFER_HOST,
-              ClientOpcodes.SET_ROOM_SETTINGS,
-              ClientOpcodes.BEGIN_GAME,
-            ].includes(opcode) &&
+            [ClientOpcodes.KICK_PLAYER, ClientOpcodes.TRANSFER_HOST, ClientOpcodes.SET_ROOM_SETTINGS].includes(opcode) &&
             metadata.type === MatchmakingType.TESTING
           ) {
             return sendError(state.user, "Disallowed to use event in a testing room");
