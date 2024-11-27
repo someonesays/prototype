@@ -17,6 +17,7 @@ export interface ServerRoom {
   minigame: Minigame | null;
   players: Map<string, ServerPlayer>;
   readyTimer?: Timer;
+  testingShutdown: boolean;
 }
 
 export interface WSState {

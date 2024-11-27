@@ -104,6 +104,11 @@ websocket.get(
           serverRoom: rooms.get(room.id) as ServerRoom,
         };
 
+        // Disallow joining when it's about to shutdown
+        if (state.serverRoom.testingShutdown) {
+          return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVERS_BUSY }));
+        }
+
         if (state.serverRoom) {
           // If the matchmaking type is normal, check if the JWT was meant to create a room
           // This prevents a race-condition in matchmaking (36^9 chance) where 2 players are assigned the same room ID
@@ -143,6 +148,7 @@ websocket.get(
             pack: null,
             minigame: defaultMinigame, // defaults as null, sets the minigame for testing rooms
             players,
+            testingShutdown: false,
           };
 
           rooms.set(room.id, state.serverRoom);
@@ -536,19 +542,35 @@ websocket.get(
 
         // Handle disconnecting
         websocketEvents.close = () => {
+          // If it's a testing room shutting down, delete it
+          if (state.serverRoom.testingShutdown) return;
+
           // Remove player from room
           state.serverRoom.players.delete(state.user.id);
 
           // Delete the room if there's no more players in it
           if (!state.serverRoom.players.size) {
+            // Delete the room
             rooms.delete(state.serverRoom.room.id);
-
             // Update the new room count (unnecessary to await)
             return setCurrentRooms(rooms.size);
           }
 
           // If host left, assign new host
           if (state.serverRoom.room.host === state.user.id) {
+            if (metadata.type === MatchmakingType.TESTING) {
+              // Set testing shutdown to true to disallow new people from joining and removing any leave events
+              state.serverRoom.testingShutdown = true;
+              // Kick all players
+              for (const player of state.serverRoom.players.values()) {
+                player.ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVER_SHUTDOWN }));
+              }
+              // Delete the room
+              rooms.delete(state.serverRoom.room.id);
+              // Update the new room count (unnecessary to await)
+              return setCurrentRooms(rooms.size);
+            }
+
             state.serverRoom.room.host = [...state.serverRoom.players.keys()][0];
 
             broadcastMessage({
