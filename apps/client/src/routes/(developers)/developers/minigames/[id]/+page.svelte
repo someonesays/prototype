@@ -93,7 +93,7 @@ async function regenTestingAccessCode() {
 
     <h3>Modify minigame</h3>
     <form onsubmit={saveMinigame}>
-      Note: You cannot change the id, authorId, publishType and createdAt value.<br>
+      Note: You cannot change the id, authorId, publishType, testingLocation, testingAccessCode and createdAt value.<br>
       <textarea name="input" rows="20" cols="100">{JSON.stringify(minigame)}</textarea><br>
       <button type="submit">Save</button>
     </form>
