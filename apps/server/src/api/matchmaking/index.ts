@@ -22,8 +22,13 @@ import {
   type MatchmakingResponseMetadata,
   type MatchmakingDataJWT,
 } from "@/public";
-import { findBestServerByLocation, findBestServerByDiscordLaunchId, getServerById } from "@/db";
-import { zodPostMatchmakingValidatorNormal, zodPostMatchmakingValidatorDiscord } from "./utils";
+import {
+  findBestServerByLocation,
+  findBestServerByDiscordLaunchId,
+  getServerById,
+  getMinigameByIdAndTestingAccessCode,
+} from "@/db";
+import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
 import { roomCreationRateLimit } from "../../utils";
 
 export const matchmaking = new Hono();
@@ -42,7 +47,7 @@ matchmaking.get("/", async (c) => {
 
 // Create or join a room
 
-matchmaking.post("/", zValidator("json", zodPostMatchmakingValidatorNormal), (c) => {
+matchmaking.post("/", zValidator("json", zodPostMatchmakingValidator), (c) => {
   const payload = c.req.valid("json");
   return handlePostMatchmaking({ c, payload });
 });
@@ -61,7 +66,7 @@ async function handlePostMatchmaking({
   payload,
 }: {
   c: Context;
-  payload: z.infer<typeof zodPostMatchmakingValidatorNormal | typeof zodPostMatchmakingValidatorDiscord>;
+  payload: z.infer<typeof zodPostMatchmakingValidator | typeof zodPostMatchmakingValidatorDiscord>;
 }) {
   // Get room ID
   let roomId: string | null = null;
@@ -88,7 +93,7 @@ async function handlePostMatchmaking({
           return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
       }
 
-      // Set display name
+      // Set display name and avatar
       displayName = payload.displayName;
       avatar = `${env.BASE_FRONTEND}/avatars/default.png`;
 
@@ -131,6 +136,9 @@ async function handlePostMatchmaking({
       }
 
       break;
+    }
+    case MatchmakingType.TESTING: {
+      return c.json({ code: ErrorMessageCodes.NOT_IMPLEMENTED }, 501);
     }
     case MatchmakingType.DISCORD: {
       if (!env.DISCORD_CLIENT_ID || !env.DISCORD_CLIENT_SECRET || !env.DISCORD_TOKEN) {

@@ -10,7 +10,7 @@ import {
   getMinigamesByAuthorId,
   updateMinigameWithAuthorId,
 } from "@/db";
-import { validateUrl } from "@/utils";
+import { createCode, validateUrl } from "@/utils";
 import { authMiddleware } from "../../middleware";
 import { getOffsetAndLimit, minigameCreationLimit, validateImageUrl } from "../../utils";
 
@@ -59,6 +59,18 @@ userMinigames.get("/:id", authMiddleware, async (c) => {
   if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
   return c.json({ minigame });
+});
+
+userMinigames.post("/:id/reset", authMiddleware, async (c) => {
+  const id = c.req.param("id");
+
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+  const testingAccessCode = createCode(18);
+  await updateMinigameWithAuthorId({ id: minigame.id, authorId: c.var.user.id, testingAccessCode });
+
+  return c.json({ testingAccessCode });
 });
 
 userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
