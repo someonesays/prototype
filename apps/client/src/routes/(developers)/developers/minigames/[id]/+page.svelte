@@ -59,6 +59,20 @@ async function deleteMinigame() {
     alert(output);
   }
 }
+
+async function regenTestingAccessCode() {
+  if (!minigame) throw new Error("Minigame hasn't loaded yet");
+
+  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/reset`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const { testingAccessCode } = await res.json();
+  alert(testingAccessCode);
+
+  refreshStates();
+}
 </script>
 
 <main>
@@ -67,6 +81,11 @@ async function deleteMinigame() {
     <p>Loading...</p>
   {:else}
     <h2>Minigame: {minigame.name}</h2>
+
+    <p>
+      Testing access code: <u>{minigame.testingAccessCode}</u>
+      <button onclick={regenTestingAccessCode}>Reset</button>
+    </p>
 
     <p><button onclick={deleteMinigame}>Delete minigame</button></p>
 
