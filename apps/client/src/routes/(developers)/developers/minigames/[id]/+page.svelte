@@ -70,8 +70,7 @@ async function regenTestingAccessCode() {
     credentials: "include",
   });
 
-  const { testingAccessCode } = await res.json();
-  alert(testingAccessCode);
+  alert(await res.text());
 
   refreshStates();
 }

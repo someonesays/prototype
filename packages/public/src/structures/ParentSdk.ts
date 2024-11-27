@@ -60,9 +60,38 @@ export class ParentSdk {
           type: MatchmakingType.NORMAL,
           location,
           roomId,
-          displayName: displayName,
+          displayName,
         }),
       });
+      const data = await res.json();
+
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
+      return { success: true as true, data: data as MatchmakingResponse };
+    } catch (err) {
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
+    }
+  }
+
+  static async getMatchmakingTesting({
+    displayName,
+    location,
+    minigameId,
+    testingAccessCode,
+    baseUrl,
+  }: {
+    displayName: string;
+    location?: MatchmakingLocation;
+    minigameId: string;
+    testingAccessCode: string;
+    baseUrl: string;
+  }) {
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, location, minigameId, testingAccessCode }),
+      });
+
       const data = await res.json();
 
       if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };

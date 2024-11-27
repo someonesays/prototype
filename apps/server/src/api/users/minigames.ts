@@ -13,7 +13,7 @@ import {
 } from "@/db";
 import { createCode, resetRoom, validateUrl } from "@/utils";
 import { authMiddleware } from "../../middleware";
-import { getOffsetAndLimit, minigameCreationLimit, validateImageUrl } from "../../utils";
+import { getOffsetAndLimit, minigameAccessCodeResetLimit, minigameCreationLimit, validateImageUrl } from "../../utils";
 
 export const userMinigames = new Hono();
 
@@ -77,6 +77,9 @@ userMinigames.post(
 
     const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
     if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+    const success = await minigameAccessCodeResetLimit.check(minigame.id);
+    if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
     const bestServer = await findBestTestingServerByHashAndLocation({ id: minigame.id, location: minigame.testingLocation });
 
