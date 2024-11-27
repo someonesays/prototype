@@ -73,6 +73,17 @@ export function getMinigame(id: string) {
   });
 }
 
+export function getMinigameByIdAndTestingAccessCode({ id, testingAccessCode }: { id: string; testingAccessCode: string }) {
+  return db.query.minigames.findFirst({
+    where: and(eq(schema.minigames.id, id), eq(schema.minigames.testingAccessCode, testingAccessCode)),
+    with: {
+      author: {
+        columns: { id: true, name: true, createdAt: true },
+      },
+    },
+  });
+}
+
 export function getMinigameByAuthorId({ id, authorId }: { id: string; authorId: string }) {
   return db.query.minigames.findFirst({
     where: and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)),

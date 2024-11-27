@@ -50,6 +50,7 @@ export function findBestServerByLocation(location: MatchmakingLocation) {
         ),
     },
     where: and(
+      eq(schema.servers.disabled, false),
       isNotNull(schema.servers.ws),
       eq(schema.servers.location, location),
       lt(schema.servers.currentRooms, schema.servers.maxRooms),
@@ -99,6 +100,8 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
       )
       .where(
         and(
+          // Check if a server is not disabled
+          eq(schema.servers.disabled, false),
           // Checks if the room is full
           lt(sql`current_rooms`, sql`max_rooms`),
           // snowflake % max(index) == index

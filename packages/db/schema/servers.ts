@@ -1,10 +1,11 @@
 import { sql } from "drizzle-orm";
-import { varchar, text, integer, timestamp, pgTable } from "drizzle-orm/pg-core";
+import { boolean, varchar, text, integer, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { MatchmakingLocation } from "@/public";
 
 export const servers = pgTable("servers", {
   id: varchar("id", { length: 3 }).primaryKey(),
   location: text("location").$type<MatchmakingLocation>().notNull(),
+  disabled: boolean("disabled").notNull().default(false),
   url: text("url").notNull(), // Do not add the trailing "/"
   ws: text("ws"),
   wsDiscord: text("ws_discord"),

@@ -1,5 +1,5 @@
 {
-  "id": "db67aade-2121-4965-b9a0-5b1b1fbfcee5",
+  "id": "6023d169-40e7-47d6-9bc7-daffd68c636e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -77,6 +77,12 @@
           "notNull": true,
           "default": 1
         },
+        "testing_access_code": {
+          "name": "testing_access_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "minimum_players_to_start": {
           "name": "minimum_players_to_start",
           "type": "smallint",
@@ -98,8 +104,12 @@
           "name": "minigames_author_id_users_id_fk",
           "tableFrom": "minigames",
           "tableTo": "users",
-          "columnsFrom": ["author_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -133,8 +143,12 @@
           "name": "packs_minigames_pack_id_packs_id_fk",
           "tableFrom": "packs_minigames",
           "tableTo": "packs",
-          "columnsFrom": ["pack_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "pack_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -142,8 +156,12 @@
           "name": "packs_minigames_minigame_id_minigames_id_fk",
           "tableFrom": "packs_minigames",
           "tableTo": "minigames",
-          "columnsFrom": ["minigame_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "minigame_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -151,7 +169,10 @@
       "compositePrimaryKeys": {
         "packs_minigames_pack_id_minigame_id_pk": {
           "name": "packs_minigames_pack_id_minigame_id_pk",
-          "columns": ["pack_id", "minigame_id"]
+          "columns": [
+            "pack_id",
+            "minigame_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -215,8 +236,12 @@
           "name": "packs_author_id_users_id_fk",
           "tableFrom": "packs",
           "tableTo": "users",
-          "columnsFrom": ["author_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -242,6 +267,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "disabled": {
+          "name": "disabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "url": {
           "name": "url",
@@ -327,7 +359,9 @@
         "users_discord_id_unique": {
           "name": "users_discord_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["discord_id"]
+          "columns": [
+            "discord_id"
+          ]
         }
       },
       "policies": {},
