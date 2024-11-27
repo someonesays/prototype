@@ -11,7 +11,6 @@ export const zodPostMatchmakingValidatorNormal = z.object({
 export const zodPostMatchmakingValidatorTesting = z.object({
   type: z.literal(MatchmakingType.TESTING),
   displayName: z.string().min(1).max(32),
-  location: z.nativeEnum(MatchmakingLocation).optional(),
   minigameId: z.string().min(1).max(50),
   testingAccessCode: z.string(),
 });
@@ -25,5 +24,5 @@ export const zodPostMatchmakingValidatorDiscord = z.object({
 export const zodPostMatchmakingValidator = z.union([
   zodPostMatchmakingValidatorNormal,
   zodPostMatchmakingValidatorTesting,
-  zodPostMatchmakingValidatorTesting,
+  zodPostMatchmakingValidatorDiscord,
 ]);

@@ -74,13 +74,11 @@ export class ParentSdk {
 
   static async getMatchmakingTesting({
     displayName,
-    location,
     minigameId,
     testingAccessCode,
     baseUrl,
   }: {
     displayName: string;
-    location?: MatchmakingLocation;
     minigameId: string;
     testingAccessCode: string;
     baseUrl: string;
@@ -89,7 +87,7 @@ export class ParentSdk {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, location, minigameId, testingAccessCode }),
+        body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, minigameId, testingAccessCode }),
       });
 
       const data = await res.json();

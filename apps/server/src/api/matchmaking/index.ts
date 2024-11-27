@@ -68,7 +68,7 @@ async function handlePostMatchmaking({
   payload,
 }: {
   c: Context;
-  payload: z.infer<typeof zodPostMatchmakingValidator | typeof zodPostMatchmakingValidatorDiscord>;
+  payload: z.infer<typeof zodPostMatchmakingValidator>;
 }) {
   // Get room ID
   let roomId: string | null = null;
