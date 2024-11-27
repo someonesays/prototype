@@ -20,3 +20,11 @@ export async function checkIfRoomExists({
     return [false, { exists: false }];
   }
 }
+
+export async function resetRoom({ url, roomId }: { url: string; roomId: string }) {
+  const res = await fetch(`${url}/api/rooms/${encodeURIComponent(roomId)}`, {
+    method: "DELETE",
+    headers: { authorization: env.ROOMS_AUTHORIZATION },
+  });
+  return res.ok;
+}

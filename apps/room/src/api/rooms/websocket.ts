@@ -1,7 +1,13 @@
 import env from "@/env";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { getMinigamePublic, getPackPublic, isMinigameInPack } from "@/db";
+import {
+  findBestTestingServerByHashAndLocation,
+  getMinigameByIdAndTestingAccessCode,
+  getMinigamePublic,
+  getPackPublic,
+  isMinigameInPack,
+} from "@/db";
 import {
   ClientOpcodes,
   ServerOpcodes,
@@ -59,6 +65,23 @@ websocket.get(
     const { type, user, room, metadata, iat } = (await verify(authorization.trim(), env.JWT_SECRET)) as MatchmakingDataJWT;
     if (type !== "matchmaking" || room.server.id !== env.SERVER_ID || serverStarted > iat) return;
 
+    // Double-checks the metadata for testing servers
+    // This check if the minigame still exists, the testing access code matches and the minigame location is the same
+    if (metadata.type === MatchmakingType.TESTING) {
+      const minigame = await getMinigameByIdAndTestingAccessCode({
+        id: metadata.minigameId,
+        testingAccessCode: metadata.testingAccessCode,
+      });
+      if (!minigame) return;
+
+      const bestServer = await findBestTestingServerByHashAndLocation({
+        id: minigame.id,
+        location: minigame.testingLocation,
+      });
+      if (bestServer?.id !== env.SERVER_ID) return;
+    }
+
+    // Create WebSocket events
     const websocketEvents: WebSocketMiddlewareEvents = {
       async open({ ws }) {
         // Create state

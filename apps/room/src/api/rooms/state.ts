@@ -20,15 +20,15 @@ state.post("/", authMiddleware, zValidator("json", z.object({ maxRooms: z.number
   return c.json({ maxRooms });
 });
 
-// Kill all rooms
+// Reset all rooms
 let resetting = false;
 state.delete("/", authMiddleware, async (c) => {
   // Check if the server is already disabled
   const room = await getServerById(env.SERVER_ID);
-  if (!room) return c.json({ success: false, error: "Cannot find the room from the database" }, 500);
+  if (!room) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 500);
 
   // Disallow race-conditioning this endpoint
-  if (resetting) return c.json({ success: false, error: "The server is currently resetting right now" }, 429);
+  if (resetting) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 429);
   resetting = true;
 
   try {
@@ -52,7 +52,7 @@ state.delete("/", authMiddleware, async (c) => {
     // On failure, log the error and return a failure response
     console.error(err);
     resetting = false;
-    return c.json({ success: false, error: "An unexpected error has occurred" }, 500);
+    return c.json({ code: ErrorMessageCodes.UNEXPECTED_ERROR }, 500);
   }
 });
 
@@ -60,4 +60,18 @@ state.delete("/", authMiddleware, async (c) => {
 state.get("/:id", authMiddleware, async (c) => {
   const roomId = c.req.param("id");
   return c.json({ exists: !!rooms.get(roomId) });
+});
+
+// Delete/reset a room
+state.delete("/:id", authMiddleware, async (c) => {
+  const roomId = c.req.param("id");
+
+  const room = rooms.get(roomId);
+  if (!room) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND });
+
+  for (const player of room.players.values()) {
+    player.ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVER_SHUTDOWN }));
+  }
+
+  return c.json({ success: true });
 });

@@ -65,6 +65,8 @@ async function regenTestingAccessCode() {
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/reset`, {
     method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ location: "usa" }), // There is a location option for resetting the access code
     credentials: "include",
   });
 

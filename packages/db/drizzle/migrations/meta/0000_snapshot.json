@@ -1,5 +1,5 @@
 {
-  "id": "6023d169-40e7-47d6-9bc7-daffd68c636e",
+  "id": "6ff41186-0227-473a-8f1b-90f3fc6a36fb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -76,6 +76,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": 1
+        },
+        "testing_location": {
+          "name": "testing_location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'usa'"
         },
         "testing_access_code": {
           "name": "testing_access_code",
@@ -264,6 +271,12 @@
         },
         "ws": {
           "name": "ws",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ws_testing": {
+          "name": "ws_testing",
           "type": "text",
           "primaryKey": false,
           "notNull": false

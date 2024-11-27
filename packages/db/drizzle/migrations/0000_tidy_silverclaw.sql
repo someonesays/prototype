@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"privacy_policy" text,
 	"proxy_url" text,
 	"path_type" smallint DEFAULT 1 NOT NULL,
+	"testing_location" text DEFAULT 'usa' NOT NULL,
 	"testing_access_code" text NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS "servers" (
 	"disabled" boolean DEFAULT false NOT NULL,
 	"url" text NOT NULL,
 	"ws" text,
+	"ws_testing" text,
 	"ws_discord" text,
 	"current_rooms" integer DEFAULT 0 NOT NULL,
 	"max_rooms" integer NOT NULL,

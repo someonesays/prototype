@@ -4,6 +4,7 @@
   "private": true,
   "main": "src/index.ts",
   "dependencies": {
+    "@/env": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2"
   }
 }

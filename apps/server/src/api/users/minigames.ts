@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { ErrorMessageCodes, MinigamePathType } from "@/public";
+import { ErrorMessageCodes, MatchmakingLocation, MinigamePathType } from "@/public";
 import {
   createMinigame,
   deleteMinigameWithAuthorId,
+  findBestTestingServerByHashAndLocation,
   getMinigameByAuthorId,
   getMinigameCountByAuthorId,
   getMinigamesByAuthorId,
   updateMinigameWithAuthorId,
 } from "@/db";
-import { createCode, validateUrl } from "@/utils";
+import { createCode, resetRoom, validateUrl } from "@/utils";
 import { authMiddleware } from "../../middleware";
 import { getOffsetAndLimit, minigameCreationLimit, validateImageUrl } from "../../utils";
 
@@ -61,17 +62,39 @@ userMinigames.get("/:id", authMiddleware, async (c) => {
   return c.json({ minigame });
 });
 
-userMinigames.post("/:id/reset", authMiddleware, async (c) => {
-  const id = c.req.param("id");
+userMinigames.post(
+  "/:id/reset",
+  authMiddleware,
+  zValidator(
+    "json",
+    z.object({
+      location: z.nativeEnum(MatchmakingLocation),
+    }),
+  ),
+  async (c) => {
+    const id = c.req.param("id");
+    const values = c.req.valid("json");
 
-  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
-  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+    const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+    if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
-  const testingAccessCode = createCode(18);
-  await updateMinigameWithAuthorId({ id: minigame.id, authorId: c.var.user.id, testingAccessCode });
+    const bestServer = await findBestTestingServerByHashAndLocation({ id: minigame.id, location: minigame.testingLocation });
 
-  return c.json({ testingAccessCode });
-});
+    const testingAccessCode = createCode(18);
+    await updateMinigameWithAuthorId({
+      id: minigame.id,
+      authorId: c.var.user.id,
+      testingLocation: values.location,
+      testingAccessCode,
+    });
+
+    if (bestServer) {
+      await resetRoom({ url: bestServer.url, roomId: `testing:${id}` });
+    }
+
+    return c.json({ testingLocation: values.location, testingAccessCode });
+  },
+);
 
 userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
   const id = c.req.param("id");

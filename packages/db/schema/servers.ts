@@ -8,6 +8,7 @@ export const servers = pgTable("servers", {
   disabled: boolean("disabled").notNull().default(false),
   url: text("url").notNull(), // Do not add the trailing "/"
   ws: text("ws"),
+  wsTesting: text("ws_testing"),
   wsDiscord: text("ws_discord"),
   currentRooms: integer("current_rooms").notNull().default(0),
   maxRooms: integer("max_rooms").notNull(),

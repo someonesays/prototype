@@ -34,6 +34,7 @@ await createServer({
   location: MatchmakingLocation.USA,
   url: "http://localhost:3002",
   ws: "ws://localhost:3002/api/rooms",
+  wsTesting: "ws://localhost:3002/api/rooms",
   wsDiscord: "/.proxy/api/rooms/000",
   maxRooms: 100,
 });

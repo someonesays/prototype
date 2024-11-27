@@ -21,12 +21,14 @@ import {
   type MatchmakingResponse,
   type MatchmakingResponseMetadata,
   type MatchmakingDataJWT,
+  type Minigame,
 } from "@/public";
 import {
   findBestServerByLocation,
   findBestServerByDiscordLaunchId,
   getServerById,
   getMinigameByIdAndTestingAccessCode,
+  findBestTestingServerByHashAndLocation,
 } from "@/db";
 import { zodPostMatchmakingValidator, zodPostMatchmakingValidatorDiscord } from "./utils";
 import { roomCreationRateLimit } from "../../utils";
@@ -73,6 +75,10 @@ async function handlePostMatchmaking({
   let displayName: string | null = null;
   let avatar: string | null = null;
   let server: MatchmakingDataJWT["room"]["server"] | null = null;
+
+  // Testing
+  let minigameId: string | null = null;
+  let testingAccessCode: string | null = null;
 
   // Discord
   let discordAccessToken: string | null = null;
@@ -138,7 +144,33 @@ async function handlePostMatchmaking({
       break;
     }
     case MatchmakingType.TESTING: {
-      return c.json({ code: ErrorMessageCodes.NOT_IMPLEMENTED }, 501);
+      // Get the minidgame and check if it matches the testing access code
+      const minigame = await getMinigameByIdAndTestingAccessCode({
+        id: payload.minigameId,
+        testingAccessCode: payload.testingAccessCode,
+      });
+      if (!minigame) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+
+      // Set display name and avatar
+      displayName = payload.displayName;
+      avatar = `${env.BASE_FRONTEND}/avatars/default.png`;
+
+      // Set the minigame metadata information
+      minigameId = minigame.id;
+      testingAccessCode = minigame.testingAccessCode;
+
+      // Set the room ID
+      roomId = `testing:${minigame.id}`;
+
+      // Assign the server based off the minigame id and location
+      const bestServer = await findBestTestingServerByHashAndLocation({
+        id: minigame.id,
+        location: minigame.testingLocation,
+      });
+      if (!bestServer) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 401);
+      server = { id: bestServer.id, url: bestServer.wsTesting, location: bestServer.location };
+
+      break;
     }
     case MatchmakingType.DISCORD: {
       if (!env.DISCORD_CLIENT_ID || !env.DISCORD_CLIENT_SECRET || !env.DISCORD_TOKEN) {
@@ -201,12 +233,18 @@ async function handlePostMatchmaking({
   // Set metadata
   let metadata: MatchmakingResponseMetadata;
   switch (payload.type) {
-    case MatchmakingType.DISCORD:
-      if (!discordAccessToken) throw new Error("Missing Discord access_token on matchmaking. This should never happen.");
-      metadata = { type: payload.type, accessToken: discordAccessToken };
+    case MatchmakingType.NORMAL:
+      metadata = { type: MatchmakingType.NORMAL, creating: !payload.roomId };
       break;
-    default:
-      metadata = { type: payload.type, creating: !payload.roomId };
+    case MatchmakingType.TESTING:
+      if (!minigameId || !testingAccessCode) {
+        throw new Error("Missing testing minigameId and/or testingAccessCode on matchmaking. This should never happen.");
+      }
+      metadata = { type: MatchmakingType.TESTING, minigameId, testingAccessCode };
+      break;
+    case MatchmakingType.DISCORD:
+      if (!discordAccessToken) throw new Error("Missing Discord accessToken on matchmaking. This should never happen.");
+      metadata = { type: MatchmakingType.DISCORD, accessToken: discordAccessToken };
       break;
   }
 

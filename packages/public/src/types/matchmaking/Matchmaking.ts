@@ -28,7 +28,10 @@ export interface MatchmakingData {
   exp: number;
 }
 
-export type MatchmakingResponseMetadata = MatchmakingResponseNormal | MatchmakingResponseMetadataDiscord;
+export type MatchmakingResponseMetadata =
+  | MatchmakingResponseNormal
+  | MatchmakingResponseTesting
+  | MatchmakingResponseMetadataDiscord;
 
 export interface MatchmakingResponseNormal {
   type: MatchmakingType.NORMAL;
@@ -37,6 +40,12 @@ export interface MatchmakingResponseNormal {
   // It only prevents a race-condition in matchmaking where 2 people can be assigned to the same room when creating one
   // It'll prevent the user from joining the room if creating == true and the room with the given ID already exists
   creating: boolean;
+}
+
+export interface MatchmakingResponseTesting {
+  type: MatchmakingType.TESTING;
+  minigameId: string;
+  testingAccessCode: string;
 }
 
 export interface MatchmakingResponseMetadataDiscord {

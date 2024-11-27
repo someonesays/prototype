@@ -2,6 +2,7 @@ import schema from "../main/schema";
 import { and, asc, eq, isNotNull, lt, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { MatchmakingLocation } from "@/public";
+import { hashCode } from "@/utils";
 
 function validateServer(server: Partial<typeof schema.servers.$inferSelect>) {
   // Force the server ID to be 3 characters long
@@ -12,9 +13,11 @@ function validateServer(server: Partial<typeof schema.servers.$inferSelect>) {
   // Disallow trailing slash on URLs
   if (server.url?.endsWith("/")) throw new Error("'url' should not have a trailing slash");
   if (server.ws?.endsWith("/")) throw new Error("'ws' should not have a trailing slash");
+  if (server.wsTesting?.endsWith("/")) throw new Error("'wsTesting' should not have a trailing slash");
   if (server.wsDiscord?.endsWith("/")) throw new Error("'wsDiscord' should not have a trailing slash");
   // Force the WebSocket endpoint to be /api/rooms
   if (server.ws && !server.ws.endsWith("/api/rooms")) throw new Error("'ws' must end with /api/rooms");
+  if (server.wsTesting && !server.wsTesting.endsWith("/api/rooms")) throw new Error("'wsTesting' must end with /api/rooms");
 }
 
 export async function createServer(server: typeof schema.servers.$inferInsert) {
@@ -59,6 +62,48 @@ export function findBestServerByLocation(location: MatchmakingLocation) {
   }) as Promise<(typeof schema.servers.$inferSelect & { ws: string }) | undefined>;
 }
 
+export async function findBestTestingServerByHashAndLocation({
+  id,
+  location,
+}: { id: string; location: MatchmakingLocation }) {
+  // Adding, deleteing and disabling a server will break this
+  // Make sure to always disable and reset all testing servers before adding/removing/disabling servers
+
+  // This script is similar to findBestServerByDiscordLaunchId but it doesn't rely on any creation date
+  // Instead, the formula is: minigame_id_hash % testing_servers_in_location
+
+  const hash = hashCode(id.slice(0, 3)); // Added .slice(0, 3) because the number would be too big
+  const server = (
+    await db
+      .select({
+        id: sql`id`,
+        location: sql`location`,
+        disabled: sql`disabled`,
+        url: sql`url`,
+        ws: sql`ws`,
+        wsTesting: sql`ws_testing`,
+        wsDiscord: sql`ws_discord`,
+        currentRooms: sql`current_rooms`,
+        maxRooms: sql`max_rooms`,
+        createdAt: sql`created_at`,
+      })
+      .from(
+        sql`(select *, cast(row_number() over (order by id) as int) - 1 as index, cast(count(*) over (partition by id) as int) as max_index from ${schema.servers} where ws_testing is not null and location=${location}) as indexed_servers`,
+      )
+      .where(
+        and(
+          eq(sql`disabled`, false),
+          lt(sql`current_rooms`, sql`max_rooms`),
+          eq(sql`mod(${hash.toString()}, max_index)`, sql`index`),
+        ),
+      )
+  )[0] as (typeof schema.servers.$inferSelect & { wsTesting: string }) | undefined;
+  if (!server) return undefined;
+
+  server.createdAt = new Date(server.createdAt);
+  return server;
+}
+
 export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
   // What's the point of this?
   // - I didn't want to store the room IDs/instance IDs corresponding to the server IDs on the database
@@ -87,8 +132,10 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
         // Select all the values from the .from(...)
         id: sql`id`,
         location: sql`location`,
+        disabled: sql`disabled`,
         url: sql`url`,
         ws: sql`ws`,
+        wsTesting: sql`ws_testing`,
         wsDiscord: sql`ws_discord`,
         currentRooms: sql`current_rooms`,
         maxRooms: sql`max_rooms`,
@@ -101,7 +148,7 @@ export async function findBestServerByDiscordLaunchId(snowflake: bigint) {
       .where(
         and(
           // Check if a server is not disabled
-          eq(schema.servers.disabled, false),
+          eq(sql`disabled`, false),
           // Checks if the room is full
           lt(sql`current_rooms`, sql`max_rooms`),
           // snowflake % max(index) == index
