@@ -156,7 +156,6 @@ websocket.get(
 
           if (opcode === ClientOpcodes.PING) return;
 
-          console.debug("WebSocket message", opcode, data);
           switch (opcode) {
             case ClientOpcodes.KICK_PLAYER: {
               if (isNotHost(state)) return sendError(state.user, "Only host can kick players");
