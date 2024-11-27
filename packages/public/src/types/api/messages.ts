@@ -18,6 +18,7 @@ export enum ErrorMessageCodes {
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
   SERVERS_BUSY = "servers_busy",
+  SERVER_SHUTDOWN = "server_shutdown",
   NOT_IMPLEMENTED = "not_implemented",
 
   ALREADY_IN_GAME = "already_in_game",
@@ -45,6 +46,7 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.MISSING_LOCATION]: "Missing location.",
   [ErrorMessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
   [ErrorMessageCodes.SERVERS_BUSY]: "The servers are currently busy! Please try again later.",
+  [ErrorMessageCodes.SERVER_SHUTDOWN]: "The server has shutdown.",
   [ErrorMessageCodes.NOT_IMPLEMENTED]: "This has not been implemented.",
 
   [ErrorMessageCodes.ALREADY_IN_GAME]: "A player with given ID is already in the game.",

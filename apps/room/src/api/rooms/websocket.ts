@@ -34,11 +34,12 @@ import {
   endGame,
   unreadyPlayersGame,
   isStarted,
+  setCurrentRooms,
+  serverStarted,
   type ServerRoom,
   type ServerPlayer,
   type WebSocketMiddlewareEvents,
   type WSState,
-  setCurrentRooms,
 } from "../../utils";
 
 export const websocket = new Hono();
@@ -55,8 +56,8 @@ websocket.get(
     let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
     if (!["Json", "Oppack"].includes(messageType)) return;
 
-    const { type, user, room, metadata } = (await verify(authorization.trim(), env.JWT_SECRET)) as MatchmakingDataJWT;
-    if (type !== "matchmaking" || room.server.id !== env.SERVER_ID) return;
+    const { type, user, room, metadata, iat } = (await verify(authorization.trim(), env.JWT_SECRET)) as MatchmakingDataJWT;
+    if (type !== "matchmaking" || room.server.id !== env.SERVER_ID || serverStarted > iat) return;
 
     const websocketEvents: WebSocketMiddlewareEvents = {
       async open({ ws }) {

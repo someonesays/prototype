@@ -24,6 +24,7 @@ export interface MatchmakingData {
     };
   };
   metadata: MatchmakingResponseMetadata;
+  iat: number;
   exp: number;
 }
 
