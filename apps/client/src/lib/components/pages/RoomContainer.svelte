@@ -1,4 +1,6 @@
 <script lang="ts">
+import env from "$lib/utils/env";
+
 import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
@@ -32,7 +34,7 @@ let exitedPage = $state(false);
 
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
-  if (!allowExitingPage) return cancel();
+  if (!allowExitingPage && env.VITE_IS_PROD) return cancel();
 });
 
 // On load tasks
