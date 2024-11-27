@@ -132,7 +132,7 @@ export async function isMinigameInPack({ packId, minigameId }: { packId: string;
   }));
 }
 
-function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeof getPack>>, undefined>): Pack {
+export function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeof getPack>>, undefined>): Pack {
   return {
     id: pack.id,
     name: pack.name,

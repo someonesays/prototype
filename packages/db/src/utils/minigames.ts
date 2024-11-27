@@ -102,7 +102,7 @@ export async function getMinigamesByIdsPublic(ids: string[]) {
   return minigames.map((m) => transformMinigameToMinigamePublic(m));
 }
 
-function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof getMinigame>>): Minigame {
+export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof getMinigame>>): Minigame {
   if (!minigame) throw new Error("Missing minigame");
   return {
     id: minigame.id,

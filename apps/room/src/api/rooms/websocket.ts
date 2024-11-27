@@ -7,6 +7,7 @@ import {
   getMinigamePublic,
   getPackPublic,
   isMinigameInPack,
+  transformMinigameToMinigamePublic,
 } from "@/db";
 import {
   ClientOpcodes,
@@ -67,6 +68,7 @@ websocket.get(
 
     // Double-checks the metadata for testing servers
     // This check if the minigame still exists, the testing access code matches and the minigame location is the same
+    let defaultMinigame: Minigame | null = null;
     if (metadata.type === MatchmakingType.TESTING) {
       const minigame = await getMinigameByIdAndTestingAccessCode({
         id: metadata.minigameId,
@@ -79,6 +81,8 @@ websocket.get(
         location: minigame.testingLocation,
       });
       if (bestServer?.id !== env.SERVER_ID) return;
+
+      defaultMinigame = transformMinigameToMinigamePublic(minigame);
     }
 
     // Create WebSocket events
@@ -137,7 +141,7 @@ websocket.get(
               state: null,
             },
             pack: null,
-            minigame: null,
+            minigame: defaultMinigame, // defaults as null, sets the minigame for testing rooms
             players,
           };
 
@@ -156,6 +160,20 @@ websocket.get(
 
           if (opcode === ClientOpcodes.PING) return;
 
+          // Disallow opcdes for testing rooms
+          if (
+            [
+              ClientOpcodes.KICK_PLAYER,
+              ClientOpcodes.TRANSFER_HOST,
+              ClientOpcodes.SET_ROOM_SETTINGS,
+              ClientOpcodes.BEGIN_GAME,
+            ].includes(opcode) &&
+            metadata.type === MatchmakingType.TESTING
+          ) {
+            return sendError(state.user, "Disallowed to use event in a testing room");
+          }
+
+          // Handle opcodes
           switch (opcode) {
             case ClientOpcodes.KICK_PLAYER: {
               if (isNotHost(state)) return sendError(state.user, "Only host can kick players");
