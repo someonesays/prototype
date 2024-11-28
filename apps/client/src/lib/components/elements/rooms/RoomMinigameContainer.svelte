@@ -7,12 +7,8 @@ import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 import { room, roomMinigameReady, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
-import { parseMd } from "$lib/utils/parseMd";
 
 let container: HTMLDivElement;
-let minigamePromptText = $state("");
-let minigameTextOpacity = $state(0);
-
 let isSettingsOpen = $state(false);
 
 onMount(() => {
@@ -38,9 +34,6 @@ onMount(() => {
       opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: evt,
     });
-  });
-  sdk.on(MinigameOpcodes.SET_CLIENT_PROMPT, (evt) => {
-    minigamePromptText = parseMd(evt.prompt);
   });
   sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
     $roomWs?.send({
@@ -73,9 +66,6 @@ onMount(() => {
     });
   });
 
-  minigamePromptText = parseMd($room.minigame.prompt);
-  minigameTextOpacity = 1;
-
   iframe.src = $launcher === "normal" ? $room.minigame.proxies.normal : $room.minigame.proxies.discord;
 
   return () => {
@@ -97,23 +87,16 @@ function leaveOrEndGame() {
 </script>
 
 <div class="minigame-container">
-  <div class="minigame-row">
-    <div class="minigame-text" style="opacity:{minigameTextOpacity}">
-      <div class="minigame-text-content">{@html minigamePromptText}</div>
-    </div>
-  </div>
   <div class="minigame-iframe-container">
     <div class="minigame-iframe" style={$roomMinigameReady ? "" : "pointer-events:none"} bind:this={container}></div>
-    <!-- {#if !$roomMinigameReady} -->
-      <div class="minigame-notready-container {$roomMinigameReady ? "fade" : ""}">
-        <div class="minigame-notready">
-          <div class="minigame-notready-box">
-            <div class="minigame-notready-loader"></div>
-            <div class="minigame-notready-text">Loading minigame...</div>
-          </div>
+    <div class="minigame-notready-container {$roomMinigameReady ? "fade" : ""}">
+      <div class="minigame-notready">
+        <div class="minigame-notready-box">
+          <div class="minigame-notready-loader"></div>
+          <div class="minigame-notready-text">Loading minigame...</div>
         </div>
       </div>
-    <!-- {/if} -->
+    </div>
   </div>
   <div class="minigame-settings">
     <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
@@ -153,36 +136,6 @@ function leaveOrEndGame() {
     align-items: stretch;
     overflow: hidden;
   }
-  .minigame-row {
-    background-color: black;
-    color: white;
-  }
-  .minigame-text {
-    display: grid;
-    opacity: 0;
-    text-align: center;
-    align-items: center;
-    vertical-align: middle;
-    height: calc(40px + 0.5vh);
-    padding: calc(4px + 0.5vh);
-    font-size: calc(16px + 0.25vh);
-    overflow: auto;
-    overflow-wrap: anywhere;
-  }
-  .minigame-text .minigame-text-content {
-    margin: 0px;
-  }
-  .minigame-text::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  .minigame-text::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  }
-  .minigame-text::-webkit-scrollbar-thumb {
-    background-color: darkgrey;
-    outline: 1px solid slategrey;
-  }
   .minigame-iframe-container {
     background-color: black;
     flex: 1 1 auto;
@@ -209,7 +162,7 @@ function leaveOrEndGame() {
     justify-content: center;
     flex-direction: column;
     width: 100%;
-    height: 80%;
+    height: 100%;
   }
   .minigame-notready-box {
     background-color: #313131;

@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"description" text DEFAULT '' NOT NULL,
 	"preview_image" text,
 	"publish_type" smallint DEFAULT 0 NOT NULL,
-	"prompt" text NOT NULL,
 	"terms_of_services" text,
 	"privacy_policy" text,
 	"proxy_url" text,

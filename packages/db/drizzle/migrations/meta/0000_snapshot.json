@@ -1,5 +1,5 @@
 {
-  "id": "6ff41186-0227-473a-8f1b-90f3fc6a36fb",
+  "id": "06df9d45-128a-422d-93aa-76a13c3d1984",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -45,12 +45,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
-        },
-        "prompt": {
-          "name": "prompt",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
         },
         "terms_of_services": {
           "name": "terms_of_services",

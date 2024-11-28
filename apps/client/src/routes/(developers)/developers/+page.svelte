@@ -29,7 +29,6 @@ async function createMinigame() {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       name: "[add your minigame name here]",
-      prompt: "**Someone says** [add your prompt here]",
     }),
     credentials: "include",
   });

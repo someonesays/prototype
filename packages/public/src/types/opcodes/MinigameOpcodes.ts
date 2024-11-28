@@ -21,12 +21,6 @@ and it will display the leaderboards.
    */
   END_GAME = "end_game",
   /**
-   * Change the minigame prompt.
-   *
-   * This will only impact the client you are sending this message to.
-   */
-  SET_CLIENT_PROMPT = "set_client_prompt",
-  /**
    * Set the game's state (persistent until the minigame ends).
    *
    * Only the host can send this message.

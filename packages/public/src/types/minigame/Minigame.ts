@@ -18,7 +18,6 @@ export interface Minigame {
     normal: string;
     discord: string;
   };
-  prompt: string;
   minimumPlayersToStart: number;
   privacyPolicy: string | null;
   termsOfServices: string | null;

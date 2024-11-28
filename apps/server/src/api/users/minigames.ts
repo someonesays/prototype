@@ -21,7 +21,6 @@ const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
-  prompt: z.string().min(1).max(500),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
   privacyPolicy: z.string().refine(validateUrl).nullable().default(null),
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),

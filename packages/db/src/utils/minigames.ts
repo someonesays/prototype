@@ -124,7 +124,6 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
           discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/minigames/${encodeURIComponent(minigame.id)}/images/preview`,
         }
       : null,
-    prompt: minigame.prompt,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
     privacyPolicy: minigame.privacyPolicy,
     termsOfServices: minigame.termsOfServices,
