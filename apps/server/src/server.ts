@@ -1,22 +1,19 @@
 import env from "@/env";
+import { z } from "zod";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
+import { zValidator } from "@hono/zod-validator";
+
 import { api } from "./api";
+import { handlePostMatchmaking, zodPostMatchmakingValidatorTesting } from "./api/matchmaking/utils";
+
 import { proxy } from "./proxy";
 
 const app = new Hono();
 
 app.route("/", proxy);
 app.route("/.proxy", proxy);
-
-app.use(
-  cors({
-    origin: env.BASE_FRONTEND,
-    maxAge: 600,
-    credentials: true,
-  }),
-);
 
 app.use(
   secureHeaders({
@@ -34,6 +31,21 @@ app.use(
       frameAncestors: ["'none'"],
       baseUri: ["'none'"],
     },
+  }),
+);
+
+// I added /api/matchmaking/testing to have it's own CORS settings
+app.use("/api/matchmaking/testing", cors({ origin: "*" }));
+app.post("/api/matchmaking/testing", zValidator("json", zodPostMatchmakingValidatorTesting), async (c) => {
+  const payload = c.req.valid("json");
+  return handlePostMatchmaking({ c, payload });
+});
+
+app.use(
+  cors({
+    origin: env.BASE_FRONTEND,
+    maxAge: 600,
+    credentials: true,
   }),
 );
 
