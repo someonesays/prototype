@@ -4,7 +4,7 @@ import env from "$lib/utils/env";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
-import { MatchmakingLocation, ErrorMessageCodesToText, ParentSdk } from "@/public";
+import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
@@ -36,7 +36,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     success,
     code,
     data: matchmaking,
-  } = await ParentSdk.getMatchmaking({
+  } = await RoomWebsocket.getMatchmaking({
     captcha: {
       type: visibleCaptcha ? "managed" : "invisible",
       token,

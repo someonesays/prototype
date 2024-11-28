@@ -105,7 +105,7 @@ websocket.get(
         };
 
         // Disallow joining when it's about to shutdown
-        if (state.serverRoom.testingShutdown) {
+        if (state.serverRoom?.testingShutdown) {
           return ws.close(1003, JSON.stringify({ code: ErrorMessageCodes.SERVERS_BUSY }));
         }
 

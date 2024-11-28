@@ -1,11 +1,11 @@
 import env from "$lib/utils/env";
 import { goto } from "$app/navigation";
-import { ErrorMessageCodes, ErrorMessageCodesToText, ParentSdk } from "@/public";
+import { ErrorMessageCodes, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
 import { roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 
 export async function load({ params }) {
   const roomId = params.roomId;
-  const exists = await ParentSdk.getIfRoomExists({
+  const exists = await RoomWebsocket.getIfRoomExists({
     roomId,
     // You'll never run into /join/[roomId] unless you connect to the website to it,
     // so I don't need to worry about changing the 'launcher' store value.

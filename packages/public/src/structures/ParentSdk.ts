@@ -1,16 +1,5 @@
 import EventEmitter from "eventemitter3";
-import {
-  ParentOpcodes,
-  MinigameOpcodes,
-  MinigameValidation,
-  ErrorMessageCodes,
-  MatchmakingType,
-  MatchmakingLocation,
-  type Minigame,
-  type ParentTypes,
-  type ApiErrorResponse,
-  type MatchmakingResponse,
-} from "../types";
+import { ParentOpcodes, MinigameOpcodes, MinigameValidation, type ParentTypes } from "../types";
 import type { z } from "zod";
 
 /**
@@ -24,109 +13,6 @@ export class ParentSdk {
   private iframe: HTMLIFrameElement;
   private isDestroyed = false;
   private targetOrigin = "*";
-
-  static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
-    const res = await fetch(`${baseUrl}/api/matchmaking?roomId=${encodeURIComponent(roomId)}`);
-    return res.status === 200;
-  }
-
-  static async getMatchmaking({
-    captcha,
-    displayName,
-    location,
-    roomId,
-    baseUrl,
-  }: {
-    auth?: string;
-    captcha: {
-      type: "invisible" | "managed";
-      token: string;
-    };
-    displayName: string;
-    location?: MatchmakingLocation;
-    roomId?: string;
-    baseUrl: string;
-  }) {
-    if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
-    try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-captcha-type": captcha.type,
-          "x-captcha-token": captcha.token,
-        },
-        body: JSON.stringify({
-          type: MatchmakingType.NORMAL,
-          location,
-          roomId,
-          displayName,
-        }),
-      });
-      const data = await res.json();
-
-      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
-      return { success: true as true, data: data as MatchmakingResponse };
-    } catch (err) {
-      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
-    }
-  }
-
-  static async getMatchmakingTesting({
-    displayName,
-    minigameId,
-    testingAccessCode,
-    baseUrl,
-  }: {
-    displayName: string;
-    minigameId: string;
-    testingAccessCode: string;
-    baseUrl: string;
-  }) {
-    try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, minigameId, testingAccessCode }),
-      });
-
-      const data = await res.json();
-
-      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
-      return { success: true as true, data: data as MatchmakingResponse };
-    } catch (err) {
-      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
-    }
-  }
-
-  static async getMatchmakingDiscord({ instanceId, code, baseUrl }: { instanceId: string; code: string; baseUrl: string }) {
-    try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code }),
-      });
-      const data = await res.json();
-
-      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
-      return { success: true as true, data: data as MatchmakingResponse };
-    } catch (err) {
-      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
-    }
-  }
-
-  static async getMinigame({ minigameId, baseUrl }: { minigameId: string; baseUrl: string }) {
-    try {
-      const res = await fetch(`${baseUrl}/api/minigames/${encodeURIComponent(minigameId)}`);
-      const data = await res.json();
-
-      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
-      return { success: true as true, data: data as Minigame };
-    } catch (err) {
-      console.error(err);
-      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
-    }
-  }
 
   constructor({ iframe, targetOrigin = "*" }: { iframe: HTMLIFrameElement; targetOrigin?: string }) {
     this.iframe = iframe;

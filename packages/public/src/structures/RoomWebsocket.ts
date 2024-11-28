@@ -7,7 +7,12 @@ import {
   ClientValidation,
   encodeOppackClient,
   encodeJsonClient,
+  MatchmakingLocation,
+  MatchmakingType,
+  ErrorMessageCodes,
   type ServerTypes,
+  type ApiErrorResponse,
+  type MatchmakingResponse,
 } from "../";
 import type { z } from "zod";
 
@@ -18,6 +23,96 @@ export class RoomWebsocket {
 
   private emitter = new EventEmitter();
   messageType: "Json" | "Oppack";
+
+  static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
+    const res = await fetch(`${baseUrl}/api/matchmaking?roomId=${encodeURIComponent(roomId)}`);
+    return res.status === 200;
+  }
+
+  static async getMatchmaking({
+    captcha,
+    displayName,
+    location,
+    roomId,
+    baseUrl,
+  }: {
+    auth?: string;
+    captcha: {
+      type: "invisible" | "managed";
+      token: string;
+    };
+    displayName: string;
+    location?: MatchmakingLocation;
+    roomId?: string;
+    baseUrl: string;
+  }) {
+    if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-captcha-type": captcha.type,
+          "x-captcha-token": captcha.token,
+        },
+        body: JSON.stringify({
+          type: MatchmakingType.NORMAL,
+          location,
+          roomId,
+          displayName,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
+      return { success: true as true, data: data as MatchmakingResponse };
+    } catch (err) {
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
+    }
+  }
+
+  static async getMatchmakingTesting({
+    displayName,
+    minigameId,
+    testingAccessCode,
+    baseUrl,
+  }: {
+    displayName: string;
+    minigameId: string;
+    testingAccessCode: string;
+    baseUrl: string;
+  }) {
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, minigameId, testingAccessCode }),
+      });
+
+      const data = await res.json();
+
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
+      return { success: true as true, data: data as MatchmakingResponse };
+    } catch (err) {
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
+    }
+  }
+
+  static async getMatchmakingDiscord({ instanceId, code, baseUrl }: { instanceId: string; code: string; baseUrl: string }) {
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code }),
+      });
+      const data = await res.json();
+
+      if (res.status !== 200) return { success: false as false, code: (data as ApiErrorResponse).code };
+      return { success: true as true, data: data as MatchmakingResponse };
+    } catch (err) {
+      return { success: false as false, code: ErrorMessageCodes.UNEXPECTED_ERROR };
+    }
+  }
 
   static async parseMessage({ messageType, payload }: { messageType: "Oppack" | "Json"; payload: any }) {
     switch (messageType) {
