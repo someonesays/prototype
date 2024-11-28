@@ -2,7 +2,7 @@
  * These are the opcodes the server sends to the parent page
  */
 export enum ServerOpcodes {
-  // PING = 0,
+  PING = 0,
   ERROR = 1,
   GET_INFORMATION = 2, // Send the room and player information, along with the room and player states.
   PLAYER_JOIN = 3, // Player joined the room

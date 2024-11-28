@@ -11,6 +11,7 @@ import type {
 } from "../../types";
 
 export interface ServerTypes {
+  [ServerOpcodes.PING]: {};
   [ServerOpcodes.ERROR]: {
     message: string;
   };
@@ -82,6 +83,7 @@ export interface ServerOpcodeAndData<O extends ServerOpcodes> {
 }
 
 export type ServerOpcodeAndDatas =
+  | ServerOpcodeAndData<ServerOpcodes.PING>
   | ServerOpcodeAndData<ServerOpcodes.ERROR>
   | ServerOpcodeAndData<ServerOpcodes.GET_INFORMATION>
   | ServerOpcodeAndData<ServerOpcodes.PLAYER_JOIN>
