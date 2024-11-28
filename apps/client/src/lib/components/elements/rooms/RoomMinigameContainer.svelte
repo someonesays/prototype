@@ -167,12 +167,17 @@ function leaveOrEndGame() {
   .minigame-notready-box {
     background-color: #313131;
     border: 1px solid #242424;
+    box-shadow: #64646f65 0px 7px 29px 0px;
     border-radius: 6px;
     padding: 20px;
     display: flex;
     align-items: center;
     flex-direction: column;
     opacity: 1;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .minigame-notready-box:hover {
+    transform: scale(1.06);
   }
   .minigame-notready-text {
     margin-top: 16px;
@@ -223,6 +228,7 @@ function leaveOrEndGame() {
     display: block;
     border-radius: 2px;
     background-color: var(--settings-button);
+    border: 1px solid #242424;
     box-shadow: #64646f33 0px 7px 29px 0px;
     padding: 18px 12px;
     width: 250px;
