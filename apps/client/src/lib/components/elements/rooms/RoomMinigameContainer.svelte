@@ -1,5 +1,4 @@
 <script lang="ts">
-import env from "$lib/utils/env";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 
 import { onMount } from "svelte";
