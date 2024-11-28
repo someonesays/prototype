@@ -5,7 +5,7 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
-import { room, roomParentSdk, roomWs } from "$lib/components/stores/roomState";
+import { room, roomMinigameReady, roomParentSdk, roomWs } from "$lib/components/stores/roomState";
 import { kickedReason } from "$lib/components/stores/lobby";
 
 import {
@@ -28,7 +28,6 @@ const roomId = $page.params.roomId;
 
 // States
 let connected = $state(false);
-let minigameReady = $state(false);
 let allowExitingPage = $state(true);
 let exitedPage = $state(false);
 
@@ -72,7 +71,7 @@ onMount(() => {
     const player = $room?.players.find((p) => p.id === evt.user);
     if (!player) return; // !player will be true when the host leaves the room during a game
 
-    if (minigameReady) {
+    if ($roomMinigameReady) {
       // If the host leave, sending remove player is unnecessary because the game will end anyways
       $roomParentSdk?.removePlayer(evt);
     }
@@ -105,7 +104,7 @@ onMount(() => {
     $room.room.state = null;
     $room.players = evt.players;
 
-    minigameReady = false;
+    $roomMinigameReady = false;
 
     // TODO: Do something with evt.reason
     switch (evt.reason) {
@@ -164,8 +163,8 @@ onMount(() => {
         $roomParentSdk?.setGameStarted({ joinedLate: true });
       }
 
-      // Set minigameReady = true to start recieving events through the SDK
-      minigameReady = true;
+      // Set $roomMinigameReady = true to start recieving events through the SDK
+      $roomMinigameReady = true;
     } else {
       // Sends to minigame that the player is ready
       // You should never recieve a readyPlayer event of yourself
@@ -190,7 +189,7 @@ onMount(() => {
 
     $room.status = GameStatus.STARTED;
 
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.setGameStarted({ joinedLate: false });
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SET_GAME_STATE, (evt) => {
@@ -198,7 +197,7 @@ onMount(() => {
 
     $room.room.state = evt.state;
 
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.updateGameState(evt);
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SET_PLAYER_STATE, (evt) => {
@@ -209,19 +208,19 @@ onMount(() => {
 
     player.state = evt.state;
 
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.updatePlayerState(evt);
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE, (evt) => {
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.sendGameMessage(evt);
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE, (evt) => {
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.sendPlayerMessage(evt);
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE, (evt) => {
-    if (!minigameReady) return;
+    if (!$roomMinigameReady) return;
     $roomParentSdk?.sendPrivateMessage(evt);
   });
 
@@ -247,6 +246,7 @@ onMount(() => {
     // Remove room from stores
     $room = null;
     $launcherMatchmaking = null;
+    $roomMinigameReady = false;
 
     // Close WebSocket and remove it from stores
     $roomWs?.close();

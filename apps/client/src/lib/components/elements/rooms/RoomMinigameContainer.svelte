@@ -4,7 +4,7 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
-import { room, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
+import { room, roomMinigameReady, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
 import { parseMd } from "$lib/utils/parseMd";
@@ -102,7 +102,19 @@ function leaveOrEndGame() {
       <div class="minigame-text-content">{@html minigamePromptText}</div>
     </div>
   </div>
-  <div class="minigame-iframe" bind:this={container}></div>
+  <div class="minigame-iframe-container">
+    <div class="minigame-iframe" style={$roomMinigameReady ? "" : "pointer-events:none"} bind:this={container}></div>
+    <!-- {#if !$roomMinigameReady} -->
+      <div class="minigame-notready-container {$roomMinigameReady ? "fade" : ""}">
+        <div class="minigame-notready">
+          <div class="minigame-notready-box">
+            <div class="minigame-notready-loader"></div>
+            <div class="minigame-notready-text">Loading minigame...</div>
+          </div>
+        </div>
+      </div>
+    <!-- {/if} -->
+  </div>
   <div class="minigame-settings">
     <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
       <div>
@@ -171,9 +183,70 @@ function leaveOrEndGame() {
     background-color: darkgrey;
     outline: 1px solid slategrey;
   }
-  .minigame-iframe {
+  .minigame-iframe-container {
     background-color: black;
     flex: 1 1 auto;
+  }
+  .minigame-iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .minigame-notready-container {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    transition: opacity .5s;
+  }
+  .minigame-notready-container.fade {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .minigame-notready {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 80%;
+  }
+  .minigame-notready-box {
+    background-color: #313131;
+    border: 1px solid #242424;
+    border-radius: 6px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    opacity: 1;
+  }
+  .minigame-notready-text {
+    margin-top: 16px;
+    text-align: center;
+  }
+  .minigame-notready-loader {
+    border: 6px solid #8a5ee9;
+    -webkit-animation: minigame-notready-loader-spin 1s linear infinite;
+    animation: minigame-notready-loader-spin 1s linear infinite;
+    animation-duration: 1.5s;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+    border-top: 6px solid #fafafa;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+  }
+  @keyframes minigame-notready-loader-spin {
+    0% { 
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
   }
   :global(.minigame-iframe iframe) {
     border-width: 0;
@@ -196,7 +269,7 @@ function leaveOrEndGame() {
   .minigame-settings-menu-active {
     display: block;
     border-radius: 2px;
-    background-color: #1e1e1e;
+    background-color: var(--settings-button);
     box-shadow: #64646f33 0px 7px 29px 0px;
     padding: 18px 12px;
     width: 250px;
