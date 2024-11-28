@@ -1,5 +1,5 @@
 {
-  "name": "@/minigame",
+  "name": "@/prompt",
   "private": true,
   "type": "module",
   "scripts": {
