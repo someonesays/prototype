@@ -28,7 +28,7 @@ export class MinigameSdk {
   private handleMessage<O extends ParentOpcodes>({
     source,
     data,
-  }: { source: MessageEvent["source"] } & { data: [O, ParentTypes[O]] }) {
+  }: { source: MessageEvent["source"]; data: [O, ParentTypes[O]] }) {
     if (this.source !== source) return;
 
     const [opcode, payload] = data;

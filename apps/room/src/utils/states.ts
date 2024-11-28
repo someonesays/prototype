@@ -3,8 +3,8 @@ import { broadcastMessage } from "./messages";
 import { transformToGamePlayers } from "./transform";
 import type { ServerRoom, WSState } from "./types";
 
-export function isNotHost(state: WSState) {
-  return state.serverRoom.room.host !== state.user.id;
+export function isHost(state: WSState) {
+  return state.serverRoom.room.host === state.user.id;
 }
 
 export function isLobby(state: WSState) {
@@ -24,7 +24,7 @@ export function isNotUser(state: WSState, user: string) {
 }
 
 export function isNotUserOrHost(state: WSState, user: string) {
-  return isNotUser(state, user) && (isNotHost(state) || !state.serverRoom.players.get(user)?.ready);
+  return isNotUser(state, user) && (!isHost(state) || !state.serverRoom.players.get(user)?.ready);
 }
 
 export function isUserReady(state: WSState, user: string) {

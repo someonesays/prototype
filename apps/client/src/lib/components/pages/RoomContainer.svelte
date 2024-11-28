@@ -94,6 +94,7 @@ onMount(() => {
   // Handle minigame
   $roomWs.on(ServerOpcodes.LOAD_MINIGAME, (evt) => {
     if (!$room) throw new Error("Cannot find $room on load minigame");
+
     $room.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
     $room.players = evt.players;
   });
@@ -151,6 +152,7 @@ onMount(() => {
               .map((p) => ({
                 id: p.id,
                 displayName: p.displayName,
+                avatar: p.avatar,
                 state: p.state,
               })),
           }),
@@ -174,6 +176,7 @@ onMount(() => {
             player: {
               id: player.id,
               displayName: player.displayName,
+              avatar: player.avatar,
               state: player.state,
             },
             joinedLate: $room.status === GameStatus.STARTED,

@@ -83,7 +83,7 @@ export class RoomWebsocket {
     baseUrl: string;
   }) {
     try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+      const res = await fetch(`${baseUrl}/api/matchmaking/testing`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ type: MatchmakingType.TESTING, displayName, minigameId, testingAccessCode }),
