@@ -171,15 +171,15 @@ websocket.get(
             [ClientOpcodes.KICK_PLAYER, ClientOpcodes.TRANSFER_HOST, ClientOpcodes.SET_ROOM_SETTINGS].includes(opcode) &&
             metadata.type === MatchmakingType.TESTING
           ) {
-            return sendError(state.user, "Disallowed to use event in a testing room");
+            return sendError(state.user, ErrorMessageCodes.WS_DISABLED_IN_TESTING_ROOM);
           }
 
           // Handle opcodes
           switch (opcode) {
             case ClientOpcodes.KICK_PLAYER: {
-              if (!isHost(state)) return sendError(state.user, "Only host can kick players");
-              if (!isLobby(state)) return sendError(state.user, "Cannot kick players during game");
-              if (state.user.id === data.user) return sendError(state.user, "Cannot kick yourself");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
+              if (state.user.id === data.user) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_KICK_SELF);
 
               state.serverRoom.players
                 .get(data.user)
@@ -187,9 +187,9 @@ websocket.get(
               return;
             }
             case ClientOpcodes.TRANSFER_HOST: {
-              if (!isHost(state)) return sendError(state.user, "Only host can transfer host");
-              if (!isLobby(state)) return sendError(state.user, "Cannot transfer host during game");
-              if (state.user.id === data.user) return sendError(state.user, "Cannot transfer host to yourself");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
+              if (state.user.id === data.user) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_TRANSFER_SELF);
 
               const player = state.serverRoom.players.get(data.user);
               if (player?.ws.readyState !== 1) return;
@@ -207,18 +207,16 @@ websocket.get(
               return;
             }
             case ClientOpcodes.SET_ROOM_SETTINGS: {
-              if (!isHost(state)) return sendError(state.user, "Only host can change room settings");
-              if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
-              if (data.minigameId === undefined && data.packId === undefined) {
-                return sendError(state.user, "Missing options to change room settings");
-              }
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
+              if (data.minigameId === undefined && data.packId === undefined) return; // No error - pretend recieveMessage failed
 
               const newSettings: { pack?: Pack | null; minigame?: Minigame | null } = {};
 
               if (data.packId) {
                 // Get minigame pack
                 const pack = await getPackPublic(data.packId);
-                if (!pack) return sendError(state.user, "Failed to find pack");
+                if (!pack) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_PACK);
 
                 // Set pack in new settings
                 newSettings.pack = pack;
@@ -229,7 +227,7 @@ websocket.get(
               if (data.minigameId) {
                 // Get minigame
                 const minigame = await getMinigamePublic(data.minigameId);
-                if (!minigame) return sendError(state.user, "Failed to find minigame");
+                if (!minigame) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
 
                 // Set pack in new settings
                 newSettings.minigame = minigame;
@@ -243,7 +241,7 @@ websocket.get(
               const minigame = newSettings.minigame === undefined ? state.serverRoom.minigame : newSettings.minigame;
 
               if (pack && !minigame) {
-                return sendError(state.user, "Cannot select pack without a minigame");
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME);
               }
 
               if (
@@ -254,12 +252,12 @@ websocket.get(
                   minigameId: minigame.id,
                 }))
               ) {
-                return sendError(state.user, "Failed to find minigame in pack");
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK);
               }
 
               // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
-              if (!isHost(state)) return sendError(state.user, "Only host can change room settings");
-              if (!isLobby(state)) return sendError(state.user, "Cannot set room settings during an ongoing game");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
               // Set pack and minigame (!== undefined is necessary as they can be null)
               if (newSettings.pack !== undefined) state.serverRoom.pack = newSettings.pack;
@@ -277,18 +275,16 @@ websocket.get(
               return;
             }
             case ClientOpcodes.BEGIN_GAME: {
-              if (!isHost(state)) return sendError(state.user, "Only host can begin game");
-              if (!isLobby(state)) return sendError(state.user, "Cannot begin game during an ongoing game");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
               // Cannot start game without a minigame selected
-              if (!state.serverRoom.minigame) return sendError(state.user, "Cannot start game without selecting a minigame");
+              if (!state.serverRoom.minigame)
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME);
 
               // Check minigame's minimum players
               if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart)
-                return sendError(
-                  state.user,
-                  "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
-                );
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS);
 
               // Set everyone's ready state and user state as false
               unreadyPlayersGame(state.serverRoom);
@@ -308,8 +304,8 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_HANDSHAKE: {
-              if (isLobby(state)) return sendError(state.user, "Cannot handshake when a game is not ongoing");
-              if (isReady(state)) return sendError(state.user, "Cannot handshake if already ready");
+              if (isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_HANDSHAKE_IF_READY);
 
               // Set ready value of player to true
               state.user.ready = true;
@@ -351,18 +347,18 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_END_GAME: {
-              if (!isHost(state)) return sendError(state.user, "Only host can end game");
-              if (isLobby(state)) return sendError(state.user, "Cannot end game in lobby");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
 
               if (data.prizes) {
-                if (!isReady(state)) return sendError(state.user, "Cannot end game and distribute prizes when not ready");
+                if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
                 // Filters prizes with valid user IDs
                 const prizes = data.prizes.filter((p) => !!state.serverRoom.players.get(p.user));
 
                 // Disallows duplicate user IDs
                 if (prizes.length !== new Set(prizes.map(({ user }) => user)).size) {
-                  return sendError(state.user, "Cannot have a user get multiple prizes");
+                  return sendError(state.user, ErrorMessageCodes.WS_CANNOT_HAVE_MULTIPLE_PRIZES);
                 }
 
                 // Check the length of the winner, second place and third place
@@ -370,9 +366,9 @@ websocket.get(
                 const seconds = prizes.filter((p) => p.type === GamePrizeType.SECOND);
                 const thirds = prizes.filter((p) => p.type === GamePrizeType.THIRD);
 
-                if (winners.length > 1) return sendError(state.user, "Cannot be more than 1 winner");
-                if (seconds.length > 1) return sendError(state.user, "Cannot be more than 1 second place");
-                if (thirds.length > 1) return sendError(state.user, "Cannot be more than 1 third place");
+                if (winners.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_WINNER);
+                if (seconds.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_SECOND);
+                if (thirds.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_THIRD);
 
                 // Turns third place to second place if third place isn't set
                 // Turns second place to winner if second place isn't set
@@ -425,9 +421,9 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_SET_GAME_STATE: {
-              if (!isHost(state)) return sendError(state.user, "Only host can set game state");
-              if (!isStarted(state)) return sendError(state.user, "Cannot set game state when game hasn't started");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to set game state");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
               state.serverRoom.room.state = data.state;
 
@@ -443,11 +439,11 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_SET_PLAYER_STATE: {
-              if (!isHost(state)) return sendError(state.user, "Only host can set player state");
-              if (!isStarted(state)) return sendError(state.user, "Cannot set player state when game hasn't started");
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (!isUserReady(state, data.user))
-                return sendError(state.user, "Cannot find ready player with given id to set player state");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to set player state");
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
               const player = state.serverRoom.players.get(data.user);
               if (!player?.ready) return; // (should never happen)
@@ -467,9 +463,9 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE: {
-              if (!isStarted(state)) return sendError(state.user, "Cannot send game message when game hasn't started");
-              if (!isHost(state)) return sendError(state.user, "Only host can send game message");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to send game message");
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -483,8 +479,8 @@ websocket.get(
               return;
             }
             case ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE: {
-              if (!isStarted(state)) return sendError(state.user, "Cannot send game message when game hasn't started");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to send game message");
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -501,12 +497,12 @@ websocket.get(
             case ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE: {
               if (!data.user) data.user = state.serverRoom.room.host;
 
-              if (!isStarted(state)) return sendError(state.user, "Cannot send private message when game hasn't started");
-              if (!isReady(state)) return sendError(state.user, "Must be ready to send private message");
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
               if (!isHost(state) && data.user !== state.serverRoom.room.host)
-                return sendError(state.user, "Only host can set any toUser to send it to");
+                return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE);
               if (!isUserReady(state, data.user))
-                return sendError(state.user, "Cannot find ready player with given id to send a message to");
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
 
               // Get host and the toUser
               const host = state.serverRoom.players.get(state.serverRoom.room.host);
@@ -624,7 +620,7 @@ websocket.get(
             }
           }
         };
-        websocketEvents.error = () => ws.close(1002, "A WebSocket error has occurred");
+        websocketEvents.error = () => ws.close(1002, JSON.stringify({ code: ErrorMessageCodes.UNEXPECTED_ERROR }));
 
         // Give the new player room information
         sendMessage({

@@ -12,9 +12,7 @@ import type {
 
 export interface ServerTypes {
   [ServerOpcodes.PING]: {};
-  [ServerOpcodes.ERROR]: {
-    message: string;
-  };
+  [ServerOpcodes.ERROR]: { code: string };
   [ServerOpcodes.GET_INFORMATION]: {
     status: GameStatus;
     user: string; // (user = player id)
@@ -23,22 +21,11 @@ export interface ServerTypes {
     minigame: Minigame | null;
     players: GamePlayer[];
   };
-  [ServerOpcodes.PLAYER_JOIN]: {
-    player: GamePlayer;
-  };
-  [ServerOpcodes.PLAYER_LEFT]: {
-    user: string;
-  };
-  [ServerOpcodes.TRANSFER_HOST]: {
-    user: string;
-  };
-  [ServerOpcodes.UPDATED_ROOM_SETTINGS]: {
-    pack: Pack | null;
-    minigame: Minigame | null;
-  };
-  [ServerOpcodes.LOAD_MINIGAME]: {
-    players: GamePlayer[];
-  };
+  [ServerOpcodes.PLAYER_JOIN]: { player: GamePlayer };
+  [ServerOpcodes.PLAYER_LEFT]: { user: string };
+  [ServerOpcodes.TRANSFER_HOST]: { user: string };
+  [ServerOpcodes.UPDATED_ROOM_SETTINGS]: { pack: Pack | null; minigame: Minigame | null };
+  [ServerOpcodes.LOAD_MINIGAME]: { players: GamePlayer[] };
   [ServerOpcodes.END_MINIGAME]:
     | {
         players: GamePlayer[];
@@ -52,24 +39,12 @@ export interface ServerTypes {
         reason: MinigameEndReason.MINIGAME_ENDED;
         prizes: GamePrize[];
       };
-  [ServerOpcodes.MINIGAME_PLAYER_READY]: {
-    user: string;
-  };
+  [ServerOpcodes.MINIGAME_PLAYER_READY]: { user: string };
   [ServerOpcodes.MINIGAME_START_GAME]: {};
-  [ServerOpcodes.MINIGAME_SET_GAME_STATE]: {
-    state: State;
-  };
-  [ServerOpcodes.MINIGAME_SET_PLAYER_STATE]: {
-    user: string;
-    state: State;
-  };
-  [ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE]: {
-    message: State;
-  };
-  [ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: {
-    user: string;
-    message: State;
-  };
+  [ServerOpcodes.MINIGAME_SET_GAME_STATE]: { state: State };
+  [ServerOpcodes.MINIGAME_SET_PLAYER_STATE]: { user: string; state: State };
+  [ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE]: { message: State };
+  [ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: { user: string; message: State };
   [ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: {
     fromUser: string; // User who sent it
     toUser: string; // Who it was sent by (mainly for the host)

@@ -5,6 +5,7 @@ import {
   encodeJsonServer,
   ServerOpcodes,
   type ServerTypes,
+  type ErrorMessageCodes,
 } from "@/public";
 import type { WSMessageReceive } from "hono/ws";
 import type { ServerPlayer, ServerRoom } from "./types";
@@ -47,11 +48,11 @@ export function sendMessage<O extends ServerOpcodes>({
   }
 }
 
-export function sendError(user: ServerPlayer, message: string) {
+export function sendError(user: ServerPlayer, code: ErrorMessageCodes) {
   return sendMessage({
     user,
     opcode: ServerOpcodes.ERROR,
-    data: { message },
+    data: { code },
   });
 }
 
