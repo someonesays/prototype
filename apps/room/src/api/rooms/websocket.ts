@@ -361,39 +361,8 @@ websocket.get(
                   return sendError(state.user, ErrorMessageCodes.WS_CANNOT_HAVE_MULTIPLE_PRIZES);
                 }
 
-                // Check the length of the winner, second place and third place
-                const winners = prizes.filter((p) => p.type === GamePrizeType.WINNER);
-                const seconds = prizes.filter((p) => p.type === GamePrizeType.SECOND);
-                const thirds = prizes.filter((p) => p.type === GamePrizeType.THIRD);
-
-                if (winners.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_WINNER);
-                if (seconds.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_SECOND);
-                if (thirds.length > 1) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_BE_MORE_THAN_ONE_THIRD);
-
-                // Turns third place to second place if third place isn't set
-                // Turns second place to winner if second place isn't set
-                let winner: string | undefined = winners[0]?.user;
-                let second: string | undefined = seconds[0]?.user;
-                let third: string | undefined = thirds[0]?.user;
-
-                if (third && !second) {
-                  second = third;
-                  third = undefined;
-                }
-                if (second && !winner) {
-                  winner = second;
-                  second = undefined;
-                }
-
-                // Transforms to the fixed prizes array
-                const transformedPrizes: GamePrize[] = [];
-                if (winner) transformedPrizes.push({ type: GamePrizeType.WINNER, user: winner });
-                if (second) transformedPrizes.push({ type: GamePrizeType.SECOND, user: second });
-                if (third) transformedPrizes.push({ type: GamePrizeType.THIRD, user: third });
-                transformedPrizes.push(...prizes.filter((p) => p.type === GamePrizeType.PARTICIPATION));
-
                 // Give prizes
-                for (const { type, user } of transformedPrizes) {
+                for (const { type, user } of prizes) {
                   const player = state.serverRoom.players.get(user);
                   if (player) {
                     player.points += GamePrizePoints[type];
@@ -404,7 +373,7 @@ websocket.get(
                 endGame({
                   room: state.serverRoom,
                   reason: MinigameEndReason.MINIGAME_ENDED,
-                  prizes: transformedPrizes,
+                  prizes,
                 });
               } else {
                 // If there isn't prizes, the game was forcefully ended

@@ -10,7 +10,7 @@ export enum MinigameOpcodes {
    */
   HANDSHAKE = "handshake",
   /**
-   * When the host ends the game, they'll also provide information, such as who won (up to top 3, optional) and anyone else who should earn participation points (aka they did what the minigame told them to do, also optional).
+   * When the host ends the game, they'll also provide information, such as who's the winner, second place and third place.
    * 
    * The minigame should display who won and gained points once the game ends, before sending the END_GAME message.
    * 

@@ -114,11 +114,7 @@ export class MinigameSdk {
     this.postMessage(MinigameOpcodes.HANDSHAKE, {});
   }
   /**
-   * End the game and assign the winner, second place, third place and anyone else who should earn points for participation.
-   *
-   * If there is no first place, second place becomes first place.
-   * If there is no second place, third place becomes second place.
-   *
+   * End the game and assign the winner (3 points), second place (2 points), third place (1 point) who should earn points
    * @param payload The prizes to give
    */
   endGame(payload: z.infer<(typeof MinigameValidation)[MinigameOpcodes.END_GAME]>) {
