@@ -1,7 +1,7 @@
 import { MatchmakingLocation, MinigamePathType, MinigamePublishType, PackPublishType } from "@/public";
 import { addMinigameToPack, createMinigame, createPack, createServer, createUser } from "../src/utils";
 
-const authorId = await createUser({ name: "Two" });
+const authorId = await createUser({ name: "Two", discordId: "276497792526974996" });
 
 const minigameId = await createMinigame({
   id: "whwj9rs8vvd6alyznh",
@@ -16,6 +16,7 @@ const minigameId = await createMinigame({
   pathType: MinigamePathType.WHOLE_PATH,
   testingAccessCode: "verysecretaccesstoken",
   minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
+  supportsMobile: true,
 });
 
 const packId = await createPack({

@@ -34,6 +34,7 @@ export class RoomWebsocket {
     displayName,
     location,
     roomId,
+    mobile,
     baseUrl,
   }: {
     auth?: string;
@@ -44,6 +45,7 @@ export class RoomWebsocket {
     displayName: string;
     location?: MatchmakingLocation;
     roomId?: string;
+    mobile: boolean;
     baseUrl: string;
   }) {
     if (!location && !roomId) throw new Error("Either location or roomId must be present to get matchmaking!");
@@ -60,6 +62,7 @@ export class RoomWebsocket {
           location,
           roomId,
           displayName,
+          mobile,
         }),
       });
       const data = await res.json();
@@ -75,11 +78,13 @@ export class RoomWebsocket {
     displayName,
     minigameId,
     testingAccessCode,
+    mobile,
     baseUrl,
   }: {
     displayName: string;
     minigameId: string;
     testingAccessCode: string;
+    mobile: boolean;
     baseUrl: string;
   }) {
     try {
@@ -98,12 +103,17 @@ export class RoomWebsocket {
     }
   }
 
-  static async getMatchmakingDiscord({ instanceId, code, baseUrl }: { instanceId: string; code: string; baseUrl: string }) {
+  static async getMatchmakingDiscord({
+    instanceId,
+    code,
+    mobile,
+    baseUrl,
+  }: { instanceId: string; code: string; mobile: boolean; baseUrl: string }) {
     try {
       const res = await fetch(`${baseUrl}/api/matchmaking`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code }),
+        body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code, mobile }),
       });
       const data = await res.json();
 

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"testing_location" text DEFAULT 'usa' NOT NULL,
 	"testing_access_code" text NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
+	"supports_mobile" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

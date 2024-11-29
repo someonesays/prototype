@@ -38,6 +38,7 @@ export const zodPostMatchmakingValidatorNormal = z.object({
   displayName: z.string().min(1).max(32),
   location: z.nativeEnum(MatchmakingLocation).optional(),
   roomId: z.string().length(10).optional(),
+  mobile: z.boolean(),
 });
 
 export const zodPostMatchmakingValidatorTesting = z.object({
@@ -51,6 +52,7 @@ export const zodPostMatchmakingValidatorDiscord = z.object({
   type: z.literal(MatchmakingType.DISCORD),
   instanceId: z.string().min(1),
   code: z.string().min(1),
+  mobile: z.boolean(),
 });
 
 export const zodPostMatchmakingValidator = z.union([
@@ -232,7 +234,7 @@ export async function handlePostMatchmaking({
   let metadata: MatchmakingResponseMetadata;
   switch (payload.type) {
     case MatchmakingType.NORMAL:
-      metadata = { type: MatchmakingType.NORMAL, creating: !payload.roomId };
+      metadata = { type: MatchmakingType.NORMAL, creating: !payload.roomId, mobile: payload.mobile };
       break;
     case MatchmakingType.TESTING:
       if (!minigameId || !testingAccessCode) {
@@ -242,7 +244,7 @@ export async function handlePostMatchmaking({
       break;
     case MatchmakingType.DISCORD:
       if (!discordAccessToken) throw new Error("Missing Discord accessToken on matchmaking. This should never happen.");
-      metadata = { type: MatchmakingType.DISCORD, accessToken: discordAccessToken };
+      metadata = { type: MatchmakingType.DISCORD, accessToken: discordAccessToken, mobile: payload.mobile };
       break;
   }
 

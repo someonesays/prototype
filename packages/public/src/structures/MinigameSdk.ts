@@ -66,7 +66,6 @@ export class MinigameSdk {
     } else if (opcode === ParentOpcodes.READY) {
       this.isWaiting = false;
       this.data = payload as ParentTypes[ParentOpcodes.READY];
-      this.emitter.emit(ParentOpcodes.READY, payload);
     }
 
     this.emitter.emit(opcode, payload);

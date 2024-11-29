@@ -2,7 +2,7 @@
 import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
-import { DiscordSDK, RPCCloseCodes } from "@discord/embedded-app-sdk";
+import { DiscordSDK, Platform, RPCCloseCodes } from "@discord/embedded-app-sdk";
 import { MatchmakingType, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
 
 import { goto } from "$app/navigation";
@@ -40,7 +40,12 @@ onMount(() => {
           success: matchmakingSuccess,
           code: matchmakingCode,
           data: matchmaking,
-        } = await RoomWebsocket.getMatchmakingDiscord({ instanceId, code, baseUrl: "/.proxy" });
+        } = await RoomWebsocket.getMatchmakingDiscord({
+          instanceId,
+          code,
+          baseUrl: "/.proxy",
+          mobile: discordSdk.platform === Platform.MOBILE,
+        });
         if (!matchmakingSuccess) {
           console.error("[MATCHMAKING] Failed to connect to matchmaking:", ErrorMessageCodesToText[matchmakingCode]);
           return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, ErrorMessageCodesToText[matchmakingCode]);

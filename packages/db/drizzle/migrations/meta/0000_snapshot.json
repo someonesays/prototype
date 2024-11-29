@@ -1,5 +1,5 @@
 {
-  "id": "06df9d45-128a-422d-93aa-76a13c3d1984",
+  "id": "ff03130c-c2e9-448d-80ad-8cf13691d90f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -90,6 +90,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": 1
+        },
+        "supports_mobile": {
+          "name": "supports_mobile",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",

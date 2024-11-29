@@ -125,6 +125,7 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
         }
       : null,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
+    supportsMobile: minigame.supportsMobile,
     privacyPolicy: minigame.privacyPolicy,
     termsOfServices: minigame.termsOfServices,
     createdAt: minigame.createdAt.toString(),

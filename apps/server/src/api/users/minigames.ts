@@ -26,6 +26,7 @@ const userMinigameZod = z.object({
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),
   pathType: z.nativeEnum(MinigamePathType).default(MinigamePathType.WHOLE_PATH),
   minimumPlayersToStart: z.number().int().min(1).max(25).default(1),
+  supportsMobile: z.boolean().default(false),
 });
 
 userMinigames.get("/", authMiddleware, async (c) => {

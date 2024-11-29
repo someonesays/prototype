@@ -8,6 +8,7 @@ import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket } from "@/p
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
+import { isMobileOrTablet } from "$lib/utils/mobile";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
@@ -44,6 +45,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
+    mobile: isMobileOrTablet(),
     baseUrl: env.VITE_BASE_API,
   });
 

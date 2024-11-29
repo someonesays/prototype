@@ -35,11 +35,11 @@ export type MatchmakingResponseMetadata =
 
 export interface MatchmakingResponseNormal {
   type: MatchmakingType.NORMAL;
-
-  // This doesn't enforce if a JWT can be used to create or join a room
+  // The value 'creating' doesn't enforce if a JWT can be used to create or join a room
   // It only prevents a race-condition in matchmaking where 2 people can be assigned to the same room when creating one
   // It'll prevent the user from joining the room if creating == true and the room with the given ID already exists
   creating: boolean;
+  mobile: boolean;
 }
 
 export interface MatchmakingResponseTesting {
@@ -51,4 +51,5 @@ export interface MatchmakingResponseTesting {
 export interface MatchmakingResponseMetadataDiscord {
   type: MatchmakingType.DISCORD;
   accessToken: string;
+  mobile: boolean;
 }

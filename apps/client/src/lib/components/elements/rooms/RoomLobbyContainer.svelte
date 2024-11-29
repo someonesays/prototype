@@ -128,6 +128,9 @@ function leaveGame() {
   {/if}
 
   <h2>Actions</h2>
+  {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+    <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+  {/if}
   <p>
     <button onclick={copyInviteLink}>Invite</button>
     <button onclick={startGame} disabled={$room.room.host !== $room.user}>Start</button>

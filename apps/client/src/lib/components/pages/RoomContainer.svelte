@@ -151,6 +151,7 @@ onMount(() => {
               .map((p) => ({
                 id: p.id,
                 displayName: p.displayName,
+                mobile: p.mobile,
                 avatar: p.avatar,
                 state: p.state,
               })),
@@ -176,6 +177,7 @@ onMount(() => {
               id: player.id,
               displayName: player.displayName,
               avatar: player.avatar,
+              mobile: player.mobile,
               state: player.state,
             },
             joinedLate: $room.status === GameStatus.STARTED,
