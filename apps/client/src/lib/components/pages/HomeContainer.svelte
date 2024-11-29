@@ -13,7 +13,7 @@ import { isMobileOrTablet } from "$lib/utils/mobile";
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
 
-let visibleCaptcha = $state(false);
+let visibleCaptcha = $state(true);
 let enableJoinButton = $state(!env.VITE_IS_PROD);
 
 // Remove kicked reason if you leave the page

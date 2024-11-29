@@ -9,8 +9,6 @@
     "build/staging": "NODE_ENV=staging bun utils/copyHeaders.ts && vite build --mode staging && bun utils/deleteHeaders.ts",
     "build/dev": "NODE_ENV=development bun utils/copyHeaders.ts && vite build --mode development && bun utils/deleteHeaders.ts",
     "preview": "vite preview",
-    "pub": "bun run build && wrangler pages deploy",
-    "pub/staging": "bun run build/staging && wrangler pages deploy",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
