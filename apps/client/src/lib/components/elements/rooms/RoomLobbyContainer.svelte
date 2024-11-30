@@ -100,7 +100,7 @@ function leaveGame() {
         $launcher === "normal"
           ? $room.pack.iconImage.normal
           : $room.pack.iconImage.discord
-      } width="100" height="100" crossorigin="anonymous" />
+      } width="100" height="100" />
     </p>
   {/if}
 
@@ -111,7 +111,7 @@ function leaveGame() {
         $launcher === "normal"
           ? $room.minigame.previewImage.normal
           : $room.minigame.previewImage.discord
-      } width="100" height="100" crossorigin="anonymous" />
+      } width="100" height="100" />
     </p>
   {/if}
 
