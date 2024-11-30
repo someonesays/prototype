@@ -1,5 +1,4 @@
 import env from "@/env";
-import { z } from "zod";
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
@@ -16,12 +15,16 @@ app.route("/", proxy);
 app.route("/.proxy", proxy);
 
 app.use((c, next) => {
-  const userOrigin = c.req.header("origin");
   let origin = env.BASE_FRONTEND;
+
+  const userOrigin = c.req.header("origin");
+  let usingLocalhost = false;
   if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
     // Allow localhost to be origin for development and staging
+    usingLocalhost = true;
     origin = userOrigin;
   }
+
   return secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
@@ -37,6 +40,7 @@ app.use((c, next) => {
       frameAncestors: ["'none'"],
       baseUri: ["'none'"],
     },
+    crossOriginResourcePolicy: usingLocalhost ? "cross-origin" : "same-origin",
   })(c, next);
 });
 
@@ -48,12 +52,14 @@ app.post("/api/matchmaking/testing", zValidator("json", zodPostMatchmakingValida
 });
 
 app.use((c, next) => {
-  const userOrigin = c.req.header("origin");
   let origin = env.BASE_FRONTEND;
+
+  const userOrigin = c.req.header("origin");
   if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
     // Allow localhost to be origin for development and staging
     origin = userOrigin;
   }
+
   return cors({
     origin,
     maxAge: 600,
