@@ -16,6 +16,8 @@ import { launcherMatchmaking } from "../stores/launcher";
 let visibleCaptcha = $state(true);
 let enableJoinButton = $state(!env.VITE_IS_PROD);
 
+let limitJoin = $state(false);
+
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
   $roomIdToJoin = null;
@@ -25,6 +27,9 @@ beforeNavigate(() => {
 // Handle joining room
 async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
+
+  if (limitJoin) return;
+  limitJoin = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
   const token = form.get("cf-turnstile-response") as string;
@@ -50,6 +55,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   });
 
   if (!success) {
+    // Allow clicking join again
+    limitJoin = false;
     // Set kick reason
     $kickedReason = `Failed to connect to matchmaking: ${ErrorMessageCodesToText[code]}`;
     // Redirect page to "/" if it's not already that
