@@ -235,7 +235,7 @@ websocket.get(
                 // Get minigame
                 const minigame = await getMinigamePublic(data.minigameId);
                 if (!minigame) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
-                if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
+                if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
 
                 // Set pack in new settings
                 newSettings.minigame = minigame;
