@@ -27,6 +27,8 @@ auth.get("/discord/callback", async (c) => {
   const state = c.req.query("state");
   const signedCookie = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
 
+  console.log(1, signedCookie);
+
   deleteCookie(c, "auth-discord-state");
 
   if (!signedCookie) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
