@@ -99,7 +99,7 @@ export async function handlePostMatchmaking({
 
       // Set display name and avatar
       displayName = payload.displayName;
-      avatar = `${env.BASE_FRONTEND}/avatars/default.png`;
+      avatar = "/avatars/default.png";
 
       // Handle finding/creating room
       if (payload.roomId) {
@@ -151,7 +151,7 @@ export async function handlePostMatchmaking({
 
       // Set display name and avatar
       displayName = payload.displayName;
-      avatar = `${env.BASE_FRONTEND}/avatars/default.png`;
+      avatar = "/avatars/default.png";
 
       // Set the minigame metadata information
       minigameId = minigame.id;
