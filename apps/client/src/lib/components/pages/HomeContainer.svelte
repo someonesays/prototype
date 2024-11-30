@@ -29,7 +29,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   limitJoin = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
-  const captcha = form.get("cf-turnstile-response") as string;
+  const captcha = env.TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
 
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
@@ -76,7 +76,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     <form onsubmit={joinRoom}>
       <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
       <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
-      {#if env.VITE_IS_PROD}
+      {#if env.VITE_IS_PROD && !env.TURNSTILE_BYPASS_SECRET}
         <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
       {/if}
     </form>

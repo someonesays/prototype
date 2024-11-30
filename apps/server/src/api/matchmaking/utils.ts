@@ -87,10 +87,10 @@ export async function handlePostMatchmaking({
   switch (payload.type) {
     case MatchmakingType.NORMAL: {
       // Check captcha
-      if (env.TURNSTILE_SECRET_KEY) {
+      if (env.NODE_ENV !== "development") {
         const token = c.req.header("x-captcha-token") || "";
         if (
-          (token || !env.TURNSTILE_IS_OPTIONAL) &&
+          (!env.TURNSTILE_BYPASS_SECRET || token !== env.TURNSTILE_BYPASS_SECRET) &&
           !(await verifyCaptcha({ token, secretKey: env.TURNSTILE_SECRET_KEY }))
         ) {
           return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
