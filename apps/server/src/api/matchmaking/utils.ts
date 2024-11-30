@@ -89,6 +89,8 @@ export async function handlePostMatchmaking({
       // Check captcha
       if (env.NODE_ENV !== "development") {
         if (
+          env.TURNSTILE_IS_OPTIONAL &&
+          env.TURNSTILE_SECRET_KEY &&
           !(await verifyCaptcha({
             token: c.req.header("x-captcha-token") || "",
             secretKey: env.TURNSTILE_SECRET_KEY,

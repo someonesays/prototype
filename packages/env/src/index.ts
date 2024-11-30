@@ -26,7 +26,8 @@ export default {
 
   COOKIE_SIGNATURE: process.env.COOKIE_SIGNATURE as string,
 
-  TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY as string,
+  TURNSTILE_IS_OPTIONAL: process.env.TURNSTILE_IS_OPTIONAL?.toLowerCase() === "true",
+  TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
 
   DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID as string,
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string,
