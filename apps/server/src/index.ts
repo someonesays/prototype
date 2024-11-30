@@ -1,20 +1,57 @@
 import env from "@/env";
-import cluster from "node:cluster";
+import { z } from "zod";
+import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
+import { cors } from "hono/cors";
+import { zValidator } from "@hono/zod-validator";
 
-cluster.setupPrimary({
-  exec: "src/server.ts",
+import { api } from "./api";
+import { handlePostMatchmaking, zodPostMatchmakingValidatorTesting } from "./api/matchmaking/utils";
+
+import { proxy } from "./proxy";
+
+const app = new Hono();
+
+app.route("/", proxy);
+app.route("/.proxy", proxy);
+
+app.use(
+  secureHeaders({
+    contentSecurityPolicy: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [env.BASE_FRONTEND],
+      styleSrc: [],
+      imgSrc: [],
+      fontSrc: [],
+      connectSrc: [env.BASE_FRONTEND],
+      mediaSrc: [],
+      frameSrc: [env.BASE_FRONTEND],
+      childSrc: [env.BASE_FRONTEND],
+      workerSrc: [env.BASE_FRONTEND],
+      frameAncestors: ["'none'"],
+      baseUri: ["'none'"],
+    },
+  }),
+);
+
+// I added /api/matchmaking/testing to have it's own CORS settings
+app.use("/api/matchmaking/testing", cors({ origin: "*" }));
+app.post("/api/matchmaking/testing", zValidator("json", zodPostMatchmakingValidatorTesting), async (c) => {
+  const payload = c.req.valid("json");
+  return handlePostMatchmaking({ c, payload });
 });
 
-cluster.on("exit", (worker) => {
-  console.log(`#${worker.process.pid} The worker died.`);
-  createCluster();
+app.use(
+  cors({
+    origin: env.BASE_FRONTEND,
+    maxAge: 600,
+    credentials: true,
+  }),
+);
+
+app.route("/api", api);
+
+Bun.serve({
+  port: env.PORT,
+  fetch: app.fetch,
 });
-
-for (let i = 0; i < env.CLUSTERS; ++i) {
-  createCluster();
-}
-
-function createCluster() {
-  const worker = cluster.fork();
-  console.log(`#${worker.process.pid} A worker has spawned.`);
-}
