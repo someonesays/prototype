@@ -80,7 +80,15 @@ websocket.get(
       defaultMinigame = transformMinigameToMinigamePublic(minigame);
     } else {
       const origin = c.req.header("origin");
-      if (origin && !env.ALLOWED_WS_ORIGINS.includes(origin)) return;
+      if (
+        // Allows if there is no origin
+        origin &&
+        // Allows localhost
+        !origin.startsWith("http://localhost") &&
+        // Allows anything in ALLOWED_WS_ORIGINS
+        !env.ALLOWED_WS_ORIGINS.includes(origin)
+      )
+        return;
     }
 
     // Create WebSocket events

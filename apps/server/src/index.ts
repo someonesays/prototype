@@ -15,24 +15,30 @@ const app = new Hono();
 app.route("/", proxy);
 app.route("/.proxy", proxy);
 
-app.use(
-  secureHeaders({
+app.use((c, next) => {
+  const userOrigin = c.req.header("origin");
+  let origin = env.BASE_FRONTEND;
+  if (userOrigin?.startsWith("http://localhost")) {
+    // Allow localhost to be origin
+    origin = userOrigin;
+  }
+  return secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
-      scriptSrc: [env.BASE_FRONTEND],
+      scriptSrc: [origin],
       styleSrc: [],
       imgSrc: [],
       fontSrc: [],
-      connectSrc: [env.BASE_FRONTEND],
+      connectSrc: [origin],
       mediaSrc: [],
-      frameSrc: [env.BASE_FRONTEND],
-      childSrc: [env.BASE_FRONTEND],
-      workerSrc: [env.BASE_FRONTEND],
+      frameSrc: [origin],
+      childSrc: [origin],
+      workerSrc: [origin],
       frameAncestors: ["'none'"],
       baseUri: ["'none'"],
     },
-  }),
-);
+  })(c, next);
+});
 
 // I added /api/matchmaking/testing to have it's own CORS settings
 app.use("/api/matchmaking/testing", cors({ origin: "*" }));
@@ -41,13 +47,19 @@ app.post("/api/matchmaking/testing", zValidator("json", zodPostMatchmakingValida
   return handlePostMatchmaking({ c, payload });
 });
 
-app.use(
-  cors({
-    origin: env.BASE_FRONTEND,
+app.use((c, next) => {
+  const userOrigin = c.req.header("origin");
+  let origin = env.BASE_FRONTEND;
+  if (userOrigin?.startsWith("http://localhost")) {
+    // Allow localhost to be origin
+    origin = userOrigin;
+  }
+  return cors({
+    origin,
     maxAge: 600,
     credentials: true,
-  }),
-);
+  })(c, next);
+});
 
 app.route("/api", api);
 
