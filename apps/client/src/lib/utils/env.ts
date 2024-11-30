@@ -21,5 +21,6 @@ const envs = {
 
 export default {
   VITE_IS_PROD: import.meta.env.PROD,
+  VITE_MODE: import.meta.env.MODE,
   ...envs[import.meta.env.MODE as "development" | "staging" | "production"],
 };

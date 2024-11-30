@@ -14,7 +14,7 @@ onMount(() => {
     const packsResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, { credentials: "include" });
 
     if (!minigamesResponse.ok || !packsResponse.ok) {
-      window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login`;
+      window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
       return;
     }
 

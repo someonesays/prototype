@@ -9,8 +9,9 @@ import { createUser, getUserByDiscordId } from "@/db";
 export const auth = new Hono();
 
 auth.get("/discord/login", async (c) => {
+  const local = env.NODE_ENV !== "production" && c.req.query("local")?.toLowerCase() === "true";
   const state = createCode(32);
-  await setSignedCookie(c, "auth-discord-state", state, env.COOKIE_SIGNATURE, {
+  await setSignedCookie(c, "auth-discord-state", JSON.stringify({ local, state }), env.COOKIE_SIGNATURE, {
     secure: true,
     expires: new Date(Date.now() + 60000),
   });
@@ -22,7 +23,31 @@ auth.get("/discord/login", async (c) => {
 auth.get("/discord/callback", async (c) => {
   const code = c.req.query("code");
   const state = c.req.query("state");
-  const signedState = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
+  const signedCookie = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
+
+  if (!signedCookie) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+
+  let isLocal: boolean;
+  let signedState: string;
+  try {
+    const parsedSignCookie = JSON.parse(signedCookie) as { local: boolean; state: string };
+    if (
+      typeof parsedSignCookie !== "object" ||
+      Array.isArray(parsedSignCookie) ||
+      parsedSignCookie === null ||
+      typeof parsedSignCookie.local !== "boolean" ||
+      typeof parsedSignCookie.state !== "string" ||
+      (env.NODE_ENV === "production" && parsedSignCookie.local)
+    ) {
+      throw new Error("Invalid parsed signed cookie for Discord OAuth2");
+    }
+
+    isLocal = parsedSignCookie.local;
+    signedState = parsedSignCookie.state;
+  } catch (err) {
+    console.error(err);
+    return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+  }
 
   deleteCookie(c, "auth-discord-state");
 
@@ -54,5 +79,6 @@ auth.get("/discord/callback", async (c) => {
     expires: new Date(exp * 1000),
   });
 
+  if (isLocal) return c.redirect("http://localhost:3000/developers");
   return c.redirect(`${env.BASE_FRONTEND}/developers`);
 });
