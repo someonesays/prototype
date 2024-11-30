@@ -66,7 +66,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 }
 </script>
 
-<div style="width: 50%; height: 300px;">
+<div style="width: 50%; min-height: 300px;">
   <BaseCard>
     {#if $kickedReason}
       <p class="kicked">{$kickedReason}</p>
