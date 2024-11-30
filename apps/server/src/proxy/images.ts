@@ -1,9 +1,17 @@
+import { Hono } from "hono";
+import { serveStatic } from "hono/bun";
 import { getMinigame, getPack } from "@/db";
 import { ErrorMessageCodes } from "@/public";
-import { Hono } from "hono";
 import { sendProxiedImage } from "../utils";
 
 export const images = new Hono();
+
+images.use(
+  "/avatars/*",
+  serveStatic({
+    rewriteRequestPath: (path) => path.replace(/^\/api\/images\/avatars/, "/static/avatars"),
+  }),
+);
 
 images.get("/minigames/:id/preview", async (c) => {
   const id = c.req.param("id");

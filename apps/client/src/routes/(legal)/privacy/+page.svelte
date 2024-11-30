@@ -1,8 +1,8 @@
-<script lang="ts">
-let { data } = $props();
-</script>
-
 <main>
   <p><a href="/">Back</a></p>
-  {@html data.privacyHtml}
+
+  <h1>Privacy Policy - Someone Says</h1>
+  <h2>Effective Date: [date here]</h2>
+
+  <p>This is where the Privacy Policy should be written!</p>
 </main>
