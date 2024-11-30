@@ -10,6 +10,7 @@ export const client = new pg.Client({
   user: env.DATABASE_USER,
   password: env.DATABASE_PASSWORD,
   database: env.DATABASE_NAME,
+  ssl: env.DATABASE_SSL,
 });
 
 await client.connect();

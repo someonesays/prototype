@@ -10,6 +10,7 @@ export const pool = new pg.Pool({
   user: env.DATABASE_USER,
   password: env.DATABASE_PASSWORD,
   database: env.DATABASE_NAME,
+  ssl: env.DATABASE_SSL,
 });
 
 export const db = drizzle(pool, { schema });
