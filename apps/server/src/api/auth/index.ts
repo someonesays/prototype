@@ -25,7 +25,13 @@ auth.get("/discord/callback", async (c) => {
   const state = c.req.query("state");
   const signedCookie = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
 
+  deleteCookie(c, "auth-discord-state");
+
+  console.log(1, signedCookie);
+
   if (!signedCookie) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+
+  console.log(2);
 
   let isLocal: boolean;
   let signedState: string;
@@ -42,6 +48,8 @@ auth.get("/discord/callback", async (c) => {
       throw new Error("Invalid parsed signed cookie for Discord OAuth2");
     }
 
+    console.log(3);
+
     isLocal = parsedSignCookie.local;
     signedState = parsedSignCookie.state;
   } catch (err) {
@@ -49,20 +57,26 @@ auth.get("/discord/callback", async (c) => {
     return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 
-  deleteCookie(c, "auth-discord-state");
-
   if (!code || !state || (!signedState && signedState !== state)) return c.redirect(env.BASE_FRONTEND);
+
+  console.log(4);
 
   const oauth2 = await verifyDiscordOAuth2Token(code);
   if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+
+  console.log(5);
 
   const scopes = oauth2.scope.split(" ");
   if (!scopes.includes("identify") || !scopes.includes("email")) {
     return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 
+  console.log(6);
+
   const discordUser = await getDiscordUser(oauth2.access_token);
   if (!discordUser) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
+
+  console.log(7);
 
   let cid = (await getUserByDiscordId(discordUser.id))?.id;
   if (!cid) {
@@ -72,12 +86,16 @@ auth.get("/discord/callback", async (c) => {
     });
   }
 
+  console.log(8);
+
   const exp = Math.trunc(Date.now() / 1000 + 86400); // 1 day
   const authorization = await sign({ type: "token", cid, exp }, env.JWT_SECRET);
   await setSignedCookie(c, "token", authorization, env.COOKIE_SIGNATURE, {
     secure: true,
     expires: new Date(exp * 1000),
   });
+
+  console.log(9);
 
   if (isLocal) return c.redirect("http://localhost:3000/developers");
   return c.redirect(`${env.BASE_FRONTEND}/developers`);
