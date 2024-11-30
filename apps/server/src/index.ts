@@ -18,6 +18,7 @@ app.route("/.proxy", proxy);
 app.use((c, next) => {
   const userOrigin = c.req.header("origin");
   let origin = env.BASE_FRONTEND;
+  console.log(userOrigin, env.NODE_ENV);
   if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
     // Allow localhost to be origin for development and staging
     origin = userOrigin;
