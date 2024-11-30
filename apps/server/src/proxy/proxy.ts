@@ -93,7 +93,8 @@ proxy.all(route, async (c) => {
 async function getProxy(c: Context<BlankEnv, typeof route>) {
   const minigameId = c.req.param("minigameId");
   const minigame = await getMinigame(minigameId);
-  if (!minigame) throw new Error("Invalid minigame ID");
+
+  if (!minigame?.proxyUrl) throw new Error("Invalid minigame ID or missing proxy URL");
 
   const absolutePath = `/.proxy/api/proxy/${minigame.id}/`;
   const query = Object.entries(c.req.query()).length ? `?${new URLSearchParams(c.req.query())}` : "";

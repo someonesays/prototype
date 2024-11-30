@@ -17,7 +17,7 @@ export interface Minigame {
   proxies: {
     normal: string;
     discord: string;
-  };
+  } | null;
   minimumPlayersToStart: number;
   supportsMobile: boolean;
   privacyPolicy: string | null;

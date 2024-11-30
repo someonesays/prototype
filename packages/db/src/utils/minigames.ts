@@ -114,10 +114,12 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
       name: minigame.author.name,
       createdAt: minigame.author.createdAt.toString(),
     },
-    proxies: {
-      normal: `${env.BASE_API}/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
-      discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
-    },
+    proxies: minigame.proxyUrl
+      ? {
+          normal: `${env.BASE_API}/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
+        }
+      : null,
     previewImage: minigame.previewImage
       ? {
           normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/preview`,
