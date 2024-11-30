@@ -87,16 +87,14 @@ export async function handlePostMatchmaking({
   switch (payload.type) {
     case MatchmakingType.NORMAL: {
       // Check captcha
-      if (env.NODE_ENV !== "development") {
+      if (env.TURNSTILE_SECRET_KEY) {
+        const token = c.req.header("x-captcha-token") || "";
         if (
-          env.TURNSTILE_IS_OPTIONAL &&
-          env.TURNSTILE_SECRET_KEY &&
-          !(await verifyCaptcha({
-            token: c.req.header("x-captcha-token") || "",
-            secretKey: env.TURNSTILE_SECRET_KEY,
-          }))
-        )
+          (token || !env.TURNSTILE_IS_OPTIONAL) &&
+          !(await verifyCaptcha({ token, secretKey: env.TURNSTILE_SECRET_KEY }))
+        ) {
           return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
+        }
       }
 
       // Set display name and avatar
