@@ -18,6 +18,7 @@ let { children } = $props();
     height: 100%;
     top: 0;
     overflow: auto;
+    word-wrap: break-word;
   }
   .pattern {
     position: relative;
