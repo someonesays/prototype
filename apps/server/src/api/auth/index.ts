@@ -27,13 +27,11 @@ auth.get("/discord/callback", async (c) => {
   const state = c.req.query("state");
   const signedCookie = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
 
-  console.log(1, signedCookie);
-
   deleteCookie(c, "auth-discord-state");
 
   if (!signedCookie) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
-  let isLocal: boolean;
+  let local: boolean;
   let signedState: string;
   try {
     const parsedSignCookie = JSON.parse(signedCookie) as { local: boolean; state: string };
@@ -48,7 +46,7 @@ auth.get("/discord/callback", async (c) => {
       throw new Error("Invalid parsed signed cookie for Discord OAuth2");
     }
 
-    isLocal = parsedSignCookie.local;
+    local = parsedSignCookie.local;
     signedState = parsedSignCookie.state;
   } catch (err) {
     console.error(err);
@@ -57,7 +55,12 @@ auth.get("/discord/callback", async (c) => {
 
   if (!code || !state || (!signedState && signedState !== state)) return c.redirect(env.BASE_FRONTEND);
 
-  const oauth2 = await verifyDiscordOAuth2Token(code);
+  const oauth2 = await verifyDiscordOAuth2Token({
+    clientId: env.DISCORD_CLIENT_ID,
+    clientSecret: env.DISCORD_CLIENT_SECRET,
+    redirectUri: local ? "http://localhost:3000/api/auth/discord/callback" : env.DISCORD_REDIRECT_URI,
+    code,
+  });
   if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
   const scopes = oauth2.scope.split(" ");
@@ -83,6 +86,6 @@ auth.get("/discord/callback", async (c) => {
     expires: new Date(exp * 1000),
   });
 
-  if (isLocal) return c.redirect("http://localhost:3000/developers");
+  if (local) return c.redirect("http://localhost:3000/developers");
   return c.redirect(`${env.BASE_FRONTEND}/developers`);
 });

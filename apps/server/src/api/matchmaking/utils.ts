@@ -177,7 +177,12 @@ export async function handlePostMatchmaking({
 
       const { instanceId, code } = payload;
 
-      const oauth2 = await verifyDiscordOAuth2Token(code);
+      const oauth2 = await verifyDiscordOAuth2Token({
+        clientId: env.DISCORD_CLIENT_ID,
+        clientSecret: env.DISCORD_CLIENT_SECRET,
+        redirectUri: env.DISCORD_REDIRECT_URI,
+        code,
+      });
       if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       const scopes = oauth2.scope.split(" ");

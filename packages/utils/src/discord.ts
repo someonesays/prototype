@@ -1,15 +1,20 @@
 import env from "@/env";
 
-export async function verifyDiscordOAuth2Token(code: string) {
+export async function verifyDiscordOAuth2Token({
+  clientId,
+  clientSecret,
+  redirectUri,
+  code,
+}: { clientId: string; clientSecret: string; redirectUri: string; code: string }) {
   const res = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: {
       "content-type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({
-      client_id: env.DISCORD_CLIENT_ID,
-      client_secret: env.DISCORD_CLIENT_SECRET,
-      redirect_uri: env.DISCORD_REDIRECT_URI,
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri,
       grant_type: "authorization_code",
       code,
     }),
