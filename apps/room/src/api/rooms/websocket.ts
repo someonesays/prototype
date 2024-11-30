@@ -53,12 +53,15 @@ websocket.get(
   "/",
   createWebSocketMiddleware(async (c) => {
     const protocol = c.req.header("sec-websocket-protocol");
+    console.log(1);
     if (!protocol) return;
 
     let [authorization, messageType = "Oppack"] = protocol.split(",").map((v) => v.trim());
+    console.log(2);
     if (!["Json", "Oppack"].includes(messageType)) return;
 
     const { type, user, room, metadata, iat } = (await verify(authorization.trim(), env.JWT_SECRET)) as MatchmakingDataJWT;
+    console.log(3);
     if (type !== "matchmaking" || room.server.id !== env.SERVER_ID || serverStarted > iat) return;
 
     // Double-checks the metadata for testing servers
@@ -80,8 +83,11 @@ websocket.get(
       defaultMinigame = transformMinigameToMinigamePublic(minigame);
     } else {
       const origin = c.req.header("origin");
+      console.log(3);
       if (origin && !env.ALLOWED_WS_ORIGINS.includes(origin)) return;
     }
+
+    console.log(4);
 
     // Create WebSocket events
     const websocketEvents: WebSocketMiddlewareEvents = {
