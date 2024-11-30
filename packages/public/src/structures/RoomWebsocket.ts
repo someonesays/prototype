@@ -38,10 +38,7 @@ export class RoomWebsocket {
     baseUrl,
   }: {
     auth?: string;
-    captcha: {
-      type: "invisible" | "managed";
-      token: string;
-    };
+    captcha: string;
     displayName: string;
     location?: MatchmakingLocation;
     roomId?: string;
@@ -54,8 +51,7 @@ export class RoomWebsocket {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-captcha-type": captcha.type,
-          "x-captcha-token": captcha.token,
+          "x-captcha-token": captcha,
         },
         body: JSON.stringify({
           type: MatchmakingType.NORMAL,

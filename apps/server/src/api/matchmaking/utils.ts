@@ -88,12 +88,10 @@ export async function handlePostMatchmaking({
     case MatchmakingType.NORMAL: {
       // Check captcha
       if (env.NODE_ENV !== "development") {
-        const captchaType = c.req.header("X-Captcha-Type") || "invisible";
         if (
-          !["invisible", "managed"].includes(captchaType) ||
           !(await verifyCaptcha({
-            token: c.req.header("X-Captcha-Token") || "",
-            secretKey: captchaType === "invisible" ? env.TURNSTILE_SECRET_KEY_INVISIBLE : env.TURNSTILE_SECRET_KEY_MANAGED,
+            token: c.req.header("x-captcha-token") || "",
+            secretKey: env.TURNSTILE_SECRET_KEY,
           }))
         )
           return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
