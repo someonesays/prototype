@@ -121,6 +121,13 @@ userMinigames.delete("/:id", authMiddleware, async (c) => {
   const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
   if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
+  const bestServer = await findBestTestingServerByHashAndLocation({ id: minigame.id, location: minigame.testingLocation });
+
   await deleteMinigameWithAuthorId({ id, authorId: c.var.user.id });
+
+  if (bestServer) {
+    await resetRoom({ url: bestServer.url, roomId: `testing:${id}` });
+  }
+
   return c.json({ success: true });
 });
