@@ -35,7 +35,7 @@ export default {
   DISCORD_TOKEN: process.env.DISCORD_TOKEN as string,
 
   REDIS_PORT: Number(process.env.REDIS_PORT || "6379"),
-  REDIS_HOST: process.env.REDIS_HOST ?? "127.0.0.1",
+  REDIS_HOST: process.env.REDIS_HOST,
   REDIS_USERNAME: process.env.REDIS_USERNAME,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD,
   REDIS_DB: Number(process.env.REDIS_DB ?? "0"),
