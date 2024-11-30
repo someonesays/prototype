@@ -145,8 +145,8 @@ export function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeo
     },
     iconImage: pack.iconImage
       ? {
-          normal: `${env.BASE_API}/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
-          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/packs/${encodeURIComponent(pack.id)}/images/icon`,
+          normal: `${env.BASE_API}/api/images/packs/${encodeURIComponent(pack.id)}/icon`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/packs/${encodeURIComponent(pack.id)}/icon`,
         }
       : null,
     createdAt: pack.createdAt.toString(),

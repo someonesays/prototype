@@ -120,8 +120,8 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     },
     previewImage: minigame.previewImage
       ? {
-          normal: `${env.BASE_API}/api/minigames/${encodeURIComponent(minigame.id)}/images/preview`,
-          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/minigames/${encodeURIComponent(minigame.id)}/images/preview`,
+          normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/preview`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/minigames/${encodeURIComponent(minigame.id)}/preview`,
         }
       : null,
     minimumPlayersToStart: minigame.minimumPlayersToStart,

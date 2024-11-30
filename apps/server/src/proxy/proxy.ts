@@ -15,13 +15,6 @@ proxy.use(route, async (c, next) => {
   if (!fetchMetadata) return c.text("Missing Sec-Fetch-Dest header. Have you updated your browser?", 401);
   if (fetchMetadata === "document") return c.text("Cannot access page as a document.", 401);
 
-  let origin = env.BASE_FRONTEND;
-  const userOrigin = c.req.header("origin");
-  if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
-    // Allow localhost to be origin for development and staging
-    origin = userOrigin;
-  }
-
   return secureHeaders({
     originAgentCluster: "",
     contentSecurityPolicy: {
@@ -55,7 +48,7 @@ proxy.use(route, async (c, next) => {
       frameSrc: [proxyHref],
       childSrc: [proxyHref, "blob:"],
       workerSrc: [proxyHref, "blob:"],
-      frameAncestors: ["'self'", origin],
+      frameAncestors: ["'self'", env.BASE_FRONTEND],
       baseUri: ["'self'"],
     },
     xFrameOptions: "",

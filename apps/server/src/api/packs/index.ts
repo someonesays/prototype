@@ -24,12 +24,3 @@ packs.get("/:id/minigames", async (c) => {
   const minigames = await getPackMinigamesPublic({ id, offset, limit });
   return c.json(minigames);
 });
-
-packs.get("/:id/images/icon", async (c) => {
-  const id = c.req.param("id");
-
-  const pack = await getPack(id);
-  if (!pack?.iconImage) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
-
-  return sendProxiedImage(c, pack.iconImage);
-});
