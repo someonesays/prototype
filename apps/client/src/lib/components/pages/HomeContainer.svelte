@@ -13,9 +13,6 @@ import { isMobileOrTablet } from "$lib/utils/mobile";
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
 
-let visibleCaptcha = $state(true);
-let enableJoinButton = $state(!env.VITE_IS_PROD);
-
 let limitJoin = $state(false);
 
 // Remove kicked reason if you leave the page
@@ -32,7 +29,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   limitJoin = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
-  const token = form.get("cf-turnstile-response") as string;
+  const captcha = form.get("cf-turnstile-response") as string;
 
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
@@ -43,10 +40,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     code,
     data: matchmaking,
   } = await RoomWebsocket.getMatchmaking({
-    captcha: {
-      type: visibleCaptcha ? "managed" : "invisible",
-      token,
-    },
+    captcha,
     displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
@@ -70,15 +64,6 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   // Goto to room page
   goto(`/rooms/${encodeURIComponent($roomIdToJoin ?? "new")}`);
 }
-
-function showCaptcha() {
-  visibleCaptcha = true;
-  setJoinButtonState(true);
-}
-
-function setJoinButtonState(state: boolean) {
-  enableJoinButton = state;
-}
 </script>
 
 <div style="width: 50%; height: 300px;">
@@ -90,13 +75,9 @@ function setJoinButtonState(state: boolean) {
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
       <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
-      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={!enableJoinButton}><br>
+      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
       {#if env.VITE_IS_PROD}
-        {#if visibleCaptcha}
-          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_MANAGED} />
-        {:else}
-          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => setJoinButtonState(true)} on:error={showCaptcha} on:expired={showCaptcha} />
-        {/if}
+        <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
       {/if}
     </form>
 
