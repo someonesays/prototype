@@ -121,10 +121,6 @@ function leaveGame() {
       <input type="text" name="minigame_id" placeholder="Minigame ID">
       <input type="submit" value="Set pack/minigame">
     </form>
-    <ul>
-      <li>Testing Pack ID: <code>aq23ndwgztlt16vjwz</code></li>
-      <li>Testing Minigame ID: <code>whwj9rs8vvd6alyznh</code></li>
-    </ul>
   {/if}
 
   <h2>Actions</h2>
