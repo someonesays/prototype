@@ -18,8 +18,8 @@ app.route("/.proxy", proxy);
 app.use((c, next) => {
   const userOrigin = c.req.header("origin");
   let origin = env.BASE_FRONTEND;
-  if (userOrigin?.startsWith("http://localhost")) {
-    // Allow localhost to be origin
+  if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
+    // Allow localhost to be origin for development and staging
     origin = userOrigin;
   }
   return secureHeaders({
@@ -50,8 +50,8 @@ app.post("/api/matchmaking/testing", zValidator("json", zodPostMatchmakingValida
 app.use((c, next) => {
   const userOrigin = c.req.header("origin");
   let origin = env.BASE_FRONTEND;
-  if (userOrigin?.startsWith("http://localhost")) {
-    // Allow localhost to be origin
+  if (env.NODE_ENV !== "production" && userOrigin?.startsWith("http://localhost")) {
+    // Allow localhost to be origin for development and staging
     origin = userOrigin;
   }
   return cors({

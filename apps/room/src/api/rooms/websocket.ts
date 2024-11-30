@@ -83,8 +83,8 @@ websocket.get(
       if (
         // Allows if there is no origin
         origin &&
-        // Allows localhost
-        !origin.startsWith("http://localhost") &&
+        // Allows localhost for development and staging
+        (env.NODE_ENV !== "production" || !origin.startsWith("http://localhost")) &&
         // Allows anything in ALLOWED_WS_ORIGINS
         !env.ALLOWED_WS_ORIGINS.includes(origin)
       )
