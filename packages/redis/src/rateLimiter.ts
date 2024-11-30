@@ -24,8 +24,7 @@ export class RateLimiter {
    * @returns A boolean representing if the user passed the rate limit or not
    */
   async check(key: string) {
-    const value = (await redis.incr(`${this.keyspace}:${key}`)) <= this.maximum;
-    await redis.expire(`${this.keyspace}:${key}`, this.interval, "NX");
-    return value;
+    const value = (await redis.multi().incr(key).expire(key, this.interval).exec()) as [[null, number], [null, number]];
+    return value[0][1] <= this.maximum;
   }
 }
