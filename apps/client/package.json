@@ -5,9 +5,9 @@
   "scripts": {
     "start": "wrangler pages dev build --port 3000",
     "dev": "vite dev",
-    "build": "NODE_ENV=production bun utils/copyHeaders.ts && vite build --mode production && bun utils/deleteHeaders.ts",
-    "build/staging": "NODE_ENV=staging bun utils/copyHeaders.ts && vite build --mode staging && bun utils/deleteHeaders.ts",
-    "build/dev": "NODE_ENV=development bun utils/copyHeaders.ts && vite build --mode development && bun utils/deleteHeaders.ts",
+    "build": "NODE_ENV=production bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
+    "build/staging": "NODE_ENV=staging bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
+    "build/dev": "NODE_ENV=development bun utils/copyHeaders.ts && vite build && bun utils/deleteHeaders.ts",
     "preview": "vite preview",
     "format": "cd ../../ && bun format"
   },
