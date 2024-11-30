@@ -13,8 +13,3 @@ export const redis = new Redis({
 redis.on("error", (err) => {
   console.error(err);
 });
-
-// Upstrash free plan fix
-setInterval(() => {
-  redis.ping();
-}, 5000);
