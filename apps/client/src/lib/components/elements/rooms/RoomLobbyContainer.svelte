@@ -1,4 +1,5 @@
 <script lang="ts">
+import Logo from "$lib/components/icons/Logo.svelte";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
 import { room, roomWs } from "$lib/components/stores/roomState";
 import { ClientOpcodes } from "@/public";
@@ -69,6 +70,12 @@ function leaveGame() {
 </script>
 
 {#if $room}
+  <div>
+    <div style="width: 180px">
+      <Logo />
+    </div>
+  </div>
+
   <h2>Players</h2>
   <ul>
     {#each $room.players.sort((a, b) => b.points - a.points) as player}
