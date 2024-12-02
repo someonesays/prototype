@@ -73,33 +73,6 @@ let { children } = $props();
       transform: scale(1.5);
     }
   }
-
-.screen-too-small {
-  position: absolute;
-  top: 0;
-  color: white;
-  display: none;
-  text-align: center;
-}
-
-@media only screen and (width < 320px) {
-  .container {
-    background: black;
-  }
-  .pattern {
-    display: none;
-  }
-  .glow {
-    display: none;
-  }
-  .child-container {
-    display: none;
-  }
-  .screen-too-small {
-    display: block;
-  }
-}
-
 </style>
 
 <div class="container">
@@ -108,8 +81,5 @@ let { children } = $props();
 
   <div class="child-container">
     {@render children()}
-  </div>
-  <div class="screen-too-small">
-    <p>Your screen's width must be at least 320px!</p>
   </div>
 </div>
