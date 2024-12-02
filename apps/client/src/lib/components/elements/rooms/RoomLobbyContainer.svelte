@@ -70,9 +70,19 @@ function leaveGame() {
 </script>
 
 {#if $room}
-  <div>
-    <div style="width: 180px">
-      <Logo />
+  <div class="nav-container">
+    <div class="nav">
+      <div class="left">
+        left
+      </div>
+      <div class="center">
+        <div class="logo">
+          <Logo />
+        </div>
+      </div>
+      <div class="right">
+        right
+      </div>
     </div>
   </div>
 
@@ -144,3 +154,45 @@ function leaveGame() {
 {:else}
   <p>TODO: Make a loading screen animation of the lobby here!</p>
 {/if}
+
+<style>
+.nav-container {
+  display: flex;
+  justify-content: center;
+}
+.nav {
+  display: flex;
+  width: 80%;
+}
+.nav > .left {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.nav > .center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav > .right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.logo {
+  width: calc(120px + 4vh);
+}
+
+@media only screen and (max-width: 480px) {
+  .nav {
+    display: flex;
+    width: 100%;
+  }
+  .logo {
+    display :none;
+  }
+}
+</style>
