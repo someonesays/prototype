@@ -187,6 +187,7 @@ function leaveGame() {
   overflow-wrap: anywhere;
 }
 .content-container {
+  height: calc(100% - 8vh);
   margin: 4vh;
 }
 .nav-container {
@@ -225,6 +226,10 @@ function leaveGame() {
 }
 
 @media only screen and (max-width: 480px) {
+  .content-container {
+    height: calc(100% - 4vh);
+    margin: 2vh;
+  }
   .nav-container {
     display: flex;
     width: 100%;
