@@ -17,6 +17,7 @@ import "$lib/styles/index.css";
     --success-button: #23a55a;
     --error-button: #aa0e32;
     --secondary-button: #4c5660;
+    --leave-button: #f23f43;
 
     --error-button-hover: #850725;
 
@@ -35,6 +36,6 @@ import "$lib/styles/index.css";
   }
   :global(body) {
     background-color: #000000;
-    color: #ffffff;
+    color: var(--secondary);
   }
 </style>
