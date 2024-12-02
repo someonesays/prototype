@@ -66,6 +66,7 @@ onMount(() => {
     });
   });
 
+  if (!$room.minigame.proxies) throw new Error("Minigame 'proxies' is not defined. This should never happen.");
   iframe.src = $launcher === "normal" ? $room.minigame.proxies.normal : $room.minigame.proxies.discord;
 
   return () => {
