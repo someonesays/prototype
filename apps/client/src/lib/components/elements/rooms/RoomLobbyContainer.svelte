@@ -83,12 +83,18 @@ function leaveGame() {
           <button class="button leave" onclick={leaveGame}>
             <div><DoorOpen /></div>
           </button>
+        {:else}
+          <div class="logo">
+            <Logo />
+          </div>
         {/if}
       </div>
       <div class="center">
-        <div class="logo">
-          <Logo />
-        </div>
+        {#if $launcher === "normal"}
+          <div class="logo">
+            <Logo />
+          </div>
+        {/if}
       </div>
       <div class="right">
         <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
