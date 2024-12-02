@@ -158,6 +158,7 @@ function leaveGame() {
 <style>
 .nav-container {
   display: flex;
+  align-content: center;
   justify-content: center;
 }
 .nav {
