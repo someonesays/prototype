@@ -4,7 +4,7 @@ import env from "$lib/utils/env";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
-import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
+import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
@@ -53,7 +53,9 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     // Allow clicking join again
     limitJoin = false;
     // Set kick reason
-    saveSamePageKickedReason = `Failed to connect to matchmaking: ${ErrorMessageCodesToText[code]}`;
+    $kickedReason = saveSamePageKickedReason = `Failed to connect to server: ${ErrorMessageCodesToText[code]}`;
+    // If is ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT, don't go to "/".
+    if (code === ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT) return;
     // Redirect page to "/" if it's not already that
     if (location.pathname !== "/") goto("/");
     return;
