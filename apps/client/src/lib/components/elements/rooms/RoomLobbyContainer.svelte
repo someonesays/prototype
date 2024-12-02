@@ -205,7 +205,7 @@ function leaveGame() {
   row-gap: 2vh;
 }
 .minigame-container {
-  width: 100vh;
+  width: 100vh; /* todo: this is bad do not keep this get a proper ui designer */
 }
 
 .logo {
