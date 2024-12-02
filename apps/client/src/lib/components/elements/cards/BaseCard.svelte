@@ -8,7 +8,5 @@
     color: var(--primary-text);
     border-radius: 15px;
     padding: 5px;
-    width: 100%;
-    height: 100%;
   }
 </style>
