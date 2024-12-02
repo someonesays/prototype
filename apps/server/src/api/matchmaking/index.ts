@@ -16,8 +16,8 @@ matchmaking.get("/", async (c) => {
   let roomId = c.req.query("roomId");
   if (roomId?.length !== 10) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
 
-  const server = await findServerByRoomIfExists(roomId);
-  if (!server) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
+  const roomExistsData = await findServerByRoomIfExists(roomId);
+  if (!roomExistsData?.exists) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
 
   return c.json({ success: true });
 });

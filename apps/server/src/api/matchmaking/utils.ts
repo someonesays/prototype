@@ -104,8 +104,12 @@ export async function handlePostMatchmaking({
       // Handle finding/creating room
       if (payload.roomId) {
         roomId = payload.roomId;
-        server = await findServerByRoomIfExists(roomId);
-        if (!server) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
+
+        const roomExistsData = await findServerByRoomIfExists(roomId);
+        if (!roomExistsData?.exists) return c.json({ code: ErrorMessageCodes.ROOM_NOT_FOUND }, 404);
+        if (roomExistsData.reachedMaxPlayers) return c.json({ code: ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT }, 403);
+
+        server = roomExistsData.server;
       } else {
         if (!payload.location) return c.json({ code: ErrorMessageCodes.MISSING_LOCATION }, 400);
 
@@ -127,9 +131,9 @@ export async function handlePostMatchmaking({
           roomId = encodeRoomId(bestServer.id);
 
           // Check if room ID is already taken on the server
-          const [success, { exists }] = await checkIfRoomExists({ url: bestServer.url, roomId });
-          if (!success) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 500);
-          if (!exists) {
+          const data = await checkIfRoomExists({ url: bestServer.url, roomId });
+          if (!data) return c.json({ code: ErrorMessageCodes.SERVERS_BUSY }, 500);
+          if (!data?.exists) {
             server = { id: bestServer.id, url: bestServer.ws, location: bestServer.location };
             break;
           }
@@ -268,8 +272,12 @@ export async function findServerByRoomIfExists(roomId: string) {
   const server = await getServerById(serverId);
   if (!server?.ws) return null; // Checks for .ws because it can be null
 
-  const [success, { exists }] = await checkIfRoomExists({ url: server.url, roomId });
-  if (!success || !exists) return null;
+  const data = await checkIfRoomExists({ url: server.url, roomId });
+  if (!data) return null;
 
-  return { id: serverId, url: server.ws, location: server.location };
+  return {
+    exists: data.exists,
+    reachedMaxPlayers: data.reachedMaxPlayers,
+    server: { id: serverId, url: server.ws, location: server.location },
+  };
 }

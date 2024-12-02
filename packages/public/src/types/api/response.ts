@@ -6,4 +6,5 @@ export interface ApiErrorResponse {
 
 export interface ApiRoomExists {
   exists: boolean;
+  reachedMaxPlayers: boolean;
 }
