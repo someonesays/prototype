@@ -75,39 +75,39 @@ function leaveGame() {
 }
 </script>
 
-{#if $room}
-  <div class="app-container">
-    <div class="content-container">
-      <div class="nav-container">
-        <div class="left">
-          {#if $launcher === "normal"}
-            <button class="button leave" onclick={leaveGame}>
-              <div><DoorOpen /></div>
-            </button>
-          {/if}
-        </div>
-        <div class="center">
-          <div class="logo">
-            <Logo />
-          </div>
-        </div>
-        <div class="right">
-          <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
-            <div><GearIcon /></div>
+<div class="app-container">
+  <div class="content-container">
+    <div class="nav-container">
+      <div class="left">
+        {#if $launcher === "normal"}
+          <button class="button leave" onclick={leaveGame}>
+            <div><DoorOpen /></div>
           </button>
-          <div class="settings-menu" class:active={isSettingsOpen}>
+        {/if}
+      </div>
+      <div class="center">
+        <div class="logo">
+          <Logo />
+        </div>
+      </div>
+      <div class="right">
+        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
+          <div><GearIcon /></div>
+        </button>
+        <div class="settings-menu" class:active={isSettingsOpen}>
+          <div>
             <div>
-              <div>
-                <p class="volume-text-left">Volume</p>
-                <p class="volume-text-right">{$volumeValue}%</p>
-              </div>
-              <br>
+              <p class="volume-text-left">Volume</p>
+              <p class="volume-text-right">{$volumeValue}%</p>
+            </div>
+            <br>
               <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
             </div>
           </div>
         </div>
-      </div>
-      <div class="main-container">
+    </div>
+    <div class="main-container">
+      {#if $room}
         <h2>Players</h2>
         <ul>
           {#each $room.players.sort((a, b) => b.points - a.points) as player}
@@ -170,12 +170,12 @@ function leaveGame() {
           <button onclick={copyInviteLink}>Invite</button>
           <button onclick={startGame} disabled={$room.room.host !== $room.user}>Start</button>
         </p>
-      </div>
+      {:else}
+        <p>TODO: Make a loading screen animation of the lobby here!</p>
+      {/if}
     </div>
   </div>
-{:else}
-  <p>TODO: Make a loading screen animation of the lobby here!</p>
-{/if}
+</div>
 
 <style>
 .app-container {

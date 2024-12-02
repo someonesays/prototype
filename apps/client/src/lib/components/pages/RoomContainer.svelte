@@ -19,6 +19,7 @@ import {
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
+
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
 import { RPCCloseCodes } from "@discord/embedded-app-sdk";
@@ -232,9 +233,10 @@ onMount(() => {
       const { code } = JSON.parse(evt.reason) as ApiErrorResponse;
 
       if (connected) return kick(ErrorMessageCodesToText[code]);
+
       return kick(`Failed to connect to server: ${ErrorMessageCodesToText[code]}`);
     } catch (err) {
-      if (connected) return kick("Disconnected!");
+      if (connected || !evt.reason) return kick("Disconnected!");
 
       console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
       return kick(`Failed to connect to server: ${evt.reason}`);
