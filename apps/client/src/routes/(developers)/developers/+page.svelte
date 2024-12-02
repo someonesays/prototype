@@ -3,6 +3,7 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
+import { getCookie } from "$lib/utils/cookies";
 import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
 
 let minigames = $state<ApiGetUserMinigames>({ offset: 0, limit: 0, total: 0, minigames: [] });
@@ -10,8 +11,12 @@ let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] }
 
 onMount(() => {
   (async () => {
-    const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, { credentials: "include" });
-    const packsResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, { credentials: "include" });
+    const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
+      headers: { authorization: getCookie("token") },
+    });
+    const packsResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
+      headers: { authorization: getCookie("token") },
+    });
 
     if (!minigamesResponse.ok || !packsResponse.ok) {
       window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
@@ -26,11 +31,10 @@ onMount(() => {
 async function createMinigame() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { authorization: getCookie("token"), "content-type": "application/json" },
     body: JSON.stringify({
       name: "[add your minigame name here]",
     }),
-    credentials: "include",
   });
   if (!res.ok) return alert("Failed to create minigame");
 
@@ -41,11 +45,10 @@ async function createMinigame() {
 async function createPack() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { authorization: getCookie("token"), "content-type": "application/json" },
     body: JSON.stringify({
       name: "[add your pack name here]",
     }),
-    credentials: "include",
   });
   if (!res.ok) return alert("Failed to create pack");
 
@@ -56,7 +59,7 @@ async function createPack() {
 async function logoutAllSessions() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/sessions`, {
     method: "DELETE",
-    credentials: "include",
+    headers: { authorization: getCookie("token") },
   });
   if (!res.ok) return alert("Failed to logout of all sessions");
 

@@ -11,8 +11,7 @@ export const authMiddleware = createMiddleware<{
   };
 }>(async (c, next) => {
   try {
-    const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
-
+    const authorization = c.req.header("authorization") || "";
     const { type, cid, iat } = (await verify(authorization, env.JWT_SECRET)) as {
       type: "token";
       cid: string;

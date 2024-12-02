@@ -1,6 +1,6 @@
 import env from "@/env";
 import { Hono } from "hono";
-import { getSignedCookie, setSignedCookie, deleteCookie } from "hono/cookie";
+import { getSignedCookie, setCookie, setSignedCookie, deleteCookie } from "hono/cookie";
 import { sign } from "hono/jwt";
 import { ErrorMessageCodes } from "@/public";
 import { createCode, getDiscordUser, verifyDiscordOAuth2Token } from "@/utils";
@@ -79,14 +79,10 @@ auth.get("/discord/callback", async (c) => {
     });
   }
 
-  
   const iat = Math.trunc(Date.now() / 1000);
   const exp = iat + 86400; // 1 day
   const authorization = await sign({ type: "token", cid, iat, exp }, env.JWT_SECRET);
-  await setSignedCookie(c, "token", authorization, env.COOKIE_SIGNATURE, {
-    secure: true,
-    expires: new Date(exp * 1000),
-  });
+  setCookie(c, "token", authorization, { secure: true });
 
   if (local) return c.redirect("http://localhost:3000/developers");
   return c.redirect(`${env.BASE_FRONTEND}/developers`);

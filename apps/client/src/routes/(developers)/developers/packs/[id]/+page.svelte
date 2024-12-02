@@ -4,6 +4,7 @@ import env from "$lib/utils/env";
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { page } from "$app/stores";
+import { getCookie } from "$lib/utils/cookies";
 import type { ApiGetUserPack, ApiGetUserPackMinigames } from "@/public";
 
 const packId = $page.params.id;
@@ -19,12 +20,12 @@ onMount(() => {
 
 async function refreshStates() {
   const packResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(packId)}`, {
-    credentials: "include",
+    headers: { authorization: getCookie("token") },
   });
   const packMinigamesResponse = await fetch(
     `${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(packId)}/minigames`,
     {
-      credentials: "include",
+      headers: { authorization: getCookie("token") },
     },
   );
   if (!packResponse.ok || !packMinigamesResponse.ok) return false;
@@ -45,9 +46,8 @@ async function savePack(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(pack.id)}`, {
     method: "PATCH",
-    headers: { "content-type": "application/json" },
+    headers: { authorization: getCookie("token"), "content-type": "application/json" },
     body: input,
-    credentials: "include",
   });
 
   alert(await res.text());
@@ -59,7 +59,7 @@ async function deletePack() {
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(pack.id)}`, {
     method: "DELETE",
-    credentials: "include",
+    headers: { authorization: getCookie("token") },
   });
   const output = await res.json();
 
@@ -82,7 +82,7 @@ async function addMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HTM
     `${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(pack.id)}/minigames/${encodeURIComponent(id)}`,
     {
       method: "POST",
-      credentials: "include",
+      headers: { authorization: getCookie("token") },
     },
   );
 
@@ -102,7 +102,7 @@ async function removeMinigame(evt: SubmitEvent & { currentTarget: EventTarget & 
     `${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(pack.id)}/minigames/${encodeURIComponent(id)}`,
     {
       method: "DELETE",
-      credentials: "include",
+      headers: { authorization: getCookie("token") },
     },
   );
 
