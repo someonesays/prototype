@@ -113,7 +113,7 @@ function leaveGame() {
       </BaseCard>
     </div>
     <div class="right options-container">
-      <div>
+      <div class="minigame-container">
         <BaseCard>
           <h2>Minigame information</h2>
           <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
@@ -203,6 +203,9 @@ function leaveGame() {
   justify-content: center;
   align-items: center;
   row-gap: 2vh;
+}
+.minigame-container {
+  width: 100vh;
 }
 
 .logo {
