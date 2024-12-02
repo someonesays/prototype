@@ -100,7 +100,7 @@ function leaveOrEndGame() {
     </div>
   </div>
   <div class="minigame-settings">
-    <div class="minigame-settings-menu" class:minigame-settings-menu-active={isSettingsOpen}>
+    <div class="settings-menu" class:active={isSettingsOpen}>
       <div>
         <div>
           <p class="volume-text-left">Volume</p>
@@ -120,7 +120,7 @@ function leaveOrEndGame() {
         {/if}
       </div>
     </div>
-    <button class="minigame-settings-button" class:minigame-settings-button-active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
+    <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
       <div><GearIcon /></div>
     </button>
   </div>
@@ -218,93 +218,8 @@ function leaveOrEndGame() {
     right: calc(16px + 0.5vh);
     bottom: calc(16px + 0.5vh);
   }
-  .minigame-settings-menu {
-    display: none;
+  .settings-menu {
     margin-bottom: 12px;
-  }
-  .minigame-settings-menu p {
-    margin: 0;
-  }
-  .minigame-settings-menu-active {
-    display: block;
-    border-radius: 2px;
-    background-color: var(--settings-button);
-    border: 1px solid #242424;
-    box-shadow: #64646f33 0px 7px 29px 0px;
-    padding: 18px 12px;
-    width: 250px;
-    font-size: 16px;
-  }
-  .volume-text-left {
-    float: left;
-  }
-  .volume-text-right {
-    float: right;
-  }
-  .minigame-settings-button {
-    background-color: var(--settings-button);
-    border: 2px #4a5259 solid;
-    border-radius: calc(4px + 0.5vh);
-    box-shadow: #64646f33 0px 7px 29px 0px;
-    padding: 0px;
-    float: right;
-    cursor: pointer;
-    width: calc(40px + 0.5vh);
-    height: calc(40px + 0.5vh);
-    transition: box-shadow .5s ease-out;
-  }
-  .minigame-settings-button div {
-    margin: 25%;
-    width: 50%;
-    height: 50%;
-    transition: transform .5s ease-out;
-  }
-  .minigame-settings-button-active {
-    background-color: #4a5259;
-  }
-  .volume-slider {
-    --slider_activecolor: #1971c2;
-    --slider_linethickness: 4px;
-    --slider_thumbsize: 16px;
-    --slider_colormix: color-mix(in srgb, var(--slider_activecolor), #000 var(--slider_mixpercentage, 0%));
-
-    margin-top: 8px;
-    width: 100%;
-    height: var(--slider_thumbsize);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: none;
-    cursor: ew-resize;
-    overflow: hidden;
-  }
-  .volume-slider:focus-visible,
-  .volume-slider:hover {
-    --slider_mixpercentage: 25%;
-  }
-  .volume-slider[type="range" i]::-webkit-slider-thumb {
-    height: var(--slider_thumbsize);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
-    border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1/calc(50% - var(--slider_linethickness)/2) 100vw/0px calc(100vw);
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .volume-slider[type="range"]::-moz-range-thumb {
-    height: var(--slider_thumbsize);
-    width: var(--slider_thumbsize);
-    background: none;
-    border-radius: 50%;
-    box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
-    border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1/calc(50% - var(--slider_linethickness)/2) 100vw/0 calc(100vw);
-    -moz-appearance: none;
-    appearance: none;
-  }
-  @supports not (color: color-mix(in srgb, red, red)) {
-    .volume-slider {
-      --slider_colormix: var(--slider_activecolor);
-    }
   }
   .leave-button {
     background-color: var(--error-button);
@@ -318,14 +233,5 @@ function leaveOrEndGame() {
   }
   .leave-button:hover {
     background-color: var(--error-button-hover);
-  }
-  @media (hover: hover) {
-    .minigame-settings-button:hover {
-      background-color: #4a5259;
-      box-shadow: #64646f73 0px 7px 29px 0px;
-    }
-    .minigame-settings-button:hover > div {
-      transform: rotate(90deg);
-    }
   }
 </style>
