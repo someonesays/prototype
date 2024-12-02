@@ -13,12 +13,20 @@ export const authMiddleware = createMiddleware<{
   try {
     const authorization = (await getSignedCookie(c, env.COOKIE_SIGNATURE, "token")) || "";
 
-    const { type, cid } = (await verify(authorization, env.JWT_SECRET)) as { type: "token"; cid: string };
+    const { type, cid, iat } = (await verify(authorization, env.JWT_SECRET)) as {
+      type: "token";
+      cid: string;
+      iat: number;
+      exp: number;
+    };
     if (type !== "token") return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
     try {
       const user = await getUser(cid);
       if (!user) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+
+      const lastRevokedToken = Math.trunc(user.lastRevokedToken.getTime() / 1000);
+      if (!iat || lastRevokedToken > iat) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       c.set("user", user);
       return await next();

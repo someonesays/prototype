@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { authMiddleware } from "../../middleware";
-import { getUserPublic } from "@/db";
+import { getUserPublic, resetUserLastRevokedToken } from "@/db";
 import { ErrorMessageCodes } from "@/public";
 
 import { userMinigames } from "./minigames";
@@ -10,6 +10,11 @@ export const users = new Hono();
 
 users.route("/@me/minigames", userMinigames);
 users.route("/@me/packs", userPacks);
+
+users.delete("/@me/sessions", authMiddleware, async (c) => {
+  await resetUserLastRevokedToken(c.var.user.id);
+  return c.json({ success: true });
+});
 
 users.get("/@me", authMiddleware, async (c) => {
   return c.json({ user: c.var.user });

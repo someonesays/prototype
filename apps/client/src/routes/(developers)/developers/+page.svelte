@@ -52,10 +52,21 @@ async function createPack() {
   const id = (await res.json()).id;
   return goto(`/developers/packs/${encodeURIComponent(id)}`);
 }
+
+async function logoutAllSessions() {
+  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/sessions`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) return alert("Failed to logout of all sessions");
+
+  return goto("/");
+}
 </script>
 
 <main>
   <p><a href="/">Back</a></p>
+  <p><button onclick={logoutAllSessions}>Logout from all sessions</button></p>
   <h2>Minigames</h2>
   <p>{JSON.stringify(minigames)}</p>
   <p><button onclick={createMinigame}>Create minigame</button></p>

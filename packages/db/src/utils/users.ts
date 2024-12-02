@@ -1,6 +1,7 @@
 import schema from "../main/schema";
 import { eq } from "drizzle-orm";
 import { db } from "../connectors/pool";
+import { NOW } from "./utils";
 import type { User } from "@/public";
 
 export async function createUser(user: typeof schema.users.$inferInsert) {
@@ -9,6 +10,10 @@ export async function createUser(user: typeof schema.users.$inferInsert) {
 
 export async function updateUser(user: Partial<typeof schema.users.$inferSelect> & { id: string }) {
   await db.update(schema.users).set(user).where(eq(schema.users.id, user.id));
+}
+
+export async function resetUserLastRevokedToken(id: string) {
+  await db.update(schema.users).set({ lastRevokedToken: NOW }).where(eq(schema.users.id, id));
 }
 
 export async function deleteUser(id: string) {

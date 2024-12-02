@@ -1,7 +1,8 @@
 import { createCode, createCuid } from "@/utils";
 import { MatchmakingLocation, MinigamePathType, MinigamePublishType } from "@/public";
 import { boolean, text, smallint, pgTable, timestamp } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
+import { NOW } from "../src/utils/utils";
 
 import { users } from "./users";
 
@@ -27,7 +28,7 @@ export const minigames = pgTable("minigames", {
     .$defaultFn(() => createCode(18)),
   minimumPlayersToStart: smallint("minimum_players_to_start").notNull().default(1),
   supportsMobile: boolean("supports_mobile").notNull().default(false),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
 });
 
 export const minigamesRelations = relations(minigames, ({ one }) => ({

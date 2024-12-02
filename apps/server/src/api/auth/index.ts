@@ -79,8 +79,10 @@ auth.get("/discord/callback", async (c) => {
     });
   }
 
-  const exp = Math.trunc(Date.now() / 1000 + 86400); // 1 day
-  const authorization = await sign({ type: "token", cid, exp }, env.JWT_SECRET);
+  
+  const iat = Math.trunc(Date.now() / 1000);
+  const exp = iat + 86400; // 1 day
+  const authorization = await sign({ type: "token", cid, iat, exp }, env.JWT_SECRET);
   await setSignedCookie(c, "token", authorization, env.COOKIE_SIGNATURE, {
     secure: true,
     expires: new Date(exp * 1000),

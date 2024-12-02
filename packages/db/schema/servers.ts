@@ -1,5 +1,5 @@
-import { sql } from "drizzle-orm";
 import { boolean, varchar, text, integer, timestamp, pgTable } from "drizzle-orm/pg-core";
+import { NOW } from "../src/utils/utils";
 import { MatchmakingLocation } from "@/public";
 
 export const servers = pgTable("servers", {
@@ -12,5 +12,5 @@ export const servers = pgTable("servers", {
   wsDiscord: text("ws_discord"),
   currentRooms: integer("current_rooms").notNull().default(0),
   maxRooms: integer("max_rooms").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
 });

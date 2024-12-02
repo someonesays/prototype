@@ -63,6 +63,8 @@ onMount(() => {
   // Handle room store value
   $roomWs.once(ServerOpcodes.GET_INFORMATION, (evt) => {
     connected = true;
+
+    evt.players = evt.players.sort((a, b) => b.points - a.points); // (sort players by points)
     $room = evt;
   });
   $roomWs.on(ServerOpcodes.PLAYER_JOIN, (evt) => {
@@ -103,7 +105,7 @@ onMount(() => {
 
     $room.status = GameStatus.LOBBY;
     $room.room.state = null;
-    $room.players = evt.players;
+    $room.players = evt.players.sort((a, b) => b.points - a.points); // (sort players by points)
 
     $roomMinigameReady = false;
 
