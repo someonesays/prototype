@@ -91,7 +91,7 @@ function leaveGame() {
       </div>
       <div class="center">
         {#if $launcher === "normal"}
-          <div class="logo">
+          <div class="logo main">
             <Logo />
           </div>
         {/if}
@@ -240,7 +240,7 @@ function leaveGame() {
     display: flex;
     width: 100%;
   }
-  .logo {
+  .logo.main {
     display :none;
   }
 }
