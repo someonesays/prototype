@@ -60,7 +60,7 @@ state.delete("/", authMiddleware, async (c) => {
 state.get("/:id", authMiddleware, async (c) => {
   const roomId = c.req.param("id");
   const room = rooms.get(roomId);
-  return c.json({ exists: !!room, reachedMaxPlayers: (room?.players.size || 0) >= 1 });
+  return c.json({ exists: !!room, reachedMaxPlayers: (room?.players.size || 0) >= 25 });
 });
 
 // Delete/reset a room
