@@ -162,7 +162,7 @@ function leaveGame() {
 }
 .nav {
   display: flex;
-  width: 80%;
+  width: 90%;
 }
 .nav > .left {
   flex: 1;
