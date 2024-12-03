@@ -22,6 +22,7 @@ import { isModalOpen } from "$lib/components/stores/modal";
 
 let container: HTMLDivElement;
 let isSettingsOpen = $state(false);
+let isEnding = $state(false);
 
 onMount(() => {
   if (!$room?.minigame) throw new Error("Missing room or minigame");
@@ -103,11 +104,15 @@ onMount(() => {
 });
 
 function leaveOrEndGame() {
+  if (isEnding) return;
   $isModalOpen = true;
 }
 
 function leaveOrEndGameConfirm() {
   if ($room && $room.room.host === $room.user) {
+    if (isEnding) return;
+    isEnding = true;
+    
     return $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: {},
@@ -127,14 +132,20 @@ function leaveOrEndGameConfirm() {
       Points will not be awarded.
     </p>
     <p>
-      <button class="leave-button" onclick={leaveOrEndGameConfirm}>End minigame</button>
+      <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>
+        {#if isEnding}
+          Ending minigame...
+        {:else}
+          End minigame
+        {/if}
+      </button>
       <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {:else}
     <div style="width: 80px; margin: 0 auto;"><DoorOpen color="black" /></div>
     <p>Are you sure you want to leave the room?</p>
     <p>
-      <button class="leave-button" onclick={leaveOrEndGameConfirm}>Leave room</button>
+      <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>Leave room</button>
       <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {/if}
@@ -163,9 +174,13 @@ function leaveOrEndGameConfirm() {
         <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} onchange={() => $roomParentSdk?.updateSettings({ settings: { volume: $volumeValue } })} />
         <br>
         {#if $launcher !== "discord" || $room && $room.room.host === $room.user}
-          <button class="leave-button" onclick={leaveOrEndGame}>
+          <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGame}>
             {#if $room && $room.room.host === $room.user}
-              End minigame
+              {#if isEnding}
+                Ending minigame...
+              {:else}
+                End minigame
+              {/if}
             {:else}
               Leave room
             {/if}
@@ -283,6 +298,9 @@ function leaveOrEndGameConfirm() {
     margin-top: 8px;
     padding: 10px;
     width: 100%;
+  }
+  .leave-button.loading {
+    cursor: wait;
   }
   .leave-button:hover {
     background-color: var(--error-button-hover);
