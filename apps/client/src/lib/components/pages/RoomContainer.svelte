@@ -121,6 +121,8 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.END_MINIGAME, (evt) => {
     if (!$room) throw new Error("Cannot find $room on end minigame");
 
+    $roomParentSdk?.destroy();
+
     $room.status = GameStatus.LOBBY;
     $room.room.state = null;
     $room.players = evt.players.sort((a, b) => b.points - a.points); // (sort players by points)

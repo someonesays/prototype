@@ -16,7 +16,7 @@ auth.get("/discord/login", async (c) => {
     expires: new Date(Date.now() + 60000),
   });
 
-  const redirectUri = local ? "http://localhost:3000/api/auth/discord/callback" : env.DISCORD_REDIRECT_URI;
+  const redirectUri = local ? "http://localhost:3000/auth/discord" : env.DISCORD_REDIRECT_URI;
   return c.redirect(
     `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(env.DISCORD_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20email&state=${encodeURIComponent(state)}&prompt=none`,
   );

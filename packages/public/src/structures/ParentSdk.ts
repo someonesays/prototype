@@ -22,7 +22,7 @@ export class ParentSdk {
     window.addEventListener("message", this.handleMessage, false);
   }
   private handleMessage({ source, data }: MessageEvent) {
-    if (source !== this.iframe.contentWindow) return;
+    if (source !== this.iframe.contentWindow || this.isDestroyed) return;
 
     if (!Array.isArray(data) || data.length !== 2 || !Object.values(MinigameOpcodes).includes(data[0])) {
       return console.error("Received an invalid data from the iframe:", data);
@@ -45,6 +45,7 @@ export class ParentSdk {
     }
   }
   private postMessage<O extends ParentOpcodes>(opcode: O, payload: ParentTypes[O]) {
+    if (this.isDestroyed) return;
     this.iframe.contentWindow?.postMessage([opcode, payload], this.targetOrigin);
   }
 
