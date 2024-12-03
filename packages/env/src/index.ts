@@ -24,8 +24,6 @@ export default {
 
   CUID_FINGERPRINT: process.env.CUID_FINGERPRINT as string,
 
-  COOKIE_SIGNATURE: process.env.COOKIE_SIGNATURE as string,
-
   TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY as string,
   TURNSTILE_BYPASS_SECRET: process.env.TURNSTILE_BYPASS_SECRET,
 

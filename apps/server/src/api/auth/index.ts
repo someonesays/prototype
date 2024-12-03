@@ -1,66 +1,34 @@
 import env from "@/env";
 import { Hono } from "hono";
-import { getSignedCookie, setCookie, setSignedCookie, deleteCookie } from "hono/cookie";
 import { sign } from "hono/jwt";
 import { ErrorMessageCodes } from "@/public";
-import { createCode, getDiscordUser, verifyDiscordOAuth2Token } from "@/utils";
+import { getDiscordUser, verifyDiscordOAuth2Token } from "@/utils";
 import { createUser, getUserByDiscordId } from "@/db";
 
 export const auth = new Hono();
 
 auth.get("/discord/login", async (c) => {
+  const state = c.req.query("state");
   const local = env.NODE_ENV !== "production" && c.req.query("local")?.toLowerCase() === "true";
-  const state = createCode(32);
-  await setSignedCookie(c, "auth-discord-state", JSON.stringify({ local, state }), env.COOKIE_SIGNATURE, {
-    secure: true,
-    expires: new Date(Date.now() + 60000),
-  });
 
   const redirectUri = local ? "http://localhost:3000/auth/discord" : env.DISCORD_REDIRECT_URI;
   return c.redirect(
-    `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(env.DISCORD_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20email&state=${encodeURIComponent(state)}&prompt=none`,
+    `https://discord.com/oauth2/authorize?client_id=${encodeURIComponent(env.DISCORD_CLIENT_ID)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20email${state ? `&state=${encodeURIComponent(state)}` : ""}&prompt=none`,
   );
 });
 
 auth.get("/discord/callback", async (c) => {
   const code = c.req.query("code");
-  const state = c.req.query("state");
-  const signedCookie = await getSignedCookie(c, env.COOKIE_SIGNATURE, "auth-discord-state");
+  const local = env.NODE_ENV !== "production" && c.req.query("local")?.toLowerCase() === "true";
 
-  deleteCookie(c, "auth-discord-state");
-
-  if (!signedCookie) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
-
-  let local: boolean;
-  let signedState: string;
-  try {
-    const parsedSignCookie = JSON.parse(signedCookie) as { local: boolean; state: string };
-    if (
-      typeof parsedSignCookie !== "object" ||
-      Array.isArray(parsedSignCookie) ||
-      parsedSignCookie === null ||
-      typeof parsedSignCookie.local !== "boolean" ||
-      typeof parsedSignCookie.state !== "string" ||
-      (env.NODE_ENV === "production" && parsedSignCookie.local)
-    ) {
-      throw new Error("Invalid parsed signed cookie for Discord OAuth2");
-    }
-
-    local = parsedSignCookie.local;
-    signedState = parsedSignCookie.state;
-  } catch (err) {
-    console.error(err);
-    return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
-  }
-
-  if (!code || !state || (!signedState && signedState !== state)) {
+  if (!code) {
     return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 
   const oauth2 = await verifyDiscordOAuth2Token({
     clientId: env.DISCORD_CLIENT_ID,
     clientSecret: env.DISCORD_CLIENT_SECRET,
-    redirectUri: local ? "http://localhost:3000/api/auth/discord/callback" : env.DISCORD_REDIRECT_URI,
+    redirectUri: local ? "http://localhost:3000/auth/discord" : env.DISCORD_REDIRECT_URI,
     code,
   });
   if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
