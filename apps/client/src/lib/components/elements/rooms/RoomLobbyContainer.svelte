@@ -1,15 +1,28 @@
 <script lang="ts">
+import { onMount } from "svelte";
+
 import Logo from "$lib/components/icons/Logo.svelte";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
+import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelte";
+
+import Modal from "../cards/Modal.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
-import { room, roomWs, roomRequestedToLeave } from "$lib/components/stores/roomState";
+import { room, roomWs, roomRequestedToLeave, roomLobbyErrorMessage } from "$lib/components/stores/roomState";
+import { isModalOpen } from "$lib/components/stores/modal";
+
 import { ClientOpcodes } from "@/public";
 import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
+
+onMount(() => {
+  return () => {
+    $isModalOpen = false;
+  };
+});
 
 function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
@@ -75,6 +88,11 @@ function leaveGame() {
   return $roomWs?.close();
 }
 </script>
+
+<Modal>
+  <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+  <p>{$roomLobbyErrorMessage}</p>
+</Modal>
 
 <div class="app-container">
   <div class="content-container">

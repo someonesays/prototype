@@ -1,63 +1,63 @@
 <script lang="ts">
-import { beforeNavigate } from "$app/navigation";
 import { isModalOpen } from "$lib/components/stores/modal";
+import { clickOutside } from "$lib/utils/clickOutside";
 
 let { children } = $props();
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="modal" class:hidden={!$isModalOpen} onclick={() => $isModalOpen = false}>
-	<div class="content">
+<div class="modal" class:hidden={!$isModalOpen}>
+	<div class="content" use:clickOutside={() => $isModalOpen = false}>
 		<div class="close-button-container">
 			<button class="close-button" aria-label="Close popup" onclick={() => $isModalOpen = false}>&times;</button>
 		</div>
+    <br><br>
     {@render children()}
 	</div>
 </div>
 
 <style>
-	.modal {
-		background-color: rgba(0,0,0,0.4);
-		position: fixed;
-		z-index: 9999;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-	}
-	.content {
-		position: relative;
-		background-color: var(--primary);
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .modal.hidden {
+    display: none;
+  }
+  .content {
+    background-color: var(--primary);
     color: var(--primary-text);
-    border-radius: 6px;
+		margin: 12px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
 		text-align: center;
-		margin: 15% auto;
-		padding: 20px;
-    width: 50vh;
-	}
-	.close-button-container {
-		padding: 0.5rem;
-	}
-	.close-button {
-		position: absolute;
+		justify-content: center;
+  }
+  .close-button-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .close-button {
     background: none;
     border: none;
-		top: 0.5rem;
-		right: 0.5rem;
-		color: var(--secondary-button);
-		font-size: 28px;
-		font-weight: bold;
-		cursor: pointer;
-	}
-	.close-button:hover,
-	.close-button:focus {
-		color: black;
-		text-decoration: none;
-		cursor: pointer;
-	}
-	.hidden {
-		display: none;	
-	}
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-text);
+  }
+  .close-button:focus {
+    outline: none;
+  }
+  .close-button:hover {
+    color: var(--primary-hover);
+  }
 </style>

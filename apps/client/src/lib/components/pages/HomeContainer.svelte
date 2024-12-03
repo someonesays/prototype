@@ -1,6 +1,8 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 
+import Ban from "../icons/Ban.svelte";
+
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import Modal from "../elements/cards/Modal.svelte";
 
@@ -76,10 +78,11 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 onMount(() => {
   if (!$kickedReason) return;
   $isModalOpen = true;
-})
+});
 </script>
 
 <Modal>
+  <div style="width: 80px; margin: 0 auto;"><Ban /></div>
   <p>{$kickedReason}</p>
 </Modal>
 

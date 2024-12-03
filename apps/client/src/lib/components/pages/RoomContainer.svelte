@@ -5,9 +5,6 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
-import { room, roomWs, roomRequestedToLeave, roomParentSdk, roomMinigameReady } from "$lib/components/stores/roomState";
-import { kickedReason } from "$lib/components/stores/lobby";
-
 import {
   ErrorMessageCodesToText,
   RoomWebsocket,
@@ -15,13 +12,25 @@ import {
   GameStatus,
   MinigameEndReason,
   type ApiErrorResponse,
+  ErrorMessageCodes,
 } from "@/public";
+
+import {
+  room,
+  roomWs,
+  roomRequestedToLeave,
+  roomParentSdk,
+  roomMinigameReady,
+  roomLobbyErrorMessage,
+} from "$lib/components/stores/roomState";
+import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
+import { kickedReason } from "$lib/components/stores/lobby";
+import { volumeValue } from "$lib/components/stores/settings";
+import { isModalOpen } from "../stores/modal";
 
 import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
 
-import { volumeValue } from "$lib/components/stores/settings";
-import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
 import { RPCCloseCodes } from "@discord/embedded-app-sdk";
 
 // Get params
@@ -62,7 +71,12 @@ onMount(() => {
   });
 
   // TODO: Handle error
-  $roomWs.on(ServerOpcodes.ERROR, (evt) => {});
+  $roomWs.on(ServerOpcodes.ERROR, (evt) => {
+    if ($room?.status !== GameStatus.LOBBY) return;
+
+    $isModalOpen = true;
+    $roomLobbyErrorMessage = ErrorMessageCodesToText[evt.code as ErrorMessageCodes];
+  });
 
   // Handle room store value
   $roomWs.once(ServerOpcodes.GET_INFORMATION, (evt) => {
@@ -242,7 +256,7 @@ onMount(() => {
       return kick(ErrorMessageCodesToText[code]);
     } catch (err) {
       console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
-      
+
       if (connected) return kick("You've been disconnected from the server!");
       return kick(`Failed to connect to server!`);
     }
@@ -256,6 +270,7 @@ onMount(() => {
     $room = null;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
+    $roomLobbyErrorMessage = null;
 
     // Close WebSocket and remove it from stores
     $roomWs?.close();

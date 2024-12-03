@@ -1,5 +1,8 @@
 <script lang="ts">
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
+import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
+import Plug from "$lib/components/icons/Plug.svelte";
+
 import Modal from "../cards/Modal.svelte";
 
 import { onMount } from "svelte";
@@ -90,7 +93,7 @@ function leaveOrEndGameConfirm() {
       data: {},
     });
   }
-  
+
   $roomRequestedToLeave = true;
   return $roomWs?.close();
 }
@@ -98,10 +101,14 @@ function leaveOrEndGameConfirm() {
 
 <Modal>
   {#if $room && $room.room.host === $room.user}
-    <p>Are you sure you want to end this minigame?</p>
-    <p>Points will not be awarded.</p>
+  <div style="width: 80px; margin: 0 auto;"><Plug /></div>
+    <p>
+      Are you sure you want to end this minigame?<br>
+      Points will not be awarded.
+    </p>
     <p><button class="leave-button" onclick={leaveOrEndGameConfirm}>End minigame</button></p>
   {:else}
+    <div style="width: 80px; margin: 0 auto;"><DoorOpen color="black" /></div>
     <p>Are you sure you want to leave the room?</p>
     <p><button class="leave-button" onclick={leaveOrEndGameConfirm}>Leave room</button></p>
   {/if}
