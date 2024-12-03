@@ -1,6 +1,10 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 
+import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
+import Modal from "../elements/cards/Modal.svelte";
+
+import { onMount } from "svelte";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
@@ -9,8 +13,8 @@ import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessa
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
 import { isMobileOrTablet } from "$lib/utils/mobile";
+import { isModalOpen } from "$lib/components/stores/modal";
 
-import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import { launcherMatchmaking } from "../stores/launcher";
 
 let limitJoin = $state(false);
@@ -19,6 +23,7 @@ let saveSamePageKickedReason = $state<string | null>(null);
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
   $roomIdToJoin = null;
+  $isModalOpen = false;
   $kickedReason = saveSamePageKickedReason;
 });
 
@@ -67,33 +72,31 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   // Goto to room page
   goto(`/rooms/${encodeURIComponent($roomIdToJoin ?? "new")}`);
 }
+
+onMount(() => {
+  if (!$kickedReason) return;
+  $isModalOpen = true;
+})
 </script>
-  
-  <div style="width: 50%; min-height: 300px;">
-    <BaseCard>
-      {#if $kickedReason}
-        <p class="kicked">{$kickedReason}</p>
+
+<Modal>
+  <p>{$kickedReason}</p>
+</Modal>
+
+<div style="width: 50%; min-height: 300px;">
+  <BaseCard>
+    <p>Someone Says</p>
+    <form onsubmit={joinRoom}>
+      <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
+      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
+      {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
+        <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
       {/if}
-      
-      <p>Someone Says</p>
-      <form onsubmit={joinRoom}>
-        <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
-        <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
-        {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
-          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
-        {/if}
-      </form>
-  
-      <p><a href="/developers">Developer Portal</a></p>
-      <p><a href="/credits">Credits</a></p>
-      <p><a href="/terms">Terms of Services</a></p>
-      <p><a href="/privacy">Privacy Policy</a></p>
-    </BaseCard>
-  </div>
-    
-  <style>
-    .kicked {
-      color: var(--error-button);
-    }
-  </style>
-  
+    </form>
+
+  <p><a href="/developers">Developer Portal</a></p>
+  <p><a href="/credits">Credits</a></p>
+    <p><a href="/terms">Terms of Services</a></p>
+    <p><a href="/privacy">Privacy Policy</a></p>
+  </BaseCard>
+</div>

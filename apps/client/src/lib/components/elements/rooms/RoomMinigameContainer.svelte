@@ -1,12 +1,14 @@
 <script lang="ts">
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
+import Modal from "../cards/Modal.svelte";
 
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
-import { room, roomMinigameReady, roomWs, roomParentSdk } from "$lib/components/stores/roomState";
+import { room, roomWs, roomRequestedToLeave, roomParentSdk, roomMinigameReady } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
+import { isModalOpen } from "$lib/components/stores/modal";
 
 let container: HTMLDivElement;
 let isSettingsOpen = $state(false);
@@ -72,20 +74,38 @@ onMount(() => {
   return () => {
     sdk.destroy();
     $roomParentSdk = null;
+    $isModalOpen = false;
     container.removeChild(iframe);
   };
 });
 
 function leaveOrEndGame() {
+  $isModalOpen = true;
+}
+
+function leaveOrEndGameConfirm() {
   if ($room && $room.room.host === $room.user) {
     return $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: {},
     });
   }
+  
+  $roomRequestedToLeave = true;
   return $roomWs?.close();
 }
 </script>
+
+<Modal>
+  {#if $room && $room.room.host === $room.user}
+    <p>Are you sure you want to end this minigame?</p>
+    <p>Points will not be awarded.</p>
+    <p><button class="leave-button" onclick={leaveOrEndGameConfirm}>End minigame</button></p>
+  {:else}
+    <p>Are you sure you want to leave the room?</p>
+    <p><button class="leave-button" onclick={leaveOrEndGameConfirm}>Leave room</button></p>
+  {/if}
+</Modal>
 
 <div class="minigame-container">
   <div class="minigame-iframe-container">

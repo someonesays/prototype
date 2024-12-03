@@ -5,7 +5,7 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 
-import { room, roomMinigameReady, roomParentSdk, roomWs } from "$lib/components/stores/roomState";
+import { room, roomWs, roomRequestedToLeave, roomParentSdk, roomMinigameReady } from "$lib/components/stores/roomState";
 import { kickedReason } from "$lib/components/stores/lobby";
 
 import {
@@ -39,6 +39,10 @@ beforeNavigate(({ cancel }) => {
 
 // On load tasks
 onMount(() => {
+  // Reset $roomRequestedToLeave variable to false
+  $roomRequestedToLeave = false;
+
+  // Join if no launcher is present (aka normal or discord)
   if (!$launcherMatchmaking) return goto(roomId === "new" ? "/" : `/join/${encodeURIComponent(roomId)}`);
 
   // Change route to /room/:roomId
@@ -231,17 +235,16 @@ onMount(() => {
 
   // Handles WebSocket closure
   $roomWs.onclose = (evt) => {
+    if ($roomRequestedToLeave) return kick();
+
     try {
       const { code } = JSON.parse(evt.reason) as ApiErrorResponse;
-
-      if (connected) return kick(ErrorMessageCodesToText[code]);
-
-      return kick(`Failed to connect to server: ${ErrorMessageCodesToText[code]}`);
+      return kick(ErrorMessageCodesToText[code]);
     } catch (err) {
-      if (connected || !evt.reason) return kick("Disconnected!");
-
       console.error("[WEBSOCKET] Failed to get WebSocket closure error.", evt);
-      return kick(`Failed to connect to server: ${evt.reason}`);
+      
+      if (connected) return kick("You've been disconnected from the server!");
+      return kick(`Failed to connect to server!`);
     }
   };
 
@@ -261,15 +264,18 @@ onMount(() => {
   };
 });
 
-function kick(reason: string) {
+function kick(reason?: string) {
   if (exitedPage) return;
 
   allowExitingPage = true;
-  $kickedReason = reason;
 
-  if ($launcher === "discord") {
-    if (!$launcherDiscordSdk) throw new Error("Missing DiscordSDK. This should never happen.");
-    return $launcherDiscordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, $kickedReason);
+  if (reason) {
+    $kickedReason = reason;
+
+    if ($launcher === "discord") {
+      if (!$launcherDiscordSdk) throw new Error("Missing DiscordSDK. This should never happen.");
+      return $launcherDiscordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, $kickedReason);
+    }
   }
 
   goto("/");

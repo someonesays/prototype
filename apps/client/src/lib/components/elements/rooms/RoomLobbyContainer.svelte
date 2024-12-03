@@ -5,7 +5,7 @@ import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
-import { room, roomWs } from "$lib/components/stores/roomState";
+import { room, roomWs, roomRequestedToLeave } from "$lib/components/stores/roomState";
 import { ClientOpcodes } from "@/public";
 import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
@@ -71,6 +71,7 @@ function startGame() {
 }
 
 function leaveGame() {
+  $roomRequestedToLeave = true;
   return $roomWs?.close();
 }
 </script>
@@ -184,64 +185,64 @@ function leaveGame() {
 </div>
 
 <style>
-.app-container {
-  height: 100vh;
-  display: grid;
-  align-items: center;
-  vertical-align: middle;
-  overflow: auto;
-  overflow-wrap: anywhere;
-}
-.content-container {
-  height: calc(100% - 8vh);
-  margin: 4vh;
-}
-.nav-container {
-  display: flex;
-  align-content: center;
-  justify-content: center;
-}
-.nav-container > .left {
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.nav-container > .center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.nav-container > .right {
-  position: relative;
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.logo {
-  width: calc(100px + 5vh);
-}
-
-.settings-menu {
-  position: absolute;
-  margin-top: 150px;
-  text-align: right;
-}
-
-@media only screen and (max-width: 480px) {
+  .app-container {
+    height: 100vh;
+    display: grid;
+    align-items: center;
+    vertical-align: middle;
+    overflow: auto;
+    overflow-wrap: anywhere;
+  }
   .content-container {
-    height: calc(100% - 4vh);
-    margin: 2vh;
+    height: calc(100% - 8vh);
+    margin: 4vh;
   }
   .nav-container {
     display: flex;
-    width: 100%;
+    align-content: center;
+    justify-content: center;
   }
-  .logo.main {
-    display :none;
+  .nav-container > .left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
-}
+  .nav-container > .center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-container > .right {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .logo {
+    width: calc(100px + 5vh);
+  }
+
+  .settings-menu {
+    position: absolute;
+    margin-top: 150px;
+    text-align: right;
+  }
+
+  @media only screen and (max-width: 480px) {
+    .content-container {
+      height: calc(100% - 4vh);
+      margin: 2vh;
+    }
+    .nav-container {
+      display: flex;
+      width: 100%;
+    }
+    .logo.main {
+      display :none;
+    }
+  }
 </style>
