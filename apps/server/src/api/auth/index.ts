@@ -60,7 +60,7 @@ auth.get("/discord/callback", async (c) => {
   const oauth2 = await verifyDiscordOAuth2Token({
     clientId: env.DISCORD_CLIENT_ID,
     clientSecret: env.DISCORD_CLIENT_SECRET,
-    redirectUri: local ? "http://localhost:3000/auth/discord/callback" : env.DISCORD_REDIRECT_URI,
+    redirectUri: local ? "http://localhost:3000/auth/discord" : env.DISCORD_REDIRECT_URI,
     code,
   });
   if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
