@@ -13,7 +13,7 @@ import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
 import { room, roomWs, roomRequestedToLeave, roomLobbyErrorMessage } from "$lib/components/stores/roomState";
 import { isModalOpen } from "$lib/components/stores/modal";
 
-import { ClientOpcodes } from "@/public";
+import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
 import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
@@ -80,6 +80,11 @@ async function copyInviteLink() {
 }
 
 function startGame() {
+  if (!$room?.minigame) {
+    $roomLobbyErrorMessage = ErrorMessageCodesToText[ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME];
+    $isModalOpen = true;
+    return;
+  }
   $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: {} });
 }
 
