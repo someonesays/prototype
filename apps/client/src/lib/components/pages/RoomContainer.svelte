@@ -20,6 +20,7 @@ import {
   roomWs,
   roomHandshakeCount,
   roomRequestedToChangeSettings,
+  roomRequestedToStartGame,
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
@@ -99,6 +100,14 @@ onMount(() => {
       ].includes(code)
     ) {
       $roomRequestedToChangeSettings = false;
+    }
+
+    if (
+      [ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME, ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS].includes(
+        code,
+      )
+    ) {
+      $roomRequestedToStartGame = false;
     }
 
     $isModalOpen = true;
@@ -247,6 +256,7 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.MINIGAME_START_GAME, () => {
     if (!$room) throw new Error("Cannot find $room on start minigame");
 
+    $roomRequestedToStartGame = false;
     $room.status = GameStatus.STARTED;
 
     if (!$roomMinigameReady) return;

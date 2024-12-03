@@ -14,6 +14,7 @@ import {
   room,
   roomWs,
   roomRequestedToChangeSettings,
+  roomRequestedToStartGame,
   roomRequestedToLeave,
   roomLobbyErrorMessage,
 } from "$lib/components/stores/roomState";
@@ -26,6 +27,7 @@ let isSettingsOpen = $state(false);
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
+  $roomRequestedToStartGame = false;
 
   return () => {
     $isModalOpen = false;
@@ -95,6 +97,8 @@ function startGame() {
     $isModalOpen = true;
     return;
   }
+
+  $roomRequestedToStartGame = true;
   $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: {} });
 }
 
@@ -209,7 +213,7 @@ function leaveGame() {
         {/if}
         <p>
           <button onclick={copyInviteLink}>Invite</button>
-          <button onclick={startGame} disabled={$room.room.host !== $room.user}>Start</button>
+          <button onclick={startGame} disabled={$room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
         </p>
       {:else}
         <p>TODO: Make a loading screen animation of the lobby here!</p>

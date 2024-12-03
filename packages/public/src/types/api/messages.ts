@@ -87,7 +87,7 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK]: "Cannot find minigame in pack.",
   [ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME]: "Cannot start game without selecting a minigame.",
   [ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS]:
-    "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
+    "Cannot start game that fails to satisfy the minigame's minimum players to start requirement.",
   [ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED]: "Cannot run this action when a game is not ongoing.",
   [ErrorMessageCodes.WS_INCORRECT_HANDSHAKE_COUNT]: "Incorrect handshake count.",
   [ErrorMessageCodes.WS_CANNOT_HANDSHAKE_IF_READY]: "Cannot handshake if already ready.",
