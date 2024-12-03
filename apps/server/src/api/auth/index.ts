@@ -53,7 +53,9 @@ auth.get("/discord/callback", async (c) => {
     return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 
-  if (!code || !state || (!signedState && signedState !== state)) return c.redirect(env.BASE_FRONTEND);
+  if (!code || !state || (!signedState && signedState !== state)) {
+    return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
+  }
 
   const oauth2 = await verifyDiscordOAuth2Token({
     clientId: env.DISCORD_CLIENT_ID,
@@ -83,11 +85,5 @@ auth.get("/discord/callback", async (c) => {
   const exp = iat + 86400; // 1 day
   const authorization = await sign({ type: "token", cid, iat, exp }, env.JWT_SECRET);
 
-  if (local) {
-    setCookie(c, "token", authorization, { domain: "localhost", secure: true });
-    return c.redirect("http://localhost:3000/developers");
-  }
-
-  setCookie(c, "token", authorization, { domain: new URL(env.BASE_FRONTEND).hostname, secure: true });
-  return c.redirect(`${env.BASE_FRONTEND}/developers`);
+  return c.json({ authorization });
 });

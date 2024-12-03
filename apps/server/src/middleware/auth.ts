@@ -3,7 +3,6 @@ import { verify } from "hono/jwt";
 import { createMiddleware } from "hono/factory";
 import { ErrorMessageCodes } from "@/public";
 import { getUser, type schema } from "@/db";
-import { getSignedCookie } from "hono/cookie";
 
 export const authMiddleware = createMiddleware<{
   Variables: {

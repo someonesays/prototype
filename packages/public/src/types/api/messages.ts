@@ -1,7 +1,7 @@
 export enum ErrorMessageCodes {
   NOT_FOUND = "not_found",
   UNEXPECTED_ERROR = "unexpected_error",
-  INVALID_AUTHORIZATION = "missing_authorization",
+  INVALID_AUTHORIZATION = "invalid_authorization",
   RATE_LIMITED = "rate_limited",
   INTERNAL_ERROR = "internal_error",
   FAILED_CAPTCHA = "failed_captcha",
