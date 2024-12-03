@@ -5,11 +5,17 @@
 
   <h2>Developers</h2>
   <ul>
-    <li>Two: <a href="https://github.com/real2two">https://github.com/real2two</a></li>
+    <li>Two: <a href="https://github.com/real2two" target="_blank">https://github.com/real2two</a></li>
   </ul>
   
   <h2>Logo designer</h2>
   <ul>
-    <li>Realmy: <a href="https://realmy.net/">https://realmy.net/</a></li>
+    <li>Realmy: <a href="https://realmy.net/" target="_blank">https://realmy.net/</a></li>
+  </ul>
+
+  <h2>External assets used</h2>
+  <ul>
+    <li>Figtree: <a href="https://www.erikdkennedy.com/projects/figtree.html" target="_blank">https://www.erikdkennedy.com/projects/figtree.html</a></li>
+    <li>Fontawesome: <a href="https://fontawesome.com/" target="_blank">https://fontawesome.com/</a> <i>(modified icon .svg files into .svelte files and modified their colors)</i></li>
   </ul>
 </main>
