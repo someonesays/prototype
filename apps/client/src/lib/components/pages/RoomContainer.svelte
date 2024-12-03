@@ -129,6 +129,10 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.TRANSFER_HOST, (evt) => {
     if (!$room) throw new Error("Cannot find $room on transfer host event");
 
+    if ($room.user === $room.room.host) {
+      $roomRequestedToChangeSettings = false;
+    }
+
     $room.room.host = evt.user;
   });
   $roomWs.on(ServerOpcodes.UPDATED_ROOM_SETTINGS, (evt) => {
