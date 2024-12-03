@@ -92,6 +92,7 @@ function leaveGame() {
 <Modal>
   <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
   <p>{$roomLobbyErrorMessage}</p>
+  <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
 </Modal>
 
 <div class="app-container">

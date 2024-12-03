@@ -84,6 +84,7 @@ onMount(() => {
 <Modal>
   <div style="width: 80px; margin: 0 auto;"><Ban /></div>
   <p>{$kickedReason}</p>
+  <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
 </Modal>
 
 <div style="width: 50%; min-height: 300px;">

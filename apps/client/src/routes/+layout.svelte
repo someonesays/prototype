@@ -20,6 +20,7 @@ import "$lib/styles/index.css";
     --leave-button: #f23f43;
 
     --error-button-hover: #850725;
+    --secondary-button-hover: #6d7781;
 
     --primary-text: #000000;
     --secondary-text: #242424;

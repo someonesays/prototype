@@ -137,3 +137,17 @@ body {
     --slider_colormix: var(--slider_activecolor);
   }
 }
+
+.secondary-button {
+  background-color: var(--secondary-button);
+  color: var(--secondary);
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  margin-top: 8px;
+  padding: 10px;
+  width: 100%;
+}
+.secondary-button:hover {
+  background-color: var(--secondary-button-hover);
+}
