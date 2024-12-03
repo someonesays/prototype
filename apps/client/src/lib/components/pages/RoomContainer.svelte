@@ -11,13 +11,14 @@ import {
   ServerOpcodes,
   GameStatus,
   MinigameEndReason,
-  type ApiErrorResponse,
   ErrorMessageCodes,
+  type ApiErrorResponse,
 } from "@/public";
 
 import {
   room,
   roomWs,
+  roomHandshakeCount,
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
@@ -74,8 +75,22 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.ERROR, (evt) => {
     if ($room?.status !== GameStatus.LOBBY) return;
 
+    const code = evt.code as ErrorMessageCodes;
+    if (
+      ![
+        ErrorMessageCodes.WS_CANNOT_FIND_PACK,
+        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
+        ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
+        ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME,
+        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
+        ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME,
+        ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS,
+      ].includes(code)
+    )
+      return;
+
     $isModalOpen = true;
-    $roomLobbyErrorMessage = ErrorMessageCodesToText[evt.code as ErrorMessageCodes];
+    $roomLobbyErrorMessage = ErrorMessageCodesToText[code];
   });
 
   // Handle room store value
@@ -115,8 +130,10 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.LOAD_MINIGAME, (evt) => {
     if (!$room) throw new Error("Cannot find $room on load minigame");
 
-    $room.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
     $room.players = evt.players;
+    $roomHandshakeCount = evt.roomHandshakeCount;
+
+    $room.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
   });
   $roomWs.on(ServerOpcodes.END_MINIGAME, (evt) => {
     if (!$room) throw new Error("Cannot find $room on end minigame");
@@ -270,6 +287,7 @@ onMount(() => {
 
     // Remove room from stores
     $room = null;
+    $roomHandshakeCount = 0;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
     $roomLobbyErrorMessage = null;

@@ -25,7 +25,7 @@ export interface ServerTypes {
   [ServerOpcodes.PLAYER_LEFT]: { user: string };
   [ServerOpcodes.TRANSFER_HOST]: { user: string };
   [ServerOpcodes.UPDATED_ROOM_SETTINGS]: { pack: Pack | null; minigame: Minigame | null };
-  [ServerOpcodes.LOAD_MINIGAME]: { players: GamePlayer[] };
+  [ServerOpcodes.LOAD_MINIGAME]: { players: GamePlayer[]; roomHandshakeCount: number };
   [ServerOpcodes.END_MINIGAME]:
     | {
         players: GamePlayer[];

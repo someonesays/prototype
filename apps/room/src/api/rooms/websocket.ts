@@ -109,6 +109,7 @@ websocket.get(
             points: 0,
           } as ServerPlayer,
           serverRoom: rooms.get(room.id) as ServerRoom,
+          roomHandshakeCount: 0,
         };
 
         // Disallow joining when it's about to shutdown
@@ -300,12 +301,16 @@ websocket.get(
               // Set status as waiting for players to load minigame
               state.serverRoom.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
 
+              // Update room handshake count (it's not a bug for this to go back to 0 - it's very much intended)
+              state.roomHandshakeCount = (state.roomHandshakeCount + 1) % Number.MAX_SAFE_INTEGER;
+
               // Send to everyone to load the minigame
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.LOAD_MINIGAME,
                 data: {
                   players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayer(p)),
+                  roomHandshakeCount: state.roomHandshakeCount,
                 },
               });
 
@@ -314,6 +319,12 @@ websocket.get(
             case ClientOpcodes.MINIGAME_HANDSHAKE: {
               if (isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_HANDSHAKE_IF_READY);
+
+              // Prevents race-condition where a handshake can be sent (in theory) if you quickly leave and join a new minigame
+              // This is an optional value to send - the client always sends this and ignoring roomHandshakeCount has no security impact.
+              if (data.roomHandshakeCount && data.roomHandshakeCount !== state.roomHandshakeCount) {
+                return sendError(state.user, ErrorMessageCodes.WS_INCORRECT_HANDSHAKE_COUNT);
+              }
 
               // Set ready value of player to true
               state.user.ready = true;

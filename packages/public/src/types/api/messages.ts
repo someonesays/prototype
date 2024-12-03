@@ -39,6 +39,7 @@ export enum ErrorMessageCodes {
   WS_CANNOT_START_WITHOUT_MINIGAME = "ws_cannot_start_without_minigame",
   WS_CANNOT_START_FAILED_REQUIREMENTS = "ws_cannot_start_failed_requirements",
   WS_GAME_HAS_NOT_STARTED = "ws_game_has_not_started",
+  WS_INCORRECT_HANDSHAKE_COUNT = "ws_incorrect_handshake_count",
   WS_CANNOT_HANDSHAKE_IF_READY = "ws_cannot_handshake_if_ready",
   WS_NOT_READY = "ws_not_ready",
   WS_CANNOT_FIND_READY_PLAYER = "ws_cannot_find_ready_player_to_send_message_to",
@@ -88,6 +89,7 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS]:
     "Cannot start game that fails to satisfy the minigame's minimum players to start requirement",
   [ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED]: "Cannot run this action when a game is not ongoing.",
+  [ErrorMessageCodes.WS_INCORRECT_HANDSHAKE_COUNT]: "Incorrect handshake count.",
   [ErrorMessageCodes.WS_CANNOT_HANDSHAKE_IF_READY]: "Cannot handshake if already ready.",
   [ErrorMessageCodes.WS_NOT_READY]: "Cannot run this action if you are not ready.",
   [ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER]: "Cannot find ready player with given id to run this action",

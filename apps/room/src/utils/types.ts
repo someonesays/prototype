@@ -24,4 +24,5 @@ export interface WSState {
   messageType: string;
   user: ServerPlayer;
   serverRoom: ServerRoom;
+  roomHandshakeCount: number;
 }

@@ -8,7 +8,14 @@ import Modal from "../cards/Modal.svelte";
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
 
-import { room, roomWs, roomRequestedToLeave, roomParentSdk, roomMinigameReady } from "$lib/components/stores/roomState";
+import {
+  room,
+  roomWs,
+  roomHandshakeCount,
+  roomRequestedToLeave,
+  roomParentSdk,
+  roomMinigameReady,
+} from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
 import { isModalOpen } from "$lib/components/stores/modal";
@@ -31,28 +38,38 @@ onMount(() => {
   sdk.once(MinigameOpcodes.HANDSHAKE, () => {
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_HANDSHAKE,
-      data: {},
+      data: {
+        roomHandshakeCount: $roomHandshakeCount,
+      },
     });
   });
   sdk.on(MinigameOpcodes.END_GAME, (evt) => {
+    if ($room.user !== $room.room.host) throw new Error("Only the host can end the game");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: evt,
     });
   });
   sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
+    if ($room.user !== $room.room.host) throw new Error("Only the host can set the game state");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_GAME_STATE,
       data: evt,
     });
   });
   sdk.on(MinigameOpcodes.SET_PLAYER_STATE, (evt) => {
+    if ($room.user !== $room.room.host) throw new Error("Only the host a player's state");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_PLAYER_STATE,
       data: evt,
     });
   });
   sdk.on(MinigameOpcodes.SEND_GAME_MESSAGE, (evt) => {
+    if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE,
       data: evt,
@@ -65,6 +82,9 @@ onMount(() => {
     });
   });
   sdk.on(MinigameOpcodes.SEND_PRIVATE_MESSAGE, (evt) => {
+    if ($room.user !== $room.room.host && evt.user && evt.user !== $room.room.host)
+      throw new Error("Only the host can send a private message to other players");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
       data: evt,

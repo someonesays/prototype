@@ -10,7 +10,7 @@ export const ClientValidation = {
     minigameId: z.string().min(1).max(50).nullable().optional(),
   }),
   [ClientOpcodes.BEGIN_GAME]: z.object({}),
-  [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({}),
+  [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({ roomHandshakeCount: z.number().optional() }),
   [ClientOpcodes.MINIGAME_END_GAME]: z.object({ prizes: GamePrizeArrayZod.optional() }),
   [ClientOpcodes.MINIGAME_SET_GAME_STATE]: z.object({ state: StateZod }),
   [ClientOpcodes.MINIGAME_SET_PLAYER_STATE]: z.object({ user: z.string().min(1).max(50), state: StateZod }),
