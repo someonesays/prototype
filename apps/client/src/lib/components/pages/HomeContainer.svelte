@@ -19,7 +19,7 @@ import { isModalOpen } from "$lib/components/stores/modal";
 
 import { launcherMatchmaking } from "../stores/launcher";
 
-let limitJoin = $state(false);
+let disableJoin = $state(false);
 let saveSamePageKickedReason = $state<string | null>(null);
 
 // Remove kicked reason if you leave the page
@@ -33,8 +33,8 @@ beforeNavigate(() => {
 async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
 
-  if (limitJoin) return;
-  limitJoin = true;
+  if (disableJoin) return;
+  disableJoin = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
   const captcha = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
@@ -58,9 +58,10 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   if (!success) {
     // Allow clicking join again
-    limitJoin = false;
+    disableJoin = false;
     // Set kick reason
-    $kickedReason = saveSamePageKickedReason = `Failed to connect to server: ${ErrorMessageCodesToText[code]}`;
+    $isModalOpen = true;
+    $kickedReason = saveSamePageKickedReason = ErrorMessageCodesToText[code];
     // If is ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT, don't go to "/".
     if (code === ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT) return;
     // Redirect page to "/" if it's not already that
@@ -91,8 +92,8 @@ onMount(() => {
   <BaseCard>
     <p>Someone Says</p>
     <form onsubmit={joinRoom}>
-      <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" required>
-      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"}><br>
+      <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoin} required>
+      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
       {/if}

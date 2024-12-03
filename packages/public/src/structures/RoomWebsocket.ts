@@ -25,8 +25,13 @@ export class RoomWebsocket {
   messageType: "Json" | "Oppack";
 
   static async getIfRoomExists({ roomId, baseUrl }: { roomId: string; baseUrl: string }) {
-    const res = await fetch(`${baseUrl}/api/matchmaking?roomId=${encodeURIComponent(roomId)}`);
-    return res.status === 200;
+    try {
+      const res = await fetch(`${baseUrl}/api/matchmaking?roomId=${encodeURIComponent(roomId)}`);
+      return res.status === 200;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   }
 
   static async getMatchmaking({

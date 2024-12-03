@@ -112,7 +112,7 @@ function leaveOrEndGameConfirm() {
   if ($room && $room.room.host === $room.user) {
     if (isEnding) return;
     isEnding = true;
-    
+
     return $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
       data: {},
