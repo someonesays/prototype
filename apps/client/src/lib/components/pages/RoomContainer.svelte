@@ -19,6 +19,7 @@ import {
   room,
   roomWs,
   roomHandshakeCount,
+  roomRequestedToChangeSettings,
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
@@ -89,6 +90,17 @@ onMount(() => {
     )
       return;
 
+    if (
+      [
+        ErrorMessageCodes.WS_CANNOT_FIND_PACK,
+        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
+        ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
+        ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME,
+      ].includes(code)
+    ) {
+      $roomRequestedToChangeSettings = false;
+    }
+
     $isModalOpen = true;
     $roomLobbyErrorMessage = ErrorMessageCodesToText[code];
   });
@@ -121,6 +133,8 @@ onMount(() => {
   });
   $roomWs.on(ServerOpcodes.UPDATED_ROOM_SETTINGS, (evt) => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
+
+    $roomRequestedToChangeSettings = false;
 
     $room.minigame = evt.minigame;
     $room.pack = evt.pack;
@@ -290,6 +304,7 @@ onMount(() => {
     $roomHandshakeCount = 0;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
+    $roomRequestedToChangeSettings = false;
     $roomLobbyErrorMessage = null;
 
     // Close WebSocket and remove it from stores

@@ -10,7 +10,13 @@ import Modal from "../cards/Modal.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
-import { room, roomWs, roomRequestedToLeave, roomLobbyErrorMessage } from "$lib/components/stores/roomState";
+import {
+  room,
+  roomWs,
+  roomRequestedToChangeSettings,
+  roomRequestedToLeave,
+  roomLobbyErrorMessage,
+} from "$lib/components/stores/roomState";
 import { isModalOpen } from "$lib/components/stores/modal";
 
 import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
@@ -19,6 +25,8 @@ import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 let isSettingsOpen = $state(false);
 
 onMount(() => {
+  $roomRequestedToChangeSettings = false;
+
   return () => {
     $isModalOpen = false;
   };
@@ -26,6 +34,8 @@ onMount(() => {
 
 function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
+
+  $roomRequestedToChangeSettings = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
   const packId = (form.get("pack_id") as string) || null;
@@ -187,9 +197,9 @@ function leaveGame() {
       
         {#if $room.room.host === $room.user}
           <form onsubmit={setSettings}>
-            <input type="text" name="pack_id" placeholder="Pack ID">
-            <input type="text" name="minigame_id" placeholder="Minigame ID">
-            <input type="submit" value="Set pack/minigame">
+            <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+            <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+            <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
           </form>
         {/if}
       
