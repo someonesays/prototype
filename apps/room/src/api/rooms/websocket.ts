@@ -292,7 +292,10 @@ websocket.get(
                 return sendError(state.user, ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME);
 
               // Check minigame's minimum players
-              if (state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart)
+              if (
+                state.serverRoom.players.size < state.serverRoom.minigame.minimumPlayersToStart &&
+                metadata.type !== MatchmakingType.TESTING
+              )
                 return sendError(state.user, ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS);
 
               // Set everyone's ready state and user state as false
