@@ -159,7 +159,7 @@ function leaveGame() {
     </div>
     <div class="main-container">
       {#if $room} 
-        <div class="card left" class:hidden={activeView !== 'players'}>
+        <div class="card left fix-size" class:hidden={activeView !== 'players'}>
           <h2 class="center">Players</h2>
           {#each $room.players as player}
             <div>
@@ -179,7 +179,7 @@ function leaveGame() {
             </div>
           {/each}
         </div>
-        <div class="right" class:hidden={activeView !== 'minigame'}>
+        <div class="right fix-size" class:hidden={activeView !== 'minigame'}>
           <div class="minigame-container card">
             <h2>Minigame information</h2>
             <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
@@ -238,7 +238,7 @@ function leaveGame() {
   }
   
   .app-container {
-    height: 100vh;
+    height: 100%;
     display: grid;
     align-items: center;
     vertical-align: middle;
@@ -279,7 +279,7 @@ function leaveGame() {
     flex-direction: row;
     margin-top: 12px;
     gap: 12px;
-    height: 100%;
+    height: 90%;
   }
   .card {
     background-color: var(--primary);
@@ -294,10 +294,13 @@ function leaveGame() {
   .main-container > .right {
     width: 70%;
   }
+  .fix-size {
+    height: 90%;
+  }
   .minigame-container {
-    width: 100%;
     height: 90%;
     overflow: auto;
+    overflow-wrap: anywhere;
   }
   .action-container {
     width: 100%;
@@ -348,6 +351,12 @@ function leaveGame() {
     .nav-container {
       display: flex;
       width: 100%;
+    }
+  }
+
+  @media only screen and (max-height: 500px) {
+    .fix-size {
+      height: 85%;
     }
   }
 </style>
