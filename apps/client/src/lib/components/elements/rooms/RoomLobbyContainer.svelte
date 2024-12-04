@@ -279,6 +279,7 @@ function leaveGame() {
     flex-direction: row;
     margin-top: 12px;
     gap: 12px;
+    height: 100%;
   }
   .card {
     background-color: var(--primary);
