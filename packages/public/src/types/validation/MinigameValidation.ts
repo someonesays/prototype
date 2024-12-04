@@ -9,4 +9,10 @@ export const MinigameValidation = {
   [MinigameOpcodes.SEND_GAME_MESSAGE]: z.object({ message: StateZod }),
   [MinigameOpcodes.SEND_PLAYER_MESSAGE]: z.object({ message: StateZod }),
   [MinigameOpcodes.SEND_PRIVATE_MESSAGE]: z.object({ user: z.string().min(1).max(50).optional(), message: StateZod }),
+  [MinigameOpcodes.SEND_BINARY_GAME_MESSAGE]: z.instanceof(Uint8Array),
+  [MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE]: z.instanceof(Uint8Array),
+  [MinigameOpcodes.SEND_BINARY_PRIVATE_MESSAGE]: z.object({
+    user: z.string().min(1).max(50).optional(),
+    message: z.instanceof(Uint8Array),
+  }),
 };

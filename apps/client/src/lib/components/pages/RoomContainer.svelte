@@ -70,7 +70,7 @@ onMount(() => {
     debug: true,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
-    messageType: "Json",
+    messageType: "Oppack",
   });
 
   // TODO: Handle error
@@ -292,6 +292,18 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE, (evt) => {
     if (!$roomMinigameReady) return;
     $roomParentSdk?.sendPrivateMessage(evt);
+  });
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE, (evt) => {
+    if (!$roomMinigameReady) return;
+    $roomParentSdk?.sendBinaryGameMessage(evt);
+  });
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE, (evt) => {
+    if (!$roomMinigameReady) return;
+    $roomParentSdk?.sendBinaryPlayerMessage(evt);
+  });
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE, (evt) => {
+    if (!$roomMinigameReady) return;
+    $roomParentSdk?.sendBinaryPrivateMessage(evt);
   });
 
   // Handles WebSocket closure

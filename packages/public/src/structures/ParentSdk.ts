@@ -89,6 +89,15 @@ export class ParentSdk {
   sendPrivateMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_PRIVATE_MESSAGE]) {
     this.postMessage(ParentOpcodes.RECEIVED_PRIVATE_MESSAGE, payload);
   }
+  sendBinaryGameMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_BINARY_GAME_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_BINARY_GAME_MESSAGE, payload);
+  }
+  sendBinaryPlayerMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_BINARY_PLAYER_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_BINARY_PLAYER_MESSAGE, payload);
+  }
+  sendBinaryPrivateMessage(payload: ParentTypes[ParentOpcodes.RECEIVED_BINARY_PRIVATE_MESSAGE]) {
+    this.postMessage(ParentOpcodes.RECEIVED_BINARY_PRIVATE_MESSAGE, payload);
+  }
 
   destroy() {
     if (this.isDestroyed) return;

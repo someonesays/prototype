@@ -50,6 +50,16 @@ export interface ServerTypes {
     toUser: string; // Who it was sent by (mainly for the host)
     message: State;
   };
+  [ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE]: Uint8Array;
+  [ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE]: {
+    user: string;
+    message: Uint8Array;
+  };
+  [ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: {
+    fromUser: string; // User who sent it
+    toUser: string; // Who it was sent by (mainly for the host)
+    message: Uint8Array;
+  };
 }
 
 export interface ServerOpcodeAndData<O extends ServerOpcodes> {
@@ -73,4 +83,7 @@ export type ServerOpcodeAndDatas =
   | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SET_PLAYER_STATE>
   | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE>
   | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE>
-  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>;
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE>
+  | ServerOpcodeAndData<ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE>;

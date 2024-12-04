@@ -49,4 +49,21 @@ and it will display the leaderboards.
    * Everyone else can only send private messages to the host.
    */
   SEND_PRIVATE_MESSAGE = "send_private_message",
+  /**
+   * Send a binary game message.
+   *
+   * Only the host can send this message.
+   */
+  SEND_BINARY_GAME_MESSAGE = "send_binary_game_message",
+  /**
+   * Send a binary player message.
+   */
+  SEND_BINARY_PLAYER_MESSAGE = "send_binary_player_message",
+  /**
+   * Send a binary private player message to another player (host by default).
+   *
+   * Only the host can send messages to other players.
+   * Everyone else can only send private messages to the host.
+   */
+  SEND_BINARY_PRIVATE_MESSAGE = "send_binary_private_message",
 }

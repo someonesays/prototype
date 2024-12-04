@@ -483,7 +483,7 @@ websocket.get(
                 },
               });
 
-              break;
+              return;
             }
             case ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE: {
               if (!data.user) data.user = state.serverRoom.room.host;
@@ -525,6 +525,83 @@ websocket.get(
                   sendMessage({
                     user: host,
                     opcode: ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
+                    data: payload,
+                  });
+                }
+              }
+
+              return;
+            }
+            case ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE: {
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: true,
+                opcode: ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE,
+                data,
+              });
+
+              return;
+            }
+            case ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE: {
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+
+              broadcastMessage({
+                room: state.serverRoom,
+                readyOnly: true,
+                opcode: ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE,
+                data: {
+                  user: state.user.id,
+                  message: data,
+                },
+              });
+
+              return;
+            }
+            case ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE: {
+              if (!data.user) data.user = state.serverRoom.room.host;
+
+              if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
+              if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+              if (!isHost(state) && data.user !== state.serverRoom.room.host)
+                return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE);
+              if (!isUserReady(state, data.user))
+                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
+
+              // Get host and the toUser
+              const host = state.serverRoom.players.get(state.serverRoom.room.host);
+              const toUser = state.serverRoom.players.get(data.user);
+              if (!host?.ready || !toUser?.ready) return;
+
+              // Payload to send
+              const payload = {
+                fromUser: state.user.id,
+                toUser: toUser.id,
+                message: data.message,
+              };
+
+              // Send private message to self
+              sendMessage({
+                user: toUser,
+                opcode: ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
+                data: payload,
+              });
+
+              if (state.user !== toUser) {
+                sendMessage({
+                  user: state.user,
+                  opcode: ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
+                  data: payload,
+                });
+
+                if (state.user !== host && toUser !== host) {
+                  sendMessage({
+                    user: host,
+                    opcode: ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
                     data: payload,
                   });
                 }

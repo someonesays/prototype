@@ -16,4 +16,7 @@ export interface ParentTypes {
   [ParentOpcodes.RECEIVED_GAME_MESSAGE]: { message: State };
   [ParentOpcodes.RECEIVED_PLAYER_MESSAGE]: { user: string; message: State };
   [ParentOpcodes.RECEIVED_PRIVATE_MESSAGE]: { fromUser: string; toUser: string; message: State };
+  [ParentOpcodes.RECEIVED_BINARY_GAME_MESSAGE]: Uint8Array;
+  [ParentOpcodes.RECEIVED_BINARY_PLAYER_MESSAGE]: { user: string; message: Uint8Array };
+  [ParentOpcodes.RECEIVED_BINARY_PRIVATE_MESSAGE]: { fromUser: string; toUser: string; message: Uint8Array };
 }

@@ -20,6 +20,12 @@ export const ClientValidation = {
     user: z.string().min(1).max(50).optional(), // Defaults to host
     message: StateZod,
   }),
+  [ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE]: z.instanceof(Uint8Array),
+  [ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE]: z.instanceof(Uint8Array),
+  [ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: z.object({
+    user: z.string().min(1).max(50).optional(), // Defaults to host
+    message: z.instanceof(Uint8Array),
+  }),
 };
 
 export interface ClientOpcodeAndData<O extends ClientOpcodes> {
@@ -39,4 +45,7 @@ export type ClientOpcodeAndDatas =
   | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SET_PLAYER_STATE>
   | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE>
   | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE>
-  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>;
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE>
+  | ClientOpcodeAndData<ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE>;

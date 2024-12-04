@@ -91,6 +91,29 @@ onMount(() => {
       data: evt,
     });
   });
+  sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, (evt) => {
+    if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
+
+    $roomWs?.send({
+      opcode: ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE, (evt) => {
+    $roomWs?.send({
+      opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE,
+      data: evt,
+    });
+  });
+  sdk.on(MinigameOpcodes.SEND_BINARY_PRIVATE_MESSAGE, (evt) => {
+    if ($room.user !== $room.room.host && evt.user && evt.user !== $room.room.host)
+      throw new Error("Only the host can send a private message to other players");
+
+    $roomWs?.send({
+      opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
+      data: evt,
+    });
+  });
 
   if (!$room.minigame.proxies) throw new Error("Minigame 'proxies' is not defined. This should never happen.");
   iframe.src = $launcher === "normal" ? $room.minigame.proxies.normal : $room.minigame.proxies.discord;

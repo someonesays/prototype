@@ -55,4 +55,16 @@ export enum ParentOpcodes {
    * A host has recieved a one-time private player message.
    */
   RECEIVED_PRIVATE_MESSAGE = "received_private_message",
+  /**
+   * The game's host has sent a one-time binary message.
+   */
+  RECEIVED_BINARY_GAME_MESSAGE = "received_binary_game_message",
+  /**
+   * A player has sent a one-time binary message.
+   */
+  RECEIVED_BINARY_PLAYER_MESSAGE = "received_binary_player_message",
+  /**
+   * A host has recieved a one-time binary private player message.
+   */
+  RECEIVED_BINARY_PRIVATE_MESSAGE = "received_binary_private_message",
 }
