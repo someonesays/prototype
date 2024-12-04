@@ -76,7 +76,7 @@ auth.get("/discord/callback", async (c) => {
   let cid = (await getUserByDiscordId(discordUser.id))?.id;
   if (!cid) {
     cid = await createUser({
-      name: discordUser.username,
+      name: discordUser.global_name ?? discordUser.username,
       discordId: discordUser.id,
     });
   }

@@ -1,11 +1,11 @@
 import type { schema } from "@/db";
 import type { Minigame, User } from "../../types";
 
-export interface GetUserMe {
+export interface ApiGetUserMe {
   user: typeof schema.users.$inferSelect;
 }
 
-export interface GetUser {
+export interface ApiGetUser {
   user: User;
 }
 

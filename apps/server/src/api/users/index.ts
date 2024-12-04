@@ -1,6 +1,8 @@
+import z from "zod";
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { authMiddleware } from "../../middleware";
-import { getUserPublic, resetUserLastRevokedToken } from "@/db";
+import { getUserPublic, resetUserLastRevokedToken, updateUser } from "@/db";
 import { ErrorMessageCodes } from "@/public";
 
 import { userMinigames } from "./minigames";
@@ -11,13 +13,19 @@ export const users = new Hono();
 users.route("/@me/minigames", userMinigames);
 users.route("/@me/packs", userPacks);
 
-users.delete("/@me/sessions", authMiddleware, async (c) => {
-  await resetUserLastRevokedToken(c.var.user.id);
+users.get("/@me", authMiddleware, async (c) => {
+  return c.json({ user: c.var.user });
+});
+
+users.patch("/@me", authMiddleware, zValidator("json", z.object({ name: z.string().min(1).max(32) })), async (c) => {
+  const { name } = c.req.valid("json");
+  await updateUser({ id: c.var.user.id, name });
   return c.json({ success: true });
 });
 
-users.get("/@me", authMiddleware, async (c) => {
-  return c.json({ user: c.var.user });
+users.delete("/@me/sessions", authMiddleware, async (c) => {
+  await resetUserLastRevokedToken(c.var.user.id);
+  return c.json({ success: true });
 });
 
 users.get("/:id", async (c) => {
