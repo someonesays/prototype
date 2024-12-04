@@ -6,7 +6,6 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
 import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelte";
 
-import BaseCard from "../cards/BaseCard.svelte";
 import Modal from "../cards/Modal.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
@@ -266,6 +265,7 @@ function leaveGame() {
   .main-container {
     display: flex;
     flex-direction: row;
+    margin-top: 12px;
     gap: 12px;
   }
   .main-container > .card {
