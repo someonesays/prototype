@@ -251,7 +251,7 @@ function leaveGame() {
     overflow-wrap: anywhere;
   }
   .content-container {
-    margin: 0 16vh 0 16vh;
+    margin: 24px 16vh 24px 16vh;
   }
   .nav-container {
     display: flex;
@@ -381,12 +381,6 @@ function leaveGame() {
     background-color: #19713e;
   }
 
-  @media only screen and (max-width: 1500px) {
-    .content-container {
-      margin: 4vh;
-    }
-  }
-
   @media only screen and (max-width: 950px) {
     .view-container {
       display: block;
@@ -402,9 +396,15 @@ function leaveGame() {
     }
   }
 
+  @media only screen and (max-width: 1000px) {
+    .content-container {
+      margin: 24px 4vh 24px 4vh;
+    }
+  }
+
   @media only screen and (max-width: 480px) {
     .content-container {
-      margin: 2vh;
+      margin: 2px 2vh 2px 2vh;
     }
     .nav-container {
       display: flex;
