@@ -1,13 +1,24 @@
 export function clickOutside(node: HTMLElement, callback: () => boolean): { destroy: () => void } {
-  const handleClick = (event: MouseEvent) => {
+  let clicking = false;
+  const handleMouseDown = (event: MouseEvent) => {
     if (!node.contains(event.target as Node)) {
-      callback();
+      clicking = true;
+      return;
     }
+    clicking = false;
   };
-  document.addEventListener("mouseup", handleClick, true);
+  const handleMouseUp = (event: MouseEvent) => {
+    if (clicking && !node.contains(event.target as Node)) {
+      return callback();
+    }
+    clicking = false;
+  };
+  document.addEventListener("mousedown", handleMouseDown, true);
+  document.addEventListener("mouseup", handleMouseUp, true);
   return {
     destroy() {
-      document.removeEventListener("mouseup", handleClick, true);
+      document.removeEventListener("mousedown", handleMouseDown, true);
+      document.removeEventListener("mouseup", handleMouseUp, true);
     },
   };
 }
