@@ -30,6 +30,7 @@ let { children } = $props();
     opacity: 1;
     animation-name: card-fade-in;
     animation-duration: 0.1s;
+    overflow: auto;
   }
   @keyframes card-fade-in {
     from { opacity: 0; }
@@ -48,7 +49,6 @@ let { children } = $props();
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
 		text-align: center;
-		justify-content: center;
   }
   .close-button-container {
     position: absolute;
