@@ -487,13 +487,14 @@ function nextMinigameInPack() {
   }
   .nextup-minigame-preview {
     margin-left: 12px;
+    width: 50%;
   }
   .nextup-minigame-preview-image {
     border: 1px #b3b3b3 solid;
     border-radius: 15px;
     height: auto;
-    max-width: 30vw;
-    max-height: 30vh;
+    width: 100%;
+    height: 100%;
   }
   
   .action-container {
