@@ -237,9 +237,9 @@ function leaveGame() {
                 </p>
               {/if}
             </div>
-            <div style="margin-left: 12px;">
+            <div class="nextup-minigame-preview">
               {#if $room.minigame?.previewImage}
-                <img class="minigame-preview" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} style="height: auto; max-width: 25vw; max-height: 25vw;" />
+                <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} style="height: auto; max-width: 25vw; max-height: 25vw;" />
               {/if}
             </div>
           </div>
@@ -437,6 +437,13 @@ function leaveGame() {
   }
   .nextup-minigame-legal {
     font-size: 0.8rem;
+  }
+  .nextup-minigame-preview {
+    margin-left: 12px;
+  }
+  .nextup-minigame-preview-image {
+    border: 1px #b3b3b3 solid;
+    border-radius: 15px;
   }
   
   .action-container {
