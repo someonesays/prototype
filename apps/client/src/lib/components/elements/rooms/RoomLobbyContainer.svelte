@@ -157,11 +157,10 @@ function leaveGame() {
           </div>
         </div>
     </div>
-    <br>
     <div class="main-container">
-      {#if $room} 
-        <div class="card left" class:hidden={activeView !== 'players'}>
-          <h2 class="center">Players</h2>
+      <div class="card left players-container" class:hidden={activeView !== 'players'}>
+        <h2 class="center">Players</h2>
+        {#if $room}
           {#each $room.players as player}
             <div>
               <img src={player.avatar} width="50" height="50" alt="{player.displayName}'s avatar" />
@@ -179,63 +178,61 @@ function leaveGame() {
               {/if}
             </div>
           {/each}
-        </div>
-        <div class="right" class:hidden={activeView !== 'minigame'}>
-          <div class="minigame-container card">
-            <h2>Minigame information</h2>
-            <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-            <p>Minigame: {$room.minigame ? JSON.stringify($room.minigame) : "None"}</p>
+        {/if}
+      </div>
+      <div class="minigame-container card right" class:hidden={activeView !== 'minigame'}>
+        {#if $room}
+          <h2>Minigame information</h2>
+          <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
+          <p>Minigame: {$room.minigame ? JSON.stringify($room.minigame) : "None"}</p>
           
-            {#if $room.pack?.iconImage}
-              <p>Pack icon image:</p>
-              <p>
-                <img alt="pack preview" src={
-                  $launcher === "normal"
-                    ? $room.pack.iconImage.normal
-                    : $room.pack.iconImage.discord
-                } width="100" height="100" />
-              </p>
-            {/if}
-                    
-            {#if $room.minigame?.previewImage}
-              <p>Minigame preview image:</p>
-              <p>
-                <img alt="minigame preview" src={
-                  $launcher === "normal"
-                    ? $room.minigame.previewImage.normal
-                    : $room.minigame.previewImage.discord
-                } width="100" height="100" />
-              </p>
-            {/if}
+          {#if $room.pack?.iconImage}
+            <p>Pack icon image:</p>
+            <p>
+              <img alt="pack preview" src={
+                $launcher === "normal"
+                  ? $room.pack.iconImage.normal
+                  : $room.pack.iconImage.discord
+              } width="100" height="100" />
+            </p>
+          {/if}
+                  
+          {#if $room.minigame?.previewImage}
+            <p>Minigame preview image:</p>
+            <p>
+              <img alt="minigame preview" src={
+                $launcher === "normal"
+                  ? $room.minigame.previewImage.normal
+                  : $room.minigame.previewImage.discord
+              } width="100" height="100" />
+            </p>
+          {/if}
 
-            {#if $room.room.host === $room.user}
-              <form onsubmit={setSettings}>
-                <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-              </form>
-            {/if}
+          {#if $room.room.host === $room.user}
+            <form onsubmit={setSettings}>
+              <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+              <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+              <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+            </form>
+          {/if}
 
-            {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-              <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-            {/if}
-          </div>
-          <div class="action-container">
-            <div>
-              <button class="action-button invite" onclick={copyInviteLink}>
-                Invite
-              </button>
-            </div>
-            <div>
-              <button class="action-button start" onclick={startGame} disabled={$room.room.host !== $room.user || $roomRequestedToStartGame}>
-                Start
-              </button>
-            </div>
-          </div>
-        </div>
-      {:else}
-        <p>TODO: Make a loading screen animation of the lobby here!</p>
-      {/if}
+          {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+            <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+          {/if}
+        {/if}
+      </div>
+    </div>
+    <div class="action-container">
+      <div>
+        <button class="action-button invite" onclick={copyInviteLink}>
+          Invite
+        </button>
+      </div>
+      <div>
+        <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>
+          Start
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -246,16 +243,15 @@ function leaveGame() {
   }
   
   .app-container {
-    height: 100%;
     display: grid;
+    height: 100%;
     align-items: center;
     vertical-align: middle;
     overflow: auto;
     overflow-wrap: anywhere;
   }
   .content-container {
-    height: calc(100% - 8vh);
-    margin: 16vh;
+    margin: 0 16vh 0 16vh;
   }
   .nav-container {
     display: flex;
@@ -285,8 +281,9 @@ function leaveGame() {
     position: relative;
     display: flex;
     flex-direction: row;
+    height: 390px;
+    margin-top: 12px;
     gap: 12px;
-    height: 80%;
   }
   .card {
     background-color: var(--primary);
@@ -294,6 +291,18 @@ function leaveGame() {
     border-radius: 15px;
     padding: 5px;
     overflow: auto;
+  }
+  .card::-webkit-scrollbar {
+    width: 10px;
+  }
+  .card::-webkit-scrollbar-track {
+    background: #fafafa;
+  }
+  .card::-webkit-scrollbar-thumb {
+    background: #6d7781;
+  }
+  .card::-webkit-scrollbar-thumb:hover {
+    background: #4c5660;
   }
   .main-container > .left {
     width: 30%;
@@ -323,12 +332,11 @@ function leaveGame() {
 
   .action-container {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
     align-content: center;
     justify-content: center;
     gap: 12px;
-
   }
   .action-container div {
     display: flex;
@@ -363,41 +371,6 @@ function leaveGame() {
   .action-button.invite:click {
     background-color: #343a40;
   }
-  .action-button:after {
-    content: "";
-    font-size: 12px;
-    font-size: 18px;
-    display: block;
-    position: absolute;
-    border-radius: 15px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: all 0.6s;
-    box-shadow: 0 0 10px 35px #ffffffcc;
-  }
-  .action-button.invite:after {
-    background-color: #343a40;
-    content: "Invite";
-    align-content: center;
-  }
-  .action-button.start:after {
-    background-color: #19713e;
-    content: "Start";
-    align-content: center;
-  }
-  .action-button:active:after {
-    box-shadow: 0 0 0 0 #ffffffcc;
-    font-size: 18.5px;
-    position: absolute;
-    border-radius: 15px;
-    left: 0;
-    top: 0;
-    opacity: 1;
-    transition: 0s;
-  }
   .action-button:active {
     top: 1px;
   }
@@ -431,7 +404,6 @@ function leaveGame() {
 
   @media only screen and (max-width: 480px) {
     .content-container {
-      height: calc(100% - 4vh);
       margin: 2vh;
     }
     .nav-container {
