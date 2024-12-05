@@ -369,7 +369,7 @@ function nextMinigameInPack() {
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
