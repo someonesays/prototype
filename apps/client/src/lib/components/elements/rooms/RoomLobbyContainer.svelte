@@ -520,9 +520,11 @@ function nextMinigameInPack() {
   }
   .nextup-minigame-author {
     margin: 0;
+    margin-top: 4px;
+    font-size: 14px;
   }
   .nextup-minigame-description {
-    margin: 6px 0;
+    margin: 12px 0;
   }
   .nextup-minigame-legal {
     font-size: 0.8rem;
