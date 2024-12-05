@@ -416,6 +416,9 @@ function nextMinigameInPack() {
     .hidden {
       display: block;
     }
+    .players-list {
+      width: calc(20vw + 1.5rem);
+    }
     .player-card {
       width: 20vw;
     }
@@ -469,6 +472,7 @@ function nextMinigameInPack() {
     background: var(--secondary);
     border: 1px #b3b3b3 solid;
     display: flex;
+    min-height: 40.6px;
     align-items: center;
     gap: 1rem;
     padding: 0.75rem;
