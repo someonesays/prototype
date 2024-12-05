@@ -416,9 +416,6 @@ function nextMinigameInPack() {
     .hidden {
       display: block;
     }
-    .players-list {
-      width: calc(20vw + 1.5rem);
-    }
     .player-card {
       width: 20vw;
     }
