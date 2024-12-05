@@ -298,11 +298,6 @@ function leaveOrEndGameConfirm() {
       transform: rotate(360deg);
     }
   }
-  :global(.minigame-iframe iframe) {
-    border-width: 0;
-    width: 100%;
-    height: 100%;
-  }
   .minigame-settings {
     position: absolute;
     color: white;

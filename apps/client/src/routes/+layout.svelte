@@ -39,4 +39,9 @@ import "$lib/styles/index.css";
     background-color: #000000;
     color: var(--secondary);
   }
+  :global(.minigame-iframe iframe) {
+    border-width: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>

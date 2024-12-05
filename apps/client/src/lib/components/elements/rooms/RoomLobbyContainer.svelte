@@ -309,7 +309,7 @@ function nextMinigameInPack() {
   .app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
@@ -413,7 +413,7 @@ function nextMinigameInPack() {
   .players-container, .game-container {
     color: var(--primary-text);
     flex: 1 1 auto;
-    height: calc(100vh - 150px);
+    height: calc(100% - 150px);
     overflow-y: auto;
   }
   .players-container, .game-section {
@@ -424,7 +424,7 @@ function nextMinigameInPack() {
   .game-section {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 207px);
+    height: calc(100% - 105px);
     overflow-y: auto;
   }
   @media (min-width: 900px) {
@@ -452,7 +452,7 @@ function nextMinigameInPack() {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    max-height: calc(100vh - 250px);
+    max-height: calc(100% - 250px);
   }
   .player-card {
     background: var(--secondary);

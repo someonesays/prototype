@@ -14,7 +14,6 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overscroll-behavior: none;
 }
 
 .url {
@@ -88,7 +87,8 @@ body {
   transition: .2s;
   opacity: 0;
   animation-name: settings-menu-fade-out;
-  animation-duration: 0.1s;
+  animation-duration: 0.2s;
+  overflow: auto;
 }
 
 .settings-menu p {
@@ -99,12 +99,14 @@ body {
   opacity: 1;
   animation-name: settings-menu-fade-in;
   animation-duration: 0.1s;
+  transition: all 1s ease-in-out;
 }
 @keyframes settings-menu-fade-in {
-  from {
+  0% {
     opacity: 0;
+    margin-top: 140px;
   }
-  to {
+  100% {
     opacity: 1;
   }
 }
@@ -152,7 +154,7 @@ body {
   border-radius: 50%;
   box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
   border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1 /
-    calc(50% - var(--slider_linethickness) / 2) 100vw / 0px calc(100vw);
+    calc(50% - var(--slider_linethickness) / 2) 450px / 0px calc(450px);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -163,7 +165,7 @@ body {
   border-radius: 50%;
   box-shadow: 0 0 0 var(--slider_thumbsize, var(--slider_linethickness)) inset var(--slider_colormix);
   border-image: linear-gradient(90deg, var(--slider_colormix) 50%, #ababab 0) 0 1 /
-    calc(50% - var(--slider_linethickness) / 2) 100vw / 0 calc(100vw);
+    calc(50% - var(--slider_linethickness) / 2) 450px / 0 calc(450px);
   -moz-appearance: none;
   appearance: none;
 }
