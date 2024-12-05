@@ -97,16 +97,29 @@ async function copyInviteLink() {
 
         $roomLobbyPopupMessage = { type: "invite" };
         $isModalOpen = true;
+
         break;
       }
       case "discord": {
         if (!$launcherDiscordSdk) throw new Error("Missing DiscordSDK. This should never happen.");
 
-        const { permissions } = await $launcherDiscordSdk.commands.getChannelPermissions();
-        if (PermissionUtils.can(Permissions.CREATE_INSTANT_INVITE, permissions)) {
-          await $launcherDiscordSdk.commands.openInviteDialog();
-        } else {
-          console.warn("User doesn't have CREATE_INSTANT_INVITE permissions!");
+        if (!$launcherDiscordSdk.guildId) {
+          $roomLobbyPopupMessage = { type: "warning", message: "Cannot create instant invite links in a non-guild!" };
+          $isModalOpen = true;
+          return;
+        }
+
+        try {
+          const { permissions } = await $launcherDiscordSdk.commands.getChannelPermissions();
+          if (PermissionUtils.can(Permissions.CREATE_INSTANT_INVITE, permissions)) {
+            await $launcherDiscordSdk.commands.openInviteDialog();
+          } else {
+            $roomLobbyPopupMessage = { type: "warning", message: "Missing permission! Cannot create instant invite link." };
+            $isModalOpen = true;
+          }
+        } catch (err) {
+          $roomLobbyPopupMessage = { type: "warning", message: "You cannot create instant invite links at this time." };
+          $isModalOpen = true;
         }
 
         break;
