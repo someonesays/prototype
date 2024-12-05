@@ -462,6 +462,7 @@ function nextMinigameInPack() {
     gap: 1rem;
     padding: 0.75rem;
     border-radius: 0.5rem;
+    overflow: auto;
   }
   .player-avatar {
     width: 2rem;
