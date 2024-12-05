@@ -571,10 +571,8 @@ function nextMinigameInPack() {
     background: var(--secondary-button);
     color: var(--primary);
   }
-  @media (hover: hover), (-ms-high-contrast:none) {
-    .action-button.invite:hover, .previousnext-button:hover {
-      background-color: #343a40;
-    }
+  .action-button.invite:hover, .previousnext-button:hover {
+    background-color: #343a40;
   }
   .action-button.invite:click, .previousnext-button:click {
     background-color: #343a40;
@@ -583,10 +581,8 @@ function nextMinigameInPack() {
     background: var(--success-button);
     color: var(--primary);
   }
-  @media (hover: hover), (-ms-high-contrast:none) {
-    .action-button.start:hover {
-      background-color: #19713e;
-    }
+  .action-button.start:hover {
+    background-color: #19713e;
   }
   @media (max-width: 319px) {
     .nav-container {
