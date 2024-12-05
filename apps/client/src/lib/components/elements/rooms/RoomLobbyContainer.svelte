@@ -483,7 +483,7 @@ function nextMinigameInPack() {
   .game-section {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 105px);
+    height: calc(100% - 96px);
     overflow-y: auto;
   }
   @media (min-width: 900px) {
@@ -612,7 +612,6 @@ function nextMinigameInPack() {
   }
   .action-button, .previousnext-button {
     border: none;
-    padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
     font-size: 1rem;
     cursor: pointer;
@@ -620,8 +619,13 @@ function nextMinigameInPack() {
     flex: 1;
     transition: 0.3s;
   }
+  .previousnext-button {
+    padding: 0.45rem 1.5rem;
+    font-size: 14px;
+  }
   .action-button {
-    height: 60px;
+    padding: 0.75rem 1.5rem;
+    height: 50px;
   }
   .previousnext-button {
     width: calc(50% - 2px);
