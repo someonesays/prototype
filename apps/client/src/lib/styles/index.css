@@ -200,6 +200,17 @@ body {
   padding: 10px;
   width: 100%;
 }
+.playeraction-button {
+  margin-top: 0px;
+  padding: 5px;
+  height: 40px;
+}
+.playeraction-button {
+  width: 70px;
+}
+.playeraction-button.transfer-host {
+  width: 120px;
+}
 .error-button:hover {
   background-color: var(--error-button-hover);
 }

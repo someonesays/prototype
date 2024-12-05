@@ -251,7 +251,7 @@ function nextMinigameInPack() {
         <div class="players-list">
           {#if $room}
             {#each $room.players as player}
-              <div class="player-card scrollbar">
+              <div class="player-card scrollbar"class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
                 <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
                 <span class="player-name">
                   {player.displayName}
@@ -265,8 +265,10 @@ function nextMinigameInPack() {
                 
                 {#if $room.room.host === $room.user && $room.user !== player.id}
                   <div class="player-actions">
-                    <button onclick={() => kickPlayer(player.id)}>Kick</button>
-                    <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                    <div>
+                      <button class="error-button playeraction-button kick" onclick={() => kickPlayer(player.id)}>Kick</button>
+                      <button class="secondary-button playeraction-button transfer-host" onclick={() => transferHost(player.id)}>Transfer Host</button>
+                    </div>
                   </div>
                 {/if}
               </div>
@@ -510,8 +512,21 @@ function nextMinigameInPack() {
     white-space: nowrap;
     overflow: hidden;
   }
+
+  .player-card.client-is-host:hover .player-avatar,
+  .player-card.client-is-host:hover .player-name,
+  .player-card.client-is-host:hover .player-points {
+    display: none;
+  }
   .player-actions {
-    opacity: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .player-card.client-is-host:hover .player-actions {
+    display: flex;
+    flex: 1;
   }
 
   .pack-container {
