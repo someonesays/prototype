@@ -1,6 +1,6 @@
 import env from "@/env";
 import { Hono } from "hono";
-import { getSignedCookie, setCookie, setSignedCookie, deleteCookie } from "hono/cookie";
+import { getSignedCookie, setSignedCookie, deleteCookie } from "hono/cookie";
 import { sign } from "hono/jwt";
 import { ErrorMessageCodes } from "@/public";
 import { createCode, getDiscordUser, verifyDiscordOAuth2Token } from "@/utils";
