@@ -6,7 +6,7 @@ let { children } = $props();
   .container {
     position: absolute;
     background: linear-gradient(90deg, var(--bg-gradient-primary-1) 0%, var(--bg-gradient-primary-2) 100%);
-    background-position: contain;
+    background-attachment: fixed;
     width: 100%;
     height: 100%;
 
