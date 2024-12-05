@@ -152,7 +152,7 @@ function nextMinigameInPack() {
 </Modal>
 
 <div class="app">
-  <div class="nav-container">
+  <div class="nav-container scrollbar">
     <div class="leave">
       {#if $launcher === "normal"}
         <button class="button leave" onclick={leaveGame}>
@@ -201,7 +201,7 @@ function nextMinigameInPack() {
       <div class="players-list">
         {#if $room}
           {#each $room.players as player}
-            <div class="player-card">
+            <div class="player-card scrollbar">
               <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
               <span class="player-name">
                 {player.displayName}
@@ -225,7 +225,7 @@ function nextMinigameInPack() {
         <br />
       </div>
     </div>
-    <div class="game-container" class:hidden={activeView !== 'game'}>
+    <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
       <div class="game-section scrollbar">
         {#if $room}
           <div class="pack-container">
