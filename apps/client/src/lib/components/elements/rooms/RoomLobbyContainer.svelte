@@ -310,7 +310,7 @@ function nextMinigameInPack() {
               <div class="nextup-container">
                 <div>
                   <h3 class="nextup-text">NEXT UP</h3>
-                  <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
+                  <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                   <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
                   <p class="nextup-minigame-description">{$room.minigame.description}</p>
       
