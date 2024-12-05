@@ -269,7 +269,6 @@ function leaveGame() {
     grid-template-columns: auto 1fr auto;
     align-items: center;
     margin-bottom: 1rem;
-    overflow: auto;
   }
   .nav-buttons {
     display: flex;
@@ -451,7 +450,6 @@ function leaveGame() {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
-    overflow: auto;
   }
   .action-button {
     border: none;
@@ -488,8 +486,12 @@ function leaveGame() {
     background-color: #19713e;
   }
   @media (max-width: 319px) {
+    .nav-container {
+      overflow: auto;
+    }
     .action-container {
       gap: 4vw;
+      overflow: auto;
     }
   }
 
