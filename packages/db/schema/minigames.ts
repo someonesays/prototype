@@ -29,6 +29,7 @@ export const minigames = pgTable("minigames", {
   minimumPlayersToStart: smallint("minimum_players_to_start").notNull().default(1),
   supportsMobile: boolean("supports_mobile").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(NOW),
 });
 
 export const minigamesRelations = relations(minigames, ({ one }) => ({

@@ -19,6 +19,7 @@ export const packs = pgTable("packs", {
   iconImage: text("icon_image"),
   publishType: smallint("publish_type").$type<PackPublishType>().notNull().default(PackPublishType.UNLISTED),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(NOW),
 });
 
 export const packsRelations = relations(packs, ({ one }) => ({

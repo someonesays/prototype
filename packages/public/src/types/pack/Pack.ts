@@ -15,4 +15,5 @@ export interface Pack {
     discord: string;
   } | null;
   createdAt: string;
+  updatedAt: string;
 }

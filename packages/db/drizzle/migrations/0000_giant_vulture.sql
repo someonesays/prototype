@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 	"testing_access_code" text NOT NULL,
 	"minimum_players_to_start" smallint DEFAULT 1 NOT NULL,
 	"supports_mobile" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "packs_minigames" (
@@ -29,7 +30,8 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"description" text DEFAULT '' NOT NULL,
 	"icon_image" text,
 	"publish_type" smallint DEFAULT 0 NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "servers" (

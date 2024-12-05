@@ -23,4 +23,5 @@ export interface Minigame {
   privacyPolicy: string | null;
   termsOfServices: string | null;
   createdAt: string;
+  updatedAt: string;
 }

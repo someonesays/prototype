@@ -29,7 +29,7 @@ import "$lib/styles/index.css";
     --settings-button: #343a40;
     --report-flag: #ff0000;
 
-    --bg-gradient-primary-1: #611ded;
+    --bg-gradient-primary-1: #8d54ff;
     --bg-gradient-primary-2: #89cad9;
     --bg-gradient-secondary: #000000;
     --bg-checkers: #ffffff14;

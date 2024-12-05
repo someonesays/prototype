@@ -2,6 +2,7 @@ import env from "@/env";
 import schema from "../main/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../connectors/pool";
+import { NOW } from "./utils";
 import type { Minigame } from "@/public";
 
 export async function createMinigame(minigame: typeof schema.minigames.$inferInsert) {
@@ -9,7 +10,10 @@ export async function createMinigame(minigame: typeof schema.minigames.$inferIns
 }
 
 export async function updateMinigame(minigame: Partial<typeof schema.minigames.$inferSelect> & { id: string }) {
-  await db.update(schema.minigames).set(minigame).where(eq(schema.minigames.id, minigame.id));
+  await db
+    .update(schema.minigames)
+    .set({ ...minigame, updatedAt: NOW })
+    .where(eq(schema.minigames.id, minigame.id));
 }
 
 export async function updateMinigameWithAuthorId(
@@ -17,7 +21,7 @@ export async function updateMinigameWithAuthorId(
 ) {
   await db
     .update(schema.minigames)
-    .set(minigame)
+    .set({ ...minigame, updatedAt: NOW })
     .where(and(eq(schema.minigames.id, minigame.id), eq(schema.minigames.authorId, minigame.authorId)));
 }
 
@@ -122,8 +126,8 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
       : null,
     previewImage: minigame.previewImage
       ? {
-          normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/preview`,
-          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/minigames/${encodeURIComponent(minigame.id)}/preview`,
+          normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/preview?v=${minigame.updatedAt.getTime()}`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/minigames/${encodeURIComponent(minigame.id)}/preview?v=${minigame.updatedAt.getTime()}`,
         }
       : null,
     minimumPlayersToStart: minigame.minimumPlayersToStart,
@@ -131,5 +135,6 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     privacyPolicy: minigame.privacyPolicy,
     termsOfServices: minigame.termsOfServices,
     createdAt: minigame.createdAt.toString(),
+    updatedAt: minigame.updatedAt.toString(),
   };
 }

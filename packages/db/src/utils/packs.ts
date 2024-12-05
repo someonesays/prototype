@@ -3,6 +3,7 @@ import schema from "../main/schema";
 import { and, eq } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { getMinigamesByIdsPublic } from "./minigames";
+import { NOW } from "./utils";
 import type { Pack } from "@/public";
 
 export async function createPack(pack: typeof schema.packs.$inferInsert) {
@@ -10,7 +11,10 @@ export async function createPack(pack: typeof schema.packs.$inferInsert) {
 }
 
 export async function updatePack(pack: Partial<typeof schema.packs.$inferSelect> & { id: string }) {
-  await db.update(schema.packs).set(pack).where(eq(schema.packs.id, pack.id));
+  await db
+    .update(schema.packs)
+    .set({ ...pack, updatedAt: NOW })
+    .where(eq(schema.packs.id, pack.id));
 }
 
 export async function updatePackWithAuthorId(
@@ -18,7 +22,7 @@ export async function updatePackWithAuthorId(
 ) {
   await db
     .update(schema.packs)
-    .set(pack)
+    .set({ ...pack, updatedAt: NOW })
     .where(and(eq(schema.packs.id, pack.id), eq(schema.packs.authorId, pack.authorId)));
 }
 
@@ -145,10 +149,11 @@ export function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeo
     },
     iconImage: pack.iconImage
       ? {
-          normal: `${env.BASE_API}/api/images/packs/${encodeURIComponent(pack.id)}/icon`,
-          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/packs/${encodeURIComponent(pack.id)}/icon`,
+          normal: `${env.BASE_API}/api/images/packs/${encodeURIComponent(pack.id)}/icon?v=${pack.updatedAt.getTime()}`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/packs/${encodeURIComponent(pack.id)}/icon?v=${pack.updatedAt.getTime()}`,
         }
       : null,
     createdAt: pack.createdAt.toString(),
+    updatedAt: pack.updatedAt.toString(),
   };
 }
