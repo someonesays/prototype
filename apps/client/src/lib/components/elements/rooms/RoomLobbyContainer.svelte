@@ -192,34 +192,37 @@ function leaveGame() {
     </div>
     <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
       <div class="game-section">
-          {#if $room}
-          <h2>Minigame information</h2>
-          <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-          {#if $room.pack?.iconImage}
-            <p>Pack icon image:</p>
-            <p>
-              <img alt="pack preview" src={
-                $launcher === "normal"
-                  ? $room.pack.iconImage.normal
-                  : $room.pack.iconImage.discord
-              } width="100" height="100" />
-            </p>
-          {/if}
+        {#if $room}
+          <div class="pack-container">
+            <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
+            {#if $room.pack?.iconImage}
+              <p>Pack icon image:</p>
+              <p>
+                <img alt="pack preview" src={
+                  $launcher === "normal"
+                    ? $room.pack.iconImage.normal
+                    : $room.pack.iconImage.discord
+                } width="100" height="100" />
+              </p>
+            {/if}
+  
+            {#if $room.room.host === $room.user}
+              <form onsubmit={setSettings}>
+                <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+              </form>
+            {/if}
+  
+            {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+              <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+            {/if}
+          </div>
 
-          {#if $room.room.host === $room.user}
-            <form onsubmit={setSettings}>
-              <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-              <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-              <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-            </form>
-          {/if}
-
-          {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-            <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-          {/if}
+          <hr />
 
           {#if $room.minigame}
-            <div class="nextup">
+            <div class="nextup-container">
               <div>
                 <h3 class="nextup-text">NEXT UP</h3>
                 <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
@@ -433,7 +436,11 @@ function leaveGame() {
     opacity: none;
   }
 
-  .nextup {
+  .pack-container {
+    margin-bottom: 1rem;
+  }
+
+  .nextup-container {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
