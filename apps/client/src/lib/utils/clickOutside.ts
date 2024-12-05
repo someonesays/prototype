@@ -4,10 +4,10 @@ export function clickOutside(node: HTMLElement, callback: () => boolean): { dest
       callback();
     }
   };
-  document.addEventListener("click", handleClick, true);
+  document.addEventListener("mouseup", handleClick, true);
   return {
     destroy() {
-      document.removeEventListener("click", handleClick, true);
+      document.removeEventListener("mouseup", handleClick, true);
     },
   };
 }
