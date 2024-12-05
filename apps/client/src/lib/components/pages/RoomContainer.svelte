@@ -24,7 +24,7 @@ import {
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
-  roomLobbyErrorMessage,
+  roomLobbyPopupMessage,
 } from "$lib/components/stores/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
 import { kickedReason } from "$lib/components/stores/lobby";
@@ -111,7 +111,7 @@ onMount(() => {
     }
 
     $isModalOpen = true;
-    $roomLobbyErrorMessage = { type: "warning", message: ErrorMessageCodesToText[code] };
+    $roomLobbyPopupMessage = { type: "warning", message: ErrorMessageCodesToText[code] };
   });
 
   // Handle room store value
@@ -331,7 +331,7 @@ onMount(() => {
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
     $roomRequestedToChangeSettings = false;
-    $roomLobbyErrorMessage = null;
+    $roomLobbyPopupMessage = null;
 
     // Close WebSocket and remove it from stores
     $roomWs?.close();

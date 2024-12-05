@@ -6,6 +6,7 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
 import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelte";
 import Crown from "$lib/components/icons/Crown.svelte";
+import Copy from "$lib/components/icons/Copy.svelte";
 
 import Modal from "../cards/Modal.svelte";
 
@@ -17,7 +18,7 @@ import {
   roomRequestedToChangeSettings,
   roomRequestedToStartGame,
   roomRequestedToLeave,
-  roomLobbyErrorMessage,
+  roomLobbyPopupMessage,
 } from "$lib/components/stores/roomState";
 import { isModalOpen } from "$lib/components/stores/modal";
 
@@ -68,11 +69,18 @@ function transferHost(user: string) {
   });
 }
 
+function copyInviteLinkNormal() {
+  navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
+}
+
 async function copyInviteLink() {
   try {
     switch ($launcher) {
       case "normal": {
-        navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
+        copyInviteLinkNormal();
+
+        $roomLobbyPopupMessage = { type: "invite" };
+        $isModalOpen = true;
         break;
       }
       case "discord": {
@@ -95,7 +103,7 @@ async function copyInviteLink() {
 
 function startGame() {
   if (!$room?.minigame) {
-    $roomLobbyErrorMessage = {
+    $roomLobbyPopupMessage = {
       type: "warning",
       message: ErrorMessageCodesToText[ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME],
     };
@@ -118,7 +126,7 @@ function openUrl(evt: MouseEvent) {
   const url = (evt.target as HTMLLinkElement).href;
   switch ($launcher) {
     case "normal":
-      $roomLobbyErrorMessage = { type: "link", url };
+      $roomLobbyPopupMessage = { type: "link", url };
       $isModalOpen = true;
       break;
     case "discord":
@@ -137,17 +145,23 @@ function nextMinigameInPack() {
 </script>
 
 <Modal>
-  <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
-  {#if $roomLobbyErrorMessage?.type === "warning"}
-    <p>{$roomLobbyErrorMessage?.message}</p>
+  {#if $roomLobbyPopupMessage?.type === "warning"}
+    <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+    <p>{$roomLobbyPopupMessage?.message}</p>
     <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
-  {:else if $roomLobbyErrorMessage?.type === "link"}
+  {:else if $roomLobbyPopupMessage?.type === "link"}
+    <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
     <p>Are you sure you want to open an external website?</p>
-    <p><a class="url" href={$roomLobbyErrorMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyErrorMessage.url}</a></p>
+    <p><a class="url" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyPopupMessage.url}</a></p>
     <p>
-      <a href="{$roomLobbyErrorMessage.url}" target="_blank"><button class="error-button">Open</button></a>
+      <a href="{$roomLobbyPopupMessage.url}" target="_blank"><button class="error-button">Open</button></a>
       <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
+  {:else if $roomLobbyPopupMessage?.type === "invite"}
+  <div style="width: 80px; margin: 0 auto;"><Copy /></div>
+    <p>Copied invite link!</p>
+    <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
+    <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
   {/if}
 </Modal>
 

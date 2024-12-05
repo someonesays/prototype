@@ -7,8 +7,8 @@ export let roomWs = writable<RoomWebsocket | null>(null);
 export let roomRequestedToChangeSettings = writable(false);
 export let roomRequestedToStartGame = writable(false);
 export let roomRequestedToLeave = writable(false);
-export let roomLobbyErrorMessage = writable<{ type: "warning"; message: string } | { type: "link"; url: string } | null>(
-  null,
-);
+export let roomLobbyPopupMessage = writable<
+  { type: "warning"; message: string } | { type: "link"; url: string } | { type: "invite" } | null
+>(null);
 export let roomParentSdk = writable<ParentSdk | null>(null);
 export let roomMinigameReady = writable(false);
