@@ -76,7 +76,7 @@ async function regenTestingAccessCode() {
 </script>
 
 <main>
-  <p><a href="/developers">Back</a></p>
+  <p><a class="url" href="/developers">Back</a></p>
   {#if !minigame}
     <p>Loading...</p>
   {:else}

@@ -99,9 +99,9 @@ onMount(() => {
       {/if}
     </form>
 
-  <p><a href="/developers">Developer Portal</a></p>
-  <p><a href="/credits">Credits</a></p>
-    <p><a href="/terms">Terms of Services</a></p>
-    <p><a href="/privacy">Privacy Policy</a></p>
+  <p><a class="url" href="/developers">Developer Portal</a></p>
+  <p><a class="url" href="/credits">Credits</a></p>
+    <p><a class="url" href="/terms">Terms of Services</a></p>
+    <p><a class="url" href="/privacy">Privacy Policy</a></p>
   </BaseCard>
 </div>

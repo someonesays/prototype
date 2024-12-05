@@ -1,5 +1,5 @@
 <main>
-  <p><a href="/">Back</a></p>
+  <p><a class="url" href="/">Back</a></p>
 
   <h1>Privacy Policy - Someone Says</h1>
   <h2>Effective Date: [date here]</h2>

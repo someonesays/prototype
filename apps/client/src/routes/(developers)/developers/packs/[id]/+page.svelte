@@ -112,7 +112,7 @@ async function removeMinigame(evt: SubmitEvent & { currentTarget: EventTarget & 
 </script>
   
 <main>
-  <p><a href="/developers">Back</a></p>
+  <p><a class="url" href="/developers">Back</a></p>
   {#if !pack || !packMinigames}
     <p>Loading...</p>
   {:else}

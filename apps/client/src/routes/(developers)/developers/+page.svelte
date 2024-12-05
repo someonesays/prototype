@@ -89,7 +89,7 @@ async function logoutAllSessions() {
 </script>
 
 <main>
-  <p><a href="/">Back</a></p>
+  <p><a class="url" href="/">Back</a></p>
   <form onsubmit={updateUser}>
     <label for="name">Name:</label>
     <input name="name" value={user?.name}>
@@ -101,7 +101,7 @@ async function logoutAllSessions() {
   <p><button onclick={createMinigame}>Create minigame</button></p>
   <ul>
     {#each minigames.minigames as minigame}
-      <li><a href="/developers/minigames/{minigame.id}">{minigame.name}</a></li>
+      <li><a class="url" href="/developers/minigames/{minigame.id}">{minigame.name}</a></li>
     {/each}
   </ul>
 
@@ -110,7 +110,7 @@ async function logoutAllSessions() {
   <p><button onclick={createPack}>Create pack</button></p>
   <ul>
     {#each packs.packs as pack}
-      <li><a href="/developers/packs/{pack.id}">{pack.name}</a></li>
+      <li><a class="url" href="/developers/packs/{pack.id}">{pack.name}</a></li>
     {/each}
   </ul>
 </main>

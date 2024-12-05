@@ -95,7 +95,10 @@ async function copyInviteLink() {
 
 function startGame() {
   if (!$room?.minigame) {
-    $roomLobbyErrorMessage = ErrorMessageCodesToText[ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME];
+    $roomLobbyErrorMessage = {
+      type: "warning",
+      message: ErrorMessageCodesToText[ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME],
+    };
     $isModalOpen = true;
     return;
   }
@@ -109,6 +112,13 @@ function leaveGame() {
   return $roomWs?.close();
 }
 
+function openUrl(evt: MouseEvent) {
+  evt.preventDefault();
+
+  $roomLobbyErrorMessage = { type: "link", url: (evt.target as HTMLLinkElement).href };
+  $isModalOpen = true;
+}
+
 function previousMinigameInPack() {
   alert("WIP");
 }
@@ -120,8 +130,17 @@ function nextMinigameInPack() {
 
 <Modal>
   <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
-  <p>{$roomLobbyErrorMessage}</p>
-  <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+  {#if $roomLobbyErrorMessage?.type === "warning"}
+    <p>{$roomLobbyErrorMessage?.message}</p>
+    <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+  {:else if $roomLobbyErrorMessage?.type === "link"}
+    <p>Are you sure you want to open an external website?</p>
+    <p><a class="url" href={$roomLobbyErrorMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyErrorMessage.url}</a></p>
+    <p>
+      <a href="{$roomLobbyErrorMessage.url}" target="_blank"><button class="error-button">Open</button></a>
+      <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
+    </p>
+  {/if}
 </Modal>
 
 <div class="app">
@@ -240,11 +259,11 @@ function nextMinigameInPack() {
                 {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                   <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                     {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                    <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a> and <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
+                    <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
                     {:else if $room.minigame.privacyPolicy}
-                      <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a>
+                      <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
                     {:else if $room.minigame.termsOfServices}
-                      <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
+                      <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
                     {/if}
                     apply to this minigame.
                   </p>

@@ -16,6 +16,13 @@ body {
   height: 100%;
 }
 
+.url {
+  color: #5812e2;
+}
+.url:hover {
+  color: #2b0081;
+}
+
 .button {
   border-radius: calc(4px + 0.5vh);
   padding: 0px;
@@ -177,4 +184,18 @@ body {
 }
 .secondary-button:hover {
   background-color: var(--secondary-button-hover);
+}
+
+.error-button {
+  background-color: var(--error-button);
+  color: var(--secondary);
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  margin-top: 8px;
+  padding: 10px;
+  width: 100%;
+}
+.error-button:hover {
+  background-color: var(--error-button-hover);
 }

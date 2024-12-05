@@ -111,7 +111,7 @@ onMount(() => {
     }
 
     $isModalOpen = true;
-    $roomLobbyErrorMessage = ErrorMessageCodesToText[code];
+    $roomLobbyErrorMessage = { type: "warning", message: ErrorMessageCodesToText[code] };
   });
 
   // Handle room store value
