@@ -269,6 +269,7 @@ function leaveGame() {
     grid-template-columns: auto 1fr auto;
     align-items: center;
     margin-bottom: 1rem;
+    overflow: auto;
   }
   .nav-buttons {
     display: flex;
@@ -279,9 +280,9 @@ function leaveGame() {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 2vw;
   }
-  @media (max-width: 360px) {
+  @media (max-width: 319px) {
     .view-container {
       flex-direction: column;
       gap: 2px;
@@ -306,7 +307,7 @@ function leaveGame() {
     background: var(--secondary-button);
     border: none;
     color: var(--primary);
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 5vw;
     border-radius: 0.5rem;
     font-size: 1rem;
     cursor: pointer;
@@ -450,6 +451,7 @@ function leaveGame() {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    overflow: auto;
   }
   .action-button {
     border: none;
@@ -484,6 +486,11 @@ function leaveGame() {
   .action-button.start:hover {
     /* background-color: #4712b1; */
     background-color: #19713e;
+  }
+  @media (max-width: 319px) {
+    .action-container {
+      gap: 4vw;
+    }
   }
 
   .scrollbar::-webkit-scrollbar {
