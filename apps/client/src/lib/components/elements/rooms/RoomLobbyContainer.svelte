@@ -108,6 +108,14 @@ function leaveGame() {
   $roomRequestedToLeave = true;
   return $roomWs?.close();
 }
+
+function previousMinigameInPack() {
+  alert("WIP");
+}
+
+function nextMinigameInPack() {
+  alert("WIP");
+}
 </script>
 
 <Modal>
@@ -190,8 +198,8 @@ function leaveGame() {
         <br />
       </div>
     </div>
-    <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
-      <div class="game-section">
+    <div class="game-container" class:hidden={activeView !== 'game'}>
+      <div class="game-section scrollbar">
         {#if $room}
           <div class="pack-container">
             <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
@@ -244,11 +252,18 @@ function leaveGame() {
               </div>
               <div class="nextup-minigame-preview">
                 {#if $room.minigame?.previewImage}
-                  <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} style="height: auto; max-width: 25vw; max-height: 25vw;" />
+                  <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
                 {/if}
               </div>
             </div>
           {/if}
+
+          <div class="previousnext-container">
+            <div class="previousnext-section">
+              <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
+              <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
+            </div>
+          </div>
         {/if}
       </div>
       <div class="action-container desktop">
@@ -380,7 +395,10 @@ function leaveGame() {
     padding: 1rem;
   }
   .game-section {
-    height: calc(100vh - 190px);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 207px);
+    overflow-y: auto;
   }
   @media (min-width: 900px) {
     .players-container,
@@ -445,7 +463,7 @@ function leaveGame() {
     align-items: flex-start;
     justify-content: space-between;
     margin-top: 1rem;
-    overflow: auto;
+    white-space: pre-line;
   }
   .nextup-text {
     margin: 0;
@@ -468,10 +486,25 @@ function leaveGame() {
   .nextup-minigame-preview-image {
     border: 1px #b3b3b3 solid;
     border-radius: 15px;
+    height: auto;
+    max-width: 30vw;
+    max-height: 30vh;
   }
   
   .action-container {
     gap: 1rem;
+  }
+  .previousnext-container {
+    display: flex;
+    margin-top: 12px;
+    gap: 1rem;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .previousnext-section {
+    width: 100%;
   }
   .action-container.desktop {
     display: flex;
@@ -481,7 +514,7 @@ function leaveGame() {
     display: none;
     margin-top: 1rem;
   }
-  .action-button {
+  .action-button, .previousnext-button {
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -491,17 +524,23 @@ function leaveGame() {
     flex: 1;
     transition: 0.3s;
   }
-  .action-button:active {
+  .action-button {
+    height: 60px;
+  }
+  .previousnext-button {
+    width: calc(50% - 2px);
+  }
+  .action-button:active, .previousnext-button {
     top: 1px;
   }
-  .action-button.invite {
+  .action-button.invite, .previousnext-button {
     background: var(--secondary-button);
     color: var(--primary);
   }
-  .action-button.invite:hover {
+  .action-button.invite:hover, .previousnext-button:hover {
     background-color: #343a40;
   }
-  .action-button.invite:click {
+  .action-button.invite:click, .previousnext-button:click {
     background-color: #343a40;
   }
   .action-button.start {
@@ -516,7 +555,7 @@ function leaveGame() {
     .nav-container {
       overflow: auto;
     }
-    .action-container {
+    .action-container, .previousnext-container {
       gap: 4vw;
       overflow: auto;
     }
