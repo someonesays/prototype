@@ -185,8 +185,192 @@ function leaveGame() {
                 </div>
               {/if}
             </div>
+
+
+            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>            <div class="player-card">
+              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+              <span class="player-name">
+                {player.displayName}
+              </span>
+
+              {#if $room.room.host === player.id}
+                <Crown />
+              {/if}
+              
+              <span class="player-points">{player.points}</span>
+              
+              {#if $room.room.host === $room.user && $room.user !== player.id}
+                <div class="player-actions">
+                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                </div>
+              {/if}
+            </div>
           {/each}
         {/if}
+        <br />
       </div>
     </div>
     <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
@@ -383,7 +567,6 @@ function leaveGame() {
     text-align: center;
   }
   .players-list {
-    margin-bottom: 12px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
