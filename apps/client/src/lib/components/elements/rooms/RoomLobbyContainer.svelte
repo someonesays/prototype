@@ -227,7 +227,7 @@ function nextMinigameInPack() {
             {/if}
           </div>
 
-          <hr />
+          <hr class="border" />
 
           {#if $room.minigame}
             <div class="nextup-container">
@@ -456,6 +456,11 @@ function nextMinigameInPack() {
 
   .pack-container {
     margin-bottom: 1rem;
+  }
+
+  .border {
+    width: 99%;
+    border-top: 1px solid #b3b3b3;
   }
 
   .nextup-container {
