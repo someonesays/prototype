@@ -313,7 +313,28 @@ function nextMinigameInPack() {
                   <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                   <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
                   <p class="nextup-minigame-description">{$room.minigame.description}</p>
-      
+
+                  <div class="nextup-minigame-legal-container desktop">
+                    {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
+                      <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
+                        {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                        <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                        {:else if $room.minigame.privacyPolicy}
+                          <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
+                        {:else if $room.minigame.termsOfServices}
+                          <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                        {/if}
+                        apply to this minigame.
+                      </p>
+                    {/if}
+                  </div>
+                </div>
+                <div class="nextup-minigame-preview">
+                  {#if $room.minigame?.previewImage}
+                    <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
+                  {/if}
+                </div>
+                <div class="nextup-minigame-legal-container mobile">
                   {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                     <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                       {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
@@ -325,11 +346,6 @@ function nextMinigameInPack() {
                       {/if}
                       apply to this minigame.
                     </p>
-                  {/if}
-                </div>
-                <div class="nextup-minigame-preview">
-                  {#if $room.minigame?.previewImage}
-                    <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
                   {/if}
                 </div>
               </div>
@@ -392,25 +408,11 @@ function nextMinigameInPack() {
     align-items: center;
     gap: 2vw;
   }
-  @media (max-width: 319px) {
-    .view-container {
-      flex-direction: column;
-      gap: 2px;
-    }
-  }
   .logo {
     width: 90px;
   }
   .logo.main {
     display: none;
-  }
-  @media (min-width: 900px) {
-    .view-container {
-      display: none;
-    }
-    .logo.main {
-      display: block;
-    }
   }
 
   .view-button {
@@ -454,20 +456,6 @@ function nextMinigameInPack() {
   .hidden {
     display: none;
   }
-  @media (min-width: 900px) {
-    .main-container {
-      flex-direction: row;
-    }
-    .hidden {
-      display: block;
-    }
-    .players-list {
-      width: calc(20vw + 1.5rem);
-    }
-    .player-card {
-      width: 20vw;
-    }
-  }
 
   .players-container, .game-container {
     color: var(--primary-text);
@@ -485,22 +473,6 @@ function nextMinigameInPack() {
     flex-direction: column;
     height: calc(100% - 96px);
     overflow-y: auto;
-  }
-  @media (min-width: 900px) {
-    .players-container,
-    .game-container {
-      flex: none;
-      height: auto;
-    }
-    .game-container {
-      flex: 2;
-    }
-    .action-container.desktop {
-      display: flex;
-    }
-    .action-container.mobile {
-      display: none;
-    }
   }
 
   .players-header {
@@ -565,12 +537,17 @@ function nextMinigameInPack() {
     margin: 6px 0 0 0;
   }
   .nextup-minigame-author {
-    margin: 0;
-    margin-top: 4px;
+    margin: 4px 0;
     font-size: 14px;
   }
   .nextup-minigame-description {
     margin: 12px 0;
+  }
+  .nextup-minigame-legal-container.mobile {
+    display: block;
+  }
+  .nextup-minigame-legal-container.desktop {
+    display: none;
   }
   .nextup-minigame-legal {
     font-size: 0.8rem;
@@ -582,9 +559,8 @@ function nextMinigameInPack() {
   .nextup-minigame-preview-image {
     border: 1px #b3b3b3 solid;
     border-radius: 15px;
-    height: auto;
     width: 100%;
-    height: 100%;
+    height: auto;
   }
   
   .action-container {
@@ -650,15 +626,6 @@ function nextMinigameInPack() {
   .action-button.start:hover {
     background-color: #19713e;
   }
-  @media (max-width: 319px) {
-    .nav-container {
-      overflow: auto;
-    }
-    .action-container, .previousnext-container {
-      gap: 4vw;
-      overflow: auto;
-    }
-  }
 
   .scrollbar::-webkit-scrollbar {
     width: 10px;
@@ -671,5 +638,71 @@ function nextMinigameInPack() {
   }
   .scrollbar::-webkit-scrollbar-thumb:hover {
     background: #4c5660;
+  }
+  
+  @media (max-width: 319px) {
+    .nav-container {
+      overflow: auto;
+    }
+    .action-container, .previousnext-container {
+      gap: 4vw;
+      overflow: auto;
+    }
+
+    .view-container {
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+  @media (width < 900px) {
+    .nextup-container {
+      flex-flow: column wrap;
+    }
+    .nextup-minigame-preview {
+      margin-left: 0px;
+    }
+  }
+  @media (min-width: 900px) {
+    .view-container {
+      display: none;
+    }
+    .logo.main {
+      display: block;
+    }
+
+    .main-container {
+      flex-direction: row;
+    }
+    .hidden {
+      display: block;
+    }
+    .players-list {
+      width: calc(20vw + 1.5rem);
+    }
+    .player-card {
+      width: 20vw;
+    }
+    
+    .nextup-minigame-legal-container.mobile {
+      display: none;
+    }
+    .nextup-minigame-legal-container.desktop {
+      display: block;
+    }
+
+    .players-container,
+    .game-container {
+      flex: none;
+      height: auto;
+    }
+    .game-container {
+      flex: 2;
+    }
+    .action-container.desktop {
+      display: flex;
+    }
+    .action-container.mobile {
+      display: none;
+    }
   }
 </style>
