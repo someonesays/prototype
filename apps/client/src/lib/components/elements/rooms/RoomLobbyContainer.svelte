@@ -115,8 +115,16 @@ function leaveGame() {
 function openUrl(evt: MouseEvent) {
   evt.preventDefault();
 
-  $roomLobbyErrorMessage = { type: "link", url: (evt.target as HTMLLinkElement).href };
-  $isModalOpen = true;
+  const url = (evt.target as HTMLLinkElement).href;
+  switch ($launcher) {
+    case "normal":
+      $roomLobbyErrorMessage = { type: "link", url };
+      $isModalOpen = true;
+      break;
+    case "discord":
+      $launcherDiscordSdk?.commands.openExternalLink({ url });
+      break;
+  }
 }
 
 function previousMinigameInPack() {
