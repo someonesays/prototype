@@ -23,17 +23,33 @@ import {
 import { isModalOpen } from "$lib/components/stores/modal";
 
 import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
-import { Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
+import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
 let activeView = $state<"players" | "game">("game");
+
+let discordActivityLayoutModeUpdate = $state<((evt: { layout_mode: 0 | 1 | 2 | -1 }) => void) | null>(null);
+let logoOnly = $state(false);
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
   $roomRequestedToStartGame = false;
 
+  if ($launcher === "discord" && $launcherDiscordSdk) {
+    $launcherDiscordSdk.subscribe(
+      Events.ACTIVITY_LAYOUT_MODE_UPDATE,
+      (discordActivityLayoutModeUpdate = ({ layout_mode: layoutMode }) => {
+        logoOnly = layoutMode === 0 ? false : true;
+      }),
+    );
+  }
+
   return () => {
     $isModalOpen = false;
+
+    if ($launcher === "discord" && $launcherDiscordSdk && discordActivityLayoutModeUpdate) {
+      $launcherDiscordSdk.unsubscribe(Events.ACTIVITY_LAYOUT_MODE_UPDATE, discordActivityLayoutModeUpdate);
+    }
   };
 });
 
@@ -144,182 +160,198 @@ function nextMinigameInPack() {
 }
 </script>
 
-<Modal>
-  {#if $roomLobbyPopupMessage?.type === "warning"}
-    <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
-    <p>{$roomLobbyPopupMessage?.message}</p>
-    <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
-  {:else if $roomLobbyPopupMessage?.type === "link"}
-    <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
-    <p>Are you sure you want to open an external website?</p>
-    <p><a class="url" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyPopupMessage.url}</a></p>
-    <p>
-      <a href="{$roomLobbyPopupMessage.url}" target="_blank"><button class="error-button">Open</button></a>
-      <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
-    </p>
-  {:else if $roomLobbyPopupMessage?.type === "invite"}
-  <div style="width: 80px; margin: 0 auto;"><Copy /></div>
-    <p>Copied invite link!</p>
-    <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
-    <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
-  {/if}
-</Modal>
-
-<div class="app">
-  <div class="nav-container scrollbar">
-    <div class="leave">
-      {#if $launcher === "normal"}
-        <button class="button leave" onclick={leaveGame}>
-          <div><DoorOpen /></div>
-        </button>
-      {:else}
-        <div class="logo main">
-          <Logo />
-        </div>
-        <div class="view-container">
-          <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
-          <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
-        </div>
-      {/if}
-    </div>
-    <div class="nav-buttons">
-      {#if $launcher === "normal"}
-        <div class="logo main">
-          <Logo />
-        </div>
-        <div class="view-container">
-          <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
-          <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
-        </div>
-      {/if}
-    </div>
-    <div class="settings-container">
-      <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
-        <div><GearIcon /></div>
-      </button>
-      <div class="settings-menu" class:active={isSettingsOpen}>
-        <div>
-          <div>
-            <p class="volume-text-left">Volume</p>
-            <p class="volume-text-right">{$volumeValue}%</p>
-          </div>
-          <br>
-          <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
-        </div>
-      </div>
+{#if logoOnly}
+  <div class="logoonly-container">
+    <div class="logo">
+      <Logo />
     </div>
   </div>
-  <div class="main-container">
-    <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
-      <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
-      <div class="players-list">
-        {#if $room}
-          {#each $room.players as player}
-            <div class="player-card scrollbar">
-              <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
-              <span class="player-name">
-                {player.displayName}
-              </span>
+{:else}
+  <Modal>
+    {#if $roomLobbyPopupMessage?.type === "warning"}
+      <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+      <p>{$roomLobbyPopupMessage?.message}</p>
+      <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+    {:else if $roomLobbyPopupMessage?.type === "link"}
+      <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+      <p>Are you sure you want to open an external website?</p>
+      <p><a class="url" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyPopupMessage.url}</a></p>
+      <p>
+        <a href="{$roomLobbyPopupMessage.url}" target="_blank"><button class="error-button">Open</button></a>
+        <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
+      </p>
+    {:else if $roomLobbyPopupMessage?.type === "invite"}
+    <div style="width: 80px; margin: 0 auto;"><Copy /></div>
+      <p>Copied invite link!</p>
+      <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
+      <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+    {/if}
+  </Modal>
 
-              {#if $room.room.host === player.id}
-                <Crown />
-              {/if}
-              
-              <span class="player-points">{player.points}</span>
-              
-              {#if $room.room.host === $room.user && $room.user !== player.id}
-                <div class="player-actions">
-                  <button onclick={() => kickPlayer(player.id)}>Kick</button>
-                  <button onclick={() => transferHost(player.id)}>Transfer Host</button>
-                </div>
-              {/if}
-            </div>
-          {/each}
+  <div class="app">
+    <div class="nav-container scrollbar">
+      <div class="leave">
+        {#if $launcher === "normal"}
+          <button class="button leave" onclick={leaveGame}>
+            <div><DoorOpen /></div>
+          </button>
+        {:else}
+          <div class="logo main">
+            <Logo />
+          </div>
+          <div class="view-container">
+            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
+            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
+          </div>
         {/if}
-        <br />
+      </div>
+      <div class="nav-buttons">
+        {#if $launcher === "normal"}
+          <div class="logo main">
+            <Logo />
+          </div>
+          <div class="view-container">
+            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
+            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
+          </div>
+        {/if}
+      </div>
+      <div class="settings-container">
+        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
+          <div><GearIcon /></div>
+        </button>
+        <div class="settings-menu" class:active={isSettingsOpen}>
+          <div>
+            <div>
+              <p class="volume-text-left">Volume</p>
+              <p class="volume-text-right">{$volumeValue}%</p>
+            </div>
+            <br>
+            <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
+          </div>
+        </div>
       </div>
     </div>
-    <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
-      <div class="game-section scrollbar">
-        {#if $room}
-          <div class="pack-container">
-            <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-            {#if $room.pack?.iconImage}
-              <p>Pack icon image:</p>
-              <p>
-                <img alt="pack preview" src={
-                  $launcher === "normal"
-                    ? $room.pack.iconImage.normal
-                    : $room.pack.iconImage.discord
-                } width="100" height="100" />
-              </p>
-            {/if}
-  
-            {#if $room.room.host === $room.user}
-              <form onsubmit={setSettings}>
-                <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-              </form>
-            {/if}
-  
-            {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-              <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-            {/if}
-          </div>
+    <div class="main-container">
+      <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
+        <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
+        <div class="players-list">
+          {#if $room}
+            {#each $room.players as player}
+              <div class="player-card scrollbar">
+                <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+                <span class="player-name">
+                  {player.displayName}
+                </span>
 
-          <hr class="border" />
-
-          {#if $room.minigame}
-            <div class="nextup-container">
-              <div>
-                <h3 class="nextup-text">NEXT UP</h3>
-                <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
-                <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-                <p class="nextup-minigame-description">{$room.minigame.description}</p>
-    
-                {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                  <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
-                    {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                    <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
-                    {:else if $room.minigame.privacyPolicy}
-                      <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
-                    {:else if $room.minigame.termsOfServices}
-                      <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
-                    {/if}
-                    apply to this minigame.
-                  </p>
+                {#if $room.room.host === player.id}
+                  <Crown />
+                {/if}
+                
+                <span class="player-points">{player.points}</span>
+                
+                {#if $room.room.host === $room.user && $room.user !== player.id}
+                  <div class="player-actions">
+                    <button onclick={() => kickPlayer(player.id)}>Kick</button>
+                    <button onclick={() => transferHost(player.id)}>Transfer Host</button>
+                  </div>
                 {/if}
               </div>
-              <div class="nextup-minigame-preview">
-                {#if $room.minigame?.previewImage}
-                  <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
-                {/if}
+            {/each}
+          {/if}
+          <br />
+        </div>
+      </div>
+      <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
+        <div class="game-section scrollbar">
+          {#if $room}
+            <div class="pack-container">
+              <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
+              {#if $room.pack?.iconImage}
+                <p>Pack icon image:</p>
+                <p>
+                  <img alt="pack preview" src={
+                    $launcher === "normal"
+                      ? $room.pack.iconImage.normal
+                      : $room.pack.iconImage.discord
+                  } width="100" height="100" />
+                </p>
+              {/if}
+    
+              {#if $room.room.host === $room.user}
+                <form onsubmit={setSettings}>
+                  <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                  <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                  <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+                </form>
+              {/if}
+    
+              {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+                <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+              {/if}
+            </div>
+
+            <hr class="border" />
+
+            {#if $room.minigame}
+              <div class="nextup-container">
+                <div>
+                  <h3 class="nextup-text">NEXT UP</h3>
+                  <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
+                  <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
+                  <p class="nextup-minigame-description">{$room.minigame.description}</p>
+      
+                  {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
+                    <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
+                      {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                      <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                      {:else if $room.minigame.privacyPolicy}
+                        <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
+                      {:else if $room.minigame.termsOfServices}
+                        <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                      {/if}
+                      apply to this minigame.
+                    </p>
+                  {/if}
+                </div>
+                <div class="nextup-minigame-preview">
+                  {#if $room.minigame?.previewImage}
+                    <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
+                  {/if}
+                </div>
+              </div>
+            {/if}
+
+            <div class="previousnext-container">
+              <div class="previousnext-section">
+                <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
+                <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
               </div>
             </div>
           {/if}
-
-          <div class="previousnext-container">
-            <div class="previousnext-section">
-              <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
-              <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
-            </div>
-          </div>
-        {/if}
-      </div>
-      <div class="action-container desktop">
-        <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
-        <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+        </div>
+        <div class="action-container desktop">
+          <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
+          <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+        </div>
       </div>
     </div>
+    <div class="action-container mobile">
+      <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
+      <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+    </div>
   </div>
-  <div class="action-container mobile">
-    <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
-    <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
-  </div>
-</div>
+{/if}
 
 <style>
+  .logoonly-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
+
   .app {
     display: flex;
     flex-direction: column;
