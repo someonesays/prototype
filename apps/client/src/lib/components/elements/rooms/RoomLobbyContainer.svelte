@@ -191,64 +191,70 @@ function leaveGame() {
       </div>
     </div>
     <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
-      {#if $room}
-        <h2>Minigame information</h2>
-        <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-        {#if $room.pack?.iconImage}
-          <p>Pack icon image:</p>
-          <p>
-            <img alt="pack preview" src={
-              $launcher === "normal"
-                ? $room.pack.iconImage.normal
-                : $room.pack.iconImage.discord
-            } width="100" height="100" />
-          </p>
-        {/if}
+      <div class="game-section">
+          {#if $room}
+          <h2>Minigame information</h2>
+          <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
+          {#if $room.pack?.iconImage}
+            <p>Pack icon image:</p>
+            <p>
+              <img alt="pack preview" src={
+                $launcher === "normal"
+                  ? $room.pack.iconImage.normal
+                  : $room.pack.iconImage.discord
+              } width="100" height="100" />
+            </p>
+          {/if}
 
-        {#if $room.room.host === $room.user}
-          <form onsubmit={setSettings}>
-            <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-            <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-            <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-          </form>
-        {/if}
+          {#if $room.room.host === $room.user}
+            <form onsubmit={setSettings}>
+              <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+              <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+              <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+            </form>
+          {/if}
 
-        {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-          <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-        {/if}
+          {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+            <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+          {/if}
 
-        {#if $room.minigame}
-          <div class="nextup">
-            <div>
-              <h3 class="nextup-text">NEXT UP</h3>
-              <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
-              <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-              <p class="nextup-minigame-description">{$room.minigame.description}</p>
-  
-              {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
-                  {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                  <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a> and <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
-                  {:else if $room.minigame.privacyPolicy}
-                    <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a>
-                  {:else if $room.minigame.termsOfServices}
-                    <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
-                  {/if}
-                  apply to this minigame.
-                </p>
-              {/if}
+          {#if $room.minigame}
+            <div class="nextup">
+              <div>
+                <h3 class="nextup-text">NEXT UP</h3>
+                <h2 class="nextup-minigame-name">{$room.minigame.name}</h2>
+                <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
+                <p class="nextup-minigame-description">{$room.minigame.description}</p>
+    
+                {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
+                  <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
+                    {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                    <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a> and <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
+                    {:else if $room.minigame.privacyPolicy}
+                      <a href={$room.minigame.privacyPolicy} target="_blank">privacy policy</a>
+                    {:else if $room.minigame.termsOfServices}
+                      <a href={$room.minigame.termsOfServices} target="_blank">terms of service</a>
+                    {/if}
+                    apply to this minigame.
+                  </p>
+                {/if}
+              </div>
+              <div class="nextup-minigame-preview">
+                {#if $room.minigame?.previewImage}
+                  <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} style="height: auto; max-width: 25vw; max-height: 25vw;" />
+                {/if}
+              </div>
             </div>
-            <div class="nextup-minigame-preview">
-              {#if $room.minigame?.previewImage}
-                <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} style="height: auto; max-width: 25vw; max-height: 25vw;" />
-              {/if}
-            </div>
-          </div>
+          {/if}
         {/if}
-      {/if}
+      </div>
+      <div class="action-container desktop">
+        <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
+        <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+      </div>
     </div>
   </div>
-  <div class="action-container">
+  <div class="action-container mobile">
     <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
     <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
   </div>
@@ -360,13 +366,18 @@ function leaveGame() {
   }
 
   .players-container, .game-container {
-    background: var(--primary);
-    border-radius: 1rem;
-    padding: 1rem;
     color: var(--primary-text);
     flex: 1 1 auto;
     height: calc(100vh - 150px);
     overflow-y: auto;
+  }
+  .players-container, .game-section {
+    background: var(--primary);
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+  .game-section {
+    height: calc(100vh - 190px);
   }
   @media (min-width: 900px) {
     .players-container,
@@ -376,6 +387,12 @@ function leaveGame() {
     }
     .game-container {
       flex: 2;
+    }
+    .action-container.desktop {
+      display: flex;
+    }
+    .action-container.mobile {
+      display: none;
     }
   }
 
@@ -447,8 +464,14 @@ function leaveGame() {
   }
   
   .action-container {
-    display: flex;
     gap: 1rem;
+  }
+  .action-container.desktop {
+    display: flex;
+    margin-top: 0.8rem;
+  }
+  .action-container.mobile {
+    display: none;
     margin-top: 1rem;
   }
   .action-button {
@@ -460,9 +483,6 @@ function leaveGame() {
     white-space: nowrap;
     flex: 1;
     transition: 0.3s;
-  }
-  .action-button:hover {
-    transform: scale(1.03);
   }
   .action-button:active {
     top: 1px;
