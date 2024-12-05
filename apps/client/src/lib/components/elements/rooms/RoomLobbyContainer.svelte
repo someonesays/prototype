@@ -157,9 +157,10 @@ function leaveGame() {
           </div>
         </div>
     </div>
+    <br>
     <div class="main-container">
       {#if $room} 
-        <div class="card left fix-size" class:hidden={activeView !== 'players'}>
+        <div class="card left" class:hidden={activeView !== 'players'}>
           <h2 class="center">Players</h2>
           {#each $room.players as player}
             <div>
@@ -179,7 +180,7 @@ function leaveGame() {
             </div>
           {/each}
         </div>
-        <div class="right fix-size" class:hidden={activeView !== 'minigame'}>
+        <div class="right" class:hidden={activeView !== 'minigame'}>
           <div class="minigame-container card">
             <h2>Minigame information</h2>
             <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
@@ -214,15 +215,22 @@ function leaveGame() {
                 <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
               </form>
             {/if}
-          </div>
-          <div class="action-container">
+
             {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
               <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
             {/if}
-            <p>
-              <button onclick={copyInviteLink}>Invite</button>
-              <button onclick={startGame} disabled={$room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
-            </p>
+          </div>
+          <div class="action-container">
+            <div>
+              <button class="action-button invite" onclick={copyInviteLink}>
+                Invite
+              </button>
+            </div>
+            <div>
+              <button class="action-button start" onclick={startGame} disabled={$room.room.host !== $room.user || $roomRequestedToStartGame}>
+                Start
+              </button>
+            </div>
           </div>
         </div>
       {:else}
@@ -277,9 +285,8 @@ function leaveGame() {
     position: relative;
     display: flex;
     flex-direction: row;
-    margin-top: 12px;
     gap: 12px;
-    height: 90%;
+    height: 80%;
   }
   .card {
     background-color: var(--primary);
@@ -294,21 +301,13 @@ function leaveGame() {
   .main-container > .right {
     width: 70%;
   }
-  .fix-size {
-    height: 90%;
-  }
   .minigame-container {
-    height: 90%;
     overflow: auto;
     overflow-wrap: anywhere;
   }
-  .action-container {
-    width: 100%;
-    height: 10%;
-  }
 
   .logo {
-    width: calc(100px + 5vh);
+    width: 120px;
   }
   
   .view-container {
@@ -320,6 +319,93 @@ function leaveGame() {
     margin-top: 150px;
     text-align: right;
     z-index: 10;
+  }
+
+  .action-container {
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    gap: 12px;
+
+  }
+  .action-container div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 50%;
+    min-height: 50px;
+    height: 55px;
+  }
+  .action-button {
+    position: relative;
+    color: white;
+    flex: 1;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    min-height: 50px;
+    height: 55px;
+    font-size: calc(18px);
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  .action-button:hover {
+    transform: scale(1.03);
+  }
+  .action-button.invite {
+    background-color: var(--secondary-button);
+  }
+  .action-button.invite:hover {
+    background-color: #343a40;
+  }
+  .action-button.invite:click {
+    background-color: #343a40;
+  }
+  .action-button:after {
+    content: "";
+    font-size: 12px;
+    font-size: 18px;
+    display: block;
+    position: absolute;
+    border-radius: 15px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.6s;
+    box-shadow: 0 0 10px 35px #ffffffcc;
+  }
+  .action-button.invite:after {
+    background-color: #343a40;
+    content: "Invite";
+    align-content: center;
+  }
+  .action-button.start:after {
+    background-color: #19713e;
+    content: "Start";
+    align-content: center;
+  }
+  .action-button:active:after {
+    box-shadow: 0 0 0 0 #ffffffcc;
+    font-size: 18.5px;
+    position: absolute;
+    border-radius: 15px;
+    left: 0;
+    top: 0;
+    opacity: 1;
+    transition: 0s;
+  }
+  .action-button:active {
+    top: 1px;
+  }
+  .action-button.start {
+    background-color: var(--success-button);
+  }
+  .action-button.start:hover {
+    background-color: #19713e;
   }
 
   @media only screen and (max-width: 1500px) {
@@ -351,12 +437,6 @@ function leaveGame() {
     .nav-container {
       display: flex;
       width: 100%;
-    }
-  }
-
-  @media only screen and (max-height: 500px) {
-    .fix-size {
-      height: 85%;
     }
   }
 </style>

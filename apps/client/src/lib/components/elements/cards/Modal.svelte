@@ -27,9 +27,17 @@ let { children } = $props();
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    opacity: 1;
+    animation-name: card-fade-in;
+    animation-duration: 0.1s;
+  }
+  @keyframes card-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   .modal.hidden {
     display: none;
+    opacity: 0;
   }
   .content {
     background-color: var(--primary);
