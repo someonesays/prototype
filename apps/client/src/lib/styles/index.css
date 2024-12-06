@@ -67,7 +67,12 @@ body.discord {
 
   margin-left: var(--sail);
   margin-right: var(--sair);
-  margin-top: var(--sait);
+}
+
+@media (orientation: portrait) {
+  body.discord {
+    margin-top: var(--sait);
+  }
 }
 
 .minigame-iframe iframe {
