@@ -749,9 +749,6 @@ function nextMinigameInPack() {
     .players-list {
       width: calc(20vw + 1.5rem);
     }
-    .player-card {
-      width: 20vw;
-    }
     
     .nextup-minigame-legal-container.mobile {
       display: none;
@@ -773,6 +770,16 @@ function nextMinigameInPack() {
     }
     .action-container.mobile {
       display: none;
+    }
+  }
+  @media (min-width: 900px) and (max-width: 1200px) {
+    .players-container {
+      min-width: 250px;
+    }
+  }
+  @Media (min-width: 1200px) {
+    .player-card {
+      width: 20vw;
     }
   }
 </style>
