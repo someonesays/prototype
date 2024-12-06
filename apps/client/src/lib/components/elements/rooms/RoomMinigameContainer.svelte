@@ -6,7 +6,7 @@ import Plug from "$lib/components/icons/Plug.svelte";
 import Modal from "../cards/Modal.svelte";
 
 import { onMount } from "svelte";
-import { ParentSdk, MinigameOpcodes, ClientOpcodes } from "@/public";
+import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus } from "@/public";
 
 import {
   room,
@@ -15,6 +15,7 @@ import {
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
+  roomJoinedLate,
 } from "$lib/components/stores/roomState";
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher } from "$lib/components/stores/launcher";
@@ -121,6 +122,7 @@ onMount(() => {
   return () => {
     sdk.destroy();
     $roomParentSdk = null;
+    $roomJoinedLate = false;
     $isModalOpen = false;
     container.removeChild(iframe);
   };
@@ -176,12 +178,14 @@ function leaveOrEndGameConfirm() {
 
 <div class="minigame-container">
   <div class="minigame-iframe-container">
-    <div class="minigame-iframe" style={$roomMinigameReady ? "" : "pointer-events:none"} bind:this={container}></div>
-    <div class="minigame-notready-container {$roomMinigameReady ? "fade" : ""}">
+    <div class="minigame-iframe" style={$roomMinigameReady && $room?.status === GameStatus.STARTED ? "" : "pointer-events:none"} bind:this={container}></div>
+    <div class="minigame-notready-container {$roomMinigameReady && $room?.status === GameStatus.STARTED ? "fade" : ""}">
       <div class="minigame-notready">
         <div class="minigame-notready-box">
           <div class="minigame-notready-loader"></div>
-          <div class="minigame-notready-text">Loading minigame...</div>
+          <div class="minigame-notready-text">
+            {$roomMinigameReady && !$roomJoinedLate ? "Waiting for other players to be ready..." : "Loading minigame..."}
+          </div>
         </div>
       </div>
     </div>

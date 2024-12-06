@@ -24,6 +24,7 @@ import {
   roomRequestedToLeave,
   roomParentSdk,
   roomMinigameReady,
+  roomJoinedLate,
   roomLobbyPopupMessage,
 } from "$lib/components/stores/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
@@ -228,6 +229,7 @@ onMount(() => {
 
       // Send minigame start game with joinedLate if it already started
       if ($room.status === GameStatus.STARTED) {
+        $roomJoinedLate = true;
         $roomParentSdk?.setGameStarted({ joinedLate: true });
       }
 
@@ -237,6 +239,7 @@ onMount(() => {
       // Sends to minigame that the player is ready
       // You should never recieve a readyPlayer event of yourself
       // Also, the point of the JSON.parse(JSON.stringify()) is because Svelte uses proxies so it'll break without that
+      $roomJoinedLate = $room.status === GameStatus.STARTED;
       $roomParentSdk?.readyPlayer(
         JSON.parse(
           JSON.stringify({
@@ -260,6 +263,8 @@ onMount(() => {
     $room.status = GameStatus.STARTED;
 
     if (!$roomMinigameReady) return;
+
+    $roomJoinedLate = false;
     $roomParentSdk?.setGameStarted({ joinedLate: false });
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SET_GAME_STATE, (evt) => {
@@ -330,6 +335,7 @@ onMount(() => {
     $roomHandshakeCount = 0;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
+    $roomJoinedLate = false;
     $roomRequestedToChangeSettings = false;
     $roomLobbyPopupMessage = null;
 
