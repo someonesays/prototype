@@ -267,3 +267,9 @@ body.discord {
 .error-button:hover {
   background-color: var(--error-button-hover);
 }
+
+@media (max-width: 120px) {
+  .modal-icon {
+    display: none;
+  }
+}

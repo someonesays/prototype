@@ -7,9 +7,9 @@ let { children } = $props();
 
 <div class="modal" class:hidden={!$isModalOpen}>
 	<div class="content" use:clickOutside={() => $isModalOpen = false}>
-		<div class="close-button-container">
-			<button class="close-button" aria-label="Close popup" onclick={() => $isModalOpen = false}>&times;</button>
-		</div>
+    <div class="close-button-container">
+      <button class="close-button" aria-label="Close popup" onclick={() => $isModalOpen = false}>&times;</button>
+    </div>
     <br><br>
     {@render children()}
 	</div>
@@ -17,20 +17,19 @@ let { children } = $props();
 
 <style>
   .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    background: rgba(0, 0, 0, .4);
+    bottom: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
     z-index: 9999;
     opacity: 1;
     animation-name: card-fade-in;
     animation-duration: 0.1s;
-    overflow: auto;
   }
   @keyframes card-fade-in {
     from { opacity: 0; }
@@ -43,12 +42,14 @@ let { children } = $props();
   .content {
     background-color: var(--primary);
     color: var(--primary-text);
-		margin: 12px;
-    padding: 20px;
-    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: relative;
+    border-radius: 8px;
+    box-sizing: border-box;
+    max-height: 100vh;
+    max-width: 500px;
 		text-align: center;
+    overflow-y: auto;
+    padding: 20px;
   }
   .close-button-container {
     position: absolute;
@@ -67,5 +68,22 @@ let { children } = $props();
   }
   .close-button:hover {
     color: var(--primary-hover);
+  }
+  @media (max-width: 319px) {
+    .content {
+      transform: scale(0.9);
+    }
+  }
+
+  @media (max-width: 140px) {
+    .content {
+      transform: scale(0.8);
+    }
+  }
+
+  @media (max-width: 100px) {
+    .content {
+      overflow-x: hidden;
+    }
   }
 </style>

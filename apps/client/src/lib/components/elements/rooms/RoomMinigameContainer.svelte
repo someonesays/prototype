@@ -151,7 +151,7 @@ function leaveOrEndGameConfirm() {
 
 <Modal>
   {#if $room && $room.room.host === $room.user}
-  <div style="width: 80px; margin: 0 auto;"><Plug /></div>
+    <div style="width: 80px; margin: 0 auto;"><Plug /></div>
     <p>
       Are you sure you want to end this minigame?<br>
       Points will not be awarded.
