@@ -305,7 +305,7 @@ function nextMinigameInPack() {
 
             {#if $room.minigame}
               <div class="options-container">
-                <div class="pack-container">
+                <div class="pack-container" class:no-pack-selected={!$room.pack}>
                   {#if $room.pack}
                     <div class="pack-image">
                       {#if $room.pack?.iconImage}
@@ -593,7 +593,10 @@ function nextMinigameInPack() {
 
   .options-container {
     display: flex;
+    gap: 12px;
+    flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-top: 1rem;
     white-space: pre-line;
@@ -603,7 +606,6 @@ function nextMinigameInPack() {
     align-items: center;
     gap: 10px;
     height: 4rem;
-    margin-bottom: 1rem;
   }
   .pack-name {
     font-weight: bold;
@@ -612,7 +614,10 @@ function nextMinigameInPack() {
     font-size: 14px;
   }
   .select-container {
-
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 4rem;
   }
 
   .border {
@@ -791,6 +796,15 @@ function nextMinigameInPack() {
     .nextup-minigame-preview {
       margin-left: 0px;
       width: 100%;
+    }
+    .options-container {
+      margin-bottom: 1rem;
+    }
+    .pack-container.no-pack-selected {
+      height: auto;
+    }
+    .select-container {
+      height: auto;
     }
   }
   @media (min-width: 900px) {
