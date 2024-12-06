@@ -61,7 +61,7 @@ body {
 }
 
 body.discord {
-  /* for Discord activity (do not load this page - make sure <a> links can't load this page either) */
+  /* for Discord activity */
   height: auto;
   min-height: auto;
 
