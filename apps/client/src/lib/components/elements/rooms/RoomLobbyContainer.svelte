@@ -280,35 +280,37 @@ function nextMinigameInPack() {
       <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
         <div class="game-section scrollbar">
           {#if $room}
-            <div class="pack-container">
-              <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-              {#if $room.pack?.iconImage}
-                <p>Pack icon image:</p>
-                <p>
-                  <img alt="pack preview" src={
-                    $launcher === "normal"
-                      ? $room.pack.iconImage.normal
-                      : $room.pack.iconImage.discord
-                  } width="100" height="100" />
-                </p>
-              {/if}
-    
-              {#if $room.room.host === $room.user}
-                <form onsubmit={setSettings}>
-                  <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                  <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                  <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-                </form>
-              {/if}
-    
-              {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-                <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-              {/if}
-            </div>
-
-            <hr class="border" />
+            <!-- testing code -->
+            {#if $room.room.host === $room.user}
+              <form onsubmit={setSettings}>
+                <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+              </form>
+            {/if}
+            <!-- end of testing code -->
 
             {#if $room.minigame}
+              <div class="pack-container">
+                <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
+                {#if $room.pack?.iconImage}
+                  <p>Pack icon image:</p>
+                  <p>
+                    <img alt="pack preview" src={
+                      $launcher === "normal"
+                        ? $room.pack.iconImage.normal
+                        : $room.pack.iconImage.discord
+                    } width="100" height="100" />
+                  </p>
+                {/if}
+      
+                {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+                  <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+                {/if}
+              </div>
+
+              <hr class="border" />
+
               <div class="nextup-container">
                 <div>
                   <h3 class="nextup-text">NEXT UP</h3>
@@ -351,14 +353,16 @@ function nextMinigameInPack() {
                   {/if}
                 </div>
               </div>
-            {/if}
 
-            <div class="previousnext-container">
-              <div class="previousnext-section">
-                <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
-                <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
+              <div class="previousnext-container">
+                <div class="previousnext-section">
+                  <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
+                  <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
+                </div>
               </div>
-            </div>
+            {:else}
+              <p>die</p>
+            {/if}
           {/if}
         </div>
         <div class="action-container desktop">
