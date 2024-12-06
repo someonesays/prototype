@@ -701,6 +701,7 @@ function nextMinigameInPack() {
     }
     .nextup-minigame-preview {
       margin-left: 0px;
+      width: 100%;
     }
   }
   @media (min-width: 900px) {
