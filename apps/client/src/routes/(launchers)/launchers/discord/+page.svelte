@@ -86,3 +86,13 @@ onMount(() => {
 {:else}
   <p>Loading launcher...</p>
 {/if}
+
+<style>
+  :global(body) {
+    /* for Discord activity (do not load this page - make sure <a> links can't load this page either) */
+    margin-left: var(--sail);
+    margin-right: var(--sair);
+    margin-top: var(--sait);
+    margin-bottom: var(--saib);
+  }
+</style>

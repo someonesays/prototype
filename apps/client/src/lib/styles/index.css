@@ -41,21 +41,22 @@
 
 html {
   height: 100%;
-
-  /* for Discord activity */
-  /* margin-left: var(--sail); */
-  /* margin-right: var(--sair); */
-  margin-top: var(--sait);
-  margin-bottom: var(--saib);
 }
 
 body {
   background-color: #000000;
   color: var(--secondary);
-  margin: 0;
   padding: 0;
   height: 100%;
   min-height: 100%;
+
+  display: block;
+  position: absolute;
+  height: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .minigame-iframe iframe {
