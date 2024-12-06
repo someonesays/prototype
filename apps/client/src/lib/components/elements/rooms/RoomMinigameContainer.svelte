@@ -184,7 +184,11 @@ function leaveOrEndGameConfirm() {
         <div class="minigame-notready-box">
           <div class="minigame-notready-loader"></div>
           <div class="minigame-notready-text">
-            {$roomMinigameReady && !$roomJoinedLate ? "Waiting for other players to be ready..." : "Loading minigame..."}
+            {
+              $roomMinigameReady && !$roomJoinedLate
+                ? `Waiting for players... (${$room?.players.filter(p => p.ready).length}/${$room?.players.length})`
+                : "Loading minigame..."
+            }
           </div>
         </div>
       </div>
