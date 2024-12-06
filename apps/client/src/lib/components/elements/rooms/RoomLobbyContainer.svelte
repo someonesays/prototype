@@ -305,7 +305,7 @@ function nextMinigameInPack() {
 
             {#if $room.minigame}
               <div class="options-container">
-                <div class="pack-container" class:no-pack-selected={!$room.pack}>
+                <div class="pack-container scrollbar" class:no-pack-selected={!$room.pack}>
                   {#if $room.pack}
                     <div class="pack-image">
                       {#if $room.pack?.iconImage}
@@ -326,7 +326,7 @@ function nextMinigameInPack() {
                     </div>
                   {/if}
                 </div>
-                <div class="select-container">
+                <div class="select-container scrollbar">
                   <button>Select minigame</button>
                   <button>Change pack</button>
                   <button>Remove pack</button>
@@ -606,6 +606,7 @@ function nextMinigameInPack() {
     align-items: center;
     gap: 10px;
     height: 4rem;
+    overflow: auto;
   }
   .pack-name {
     font-weight: bold;
@@ -618,6 +619,7 @@ function nextMinigameInPack() {
     align-items: center;
     gap: 10px;
     height: 4rem;
+    overflow: auto;
   }
 
   .border {
