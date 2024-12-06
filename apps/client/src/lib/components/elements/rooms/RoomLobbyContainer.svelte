@@ -188,9 +188,15 @@ function nextMinigameInPack() {
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
-      <p><a class="url" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>{$roomLobbyPopupMessage.url}</a></p>
       <p>
-        <a href="{$roomLobbyPopupMessage.url}" target="_blank"><button class="error-button">Open</button></a>
+        <a class="url" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
+          {$roomLobbyPopupMessage.url}
+        </a>
+      </p>
+      <p>
+        <a data-sveltekit-preload-data="off" href="{$roomLobbyPopupMessage.url}" target="_blank">
+          <button class="error-button">Open</button>
+        </a>
         <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
@@ -322,11 +328,21 @@ function nextMinigameInPack() {
                     {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                       <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                         {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                        <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl}>
+                          privacy policy
+                        </a>
+                        and
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl}>
+                          terms of service
+                        </a>
                         {:else if $room.minigame.privacyPolicy}
-                          <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl}>
+                            privacy policy
+                          </a>
                         {:else if $room.minigame.termsOfServices}
-                          <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl}>
+                            terms of service
+                          </a>
                         {/if}
                         apply to this minigame.
                       </p>
