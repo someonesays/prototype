@@ -242,11 +242,8 @@ function nextMinigameInPack() {
           </div>
         {/if}
       </div>
-      <div class="settings-container">
-        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
-          <div><GearIcon /></div>
-        </button>
-        <div class="settings-menu" class:active={isSettingsOpen} use:clickOutside={() => isSettingsOpen = false}>
+      <div class="settings-container" use:clickOutside={() => isSettingsOpen = false}>
+        <div class="settings-menu" class:active={isSettingsOpen}>
           <div>
             <div>
               <p class="volume-text-left">Volume</p>
@@ -256,6 +253,9 @@ function nextMinigameInPack() {
             <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
           </div>
         </div>
+        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
+          <div><GearIcon /></div>
+        </button>
       </div>
     </div>
     <div class="main-container">
@@ -463,8 +463,10 @@ function nextMinigameInPack() {
   .view-button.active {
     background: var(--primary-button);
   }
-  .view-button:hover {
-    background-color: #4712b1;
+  @media (hover: hover) and (pointer: fine) {
+    .view-button:hover {
+      background-color: #4712b1;
+    }
   }
 
   .settings-container {
@@ -487,7 +489,7 @@ function nextMinigameInPack() {
     gap: 1rem;
     flex: 1;
     overflow: hidden;
-    min-height: 300px;
+    min-height: 200px;
   }
   .hidden {
     display: none;
