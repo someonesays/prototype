@@ -388,13 +388,13 @@ function nextMinigameInPack() {
             {/if}
           {/if}
         </div>
-        <div class="action-container desktop">
+        <div class="action-container desktop scrollbar">
           <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
           <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
         </div>
       </div>
     </div>
-    <div class="action-container mobile">
+    <div class="action-container mobile scrollbar">
       <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
       <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
     </div>
@@ -423,6 +423,7 @@ function nextMinigameInPack() {
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
+    overflow: auto;
   }
 
   .nav-container {
@@ -486,6 +487,7 @@ function nextMinigameInPack() {
     gap: 1rem;
     flex: 1;
     overflow: hidden;
+    min-height: 300px;
   }
   .hidden {
     display: none;
@@ -709,18 +711,27 @@ function nextMinigameInPack() {
     background: #4c5660;
   }
   
-  @media (max-width: 319px) {
+  @media (max-height: 319px) {
+    .app {
+      padding: 0;
+      transform: scale(0.9);
+    }
     .nav-container {
       overflow: auto;
+      min-height: 65px;
     }
     .action-container, .previousnext-container {
       gap: 4vw;
       overflow: auto;
     }
-
     .view-container {
-      flex-direction: column;
+      margin: 0 12px;
       gap: 2px;
+    }
+  }
+  @media (max-height: 150px) {
+    .app {
+      transform: scale(0.8);
     }
   }
   @media (width < 900px) {
