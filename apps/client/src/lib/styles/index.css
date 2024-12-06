@@ -68,7 +68,6 @@ body.discord {
   margin-left: var(--sail);
   margin-right: var(--sair);
   margin-top: var(--sait);
-  margin-bottom: var(--saib);
 }
 
 .minigame-iframe iframe {

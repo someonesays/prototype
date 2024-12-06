@@ -9,6 +9,7 @@ let { children } = $props();
     background-attachment: fixed;
     width: 100%;
     height: 100%;
+    min-height: 100%;
 
     animation-duration: 2s;
     animation-fill-mode: forwards;
@@ -17,6 +18,7 @@ let { children } = $props();
     position: absolute;
     width: 100%;
     height: 100%;
+    min-height: 100%;
     top: 0;
     overflow: auto;
     word-wrap: break-word;
@@ -29,6 +31,7 @@ let { children } = $props();
     opacity: 10%;
     width: 100%;
     height: 100%;
+    min-height: 100%;
     overflow: hidden;
   }
   .pattern::after {
@@ -52,6 +55,7 @@ let { children } = $props();
     background: radial-gradient(50% 50% at 50% 50%, var(--bg-glow) 0%, #ffffff00 100%);
     width: 100%;
     height: 100%;
+    min-height: 100%;
     overflow: auto;
   }
   @keyframes pattern-fade-in {
