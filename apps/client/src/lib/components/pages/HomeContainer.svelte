@@ -63,7 +63,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     $isModalOpen = true;
     $kickedReason = saveSamePageKickedReason = ErrorMessageCodesToText[code];
     // If is ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT, don't go to "/".
-    if (code === ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT) return;
+    if ([ErrorMessageCodes.FAILED_CAPTCHA, ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT].includes(code)) return;
     // Redirect page to "/" if it's not already that
     if (location.pathname !== "/") goto("/");
     return;
