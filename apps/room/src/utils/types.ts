@@ -18,11 +18,11 @@ export interface ServerRoom {
   players: Map<string, ServerPlayer>;
   readyTimer?: Timer;
   testingShutdown: boolean;
+  roomHandshakeCount: number;
 }
 
 export interface WSState {
   messageType: string;
   user: ServerPlayer;
   serverRoom: ServerRoom;
-  roomHandshakeCount: number;
 }

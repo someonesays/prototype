@@ -109,7 +109,6 @@ websocket.get(
             points: 0,
           } as ServerPlayer,
           serverRoom: rooms.get(room.id) as ServerRoom,
-          roomHandshakeCount: 0,
         };
 
         // Disallow joining when it's about to shutdown
@@ -157,6 +156,7 @@ websocket.get(
             minigame: defaultMinigame, // defaults as null, sets the minigame for testing rooms
             players,
             testingShutdown: false,
+            roomHandshakeCount: 0,
           };
 
           rooms.set(room.id, state.serverRoom);
@@ -305,7 +305,8 @@ websocket.get(
               state.serverRoom.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
 
               // Update room handshake count (it's not a bug for this to go back to 0 - it's very much intended)
-              state.roomHandshakeCount = (state.roomHandshakeCount + 1) % Number.MAX_SAFE_INTEGER;
+              state.serverRoom.roomHandshakeCount = (state.serverRoom.roomHandshakeCount + 1) % Number.MAX_SAFE_INTEGER;
+              if (!state.serverRoom.roomHandshakeCount) state.serverRoom.roomHandshakeCount = 1;
 
               // Send to everyone to load the minigame
               broadcastMessage({
@@ -313,7 +314,7 @@ websocket.get(
                 opcode: ServerOpcodes.LOAD_MINIGAME,
                 data: {
                   players: [...state.serverRoom.players.values()].map((p) => transformToGamePlayer(p)),
-                  roomHandshakeCount: state.roomHandshakeCount,
+                  roomHandshakeCount: state.serverRoom.roomHandshakeCount,
                 },
               });
 
@@ -325,7 +326,7 @@ websocket.get(
 
               // Prevents race-condition where a handshake can be sent (in theory) if you quickly leave and join a new minigame
               // This is an optional value to send - the client always sends this and ignoring roomHandshakeCount has no security impact.
-              if (data.roomHandshakeCount && data.roomHandshakeCount !== state.roomHandshakeCount) {
+              if (data.roomHandshakeCount && data.roomHandshakeCount !== state.serverRoom.roomHandshakeCount) {
                 return sendError(state.user, ErrorMessageCodes.WS_INCORRECT_HANDSHAKE_COUNT);
               }
 
