@@ -99,9 +99,9 @@ onMount(() => {
       {/if}
     </form>
 
-  <p><a class="url" href="/developers">Developer Portal</a></p>
-  <p><a class="url" href="/credits">Credits</a></p>
-    <p><a class="url" href="/terms">Terms of Services</a></p>
-    <p><a class="url" href="/privacy">Privacy Policy</a></p>
+  <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers">Developer Portal</a></p>
+  <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits">Credits</a></p>
+    <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms">Terms of Services</a></p>
+    <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy">Privacy Policy</a></p>
   </BaseCard>
 </div>

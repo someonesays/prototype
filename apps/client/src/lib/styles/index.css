@@ -88,6 +88,10 @@ body.discord {
   color: #2b0081;
 }
 
+.url.disabled {
+  pointer-events: none;
+}
+
 .button {
   border-radius: calc(4px + 0.5vh);
   padding: 0px;
