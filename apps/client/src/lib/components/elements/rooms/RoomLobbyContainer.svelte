@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
+import { clickOutside } from "$lib/utils/clickOutside";
 
 import Logo from "$lib/components/icons/Logo.svelte";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
@@ -239,7 +240,7 @@ function nextMinigameInPack() {
         <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
           <div><GearIcon /></div>
         </button>
-        <div class="settings-menu" class:active={isSettingsOpen}>
+        <div class="settings-menu" class:active={isSettingsOpen} use:clickOutside={() => isSettingsOpen = false}>
           <div>
             <div>
               <p class="volume-text-left">Volume</p>
