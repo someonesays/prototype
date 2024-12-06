@@ -60,6 +60,17 @@ body {
   right: 0;
 }
 
+body.discord {
+  /* for Discord activity (do not load this page - make sure <a> links can't load this page either) */
+  height: auto;
+  min-height: auto;
+
+  margin-left: var(--sail);
+  margin-right: var(--sair);
+  margin-top: var(--sait);
+  margin-bottom: var(--saib);
+}
+
 .minigame-iframe iframe {
   border-width: 0;
   width: 100%;

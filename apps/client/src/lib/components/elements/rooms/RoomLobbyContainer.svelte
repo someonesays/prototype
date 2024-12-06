@@ -41,6 +41,12 @@ onMount(() => {
       Events.ACTIVITY_LAYOUT_MODE_UPDATE,
       (discordActivityLayoutModeUpdate = ({ layout_mode: layoutMode }) => {
         logoOnly = layoutMode === 0 ? false : true;
+
+        if (layoutMode === 0) {
+          document.body.classList.add("discord");
+        } else {
+          document.body.classList.remove("discord");
+        }
       }),
     );
   }
@@ -397,10 +403,14 @@ function nextMinigameInPack() {
 
 <style>
   .logoonly-container {
+    margin-left: calc(var(--sail) * -1);
+    margin-right: calc(-50% - var(--sair));
+    margin-top: calc(var(--sait) * -1);
+    margin-bottom: calc(var(--saib) * -1);
+
     position: absolute;
     top: 50%;
-    left: 50%;
-    margin-right: -50%;
+    left: 49%;
     transform: translate(-50%, -50%)
   }
 

@@ -12,6 +12,9 @@ let failed = $state(false);
 
 onMount(() => {
   try {
+    // Add Discord style
+    document.body.classList.add("discord");
+
     // Load Discord SDK
     const discordSdk = new DiscordSDK(env.VITE_DISCORD_CLIENT_ID);
 
@@ -86,16 +89,3 @@ onMount(() => {
 {:else}
   <p>Loading launcher...</p>
 {/if}
-
-<style>
-  :global(body) {
-    /* for Discord activity (do not load this page - make sure <a> links can't load this page either) */
-    height: auto;
-    min-height: auto;
-    
-    margin-left: var(--sail);
-    margin-right: var(--sair);
-    margin-top: var(--sait);
-    margin-bottom: var(--saib);
-  }
-</style>
