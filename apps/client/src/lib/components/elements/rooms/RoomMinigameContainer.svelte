@@ -151,7 +151,7 @@ function leaveOrEndGameConfirm() {
 
 <Modal>
   {#if $room && $room.room.host === $room.user}
-    <div style="width: 80px; margin: 0 auto;"><Plug /></div>
+    <div class="modal-icon"><Plug /></div>
     <p>
       Are you sure you want to end this minigame?<br>
       Points will not be awarded.
@@ -167,7 +167,7 @@ function leaveOrEndGameConfirm() {
       <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {:else}
-    <div style="width: 80px; margin: 0 auto;"><DoorOpen color="black" /></div>
+    <div class="modal-icon"><DoorOpen color="black" /></div>
     <p>Are you sure you want to leave the room?</p>
     <p>
       <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>Leave room</button>

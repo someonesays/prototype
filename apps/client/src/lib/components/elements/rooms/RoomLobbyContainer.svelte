@@ -189,11 +189,11 @@ function nextMinigameInPack() {
 {:else}
   <Modal>
     {#if $roomLobbyPopupMessage?.type === "warning"}
-      <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+      <div class="modal-icon"><TriangleExclamation /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
       <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
-      <div style="width: 80px; margin: 0 auto;"><TriangleExclamation /></div>
+      <div class="modal-icon"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
         <a class="url" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
@@ -207,7 +207,7 @@ function nextMinigameInPack() {
         <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
-    <div style="width: 80px; margin: 0 auto;"><Copy /></div>
+    <div class="modal-icon"><Copy /></div>
       <p>Copied invite link!</p>
       <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
