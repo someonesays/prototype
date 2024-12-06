@@ -304,23 +304,39 @@ function nextMinigameInPack() {
             <!-- end of testing code -->
 
             {#if $room.minigame}
-              <div class="pack-container">
-                <p>Pack: {$room.pack ? JSON.stringify($room.pack) : "None"}</p>
-                {#if $room.pack?.iconImage}
-                  <p>Pack icon image:</p>
-                  <p>
-                    <img alt="pack preview" src={
-                      $launcher === "normal"
-                        ? $room.pack.iconImage.normal
-                        : $room.pack.iconImage.discord
-                    } width="100" height="100" />
-                  </p>
-                {/if}
-      
-                {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-                  <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-                {/if}
+              <div class="options-container">
+                <div class="pack-container">
+                  {#if $room.pack}
+                    <div class="pack-image">
+                      {#if $room.pack?.iconImage}
+                        <img class="pack-image" alt="Pack icon" src={
+                          $launcher === "normal"
+                            ? $room.pack.iconImage.normal
+                            : $room.pack.iconImage.discord
+                        } />
+                      {/if}
+                    </div>
+                    <div>
+                      <div class="pack-name">{$room.pack.name}</div>
+                      <div class="pack-author">by {$room.pack.author.name}</div>
+                    </div>
+                  {:else}
+                    <div>
+                      <div class="pack-name">No pack selected!</div>
+                    </div>
+                  {/if}
+                </div>
+                <div class="select-container">
+                  <button>Select minigame</button>
+                  <button>Change pack</button>
+                  <button>Remove pack</button>
+                  <button>Report</button>
+                </div>
               </div>
+      
+              {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+                <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+              {/if}
 
               <hr class="border" />
 
@@ -575,13 +591,45 @@ function nextMinigameInPack() {
     }
   }
 
+  .options-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    white-space: pre-line;
+  }
   .pack-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 4rem;
     margin-bottom: 1rem;
+  }
+  .pack-name {
+    font-weight: bold;
+  }
+  .pack-author {
+    font-size: 14px;
+  }
+  .select-container {
+
   }
 
   .border {
     width: 99%;
     border-top: 1px solid #b3b3b3;
+  }
+
+  .pack-image {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.5rem;
+    background: var(--card-stroke);
+  }
+
+  .pack-image img {
+    width: 4rem;
+    height: 4rem;
   }
 
   .nextup-container {

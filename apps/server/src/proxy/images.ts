@@ -22,7 +22,7 @@ images.get("/minigames/:id/preview", async (c) => {
   return sendProxiedImage(c, minigame.previewImage);
 });
 
-images.get("/:id/packs/icon", async (c) => {
+images.get("/packs/:id/icon", async (c) => {
   const id = c.req.param("id");
 
   const pack = await getPack(id);
