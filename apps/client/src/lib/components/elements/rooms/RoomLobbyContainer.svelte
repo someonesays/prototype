@@ -531,6 +531,16 @@ function nextMinigameInPack() {
   .player-card.client-is-host:hover .player-actions {
     display: flex;
     flex: 1;
+    animation-name: player-actions-pointer-actions;
+    animation-duration: 0.3s;
+  }
+  @keyframes player-actions-pointer-actions {
+    0% { 
+      pointer-events: none;
+    }
+    100% {
+      pointer-events: all;
+    }
   }
 
   .pack-container {
@@ -644,6 +654,18 @@ function nextMinigameInPack() {
   }
   .action-button.start:hover {
     background-color: #19713e;
+  }
+
+  .playeraction-button {
+    margin-top: 0px;
+    padding: 5px;
+    height: 40px;
+  }
+  .playeraction-button {
+    width: 70px;
+  }
+  .playeraction-button.transfer-host {
+    width: 120px;
   }
 
   .scrollbar::-webkit-scrollbar {
