@@ -214,7 +214,7 @@ function nextMinigameInPack() {
     {/if}
   </Modal>
 
-  <div class="app">
+  <div class="app scrollbar">
     <div class="nav-container scrollbar">
       <div class="leave">
         {#if $launcher === "normal"}
@@ -264,7 +264,7 @@ function nextMinigameInPack() {
         <div class="players-list">
           {#if $room}
             {#each $room.players as player}
-              <div class="player-card scrollbar"class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
+              <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
                 <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
                 <span class="player-name">
                   {player.displayName}
@@ -787,10 +787,13 @@ function nextMinigameInPack() {
     .players-container {
       min-width: 250px;
     }
-  }
-  @Media (min-width: 1200px) {
     .player-card {
-      width: 20vw;
+      width: 14rem;
+    }
+  }
+  @media (min-width: 1125px) {
+    .player-card {
+      width: 19.75vw;
     }
   }
 </style>
