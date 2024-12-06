@@ -90,6 +90,9 @@ onMount(() => {
 <style>
   :global(body) {
     /* for Discord activity (do not load this page - make sure <a> links can't load this page either) */
+    height: auto;
+    min-height: auto;
+    
     margin-left: var(--sail);
     margin-right: var(--sair);
     margin-top: var(--sait);
