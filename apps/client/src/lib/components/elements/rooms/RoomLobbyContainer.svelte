@@ -859,6 +859,8 @@ function openUrl(evt: MouseEvent) {
     border-radius: 15px;
     width: 100%;
     height: auto;
+    max-width: 300px;
+    max-height: 300px;
     overflow: auto;
   }
   
