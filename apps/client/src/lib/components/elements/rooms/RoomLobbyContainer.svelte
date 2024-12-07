@@ -920,7 +920,6 @@ function openUrl(evt: MouseEvent) {
 
   .report-button {
     background: none;
-    height: 40px;
     cursor: pointer;
     border: none;
     margin-left: 6px;
