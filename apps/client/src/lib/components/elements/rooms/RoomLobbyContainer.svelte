@@ -567,11 +567,23 @@ function openUrl(evt: MouseEvent) {
     justify-content: center;
   }
 
+  @keyframes appear-animation {
+    0% {
+      margin-top: 6px;
+    }
+    100% {
+      margin-top: 0px;
+    }
+  }
+
   .nav-container {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
     margin-bottom: .75rem;
+
+    animation-name: appear-animation;
+    animation-duration: 0.6s;
   }
   
   .nav-buttons {
@@ -645,6 +657,9 @@ function openUrl(evt: MouseEvent) {
     flex: 1 1 auto;
     height: calc(100% - 150px);
     overflow-y: auto;
+    
+    animation-name: appear-animation;
+    animation-duration: 0.4s;
   }
   .players-container, .game-section {
     background: var(--primary);
