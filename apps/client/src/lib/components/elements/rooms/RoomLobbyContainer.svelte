@@ -458,6 +458,7 @@ function nextMinigameInPack() {
     align-items: center;
     margin-bottom: .75rem;
   }
+  
   .nav-buttons {
     display: flex;
     justify-content: center;
@@ -796,7 +797,7 @@ function nextMinigameInPack() {
     .nav-container {
       overflow: auto;
       min-height: 65px;
-      margin-bottom: 0rem;
+      margin-bottom: 0;
     }
     .action-container, .previousnext-container {
       gap: 4vw;
@@ -867,6 +868,38 @@ function nextMinigameInPack() {
   @media (min-width: 900px) and (max-width: 1200px) {
     .players-container {
       min-width: 250px;
+    }
+  }
+
+  /* lazy fixes for very small screens */
+  @media (max-height: 241px) {
+    .nav-container {
+      margin-top: 30px;
+    }
+  }
+  @media (max-height: 215px) {
+    .nav-container {
+      margin-top: 49px;
+    }
+  }
+  @media (max-height: 190px) {
+    .nav-container {
+      margin-top: 90px;
+    }
+  }
+  @media (max-height: 150px) {
+    .nav-container {
+      margin-top: 140px;
+    }
+  }
+  @media (max-height: 100px) {
+    .nav-container {
+      margin-top: 180px;
+    }
+  }
+  @media (max-height: 60px) {
+    .nav-container {
+      margin-top: 200px;
     }
   }
 </style>
