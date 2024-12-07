@@ -255,6 +255,15 @@ async function copyInviteLink() {
 }
 
 function startGame(ignoreWarning: boolean) {
+  if (!$room || $room.user !== $room.room.host) {
+    $roomLobbyPopupMessage = {
+      type: "warning",
+      message: "Only the host can start the game!",
+    };
+    $isModalOpen = true;
+    return;
+  }
+
   if (!$room?.minigame) {
     $roomLobbyPopupMessage = {
       type: "warning",
@@ -582,12 +591,14 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 </div>
   
-                <div class="previousnext-container load-fade-in" class:loaded={$room}>
-                  <div class="previousnext-section">
-                    <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
-                    <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
+                {#if $room.room.host === $room.user}
+                  <div class="previousnext-container load-fade-in" class:loaded={$room}>
+                    <div class="previousnext-section">
+                      <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
+                      <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
+                    </div>
                   </div>
-                </div>
+                {/if}
               {:else}
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
                   <!-- testing code -->
@@ -613,13 +624,13 @@ function openUrl(evt: MouseEvent) {
           </div>
           <div class="action-container desktop scrollbar">
             <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
           </div>
         </div>
       </div>
       <div class="action-container mobile scrollbar">
         <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
       </div>
     </div>
   </div>
