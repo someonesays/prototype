@@ -954,8 +954,8 @@ function openUrl(evt: MouseEvent) {
   .nextup-minigame-preview-image {
     border: 1px #b3b3b3 solid;
     border-radius: 15px;
-    width: 100%;
-    height: auto;
+    width: 300px;
+    height: 300px;
     max-width: 300px;
     max-height: 300px;
     float: right;
