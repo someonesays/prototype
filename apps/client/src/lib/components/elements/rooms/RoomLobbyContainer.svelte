@@ -344,7 +344,7 @@ function openUrl(evt: MouseEvent) {
         {#if minigamesInPack.packMinigames.minigames.length === 0}
           <p>This pack is empty!</p>
         {:else}
-          <div class="select-minigame-container scrollbar" style="width: 400px;">
+          <div class="select-minigame-container scrollbar" style="width: 400px; max-width: 100%;">
             {#each minigamesInPack.packMinigames.minigames as minigame}
               <div>
                 <button class="primary-button select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>{minigame.name}</button>
