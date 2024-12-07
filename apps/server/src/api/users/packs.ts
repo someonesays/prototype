@@ -26,6 +26,7 @@ const userPackZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   iconImage: z.string().refine(validateUrl).nullable().default(null),
+  randomize: z.boolean().default(true),
 });
 
 userPacks.get("/", authMiddleware, async (c) => {
