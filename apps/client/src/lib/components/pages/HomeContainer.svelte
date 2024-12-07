@@ -23,6 +23,8 @@ import { launcherMatchmaking } from "../stores/launcher";
 let disableJoin = $state(false);
 let saveSamePageKickedReason = $state<string | null>(null);
 
+let transformScale = $state(1);
+
 // Remove kicked reason if you leave the page
 beforeNavigate(() => {
   $roomIdToJoin = null;
@@ -78,8 +80,23 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 }
 
 onMount(() => {
-  if (!$kickedReason) return;
-  $isModalOpen = true;
+  if ($kickedReason) {
+    $isModalOpen = true;
+  }
+
+  const resize = () => {
+    if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
+      transformScale = Math.min(window.innerWidth / 1100, window.innerHeight / 660);
+    } else {
+      transformScale = 1;
+    }
+  };
+  window.addEventListener("resize", resize);
+
+  resize();
+  return () => {
+    window.removeEventListener("resize", resize);
+  };
 });
 </script>
 
@@ -91,7 +108,7 @@ onMount(() => {
 </Modal>
 
 <div class="main-container">
-  <BaseCard style="padding: 20px;">
+  <BaseCard style="padding: 20px; transform: scale({transformScale});">
     <br>
     <div class="logo-container">
       <Logo />
