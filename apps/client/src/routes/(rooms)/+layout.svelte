@@ -5,7 +5,7 @@ let { children } = $props();
 </script>
 
 <style>
-  .container, .primary-bg, .secondary-bg {
+  .container {
     position: absolute;
     background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
     background-attachment: fixed;
@@ -13,7 +13,25 @@ let { children } = $props();
     height: 100%;
     min-height: 100%;
 
-    animation-duration: 0.5s;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+  }
+  .bg-container {
+    animation-name: bg-fade-in;
+    animation-duration: 0.8s;
+    animation-fill-mode: forwards;
+  }
+  .bg {
+    position: absolute;
+    background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
+    opacity: 0;
+    background-attachment: fixed;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    
+    animation-name: bg-fade-in;
+    animation-duration: 0.8s;
     animation-fill-mode: forwards;
   }
   .primary-bg {
@@ -22,11 +40,7 @@ let { children } = $props();
   .secondary-bg {
     background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
   }
-  .primary-bg, .secondary-bg {
-    animation-name: bg-fade-in;
-    animation-duration: 0.8s;
-  }
-  .primary-bg.hide, .secondary-bg.hide {
+  .bg.hide {
     animation-name: bg-fade-out;
     animation-duration: 0.8s;
     animation-fill-mode: forwards;
@@ -115,8 +129,10 @@ let { children } = $props();
 </style>
 
 <div class="container">
-  <div class="primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")}></div>
-  <div class="secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")}></div>
+  <div class="bg-container">
+    <div class="bg primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")}></div>
+    <div class="bg secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")}></div>
+  </div>
 
   <div class="pattern"></div>
   <div class="glow"></div>
