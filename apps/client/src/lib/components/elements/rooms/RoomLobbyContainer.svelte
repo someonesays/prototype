@@ -283,26 +283,27 @@ function openUrl(evt: MouseEvent) {
       <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <h2>Select minigame</h2>
-
       <form onsubmit={setSettings}>
+        <h2>Select minigame</h2>
+
         <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} hidden>
-        <input type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
-        <input type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
-      </form>
 
-      <br>
-      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
+        <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
+
+        <br><br>
+        <input class="primary-button" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
+        <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
+      </form>
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
-      <h2>Select pack</h2>
-
       <form onsubmit={setSettings}>
-        <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
-        <input type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+        <h2>Select pack</h2>
+
+        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
+
+        <br><br>
+        <input class="primary-button" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+        <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
-      
-      <br>
-      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
       <p>This is is a work in progress!</p>
@@ -553,6 +554,14 @@ function openUrl(evt: MouseEvent) {
 {/if}
 
 <style>
+  .input {
+    width: 100%;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 1px #b3b3b3 solid;
+    border-radius: 4px;
+  }
+
   .logoonly-container {
     margin-left: calc(var(--sail) * -1);
     margin-right: calc(-50% - var(--sair));
@@ -606,9 +615,9 @@ function openUrl(evt: MouseEvent) {
     align-items: center;
     margin-bottom: .75rem;
 
-  animation-name: appear-animation;
-  animation-duration: 0.6s;
-  animation-timing-function: ease-out;
+    animation-name: appear-animation;
+    animation-duration: 0.6s;
+    animation-timing-function: ease-out;
   }
   
   .nav-buttons {

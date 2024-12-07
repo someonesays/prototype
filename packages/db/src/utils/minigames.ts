@@ -1,6 +1,6 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { NOW } from "./utils";
 import type { Minigame } from "@/public";
@@ -36,6 +36,7 @@ export async function deleteMinigameWithAuthorId({ id, authorId }: { id: string;
 export function getMinigamesByIds(ids: string[]) {
   return db.query.minigames.findMany({
     where: inArray(schema.minigames.id, ids),
+    orderBy: asc(schema.minigames.createdAt),
     with: {
       author: {
         columns: { id: true, name: true, createdAt: true },
@@ -53,6 +54,7 @@ export async function getMinigamesByAuthorId({
     offset,
     limit,
     where: eq(schema.minigames.authorId, authorId),
+    orderBy: asc(schema.minigames.createdAt),
   });
   return {
     offset,

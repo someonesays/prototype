@@ -59,6 +59,7 @@ export async function getPacksByAuthorId({
     offset,
     limit,
     where: eq(schema.packs.authorId, authorId),
+    orderBy: asc(schema.packs.createdAt),
   });
   return {
     offset,
