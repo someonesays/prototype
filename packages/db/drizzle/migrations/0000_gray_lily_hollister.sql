@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS "minigames" (
 CREATE TABLE IF NOT EXISTS "packs_minigames" (
 	"pack_id" text NOT NULL,
 	"minigame_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "packs_minigames_pack_id_minigame_id_pk" PRIMARY KEY("pack_id","minigame_id")
 );
 --> statement-breakpoint

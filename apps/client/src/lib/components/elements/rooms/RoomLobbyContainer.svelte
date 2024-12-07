@@ -24,7 +24,7 @@ import {
 } from "$lib/components/stores/roomState";
 import { isModalOpen } from "$lib/components/stores/modal";
 
-import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
+import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, GameSelectPreviousOrNextMinigame } from "@/public";
 import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
@@ -105,15 +105,24 @@ function handleRemoveMinigameAndPack() {
 function handleReport() {
   if (!$room?.minigame) return;
 
-  alert("handle report");
+  $roomLobbyPopupMessage = { type: "report" };
+  $isModalOpen = true;
 }
 
 function previousMinigameInPack() {
-  alert("WIP");
+  $roomRequestedToChangeSettings = true;
+  $roomWs?.send({
+    opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
+    data: { direction: GameSelectPreviousOrNextMinigame.Previous },
+  });
 }
 
 function nextMinigameInPack() {
-  alert("WIP");
+  $roomRequestedToChangeSettings = true;
+  $roomWs?.send({
+    opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
+    data: { direction: GameSelectPreviousOrNextMinigame.Next },
+  });
 }
 
 function kickPlayer(user: string) {
@@ -233,7 +242,7 @@ function openUrl(evt: MouseEvent) {
       <p>{$roomLobbyPopupMessage?.message}</p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false} >Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
-    <br><br>
+      <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
@@ -257,7 +266,7 @@ function openUrl(evt: MouseEvent) {
       <h2>Select minigame</h2>
 
       <form onsubmit={setSettings}>
-        <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings} hidden>
+        <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} hidden>
         <input type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
         <input type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
       </form>
@@ -273,6 +282,10 @@ function openUrl(evt: MouseEvent) {
       </form>
       
       <br>
+      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
+    {:else if $roomLobbyPopupMessage?.type === "report"}
+      <h2>Report</h2>
+      <p>This is is a work in progress!</p>
       <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
     {/if}
   </Modal>
@@ -391,11 +404,10 @@ function openUrl(evt: MouseEvent) {
                 </div>
                 <div class="select-container scrollbar">
                   {#if $room.room.host === $room.user}
-                    <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
-                      Select minigame
-                    </button>
-
                     {#if $room.pack}
+                      <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
+                        Select minigame
+                      </button>
                       <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
                         Change pack
                       </button>
@@ -487,8 +499,8 @@ function openUrl(evt: MouseEvent) {
 
               <div class="previousnext-container">
                 <div class="previousnext-section">
-                  <button class="previousnext-button" onclick={previousMinigameInPack}  tabindex={disableTabIndex}>Previous</button>
-                  <button class="previousnext-button" onclick={nextMinigameInPack}  tabindex={disableTabIndex}>Next</button>
+                  <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
+                  <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
                 </div>
               </div>
             {:else}
@@ -855,6 +867,9 @@ function openUrl(evt: MouseEvent) {
   }
   .action-button.invite:click, .previousnext-button:click {
     background-color: #343a40;
+  }
+  .previousnext-button:disabled {
+    cursor: wait;
   }
   .action-button.start {
     background: var(--success-button);

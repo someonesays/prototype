@@ -5,6 +5,7 @@ import {
   findBestTestingServerByHashAndLocation,
   getMinigameByIdAndTestingAccessCode,
   getMinigamePublic,
+  getPackMinigameCount,
   getPackMinigamesPublic,
   getPackPublic,
   isMinigameInPack,
@@ -18,6 +19,7 @@ import {
   GamePrizePoints,
   ErrorMessageCodes,
   MatchmakingType,
+  GameSelectPreviousOrNextMinigame,
   type MatchmakingDataJWT,
   type Pack,
   type Minigame,
@@ -158,6 +160,7 @@ websocket.get(
             players,
             testingShutdown: false,
             roomHandshakeCount: 0,
+            packMinigameOrder: null,
           };
 
           rooms.set(room.id, state.serverRoom);
@@ -277,6 +280,69 @@ websocket.get(
               // Set pack and minigame (!== undefined is necessary as they can be null)
               state.serverRoom.pack = newSettings.pack;
               state.serverRoom.minigame = newSettings.minigame;
+
+              if (state.serverRoom.pack) {
+                state.serverRoom.packMinigameOrder = 0;
+              } else {
+                state.serverRoom.packMinigameOrder = null;
+              }
+
+              broadcastMessage({
+                room: state.serverRoom,
+                opcode: ServerOpcodes.UPDATED_ROOM_SETTINGS,
+                data: {
+                  pack: state.serverRoom.pack,
+                  minigame: state.serverRoom.minigame,
+                },
+              });
+
+              return;
+            }
+            case ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME: {
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
+
+              if (!state.serverRoom.pack) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_PACK);
+              if (state.serverRoom.packMinigameOrder === null) {
+                throw new Error("Pack minigame order is null. This should never happen!");
+              }
+
+              // Check if you want to get the previous minigame or the next one
+              let newDirection =
+                data.direction === GameSelectPreviousOrNextMinigame.Previous
+                  ? state.serverRoom.packMinigameOrder - 1
+                  : state.serverRoom.packMinigameOrder + 1;
+
+              // Disallow going negative
+              if (newDirection < 0) {
+                newDirection = 0;
+              }
+
+              // Disallow going over the limit
+              const count = await getPackMinigameCount(state.serverRoom.pack.id);
+              if (newDirection >= count) {
+                newDirection = count - 1;
+              }
+
+              // Get the minigame
+              const { minigames } = await getPackMinigamesPublic({
+                id: state.serverRoom.pack.id,
+                offset: newDirection,
+                limit: 1,
+              });
+              if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
+
+              // Missing proxy URL
+              const minigame = minigames[0];
+              if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
+
+              // Race condition check
+              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
+              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
+
+              // Set minigame
+              state.serverRoom.packMinigameOrder = newDirection;
+              state.serverRoom.minigame = minigame;
 
               broadcastMessage({
                 room: state.serverRoom,

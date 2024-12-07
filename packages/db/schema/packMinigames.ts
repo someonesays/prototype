@@ -1,4 +1,6 @@
-import { text, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { text, pgTable, primaryKey, timestamp } from "drizzle-orm/pg-core";
+import { NOW } from "../src/utils/utils";
 
 import { packs } from "./packs";
 import { minigames } from "./minigames";
@@ -12,6 +14,7 @@ export const packsMinigames = pgTable(
     minigameId: text("minigame_id")
       .notNull()
       .references(() => minigames.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
   },
   (table) => [
     primaryKey({
@@ -19,3 +22,10 @@ export const packsMinigames = pgTable(
     }),
   ],
 );
+
+export const packMinigamesRelations = relations(packsMinigames, ({ one }) => ({
+  minigame: one(minigames, {
+    fields: [packsMinigames.minigameId],
+    references: [minigames.id],
+  }),
+}));

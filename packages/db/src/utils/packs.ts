@@ -1,8 +1,8 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, asc } from "drizzle-orm";
 import { db } from "../connectors/pool";
-import { getMinigamesByIdsPublic } from "./minigames";
+import { transformMinigameToMinigamePublic } from "./minigames";
 import { NOW } from "./utils";
 import type { Pack } from "@/public";
 
@@ -89,20 +89,48 @@ export async function getPackByAuthorId({ id, authorId }: { id: string; authorId
   });
 }
 
-export function getPackMinigames({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
-  return db.query.packsMinigames.findMany({
-    offset,
-    limit,
-    where: eq(schema.packsMinigames.packId, id),
-  });
+export async function getPackMinigames({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
+  return (
+    await db.query.packsMinigames.findMany({
+      offset,
+      limit,
+      where: eq(schema.packsMinigames.packId, id),
+      orderBy: asc(schema.packsMinigames.createdAt),
+      with: {
+        minigame: {
+          with: {
+            author: {
+              columns: { id: true, name: true, createdAt: true },
+            },
+          },
+        },
+      },
+    })
+  ).map((m) => transformMinigameToMinigamePublic(m.minigame));
 }
 
-export function getPackMinigamesByAuthorId({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
-  return db.query.packsMinigames.findMany({
-    offset,
-    limit,
-    where: eq(schema.packsMinigames.packId, id),
-  });
+export async function getPackMinigamesByAuthorId({
+  id,
+  offset = 0,
+  limit = 50,
+}: { id: string; offset?: number; limit?: number }) {
+  return (
+    await db.query.packsMinigames.findMany({
+      offset,
+      limit,
+      where: eq(schema.packsMinigames.packId, id),
+      orderBy: asc(schema.packsMinigames.createdAt),
+      with: {
+        minigame: {
+          with: {
+            author: {
+              columns: { id: true, name: true, createdAt: true },
+            },
+          },
+        },
+      },
+    })
+  ).map((m) => transformMinigameToMinigamePublic(m.minigame));
 }
 
 export function getPackMinigameCount(id: string) {
@@ -121,12 +149,11 @@ export async function getPackMinigamesPublic({
   offset = 0,
   limit = 50,
 }: { id: string; offset?: number; limit?: number }) {
-  const minigameIds = await getPackMinigames({ id, offset, limit });
   return {
     offset,
     limit,
     total: await getPackMinigameCount(id),
-    minigames: await getMinigamesByIdsPublic(minigameIds.map((m) => m.minigameId)),
+    minigames: await getPackMinigames({ id, offset, limit }),
   };
 }
 

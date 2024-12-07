@@ -19,6 +19,7 @@ export interface ServerRoom {
   readyTimer?: Timer;
   testingShutdown: boolean;
   roomHandshakeCount: number;
+  packMinigameOrder: number | null;
 }
 
 export interface WSState {
