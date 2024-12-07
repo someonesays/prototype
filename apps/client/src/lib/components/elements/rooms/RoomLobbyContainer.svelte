@@ -989,6 +989,9 @@ function openUrl(evt: MouseEvent) {
       margin-left: 0px;
       width: 100%;
     }
+    .nextup-minigame-preview-image {
+      float: left;
+    }
 
     .players-container, .game-container {
       animation-name: appear-animation-weak;
