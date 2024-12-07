@@ -1,17 +1,34 @@
 <script lang="ts">
+import { page } from "$app/stores";
+
 let { children } = $props();
 </script>
 
 <style>
-  .container {
+  .container, .primary-bg, .secondary-bg {
     position: absolute;
-    background: linear-gradient(90deg, var(--bg-gradient-primary-1) 0%, var(--bg-gradient-primary-2) 100%);
+    background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
     background-attachment: fixed;
     width: 100%;
     height: 100%;
     min-height: 100%;
 
-    animation-duration: 2s;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+  }
+  .primary-bg {
+    background: linear-gradient(90deg, var(--bg-gradient-primary-1) 0%, var(--bg-gradient-primary-2) 100%);
+  }
+  .secondary-bg {
+    background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
+  }
+  .primary-bg, .secondary-bg {
+    animation-name: bg-fade-in;
+    animation-duration: 0.8s;
+  }
+  .primary-bg.hide, .secondary-bg.hide {
+    animation-name: bg-fade-out;
+    animation-duration: 0.8s;
     animation-fill-mode: forwards;
   }
   .child-container {
@@ -59,6 +76,22 @@ let { children } = $props();
     min-height: 100%;
     overflow: auto;
   }
+  @keyframes bg-fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes bg-fade-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
   @keyframes pattern-fade-in {
     0% {
       background-color: #000000;
@@ -82,6 +115,9 @@ let { children } = $props();
 </style>
 
 <div class="container">
+  <div class="primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")}></div>
+  <div class="secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")}></div>
+
   <div class="pattern"></div>
   <div class="glow"></div>
 

@@ -25,6 +25,9 @@
   --bg-checkers: #ffffff14;
   --bg-glow: #ff93f880;
 
+  --bg-gradient-2-primary-1: #d454ff;
+  --bg-gradient-2-primary-2: #8996d9;
+
   /* for Discord activity */
   --sait: var(--discord-safe-area-inset-top, env(safe-area-inset-top));
   --saib: var(--discord-safe-area-inset-bottom, env(safe-area-inset-bottom));
