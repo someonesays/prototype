@@ -113,14 +113,14 @@ userPacks.post("/:id/minigames/:minigameId", authMiddleware, async (c) => {
   if (alreadyInPack) return c.json({ code: ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK }, 409);
 
   const count = await getPackMinigameCount(pack.id);
-  if (count > 1) return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
+  if (count > 1000) return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
 
   try {
     await addMinigameToPack({ packId: pack.id, minigameId });
 
     // Race condition check
     const count = await getPackMinigameCount(pack.id);
-    if (count > 1) {
+    if (count > 1000) {
       await removeMinigameFromPack({ packId: pack.id, minigameId });
       return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
     }
