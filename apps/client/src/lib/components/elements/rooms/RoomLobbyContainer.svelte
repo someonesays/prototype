@@ -571,14 +571,14 @@ function openUrl(evt: MouseEvent) {
 
   @keyframes appear-animation {
     0% {
-      margin-top: 6px;
+      transform: scale(0.99);
     }
     100% {
-      margin-top: 0px;
+      transform: scale(1);
     }
   }
 
-  @keyframes appear-animation-weak {
+  @keyframes mobile-animation {
     0% {
       margin-top: 4px;
     }
@@ -593,9 +593,9 @@ function openUrl(evt: MouseEvent) {
     align-items: center;
     margin-bottom: .75rem;
 
-    animation-name: appear-animation;
-    animation-duration: 0.6s;
-    animation-timing-function: ease-out;
+  animation-name: appear-animation;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
   }
   
   .nav-buttons {
@@ -659,8 +659,9 @@ function openUrl(evt: MouseEvent) {
     overflow: hidden;
     min-height: 200px;
     max-height: 550px;
+    
     animation-name: appear-animation;
-    animation-duration: 0.4s;
+    animation-duration: 0.6s;
     animation-timing-function: ease-out;
   }
 
@@ -994,7 +995,7 @@ function openUrl(evt: MouseEvent) {
     }
 
     .players-container, .game-container {
-      animation-name: appear-animation-weak;
+      animation-name: mobile-animation;
       animation-duration: 0.2s;
       animation-timing-function: ease-out;
     }
