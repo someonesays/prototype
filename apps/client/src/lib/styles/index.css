@@ -293,6 +293,14 @@ body.discord {
   margin: 0 auto;
 }
 
+.input {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 1px #b3b3b3 solid;
+  border-radius: 4px;
+}
+
 @media (max-width: 120px) {
   .modal-icon {
     display: none;

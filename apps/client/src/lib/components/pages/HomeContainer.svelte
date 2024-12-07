@@ -2,6 +2,7 @@
 import env from "$lib/utils/env";
 
 import Ban from "../icons/Ban.svelte";
+import Logo from "../icons/Logo.svelte";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 import Modal from "../elements/cards/Modal.svelte";
@@ -89,20 +90,60 @@ onMount(() => {
   <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
 </Modal>
 
-<div style="width: 50%; min-height: 300px;">
-  <BaseCard>
-    <p>Someone Says</p>
+<div class="main-container">
+  <BaseCard style="padding: 12px;">
+    <br>
+    <div class="logo-container">
+      <Logo />
+    </div>
+    <br>
     <form onsubmit={joinRoom}>
-      <input type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoin} required>
-      <input type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={disableJoin}><br>
+      <input class="input input-center" type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoin} required>
+      <input class="primary-button margin-top-8" type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
       {/if}
     </form>
 
-  <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers">Developer Portal</a></p>
-  <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits">Credits</a></p>
-    <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms">Terms of Services</a></p>
-    <p><a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy">Privacy Policy</a></p>
+    <p>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers">Developer Portal</a>
+      &nbsp;&nbsp;
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits">Credits</a>
+      &nbsp;&nbsp;
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms">Terms of Services</a>
+      &nbsp;&nbsp;
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy">Privacy Policy</a>
+    </p>
   </BaseCard>
 </div>
+
+<style>
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    min-width: 100px;
+    min-height: 100px;
+    text-align: center;
+    height: 100%;
+    overflow: auto;
+    margin: 0 auto;
+
+    
+    align-items: center;
+      justify-content: center;
+  }
+  .input-center {
+    text-align: center;
+  }
+  .logo-container {
+    max-width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  .margin-top-8 {
+    margin-top: 8px;
+  }
+</style>

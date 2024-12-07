@@ -626,14 +626,6 @@ function openUrl(evt: MouseEvent) {
 {/if}
 
 <style>
-  .input {
-    width: 100%;
-    padding: 12px 20px;
-    box-sizing: border-box;
-    border: 1px #b3b3b3 solid;
-    border-radius: 4px;
-  }
-
   .logoonly-container {
     margin-left: calc(var(--sail) * -1);
     margin-right: calc(-50% - var(--sair));

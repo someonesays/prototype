@@ -1,8 +1,8 @@
 <script lang="ts">
-let { children } = $props();
+let { children, style = "" } = $props();
 </script>
 
-<div class="card">
+<div class="card" style={style}>
   {@render children()}
 </div>
 
