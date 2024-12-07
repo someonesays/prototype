@@ -647,7 +647,10 @@ function openUrl(evt: MouseEvent) {
     overflow: hidden;
     min-height: 200px;
     max-height: 550px;
+    animation-name: appear-animation;
+    animation-duration: 0.4s;
   }
+
   .hidden {
     display: none;
   }
@@ -657,9 +660,6 @@ function openUrl(evt: MouseEvent) {
     flex: 1 1 auto;
     height: calc(100% - 150px);
     overflow-y: auto;
-    
-    animation-name: appear-animation;
-    animation-duration: 0.4s;
   }
   .players-container, .game-section {
     background: var(--primary);
@@ -974,6 +974,11 @@ function openUrl(evt: MouseEvent) {
     .nextup-minigame-preview {
       margin-left: 0px;
       width: 100%;
+    }
+
+    .players-container, .game-container {
+      animation-name: appear-animation;
+      animation-duration: 0.4s;
     }
   }
   @media (min-width: 900px) {
