@@ -11,6 +11,7 @@ import {
   getMinigamePublic,
   getPackByAuthorId,
   getPackCountByAuthorId,
+  getPackMinigameCount,
   getPackMinigamesPublic,
   getPacksByAuthorId,
   removeMinigameFromPack,
@@ -111,8 +112,19 @@ userPacks.post("/:id/minigames/:minigameId", authMiddleware, async (c) => {
   const alreadyInPack = await getMinigameInPack({ packId: pack.id, minigameId: minigame.id });
   if (alreadyInPack) return c.json({ code: ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK }, 409);
 
+  const count = await getPackMinigameCount(pack.id);
+  if (count > 1) return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
+
   try {
     await addMinigameToPack({ packId: pack.id, minigameId });
+
+    // Race condition check
+    const count = await getPackMinigameCount(pack.id);
+    if (count > 1) {
+      await removeMinigameFromPack({ packId: pack.id, minigameId });
+      return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
+    }
+
     return c.json({ success: true });
   } catch (err) {
     return c.json({ code: ErrorMessageCodes.INTERNAL_ERROR }, 500);

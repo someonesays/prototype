@@ -11,6 +11,7 @@ export enum ErrorMessageCodes {
 
   CANNOT_FIND_MINIGAME_FOR_PACK = "cannot_find_minigame_for_pack",
   MINIGAME_ALREADY_IN_PACK = "minigame_already_in_pack",
+  REACHED_PACK_MINIGAME_LIMIT = "reached_pack_minigame_limit",
 
   REACHED_MINIGAME_LIMIT = "reached_minigame_limit",
   REACHED_PACK_LIMIT = "reached_pack_limit",
@@ -63,6 +64,8 @@ export const ErrorMessageCodesToText = {
 
   [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (10)",
   [ErrorMessageCodes.REACHED_PACK_LIMIT]: "You have reached the packs limit! (5)",
+  [ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT]:
+    "You have reached the maximum amount of minigames a pack can have! (1000)",
 
   [ErrorMessageCodes.MISSING_LOCATION]: "Missing location.",
   [ErrorMessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
