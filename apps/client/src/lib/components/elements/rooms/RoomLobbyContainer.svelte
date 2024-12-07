@@ -434,8 +434,8 @@ function openUrl(evt: MouseEvent) {
       <div class="main-container">
         <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
           <div class="players-section">
-            <h2 class="players-header" class:load-fade-in={$room}>Players ({$room?.players.length ?? 0})</h2>
-            <div class="players-list" class:load-fade-in={$room}>
+            <h2 class="players-header load-fade-in" class:loaded={$room}>Players ({$room?.players.length ?? 0})</h2>
+            <div class="players-list load-fade-in" class:loaded={$room}>
               {#if $room}
                 {#each $room.players as player}
                   <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
@@ -469,7 +469,7 @@ function openUrl(evt: MouseEvent) {
           <div class="game-section scrollbar">
             {#if $room}
               {#if $room.minigame}
-                <div class="options-container" class:load-fade-in={$room}>
+                <div class="options-container load-fade-in" class:loaded={$room}>
                   <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
                     {#if $room.pack}
                       <div class="pack-image">
@@ -517,9 +517,9 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 </div>
   
-                <hr class="border" class:load-fade-in={$room} />
+                <hr class="border load-fade-in" class:loaded={$room} />
   
-                <div class="nextup-container" class:load-fade-in={$room}>
+                <div class="nextup-container load-fade-in" class:loaded={$room}>
                   <div class="nextup-text-container">
                     <h3 class="nextup-text">NEXT UP</h3>
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
@@ -582,14 +582,14 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 </div>
   
-                <div class="previousnext-container" class:load-fade-in={$room}>
+                <div class="previousnext-container load-fade-in" class:loaded={$room}>
                   <div class="previousnext-section">
                     <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
                     <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
                   </div>
                 </div>
               {:else}
-                <div class="nothingselected-container" class:load-fade-in={$room}>
+                <div class="nothingselected-container load-fade-in" class:loaded={$room}>
                   <!-- testing code -->
                   <!-- {#if $room.room.host === $room.user}
                     <form onsubmit={setSettingsForm}>
@@ -656,6 +656,12 @@ function openUrl(evt: MouseEvent) {
   }
 
   .load-fade-in {
+    opacity: 0;
+  }
+
+  .load-fade-in.loaded {
+    opacity: 1;
+    
     animation-name: fade-in-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
