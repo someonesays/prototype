@@ -36,9 +36,22 @@ let logoOnly = $state(false);
 let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
+let transformScale = $state(1);
+
 onMount(() => {
   $roomRequestedToChangeSettings = false;
   $roomRequestedToStartGame = false;
+
+  const resize = () => {
+    if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
+      transformScale = Math.min(window.innerWidth / 1100, window.innerHeight / 660);
+    } else {
+      transformScale = 1;
+    }
+  };
+  window.addEventListener("resize", resize);
+
+  resize();
 
   if ($launcher === "discord" && $launcherDiscordSdk) {
     $launcherDiscordSdk.subscribe(
@@ -57,6 +70,7 @@ onMount(() => {
 
   return () => {
     $isModalOpen = false;
+    window.removeEventListener("resize", resize);
 
     if ($launcher === "discord" && $launcherDiscordSdk && discordActivityLayoutModeUpdate) {
       $launcherDiscordSdk.unsubscribe(Events.ACTIVITY_LAYOUT_MODE_UPDATE, discordActivityLayoutModeUpdate);
@@ -290,158 +304,189 @@ function openUrl(evt: MouseEvent) {
     {/if}
   </Modal>
 
-  <div class="app scrollbar">
-    <div class="nav-container scrollbar">
-      <div class="leave">
-        {#if $launcher === "normal"}
-          <button class="button leave" onclick={leaveGame} tabindex={disableTabIndex}>
-            <div><DoorOpen /></div>
-          </button>
-        {:else}
-          <div class="logo main">
-            <Logo />
-          </div>
-          <div class="view-container">
-            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
-            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
-          </div>
-        {/if}
-      </div>
-      <div class="nav-buttons">
-        {#if $launcher === "normal"}
-          <div class="logo main">
-            <Logo />
-          </div>
-          <div class="view-container main">
-            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
-            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
-          </div>
-        {/if}
-      </div>
-      <div class="settings-container" use:clickOutside={() => isSettingsOpen = false}>
-        <div class="settings-menu" class:active={isSettingsOpen}>
-          <div>
-            <div>
-              <p class="volume-text-left">Volume</p>
-              <p class="volume-text-right">{$volumeValue}%</p>
+  <div class="app">
+    <div class="app-section" style="transform: scale({transformScale}); height: {transformScale === 1 ? "100%" : `${window.innerHeight / transformScale}px`};">
+      <div class="nav-container scrollbar">
+        <div class="leave">
+          {#if $launcher === "normal"}
+            <button class="button leave" onclick={leaveGame} tabindex={disableTabIndex}>
+              <div><DoorOpen /></div>
+            </button>
+          {:else}
+            <div class="logo main">
+              <Logo />
             </div>
-            <br>
-            <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} tabindex={disableTabIndex} />
-          </div>
-        </div>
-        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen} tabindex={disableTabIndex}>
-          <div><GearIcon /></div>
-        </button>
-      </div>
-    </div>
-    <div class="main-container">
-      <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
-        <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
-        <div class="players-list">
-          {#if $room}
-            {#each $room.players as player}
-              <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
-                <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
-                <span class="player-name">
-                  {player.displayName}
-                </span>
-
-                {#if $room.room.host === player.id}
-                  <Crown />
-                {/if}
-                
-                <span class="player-points">{player.points}</span>
-                
-                {#if $room.room.host === $room.user && $room.user !== player.id}
-                  <div class="player-actions">
-                    <div>
-                      <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
-                      <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
-                    </div>
-                  </div>
-                {/if}
-              </div>
-            {/each}
+            <div class="view-container">
+              <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
+              <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
+            </div>
           {/if}
-          <br />
+        </div>
+        <div class="nav-buttons">
+          {#if $launcher === "normal"}
+            <div class="logo main">
+              <Logo />
+            </div>
+            <div class="view-container main">
+              <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
+              <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
+            </div>
+          {/if}
+        </div>
+        <div class="settings-container" use:clickOutside={() => isSettingsOpen = false}>
+          <div class="settings-menu" class:active={isSettingsOpen}>
+            <div>
+              <div>
+                <p class="volume-text-left">Volume</p>
+                <p class="volume-text-right">{$volumeValue}%</p>
+              </div>
+              <br>
+              <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} tabindex={disableTabIndex} />
+            </div>
+          </div>
+          <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen} tabindex={disableTabIndex}>
+            <div><GearIcon /></div>
+          </button>
         </div>
       </div>
-      <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
-        <div class="game-section scrollbar">
-          {#if $room}
-            <!-- testing code -->
-            {#if $room.room.host === $room.user && !$room.minigame}
-              <form onsubmit={setSettings}>
-                <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-              </form>
-            {/if}
-            <!-- end of testing code -->
-
-            {#if $room.minigame}
-              <div class="options-container">
-                <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
-                  {#if $room.pack}
-                    <div class="pack-image">
-                      {#if $room.pack?.iconImage}
-                        <img class="pack-image" alt="Pack icon" src={
-                          $launcher === "normal"
-                            ? $room.pack.iconImage.normal
-                            : $room.pack.iconImage.discord
-                        } />
-                      {/if}
-                    </div>
-                    <div>
-                      <div class="pack-name">{$room.pack.name}</div>
-                      <div class="pack-author">by {$room.pack.author.name}</div>
-                    </div>
-                  {:else}
-                    <div>
-                      <div class="pack-name">No pack selected!</div>
+      <div class="main-container">
+        <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
+          <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
+          <div class="players-list">
+            {#if $room}
+              {#each $room.players as player}
+                <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
+                  <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+                  <span class="player-name">
+                    {player.displayName}
+                  </span>
+  
+                  {#if $room.room.host === player.id}
+                    <Crown />
+                  {/if}
+                  
+                  <span class="player-points">{player.points}</span>
+                  
+                  {#if $room.room.host === $room.user && $room.user !== player.id}
+                    <div class="player-actions">
+                      <div>
+                        <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                        <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
+                      </div>
                     </div>
                   {/if}
                 </div>
-                <div class="select-container scrollbar">
-                  {#if $room.room.host === $room.user}
+              {/each}
+            {/if}
+            <br />
+          </div>
+        </div>
+        <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
+          <div class="game-section scrollbar">
+            {#if $room}
+              <!-- testing code -->
+              {#if $room.room.host === $room.user && !$room.minigame}
+                <form onsubmit={setSettings}>
+                  <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                  <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                  <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+                </form>
+              {/if}
+              <!-- end of testing code -->
+  
+              {#if $room.minigame}
+                <div class="options-container">
+                  <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
                     {#if $room.pack}
-                      <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
-                        Select minigame
-                      </button>
-                      <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
-                        Change pack
-                      </button>
+                      <div class="pack-image">
+                        {#if $room.pack?.iconImage}
+                          <img class="pack-image" alt="Pack icon" src={
+                            $launcher === "normal"
+                              ? $room.pack.iconImage.normal
+                              : $room.pack.iconImage.discord
+                          } />
+                        {/if}
+                      </div>
+                      <div>
+                        <div class="pack-name">{$room.pack.name}</div>
+                        <div class="pack-author">by {$room.pack.author.name}</div>
+                      </div>
                     {:else}
-                      <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
-                        Select pack
+                      <div>
+                        <div class="pack-name">No pack selected!</div>
+                      </div>
+                    {/if}
+                  </div>
+                  <div class="select-container scrollbar">
+                    {#if $room.room.host === $room.user}
+                      {#if $room.pack}
+                        <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
+                          Select minigame
+                        </button>
+                        <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                          Change pack
+                        </button>
+                      {:else}
+                        <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                          Select pack
+                        </button>
+                      {/if}
+  
+                      <button class="error-button select-button" onclick={handleRemoveMinigameAndPack} tabindex={disableTabIndex}>
+                        Remove
                       </button>
                     {/if}
-
-                    <button class="error-button select-button" onclick={handleRemoveMinigameAndPack} tabindex={disableTabIndex}>
-                      Remove
+  
+                    <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
+                      <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
                     </button>
-                  {/if}
-
-                  <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
-                    <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
-                  </button>
+                  </div>
                 </div>
-              </div>
-      
-              {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-                <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-              {/if}
-
-              <hr class="border" />
-
-              <div class="nextup-container">
-                <div>
-                  <h3 class="nextup-text">NEXT UP</h3>
-                  <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
-                  <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-                  <p class="nextup-minigame-description">{$room.minigame.description}</p>
-
-                  <div class="nextup-minigame-legal-container desktop">
+        
+                {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
+                  <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
+                {/if}
+  
+                <hr class="border" />
+  
+                <div class="nextup-container">
+                  <div>
+                    <h3 class="nextup-text">NEXT UP</h3>
+                    <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
+                    <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
+                    <p class="nextup-minigame-description">{$room.minigame.description}</p>
+  
+                    <div class="nextup-minigame-legal-container desktop">
+                      {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
+                        <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
+                          {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
+                            privacy policy
+                          </a>
+                          and
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
+                            terms of service
+                          </a>
+                          {:else if $room.minigame.privacyPolicy}
+                            <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
+                              privacy policy
+                            </a>
+                          {:else if $room.minigame.termsOfServices}
+                            <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
+                              terms of service
+                            </a>
+                          {/if}
+                          apply to this minigame.
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                  <div class="nextup-minigame-preview">
+                    {#if $room.minigame?.previewImage}
+                      <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
+                    {/if}
+                  </div>
+                  <div class="nextup-minigame-legal-container mobile">
                     {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                       <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                         {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
@@ -466,57 +511,28 @@ function openUrl(evt: MouseEvent) {
                     {/if}
                   </div>
                 </div>
-                <div class="nextup-minigame-preview">
-                  {#if $room.minigame?.previewImage}
-                    <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
-                  {/if}
+  
+                <div class="previousnext-container">
+                  <div class="previousnext-section">
+                    <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
+                    <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
+                  </div>
                 </div>
-                <div class="nextup-minigame-legal-container mobile">
-                  {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                    <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
-                      {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
-                        privacy policy
-                      </a>
-                      and
-                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
-                        terms of service
-                      </a>
-                      {:else if $room.minigame.privacyPolicy}
-                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
-                          privacy policy
-                        </a>
-                      {:else if $room.minigame.termsOfServices}
-                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
-                          terms of service
-                        </a>
-                      {/if}
-                      apply to this minigame.
-                    </p>
-                  {/if}
-                </div>
-              </div>
-
-              <div class="previousnext-container">
-                <div class="previousnext-section">
-                  <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
-                  <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
-                </div>
-              </div>
-            {:else}
-              <p>die</p>
+              {:else}
+                <p>die</p>
+              {/if}
             {/if}
-          {/if}
-        </div>
-        <div class="action-container desktop scrollbar">
-          <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-          <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+          </div>
+          <div class="action-container desktop scrollbar">
+            <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
+            <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="action-container mobile scrollbar">
-      <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-      <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+      <div class="action-container mobile scrollbar">
+        <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
+        <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+      </div>
     </div>
   </div>
 {/if}
@@ -544,7 +560,11 @@ function openUrl(evt: MouseEvent) {
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
-    overflow: auto;
+  }
+  .app-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .nav-container {
@@ -915,7 +935,6 @@ function openUrl(evt: MouseEvent) {
       margin-bottom: 0;
     }
     .action-container, .previousnext-container {
-      gap: 4vw;
       overflow: auto;
     }
     .view-container {
