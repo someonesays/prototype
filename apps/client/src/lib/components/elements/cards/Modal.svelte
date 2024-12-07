@@ -2,7 +2,7 @@
 import { isModalOpen } from "$lib/components/stores/modal";
 import { clickOutside } from "$lib/utils/clickOutside";
 
-let { children, cardStyle } = $props();
+let { children, cardStyle = "" } = $props();
 </script>
 
 <div class="modal" class:hidden={!$isModalOpen} role="dialog">

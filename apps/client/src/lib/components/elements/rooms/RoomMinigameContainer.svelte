@@ -266,9 +266,10 @@ function leaveOrEndGameConfirm() {
     height: 100%;
   }
   .minigame-notready-box {
-    background-color: #313131;
+    background-color: var(--primary);
+    color: var(--secondary-text);
     border: 1px solid #242424;
-    box-shadow: #64646f65 0px 7px 29px 0px;
+    box-shadow: #00000065 0px 7px 29px 0px;
     border-radius: 6px;
     padding: 20px;
     display: flex;
@@ -285,7 +286,7 @@ function leaveOrEndGameConfirm() {
     text-align: center;
   }
   .minigame-notready-loader {
-    border: 6px solid #8a5ee9;
+    border: 6px solid #5812e2;
     -webkit-animation: minigame-notready-loader-spin 1s linear infinite;
     animation: minigame-notready-loader-spin 1s linear infinite;
     animation-duration: 1.5s;
