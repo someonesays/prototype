@@ -8,6 +8,7 @@ import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
 import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelte";
 import Crown from "$lib/components/icons/Crown.svelte";
 import Copy from "$lib/components/icons/Copy.svelte";
+import Flag from "$lib/components/icons/Flag.svelte";
 
 import Modal from "../cards/Modal.svelte";
 
@@ -31,6 +32,8 @@ let activeView = $state<"players" | "game">("game");
 
 let discordActivityLayoutModeUpdate = $state<((evt: { layout_mode: 0 | 1 | 2 | -1 }) => void) | null>(null);
 let logoOnly = $state(false);
+
+let isHoveringFlag = $state(false);
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
@@ -200,7 +203,7 @@ function nextMinigameInPack() {
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
-      <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
@@ -211,15 +214,15 @@ function nextMinigameInPack() {
       </p>
       <p>
         <a data-sveltekit-preload-data="off" href="{$roomLobbyPopupMessage.url}" target="_blank">
-          <button class="error-button">Open</button>
+          <button class="error-button margin-8px">Open</button>
         </a>
-        <button class="secondary-button" onclick={() => $isModalOpen = false}>Cancel</button>
+        <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
     <div class="modal-icon"><Copy /></div>
       <p>Copied invite link!</p>
       <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
-      <p><button class="secondary-button" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {/if}
   </Modal>
 
@@ -288,8 +291,8 @@ function nextMinigameInPack() {
                 {#if $room.room.host === $room.user && $room.user !== player.id}
                   <div class="player-actions">
                     <div>
-                      <button class="error-button playeraction-button kick" onclick={() => kickPlayer(player.id)}>Kick</button>
-                      <button class="secondary-button playeraction-button transfer-host" onclick={() => transferHost(player.id)}>Transfer Host</button>
+                      <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)}>Kick</button>
+                      <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)}>Transfer Host</button>
                     </div>
                   </div>
                 {/if}
@@ -336,10 +339,12 @@ function nextMinigameInPack() {
                   {/if}
                 </div>
                 <div class="select-container scrollbar">
-                  <button>Select minigame</button>
-                  <button>Change pack</button>
-                  <button>Remove pack</button>
-                  <button>Report</button>
+                  <button class="secondary-button select-button">Select minigame</button>
+                  <button class="primary-button select-button">Change pack</button>
+                  <button class="error-button select-button">Remove pack</button>
+                  <button class="report-button" onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false}>
+                    <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
+                  </button>
                 </div>
               </div>
       
@@ -633,7 +638,6 @@ function nextMinigameInPack() {
   }
   .select-container {
     display: flex;
-    align-items: center;
     gap: 5px;
     overflow: auto;
   }
@@ -657,6 +661,21 @@ function nextMinigameInPack() {
 
   .pack-image img {
     display: flex;
+  }
+
+  .select-button {
+    width: 105px;
+  }
+  .select-button.secondary-button {
+    width: 120px;
+  }
+
+  .report-button {
+    background: none;
+    height: 40px;
+    cursor: pointer;
+    border: none;
+    margin-left: 6px;
   }
 
   .nextup-container {

@@ -8,6 +8,7 @@
   --secondary-button: #4c5660;
   --leave-button: #f23f43;
 
+  --primary-button-hover: #450db5;
   --error-button-hover: #850725;
   --secondary-button-hover: #6d7781;
 
@@ -244,13 +245,25 @@ body.discord {
   }
 }
 
+.primary-button {
+  background-color: var(--primary-button);
+  color: var(--secondary);
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+}
+.primary-button:hover {
+  background-color: var(--primary-button-hover);
+}
+
 .secondary-button {
   background-color: var(--secondary-button);
   color: var(--secondary);
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  margin-top: 8px;
   padding: 10px;
   width: 100%;
 }
@@ -264,12 +277,15 @@ body.discord {
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  margin-top: 8px;
   padding: 10px;
   width: 100%;
 }
 .error-button:hover {
   background-color: var(--error-button-hover);
+}
+
+.margin-8px {
+  margin-top: 8px;
 }
 
 .modal-icon {
