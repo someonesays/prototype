@@ -155,6 +155,16 @@ onMount(() => {
       $isModalOpen = false;
     }
 
+    const gameSectionDiv = document.querySelector(".game-section");
+    if (gameSectionDiv) {
+      let scrollPercentage = gameSectionDiv.scrollTop / (gameSectionDiv.scrollHeight - gameSectionDiv.clientHeight);
+      if (scrollPercentage > 0.999) scrollPercentage = 1;
+
+      setTimeout(() => {
+        gameSectionDiv.scrollTop = scrollPercentage * (gameSectionDiv.scrollHeight - gameSectionDiv.clientHeight);
+      }, 0);
+    }
+
     $room.minigame = evt.minigame;
     $room.pack = evt.pack;
   });

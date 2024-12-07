@@ -1116,9 +1116,6 @@ function openUrl(evt: MouseEvent) {
       min-height: 65px;
       margin-bottom: 0;
     }
-    .previousnext-container {
-      overflow: auto;
-    }
     .view-container {
       gap: 1vw;
     }
