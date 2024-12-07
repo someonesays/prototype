@@ -644,6 +644,7 @@ function openUrl(evt: MouseEvent) {
     justify-content: center;
     height: 100%;
     min-height: 100%;
+    max-height: 100%;
     max-width: 1100px;
     margin: 0 auto;
     padding: 1rem;
