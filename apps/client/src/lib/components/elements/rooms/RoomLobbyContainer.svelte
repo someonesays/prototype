@@ -1,4 +1,6 @@
 <script lang="ts">
+import env from "$lib/utils/env";
+
 import { onMount } from "svelte";
 import { clickOutside } from "$lib/utils/clickOutside";
 
@@ -24,7 +26,13 @@ import {
 } from "$lib/components/stores/roomState";
 import { isModalOpen } from "$lib/components/stores/modal";
 
-import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, GameSelectPreviousOrNextMinigame } from "@/public";
+import {
+  ClientOpcodes,
+  ErrorMessageCodes,
+  ErrorMessageCodesToText,
+  GameSelectPreviousOrNextMinigame,
+  type ApiGetPackMinigames,
+} from "@/public";
 import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
@@ -37,6 +45,14 @@ let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
 let transformScale = $state(1);
+
+let minigamesInPack = $state<
+  | { loading: false; loaded: false }
+  | { loading: true; loaded: boolean; packMinigames?: ApiGetPackMinigames; controller?: AbortController }
+>({
+  loading: false,
+  loaded: false,
+});
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
@@ -78,7 +94,7 @@ onMount(() => {
   };
 });
 
-function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
+function setSettingsForm(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
 
   $roomRequestedToChangeSettings = true;
@@ -93,16 +109,56 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
   });
 }
 
-function handleSelectMinigame() {
-  if (!$room?.minigame) return;
+function setSettings({ packId = null, minigameId = null }: { packId?: string | null; minigameId?: string | null }) {
+  $roomRequestedToChangeSettings = true;
+  $roomWs?.send({
+    opcode: ClientOpcodes.SET_ROOM_SETTINGS,
+    data: { packId, minigameId },
+  });
+}
+
+async function handleSelectMinigame() {
+  if (!$room?.pack) {
+    throw new Error("Missing pack on handleSelectMinigame");
+  }
+
+  if (minigamesInPack.loading && minigamesInPack.controller) minigamesInPack.controller.abort();
+
+  const controller = new AbortController();
+  minigamesInPack = { loading: true, loaded: false, controller };
+
+  let url: string;
+  switch ($launcher) {
+    case "normal":
+      url = `${env.VITE_BASE_API}/api/packs/${$room.pack.id}/minigames`;
+      break;
+    case "discord":
+      url = `/api/packs/${$room.pack.id}/minigames`;
+      break;
+    default:
+      throw new Error("Invalid launcher for handleSelectMinigame");
+  }
 
   $roomLobbyPopupMessage = { type: "select-minigame" };
   $isModalOpen = true;
+
+  try {
+    const res = await fetch(url, { method: "get", signal: controller.signal });
+    const packMinigames = (await res.json()) as ApiGetPackMinigames;
+
+    if (!res.ok) throw new Error("Failed to load minigames in pack (response is not OK)");
+
+    minigamesInPack = { loading: true, loaded: true, packMinigames, controller: undefined };
+  } catch (err) {
+    console.error(err);
+    minigamesInPack = { loading: false, loaded: false };
+
+    $roomLobbyPopupMessage = { type: "warning", message: "Failed to load minigames in pack." };
+    $isModalOpen = true;
+  }
 }
 
 function handleSelectPack() {
-  if (!$room?.minigame) return;
-
   $roomLobbyPopupMessage = { type: "select-pack" };
   $isModalOpen = true;
 }
@@ -283,9 +339,27 @@ function openUrl(evt: MouseEvent) {
       <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <form onsubmit={setSettings}>
-        <h2>Select minigame</h2>
+      <h2>Select minigame in pack</h2>
+      {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
+        {#if minigamesInPack.packMinigames.minigames.length === 0}
+          <p>This pack is empty!</p>
+        {:else}
+          <div class="select-minigame-container scrollbar" style="width: 400px;">
+            {#each minigamesInPack.packMinigames.minigames as minigame}
+              <div>
+                <button class="primary-button select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>{minigame.name}</button>
+              </div>
+            {/each}
+          </div>
+          <br>
+        {/if}
+      {:else}
+        <p>Loading minigames in pack...</p>
+      {/if}
 
+      <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
+
+      <!-- <form onsubmit={setSettingsForm}>
         <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} hidden>
 
         <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
@@ -293,9 +367,9 @@ function openUrl(evt: MouseEvent) {
         <br><br>
         <input class="primary-button" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
         <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
-      </form>
+      </form> -->
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
-      <form onsubmit={setSettings}>
+      <form onsubmit={setSettingsForm}>
         <h2>Select pack</h2>
 
         <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
@@ -406,7 +480,7 @@ function openUrl(evt: MouseEvent) {
             {#if $room}
               <!-- testing code -->
               {#if $room.room.host === $room.user && !$room.minigame}
-                <form onsubmit={setSettings}>
+                <form onsubmit={setSettingsForm}>
                   <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
                   <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
                   <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
@@ -920,6 +994,13 @@ function openUrl(evt: MouseEvent) {
     flex: 1;
     transition: 0.3s;
   }
+  .select-minigame-container {
+    display: flex;
+    max-height: 200px;
+    overflow: auto;
+    gap: 3px;
+    flex-direction: column;
+  }
   .previousnext-button {
     padding: 0.45rem 1.5rem;
     font-size: 14px;
@@ -943,6 +1024,9 @@ function openUrl(evt: MouseEvent) {
   }
   .action-button.invite:click, .previousnext-button:click {
     background-color: #343a40;
+  }
+  .select-minigame-button:disabled {
+    cursor: wait;
   }
   .previousnext-button:disabled {
     cursor: wait;

@@ -82,6 +82,7 @@ onMount(() => {
     if (
       ![
         ErrorMessageCodes.WS_CANNOT_FIND_PACK,
+        ErrorMessageCodes.WS_PACK_IS_EMPTY,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
         ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
@@ -94,8 +95,10 @@ onMount(() => {
     if (
       [
         ErrorMessageCodes.WS_CANNOT_FIND_PACK,
+        ErrorMessageCodes.WS_PACK_IS_EMPTY,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
         ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
+        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
       ].includes(code)
     ) {
       $roomRequestedToChangeSettings = false;
@@ -147,6 +150,10 @@ onMount(() => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
 
     $roomRequestedToChangeSettings = false;
+    if ($roomLobbyPopupMessage?.type === "select-minigame") {
+      $roomLobbyPopupMessage = null;
+      $isModalOpen = false;
+    }
 
     $room.minigame = evt.minigame;
     $room.pack = evt.pack;
