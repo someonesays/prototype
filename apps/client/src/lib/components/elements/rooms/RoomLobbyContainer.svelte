@@ -339,7 +339,7 @@ function openUrl(evt: MouseEvent) {
       <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <h2>Select minigame in pack</h2>
+      <h2 style="width: 400px; max-width: 100%;">Select minigame in pack</h2>
       {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
         {#if minigamesInPack.packMinigames.minigames.length === 0}
           <p>This pack is empty!</p>
@@ -358,19 +358,9 @@ function openUrl(evt: MouseEvent) {
       {/if}
 
       <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
-
-      <!-- <form onsubmit={setSettingsForm}>
-        <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} hidden>
-
-        <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
-
-        <br><br>
-        <input class="primary-button" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
-      </form> -->
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
       <form onsubmit={setSettingsForm}>
-        <h2>Select pack</h2>
+        <h2 style="width: 400px; max-width: 100%;">Select pack</h2>
 
         <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
 
@@ -599,17 +589,25 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 </div>
               {:else}
-                <!-- testing code -->
-                {#if $room.room.host === $room.user}
-                  <form onsubmit={setSettingsForm}>
-                    <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                    <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                    <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-                  </form>
-                {/if}
-                <!-- end of testing code -->
-                 
-                <p>die</p>
+                <div class="nothingselected-container">
+                  <!-- testing code -->
+                  <!-- {#if $room.room.host === $room.user}
+                    <form onsubmit={setSettingsForm}>
+                      <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                      <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                      <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+                    </form>
+                  {/if} -->
+                  <!-- end of testing code -->
+
+                  <h2>Choose a minigame pack to play!</h2>
+
+                  <div class="nothingselected-buttons">
+                    <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                      Select another pack...
+                    </button>
+                  </div>
+                </div>
               {/if}
             {/if}
           </div>
@@ -845,6 +843,24 @@ function openUrl(evt: MouseEvent) {
     100% {
       pointer-events: all;
     }
+  }
+
+  .nothingselected-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: auto;
+    min-width: 100px;
+    text-align: center;
+  }
+  .nothingselected-buttons {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+  }
+  .nothingselected-button {
+    padding: 15px;
   }
 
   .options-container {
