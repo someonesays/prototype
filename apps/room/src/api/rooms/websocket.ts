@@ -307,6 +307,9 @@ websocket.get(
                 throw new Error("Pack minigame order is null. This should never happen!");
               }
 
+              // Get minigame count in pack
+              const count = await getPackMinigameCount(state.serverRoom.pack.id);
+
               // Check if you want to get the previous minigame or the next one
               let newDirection =
                 data.direction === GameSelectPreviousOrNextMinigame.Previous
@@ -315,13 +318,12 @@ websocket.get(
 
               // Disallow going negative
               if (newDirection < 0) {
-                newDirection = 0;
+                newDirection = count - 1;
               }
 
               // Disallow going over the limit
-              const count = await getPackMinigameCount(state.serverRoom.pack.id);
               if (newDirection >= count) {
-                newDirection = count - 1;
+                newDirection = 0;
               }
 
               // Get the minigame
