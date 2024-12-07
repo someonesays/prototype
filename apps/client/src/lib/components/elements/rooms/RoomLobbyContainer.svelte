@@ -1004,6 +1004,7 @@ function openUrl(evt: MouseEvent) {
   
   .action-container {
     gap: 1rem;
+    overflow: auto;
   }
   .previousnext-container {
     display: flex;
