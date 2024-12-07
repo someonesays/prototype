@@ -91,7 +91,7 @@ onMount(() => {
 </Modal>
 
 <div class="main-container">
-  <BaseCard style="padding: 12px;">
+  <BaseCard style="padding: 20px;">
     <br>
     <div class="logo-container">
       <Logo />
@@ -124,14 +124,12 @@ onMount(() => {
     overflow: auto;
     min-width: 100px;
     min-height: 100px;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     height: 100%;
     overflow: auto;
     margin: 0 auto;
-
-    
-    align-items: center;
-      justify-content: center;
   }
   .input-center {
     text-align: center;
