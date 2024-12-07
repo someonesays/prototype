@@ -506,7 +506,7 @@ function nextMinigameInPack() {
     align-items: center;
   }
   .settings-menu {
-    position: absolute;
+    position: fixed;
     margin-top: 150px;
     text-align: right;
     z-index: 10;
