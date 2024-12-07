@@ -1024,6 +1024,7 @@ function openUrl(evt: MouseEvent) {
   }
   .action-container.mobile {
     display: flex;
+    min-height: 50px;
     margin-top: 1rem;
   }
   .action-button, .previousnext-button {
