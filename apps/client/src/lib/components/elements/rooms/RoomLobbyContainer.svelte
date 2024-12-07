@@ -198,7 +198,7 @@ async function copyInviteLink() {
   }
 }
 
-function startGame() {
+function startGame(ignoreWarning: boolean) {
   if (!$room?.minigame) {
     $roomLobbyPopupMessage = {
       type: "warning",
@@ -213,6 +213,12 @@ function startGame() {
       type: "warning",
       message: `There must be at least ${$room.minigame.minimumPlayersToStart} players to start this minigame!`,
     };
+    $isModalOpen = true;
+    return;
+  }
+
+  if (!ignoreWarning && !$room.minigame.supportsMobile && $room.players.find((p) => p.mobile)) {
+    $roomLobbyPopupMessage = { type: "mobile" };
     $isModalOpen = true;
     return;
   }
@@ -254,7 +260,7 @@ function openUrl(evt: MouseEvent) {
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
-      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false} >Close</button></p>
+      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
@@ -301,6 +307,17 @@ function openUrl(evt: MouseEvent) {
       <h2>Report</h2>
       <p>This is is a work in progress!</p>
       <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
+    {:else if $roomLobbyPopupMessage?.type === "mobile"}
+      <br><br>
+      <div class="modal-icon"><TriangleExclamation /></div>
+      <p>
+        This minigame doesn't support mobile devices!<br>
+        Do you wish to continue?
+      </p>
+      <p>
+        <button class="primary-button margin-8px" onclick={() => startGame(true)}>Start</button>
+        <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      </p>
     {/if}
   </Modal>
 
@@ -444,10 +461,6 @@ function openUrl(evt: MouseEvent) {
                     </button>
                   </div>
                 </div>
-        
-                {#if $room.minigame && !$room.minigame.supportsMobile && $room.players.find(p => p.mobile)}
-                  <p>WARNING: There is at least one mobile player in this lobby and this minigame doesn't support mobile devices!</p>
-                {/if}
   
                 <hr class="border" />
   
@@ -527,13 +540,13 @@ function openUrl(evt: MouseEvent) {
           </div>
           <div class="action-container desktop scrollbar">
             <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-            <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
           </div>
         </div>
       </div>
       <div class="action-container mobile scrollbar">
         <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-        <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
       </div>
     </div>
   </div>

@@ -45,7 +45,8 @@ let { children } = $props();
     mask-image: radial-gradient(#000000, #0000004d);
     
     animation-name: pattern-fade-in;
-    animation-duration: 1.5s;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-in;
     animation-fill-mode: forwards;
     animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
   }

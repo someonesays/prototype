@@ -11,7 +11,7 @@ export let roomRequestedToLeave = writable(false);
 export let roomLobbyPopupMessage = writable<
   | { type: "warning"; message: string }
   | { type: "link"; url: string }
-  | { type: "invite" | "select-minigame" | "select-pack" | "report" }
+  | { type: "invite" | "select-minigame" | "select-pack" | "report" | "mobile" }
   | null
 >(null);
 export let roomParentSdk = writable<ParentSdk | null>(null);
