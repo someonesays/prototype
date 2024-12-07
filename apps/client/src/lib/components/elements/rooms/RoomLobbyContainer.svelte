@@ -294,13 +294,13 @@ function nextMinigameInPack() {
         <div class="game-section scrollbar">
           {#if $room}
             <!-- testing code -->
-            <!-- {#if $room.room.host === $room.user}
+            {#if $room.room.host === $room.user && !$room.minigame}
               <form onsubmit={setSettings}>
                 <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
                 <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
                 <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
               </form>
-            {/if} -->
+            {/if}
             <!-- end of testing code -->
 
             {#if $room.minigame}
@@ -842,6 +842,7 @@ function nextMinigameInPack() {
     .players-container {
       flex: 1;
       height: auto;
+      max-width: 300px;
     }
     .game-container {
       flex: 2;
