@@ -83,7 +83,19 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
   });
 }
 
-function removePack() {
+function handleSelectMinigame() {
+  if (!$room?.minigame) return;
+
+  alert("handle select minigame");
+}
+
+function handleSelectPack(changing: boolean) {
+  if (!$room?.minigame) return;
+
+  alert("handle select/change pack");
+}
+
+function handleRemovePack() {
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
     data: {
@@ -91,6 +103,20 @@ function removePack() {
       minigameId: $room?.minigame?.id,
     },
   });
+}
+
+function handleReport() {
+  if (!$room?.minigame) return;
+
+  alert("handle report");
+}
+
+function previousMinigameInPack() {
+  alert("WIP");
+}
+
+function nextMinigameInPack() {
+  alert("WIP");
 }
 
 function kickPlayer(user: string) {
@@ -193,28 +219,6 @@ function openUrl(evt: MouseEvent) {
       $launcherDiscordSdk?.commands.openExternalLink({ url });
       break;
   }
-}
-
-function handleReport() {
-  if (!$room?.minigame) return;
-
-  const url = `${env.VITE_BASE_FRONTEND}/report?${$room.pack ? `pack_id=${$room.pack.id}&` : ""}minigame_id=${$room.minigame.id}`;
-  switch ($launcher) {
-    case "normal":
-      window.open(url, "_blank");
-      break;
-    case "discord":
-      $launcherDiscordSdk?.commands.openExternalLink({ url });
-      break;
-  }
-}
-
-function previousMinigameInPack() {
-  alert("WIP");
-}
-
-function nextMinigameInPack() {
-  alert("WIP");
 }
 </script>
 
@@ -365,9 +369,13 @@ function nextMinigameInPack() {
                   {/if}
                 </div>
                 <div class="select-container scrollbar">
-                  <button class="secondary-button select-button">Select minigame</button>
-                  <button class="primary-button select-button">Change pack</button>
-                  <button class="error-button select-button" onclick={removePack}>Remove pack</button>
+                  <button class="secondary-button select-button" onclick={handleSelectMinigame}>Select minigame</button>
+                  {#if $room.pack}
+                    <button class="primary-button select-button" onclick={() => handleSelectPack(true)}>Change pack</button>
+                    <button class="error-button select-button" onclick={handleRemovePack}>Remove pack</button>
+                  {:else}
+                    <button class="primary-button select-button" onclick={() => handleSelectPack(false)}>Select pack</button>
+                  {/if}
                   <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false}>
                     <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
                   </button>
