@@ -147,6 +147,15 @@ function startGame() {
     return;
   }
 
+  if ($room.minigame.minimumPlayersToStart > $room.players.length) {
+    $roomLobbyPopupMessage = {
+      type: "warning",
+      message: `There must be at least ${$room.minigame.minimumPlayersToStart} players to start this minigame!`,
+    };
+    $isModalOpen = true;
+    return;
+  }
+
   $roomRequestedToStartGame = true;
   $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: {} });
 }
