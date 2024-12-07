@@ -576,6 +576,15 @@ function openUrl(evt: MouseEvent) {
     }
   }
 
+  @keyframes appear-animation-weak {
+    0% {
+      margin-top: 4px;
+    }
+    100% {
+      margin-top: 0px;
+    }
+  }
+
   .nav-container {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -584,6 +593,7 @@ function openUrl(evt: MouseEvent) {
 
     animation-name: appear-animation;
     animation-duration: 0.6s;
+    animation-timing-function: ease-out;
   }
   
   .nav-buttons {
@@ -649,6 +659,7 @@ function openUrl(evt: MouseEvent) {
     max-height: 550px;
     animation-name: appear-animation;
     animation-duration: 0.4s;
+    animation-timing-function: ease-out;
   }
 
   .hidden {
@@ -977,8 +988,9 @@ function openUrl(evt: MouseEvent) {
     }
 
     .players-container, .game-container {
-      animation-name: appear-animation;
-      animation-duration: 0.4s;
+      animation-name: appear-animation-weak;
+      animation-duration: 0.2s;
+      animation-timing-function: ease-out;
     }
   }
   @media (min-width: 900px) {
