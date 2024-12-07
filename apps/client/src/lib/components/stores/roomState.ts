@@ -9,7 +9,10 @@ export let roomRequestedToStartGame = writable(false);
 export let roomJoinedLate = writable(false);
 export let roomRequestedToLeave = writable(false);
 export let roomLobbyPopupMessage = writable<
-  { type: "warning"; message: string } | { type: "link"; url: string } | { type: "invite" } | null
+  | { type: "warning"; message: string }
+  | { type: "link"; url: string }
+  | { type: "invite" | "select-minigame" | "select-pack" }
+  | null
 >(null);
 export let roomParentSdk = writable<ParentSdk | null>(null);
 export let roomMinigameReady = writable(false);

@@ -5,12 +5,8 @@ import { clickOutside } from "$lib/utils/clickOutside";
 let { children } = $props();
 </script>
 
-<div class="modal" class:hidden={!$isModalOpen}>
+<div class="modal" class:hidden={!$isModalOpen} role="dialog">
 	<div class="content" use:clickOutside={() => $isModalOpen = false}>
-    <div class="close-button-container">
-      <button class="close-button" aria-label="Close popup" onclick={() => $isModalOpen = false}>&times;</button>
-    </div>
-    <br><br>
     {@render children()}
 	</div>
 </div>
@@ -50,24 +46,6 @@ let { children } = $props();
 		text-align: center;
     overflow-y: auto;
     padding: 20px;
-  }
-  .close-button-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-  .close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--primary-text);
-  }
-  .close-button:focus {
-    outline: none;
-  }
-  .close-button:hover {
-    color: var(--primary-hover);
   }
   @media (max-width: 319px) {
     .content {

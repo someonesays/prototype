@@ -5,6 +5,7 @@ import {
   findBestTestingServerByHashAndLocation,
   getMinigameByIdAndTestingAccessCode,
   getMinigamePublic,
+  getPackMinigamesPublic,
   getPackPublic,
   isMinigameInPack,
   transformMinigameToMinigamePublic,
@@ -217,9 +218,11 @@ websocket.get(
             case ClientOpcodes.SET_ROOM_SETTINGS: {
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
-              if (data.minigameId === undefined && data.packId === undefined) return; // No error - pretend recieveMessage failed
 
-              const newSettings: { pack?: Pack | null; minigame?: Minigame | null } = {};
+              const newSettings: { pack: Pack | null; minigame: Minigame | null } = {
+                pack: null,
+                minigame: null,
+              };
 
               if (data.packId) {
                 // Get minigame pack
@@ -228,8 +231,6 @@ websocket.get(
 
                 // Set pack in new settings
                 newSettings.pack = pack;
-              } else if (data.packId === null) {
-                newSettings.pack = null;
               }
 
               if (data.minigameId) {
@@ -240,25 +241,30 @@ websocket.get(
 
                 // Set pack in new settings
                 newSettings.minigame = minigame;
-              } else if (data.minigameId === null) {
-                newSettings.minigame = null;
+              } else if (newSettings.pack) {
+                // Get the first minigame in the pack and set it
+                const { minigames } = await getPackMinigamesPublic({ id: newSettings.pack.id, limit: 1 });
+                if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_PACK_IS_EMPTY);
+
+                const minigame = minigames[0];
+                if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
+
+                // Set pack in new settings
+                newSettings.minigame = minigame;
               }
 
-              // Make sure a minigame and a pack both co-exist
-              // Check if the minigame is in the pack
-              const pack = newSettings.pack === undefined ? state.serverRoom.pack : newSettings.pack;
-              const minigame = newSettings.minigame === undefined ? state.serverRoom.minigame : newSettings.minigame;
-
-              if (pack && !minigame) {
-                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME);
+              if (newSettings.pack && !newSettings.minigame) {
+                throw new Error(
+                  "An unexpected error has occurred where a pack was selected when a minigame wasn't selected. This should never happen.",
+                );
               }
 
               if (
-                pack &&
-                minigame &&
+                newSettings.pack &&
+                newSettings.minigame &&
                 !(await isMinigameInPack({
-                  packId: pack.id,
-                  minigameId: minigame.id,
+                  packId: newSettings.pack.id,
+                  minigameId: newSettings.minigame.id,
                 }))
               ) {
                 return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK);
@@ -269,8 +275,8 @@ websocket.get(
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
               // Set pack and minigame (!== undefined is necessary as they can be null)
-              if (newSettings.pack !== undefined) state.serverRoom.pack = newSettings.pack;
-              if (newSettings.minigame !== undefined) state.serverRoom.minigame = newSettings.minigame;
+              state.serverRoom.pack = newSettings.pack;
+              state.serverRoom.minigame = newSettings.minigame;
 
               broadcastMessage({
                 room: state.serverRoom,

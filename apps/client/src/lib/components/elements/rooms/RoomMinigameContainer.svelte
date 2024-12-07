@@ -150,6 +150,7 @@ function leaveOrEndGameConfirm() {
 </script>
 
 <Modal>
+  <br><br>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug /></div>
     <p>

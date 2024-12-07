@@ -6,8 +6,8 @@ export const ClientValidation = {
   [ClientOpcodes.KICK_PLAYER]: z.object({ user: z.string().min(1).max(50) }),
   [ClientOpcodes.TRANSFER_HOST]: z.object({ user: z.string().min(1).max(50) }),
   [ClientOpcodes.SET_ROOM_SETTINGS]: z.object({
-    packId: z.string().min(1).max(50).nullable().optional(),
-    minigameId: z.string().min(1).max(50).nullable().optional(),
+    packId: z.string().min(1).max(50).nullable(),
+    minigameId: z.string().min(1).max(50).nullable(),
   }),
   [ClientOpcodes.BEGIN_GAME]: z.object({}),
   [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({ roomHandshakeCount: z.number().optional() }),

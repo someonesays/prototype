@@ -1,6 +1,4 @@
 <script lang="ts">
-import env from "$lib/utils/env";
-
 import { onMount } from "svelte";
 import { clickOutside } from "$lib/utils/clickOutside";
 
@@ -36,6 +34,7 @@ let discordActivityLayoutModeUpdate = $state<((evt: { layout_mode: 0 | 1 | 2 | -
 let logoOnly = $state(false);
 
 let isHoveringFlag = $state(false);
+let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
@@ -76,32 +75,30 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
 
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: {
-      packId,
-      minigameId,
-    },
+    data: { packId, minigameId },
   });
 }
 
 function handleSelectMinigame() {
   if (!$room?.minigame) return;
 
-  alert("handle select minigame");
+  $roomLobbyPopupMessage = { type: "select-minigame" };
+  $isModalOpen = true;
 }
 
-function handleSelectPack(changing: boolean) {
+function handleSelectPack() {
   if (!$room?.minigame) return;
 
-  alert("handle select/change pack");
+  $roomLobbyPopupMessage = { type: "select-pack" };
+  $isModalOpen = true;
 }
 
-function handleRemovePack() {
+function handleRemoveMinigameAndPack() {
+  if (!$room?.minigame?.id) throw new Error("Cannot remove pack without minigame");
+
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: {
-      packId: null,
-      minigameId: $room?.minigame?.id,
-    },
+    data: { packId: null, minigameId: null },
   });
 }
 
@@ -231,10 +228,12 @@ function openUrl(evt: MouseEvent) {
 {:else}
   <Modal>
     {#if $roomLobbyPopupMessage?.type === "warning"}
+      <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
-      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false} >Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
+    <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
@@ -249,10 +248,32 @@ function openUrl(evt: MouseEvent) {
         <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
-    <div class="modal-icon"><Copy /></div>
+      <br><br>
+      <div class="modal-icon"><Copy /></div>
       <p>Copied invite link!</p>
       <p><a class="url" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+    {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
+      <h2>Select minigame</h2>
+
+      <form onsubmit={setSettings}>
+        <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings} hidden>
+        <input type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
+        <input type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
+      </form>
+
+      <br>
+      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
+    {:else if $roomLobbyPopupMessage?.type === "select-pack"}
+      <h2>Select pack</h2>
+
+      <form onsubmit={setSettings}>
+        <input type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
+        <input type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+      </form>
+      
+      <br>
+      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
     {/if}
   </Modal>
 
@@ -260,7 +281,7 @@ function openUrl(evt: MouseEvent) {
     <div class="nav-container scrollbar">
       <div class="leave">
         {#if $launcher === "normal"}
-          <button class="button leave" onclick={leaveGame}>
+          <button class="button leave" onclick={leaveGame} tabindex={disableTabIndex}>
             <div><DoorOpen /></div>
           </button>
         {:else}
@@ -268,8 +289,8 @@ function openUrl(evt: MouseEvent) {
             <Logo />
           </div>
           <div class="view-container">
-            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
-            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
+            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
+            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
           </div>
         {/if}
       </div>
@@ -279,8 +300,8 @@ function openUrl(evt: MouseEvent) {
             <Logo />
           </div>
           <div class="view-container main">
-            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
-            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
+            <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"} tabindex={disableTabIndex}>Minigame</button>
+            <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"} tabindex={disableTabIndex}>Players</button>
           </div>
         {/if}
       </div>
@@ -292,10 +313,10 @@ function openUrl(evt: MouseEvent) {
               <p class="volume-text-right">{$volumeValue}%</p>
             </div>
             <br>
-            <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} />
+            <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} tabindex={disableTabIndex} />
           </div>
         </div>
-        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen}>
+        <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen} tabindex={disableTabIndex}>
           <div><GearIcon /></div>
         </button>
       </div>
@@ -321,8 +342,8 @@ function openUrl(evt: MouseEvent) {
                 {#if $room.room.host === $room.user && $room.user !== player.id}
                   <div class="player-actions">
                     <div>
-                      <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)}>Kick</button>
-                      <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)}>Transfer Host</button>
+                      <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                      <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
                     </div>
                   </div>
                 {/if}
@@ -369,14 +390,27 @@ function openUrl(evt: MouseEvent) {
                   {/if}
                 </div>
                 <div class="select-container scrollbar">
-                  <button class="secondary-button select-button" onclick={handleSelectMinigame}>Select minigame</button>
-                  {#if $room.pack}
-                    <button class="primary-button select-button" onclick={() => handleSelectPack(true)}>Change pack</button>
-                    <button class="error-button select-button" onclick={handleRemovePack}>Remove pack</button>
-                  {:else}
-                    <button class="primary-button select-button" onclick={() => handleSelectPack(false)}>Select pack</button>
+                  {#if $room.room.host === $room.user}
+                    <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
+                      Select minigame
+                    </button>
+
+                    {#if $room.pack}
+                      <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                        Change pack
+                      </button>
+                    {:else}
+                      <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                        Select pack
+                      </button>
+                    {/if}
+
+                    <button class="error-button select-button" onclick={handleRemoveMinigameAndPack} tabindex={disableTabIndex}>
+                      Remove
+                    </button>
                   {/if}
-                  <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false}>
+
+                  <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
                     <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
                   </button>
                 </div>
@@ -399,19 +433,19 @@ function openUrl(evt: MouseEvent) {
                     {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                       <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                         {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl}>
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
                           privacy policy
                         </a>
                         and
-                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl}>
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
                           terms of service
                         </a>
                         {:else if $room.minigame.privacyPolicy}
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl}>
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
                             privacy policy
                           </a>
                         {:else if $room.minigame.termsOfServices}
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl}>
+                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
                             terms of service
                           </a>
                         {/if}
@@ -429,11 +463,21 @@ function openUrl(evt: MouseEvent) {
                   {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
                     <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
                       {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                      <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a> and <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
+                        privacy policy
+                      </a>
+                      and
+                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
+                        terms of service
+                      </a>
                       {:else if $room.minigame.privacyPolicy}
-                        <a class="url" href={$room.minigame.privacyPolicy} onclick={openUrl}>privacy policy</a>
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
+                          privacy policy
+                        </a>
                       {:else if $room.minigame.termsOfServices}
-                        <a class="url" href={$room.minigame.termsOfServices} onclick={openUrl}>terms of service</a>
+                        <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
+                          terms of service
+                        </a>
                       {/if}
                       apply to this minigame.
                     </p>
@@ -443,8 +487,8 @@ function openUrl(evt: MouseEvent) {
 
               <div class="previousnext-container">
                 <div class="previousnext-section">
-                  <button class="previousnext-button" onclick={previousMinigameInPack}>Previous</button>
-                  <button class="previousnext-button" onclick={nextMinigameInPack}>Next</button>
+                  <button class="previousnext-button" onclick={previousMinigameInPack}  tabindex={disableTabIndex}>Previous</button>
+                  <button class="previousnext-button" onclick={nextMinigameInPack}  tabindex={disableTabIndex}>Next</button>
                 </div>
               </div>
             {:else}
@@ -453,14 +497,14 @@ function openUrl(evt: MouseEvent) {
           {/if}
         </div>
         <div class="action-container desktop scrollbar">
-          <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
-          <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+          <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
+          <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
         </div>
       </div>
     </div>
     <div class="action-container mobile scrollbar">
-      <button class="action-button invite" onclick={copyInviteLink} disabled={!$room}>Invite</button>
-      <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame}>Start</button>
+      <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
+      <button class="action-button start" onclick={startGame} disabled={!$room || $room.room.host !== $room.user || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
     </div>
   </div>
 {/if}
@@ -697,11 +741,14 @@ function openUrl(evt: MouseEvent) {
     display: flex;
   }
 
-  .select-button {
-    width: 105px;
+  .select-button.primary-button {
+    width: 100px;
   }
   .select-button.secondary-button {
     width: 120px;
+  }
+  .select-button.error-button {
+    width: 75px;
   }
 
   .report-button {

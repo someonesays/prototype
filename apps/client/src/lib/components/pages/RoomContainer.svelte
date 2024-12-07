@@ -71,7 +71,7 @@ onMount(() => {
     debug: env.VITE_IS_PROD,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
-    messageType: "Oppack",
+    messageType: env.VITE_IS_PROD ? "Oppack" : "Json",
   });
 
   // TODO: Handle error
@@ -84,7 +84,6 @@ onMount(() => {
         ErrorMessageCodes.WS_CANNOT_FIND_PACK,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
         ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
-        ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
         ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME,
         ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS,
@@ -97,7 +96,6 @@ onMount(() => {
         ErrorMessageCodes.WS_CANNOT_FIND_PACK,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
         ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
-        ErrorMessageCodes.WS_CANNOT_SELECT_PACK_WITHOUT_MINIGAME,
       ].includes(code)
     ) {
       $roomRequestedToChangeSettings = false;
