@@ -530,7 +530,7 @@ function openUrl(evt: MouseEvent) {
                 <hr class="border" />
   
                 <div class="nextup-container">
-                  <div>
+                  <div class="nextup-text-container">
                     <h3 class="nextup-text">NEXT UP</h3>
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                     <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
@@ -925,6 +925,9 @@ function openUrl(evt: MouseEvent) {
     margin-top: 1rem;
     white-space: pre-line;
   }
+  .nextup-text-container {
+    width: 50%;
+  }
   .nextup-text {
     margin: 0;
   }
@@ -948,17 +951,25 @@ function openUrl(evt: MouseEvent) {
     font-size: 0.8rem;
   }
   .nextup-minigame-preview {
+    border: 1px #b3b3b3 solid;
+    background: var(--card-stroke);
     margin-left: 12px;
     width: 50%;
+
+    border-radius: 15px;
+    max-width: 300px;
+    max-height: 300px;
+    aspect-ratio: 1 / 1;
+    float: right;
+    overflow: auto;
   }
   .nextup-minigame-preview-image {
-    border: 1px #b3b3b3 solid;
     border-radius: 15px;
     width: 100%;
     height: auto;
     max-width: 300px;
     max-height: 300px;
-    aspect-ratio: 1 / 1;;
+    aspect-ratio: 1 / 1;
     float: right;
     overflow: auto;
   }
@@ -1092,6 +1103,9 @@ function openUrl(evt: MouseEvent) {
   @media (width < 900px) {
     .nextup-container {
       flex-flow: column wrap;
+    }
+    .nextup-text-container {
+      width: 100%;
     }
     .nextup-minigame-preview {
       margin-left: 0px;
