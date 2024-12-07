@@ -861,6 +861,7 @@ function openUrl(evt: MouseEvent) {
     height: auto;
     max-width: 300px;
     max-height: 300px;
+    float: right;
     overflow: auto;
   }
   
