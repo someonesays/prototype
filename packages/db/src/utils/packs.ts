@@ -1,6 +1,6 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, eq, asc } from "drizzle-orm";
+import { and, eq, asc, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { transformMinigameToMinigamePublic } from "./minigames";
 import { NOW } from "./utils";
@@ -89,24 +89,36 @@ export async function getPackByAuthorId({ id, authorId }: { id: string; authorId
   });
 }
 
-export async function getPackMinigames({ id, offset = 0, limit = 50 }: { id: string; offset?: number; limit?: number }) {
-  return (
-    await db.query.packsMinigames.findMany({
-      offset,
-      limit,
-      where: eq(schema.packsMinigames.packId, id),
-      orderBy: asc(schema.packsMinigames.createdAt),
-      with: {
-        minigame: {
-          with: {
-            author: {
-              columns: { id: true, name: true, createdAt: true },
+export function getPackMinigames({
+  id,
+  offset = 0,
+  limit = 50,
+  randomSeed = null,
+}: { id: string; offset?: number; limit?: number; randomSeed?: number | null }) {
+  return db.transaction(async (tx) => {
+    if (randomSeed !== null && (typeof randomSeed !== "number" || randomSeed < -1 || randomSeed > 1)) {
+      throw new Error("Failed randomSeed runtime validation check. This should never happen.");
+    }
+
+    await tx.execute(`SELECT setseed(${randomSeed})`);
+    return (
+      await tx.query.packsMinigames.findMany({
+        offset,
+        limit,
+        where: eq(schema.packsMinigames.packId, id),
+        orderBy: randomSeed ? sql<number>`random()`.mapWith(Number) : asc(schema.packsMinigames.createdAt),
+        with: {
+          minigame: {
+            with: {
+              author: {
+                columns: { id: true, name: true, createdAt: true },
+              },
             },
           },
         },
-      },
-    })
-  ).map((m) => transformMinigameToMinigamePublic(m.minigame));
+      })
+    ).map((m) => transformMinigameToMinigamePublic(m.minigame));
+  });
 }
 
 export async function getPackMinigamesByAuthorId({
@@ -148,12 +160,13 @@ export async function getPackMinigamesPublic({
   id,
   offset = 0,
   limit = 50,
-}: { id: string; offset?: number; limit?: number }) {
+  randomSeed = null,
+}: { id: string; offset?: number; limit?: number; randomSeed?: number | null }) {
   return {
     offset,
     limit,
     total: await getPackMinigameCount(id),
-    minigames: await getPackMinigames({ id, offset, limit }),
+    minigames: await getPackMinigames({ id, offset, limit, randomSeed }),
   };
 }
 
@@ -180,6 +193,7 @@ export function transformPackToPackPublic(pack: Exclude<Awaited<ReturnType<typeo
           discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/packs/${encodeURIComponent(pack.id)}/icon?v=${pack.updatedAt.getTime()}`,
         }
       : null,
+    randomize: pack.randomize,
     createdAt: pack.createdAt.toString(),
     updatedAt: pack.updatedAt.toString(),
   };

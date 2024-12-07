@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS "packs" (
 	"description" text DEFAULT '' NOT NULL,
 	"icon_image" text,
 	"publish_type" smallint DEFAULT 0 NOT NULL,
+	"randomize" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );

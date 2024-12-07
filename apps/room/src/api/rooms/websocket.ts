@@ -161,6 +161,7 @@ websocket.get(
             testingShutdown: false,
             roomHandshakeCount: 0,
             packMinigameOrder: null,
+            packRandomSeed: null,
           };
 
           rooms.set(room.id, state.serverRoom);
@@ -222,9 +223,10 @@ websocket.get(
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
-              const newSettings: { pack: Pack | null; minigame: Minigame | null } = {
+              const newSettings: { pack: Pack | null; minigame: Minigame | null; packRandomSeed: number | null } = {
                 pack: null,
                 minigame: null,
+                packRandomSeed: null,
               };
 
               if (data.packId) {
@@ -234,6 +236,10 @@ websocket.get(
 
                 // Set pack in new settings
                 newSettings.pack = pack;
+
+                if (newSettings.pack?.randomize) {
+                  newSettings.packRandomSeed = Math.random() * 2 - 1;
+                }
               }
 
               if (data.minigameId) {
@@ -246,7 +252,11 @@ websocket.get(
                 newSettings.minigame = minigame;
               } else if (newSettings.pack) {
                 // Get the first minigame in the pack and set it
-                const { minigames } = await getPackMinigamesPublic({ id: newSettings.pack.id, limit: 1 });
+                const { minigames } = await getPackMinigamesPublic({
+                  id: newSettings.pack.id,
+                  limit: 1,
+                  randomSeed: newSettings.packRandomSeed,
+                });
                 if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_PACK_IS_EMPTY);
 
                 const minigame = minigames[0];
@@ -280,6 +290,7 @@ websocket.get(
               // Set pack and minigame (!== undefined is necessary as they can be null)
               state.serverRoom.pack = newSettings.pack;
               state.serverRoom.minigame = newSettings.minigame;
+              state.serverRoom.packRandomSeed = newSettings.packRandomSeed;
 
               if (state.serverRoom.pack) {
                 state.serverRoom.packMinigameOrder = 0;
@@ -331,6 +342,7 @@ websocket.get(
                 id: state.serverRoom.pack.id,
                 offset: newDirection,
                 limit: 1,
+                randomSeed: state.serverRoom.packRandomSeed,
               });
               if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
 

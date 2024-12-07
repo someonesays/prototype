@@ -14,6 +14,7 @@ export interface Pack {
     normal: string;
     discord: string;
   } | null;
+  randomize: boolean;
   createdAt: string;
   updatedAt: string;
 }

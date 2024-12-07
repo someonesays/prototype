@@ -20,6 +20,7 @@ export interface ServerRoom {
   testingShutdown: boolean;
   roomHandshakeCount: number;
   packMinigameOrder: number | null;
+  packRandomSeed: number | null;
 }
 
 export interface WSState {
