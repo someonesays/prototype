@@ -236,7 +236,7 @@ function nextMinigameInPack() {
           <div class="logo main">
             <Logo />
           </div>
-          <div class="view-container">
+          <div class="view-container main">
             <button class="view-button" class:active={activeView === 'game'} onclick={() => activeView = "game"}>Minigame</button>
             <button class="view-button" class:active={activeView === 'players'} onclick={() => activeView = "players"}>Players</button>
           </div>
@@ -294,18 +294,18 @@ function nextMinigameInPack() {
         <div class="game-section scrollbar">
           {#if $room}
             <!-- testing code -->
-            {#if $room.room.host === $room.user}
+            <!-- {#if $room.room.host === $room.user}
               <form onsubmit={setSettings}>
                 <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
                 <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
                 <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
               </form>
-            {/if}
+            {/if} -->
             <!-- end of testing code -->
 
             {#if $room.minigame}
               <div class="options-container">
-                <div class="pack-container scrollbar" class:no-pack-selected={!$room.pack}>
+                <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
                   {#if $room.pack}
                     <div class="pack-image">
                       {#if $room.pack?.iconImage}
@@ -433,9 +433,10 @@ function nextMinigameInPack() {
   .app {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     height: 100%;
     min-height: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
@@ -446,7 +447,7 @@ function nextMinigameInPack() {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: .75rem;
   }
   .nav-buttons {
     display: flex;
@@ -455,9 +456,11 @@ function nextMinigameInPack() {
   }
   .view-container {
     display: flex;
+    gap: 2vw;
+  }
+  .view-container.main {
     justify-content: center;
     align-items: center;
-    gap: 2vw;
   }
   .logo {
     width: 90px;
@@ -506,6 +509,7 @@ function nextMinigameInPack() {
     flex: 1;
     overflow: hidden;
     min-height: 200px;
+    max-height: 550px;
   }
   .hidden {
     display: none;
@@ -598,15 +602,18 @@ function nextMinigameInPack() {
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 1rem;
     white-space: pre-line;
   }
   .pack-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    height: 4rem;
+    gap: 5px;
+    white-space: nowrap;
     overflow: auto;
+  }
+  .pack-container.no-pack {
+    margin-top: 12px;
+    margin-bottom: 6px;
   }
   .pack-name {
     font-weight: bold;
@@ -617,26 +624,29 @@ function nextMinigameInPack() {
   .select-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    height: 4rem;
+    gap: 5px;
     overflow: auto;
   }
-
+  
   .border {
     width: 99%;
+    margin-top: 1rem;
     border-top: 1px solid #b3b3b3;
   }
 
   .pack-image {
+    min-width: 4rem;
+    min-height: 4rem;
     width: 4rem;
     height: 4rem;
+    
+    margin-right: 6px;
     border-radius: 0.5rem;
     background: var(--card-stroke);
   }
 
   .pack-image img {
-    width: 4rem;
-    height: 4rem;
+    display: flex;
   }
 
   .nextup-container {
@@ -677,6 +687,7 @@ function nextMinigameInPack() {
     border-radius: 15px;
     width: 100%;
     height: auto;
+    overflow: auto;
   }
   
   .action-container {
@@ -776,14 +787,17 @@ function nextMinigameInPack() {
     .nav-container {
       overflow: auto;
       min-height: 65px;
+      margin-bottom: 0rem;
     }
     .action-container, .previousnext-container {
       gap: 4vw;
       overflow: auto;
     }
     .view-container {
+      gap: 1vw;
+    }
+    .view-container.main {
       margin: 0 12px;
-      gap: 2px;
     }
   }
   @media (max-height: 150px) {
@@ -792,21 +806,15 @@ function nextMinigameInPack() {
     }
   }
   @media (width < 900px) {
+    .nav-container {
+      overflow: auto;
+    }
     .nextup-container {
       flex-flow: column wrap;
     }
     .nextup-minigame-preview {
       margin-left: 0px;
       width: 100%;
-    }
-    .options-container {
-      margin-bottom: 1rem;
-    }
-    .pack-container.no-pack-selected {
-      height: auto;
-    }
-    .select-container {
-      height: auto;
     }
   }
   @media (min-width: 900px) {
@@ -823,9 +831,6 @@ function nextMinigameInPack() {
     .hidden {
       display: block;
     }
-    .players-list {
-      width: calc(20vw + 1.5rem);
-    }
     
     .nextup-minigame-legal-container.mobile {
       display: none;
@@ -834,13 +839,13 @@ function nextMinigameInPack() {
       display: block;
     }
 
-    .players-container,
-    .game-container {
-      flex: none;
+    .players-container {
+      flex: 1;
       height: auto;
     }
     .game-container {
       flex: 2;
+      height: auto;
     }
     .action-container.desktop {
       display: flex;
@@ -852,14 +857,6 @@ function nextMinigameInPack() {
   @media (min-width: 900px) and (max-width: 1200px) {
     .players-container {
       min-width: 250px;
-    }
-    .player-card {
-      width: 14rem;
-    }
-  }
-  @media (min-width: 1125px) {
-    .player-card {
-      width: 19.75vw;
     }
   }
 </style>
