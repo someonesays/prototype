@@ -351,34 +351,36 @@ function openUrl(evt: MouseEvent) {
       </div>
       <div class="main-container">
         <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
-          <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
-          <div class="players-list">
-            {#if $room}
-              {#each $room.players as player}
-                <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
-                  <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
-                  <span class="player-name">
-                    {player.displayName}
-                  </span>
-  
-                  {#if $room.room.host === player.id}
-                    <Crown />
-                  {/if}
-                  
-                  <span class="player-points">{player.points}</span>
-                  
-                  {#if $room.room.host === $room.user && $room.user !== player.id}
-                    <div class="player-actions">
-                      <div>
-                        <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
-                        <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
+          <div class="players-section">
+            <h2 class="players-header">Players ({$room?.players.length ?? 0})</h2>
+            <div class="players-list">
+              {#if $room}
+                {#each $room.players as player}
+                  <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
+                    <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+                    <span class="player-name">
+                      {player.displayName}
+                    </span>
+    
+                    {#if $room.room.host === player.id}
+                      <Crown />
+                    {/if}
+                    
+                    <span class="player-points">{player.points}</span>
+                    
+                    {#if $room.room.host === $room.user && $room.user !== player.id}
+                      <div class="player-actions">
+                        <div>
+                          <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
+                        </div>
                       </div>
-                    </div>
-                  {/if}
-                </div>
-              {/each}
-            {/if}
-            <br />
+                    {/if}
+                  </div>
+                {/each}
+              {/if}
+              <br />
+            </div>
           </div>
         </div>
         <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
@@ -672,16 +674,18 @@ function openUrl(evt: MouseEvent) {
     height: calc(100% - 150px);
     overflow-y: auto;
   }
-  .players-container, .game-section {
+  .players-section, .game-section {
     background: var(--primary);
     border-radius: 1rem;
     padding: 1rem;
   }
-  .game-section {
+  .players-section, .game-section {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 96px);
     overflow-y: auto;
+  }
+  .players-section, .game-section {
+    height: calc(100% - 32px);
   }
 
   .players-header {
@@ -874,11 +878,11 @@ function openUrl(evt: MouseEvent) {
     width: 100%;
   }
   .action-container.desktop {
-    display: flex;
+    display: none;
     margin-top: 0.8rem;
   }
   .action-container.mobile {
-    display: none;
+    display: flex;
     margin-top: 1rem;
   }
   .action-button, .previousnext-button {
@@ -956,11 +960,10 @@ function openUrl(evt: MouseEvent) {
       transform: scale(0.9);
     }
     .nav-container {
-      overflow: auto;
       min-height: 65px;
       margin-bottom: 0;
     }
-    .action-container, .previousnext-container {
+    .previousnext-container {
       overflow: auto;
     }
     .view-container {
@@ -976,9 +979,6 @@ function openUrl(evt: MouseEvent) {
     }
   }
   @media (width < 900px) {
-    .nav-container {
-      overflow: auto;
-    }
     .nextup-container {
       flex-flow: column wrap;
     }
@@ -1030,42 +1030,71 @@ function openUrl(evt: MouseEvent) {
     .action-container.mobile {
       display: none;
     }
+
+    .game-section {
+      height: calc(100% - 96px);
+    }
   }
   @media (min-width: 900px) and (max-width: 1200px) {
     .players-container {
       min-width: 250px;
     }
   }
+  @media (max-width: 320px) {
+    .nav-container {
+      overflow: auto;
+    }
+  }
 
   /* lazy fixes for very small screens */
+  @media (max-height: 330px) {
+    .nav-container {
+      margin-top: 10px;
+    }
+  }
+  @media (max-height: 280px) {
+    .nav-container {
+      margin-top: 20px;
+    }
+  }
+  @media (max-height: 270px) {
+    .nav-container {
+      margin-top: 40px;
+    }
+  }
   @media (max-height: 241px) {
     .nav-container {
-      margin-top: 30px;
+      margin-top: 70px;
+    }
+  }
+  @media (max-height: 223px) {
+    .nav-container {
+      margin-top: 89px;
     }
   }
   @media (max-height: 215px) {
     .nav-container {
-      margin-top: 49px;
+      margin-top: 100px;
     }
   }
   @media (max-height: 190px) {
     .nav-container {
-      margin-top: 90px;
+      margin-top: 130px;
     }
   }
-  @media (max-height: 150px) {
-    .nav-container {
-      margin-top: 140px;
-    }
-  }
-  @media (max-height: 100px) {
+  @media (max-height: 160px) {
     .nav-container {
       margin-top: 180px;
     }
   }
+  @media (max-height: 100px) {
+    .nav-container {
+      margin-top: 220px;
+    }
+  }
   @media (max-height: 60px) {
     .nav-container {
-      margin-top: 200px;
+      margin-top: 240px;
     }
   }
 </style>
