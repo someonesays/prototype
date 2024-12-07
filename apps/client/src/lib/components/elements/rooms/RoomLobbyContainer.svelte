@@ -1,4 +1,6 @@
 <script lang="ts">
+import env from "$lib/utils/env";
+
 import { onMount } from "svelte";
 import { clickOutside } from "$lib/utils/clickOutside";
 
@@ -77,6 +79,16 @@ function setSettings(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormE
     data: {
       packId,
       minigameId,
+    },
+  });
+}
+
+function removePack() {
+  $roomWs?.send({
+    opcode: ClientOpcodes.SET_ROOM_SETTINGS,
+    data: {
+      packId: null,
+      minigameId: $room?.minigame?.id,
     },
   });
 }
@@ -176,6 +188,20 @@ function openUrl(evt: MouseEvent) {
     case "normal":
       $roomLobbyPopupMessage = { type: "link", url };
       $isModalOpen = true;
+      break;
+    case "discord":
+      $launcherDiscordSdk?.commands.openExternalLink({ url });
+      break;
+  }
+}
+
+function handleReport() {
+  if (!$room?.minigame) return;
+
+  const url = `${env.VITE_BASE_FRONTEND}/report?${$room.pack ? `pack_id=${$room.pack.id}&` : ""}minigame_id=${$room.minigame.id}`;
+  switch ($launcher) {
+    case "normal":
+      window.open(url, "_blank");
       break;
     case "discord":
       $launcherDiscordSdk?.commands.openExternalLink({ url });
@@ -341,8 +367,8 @@ function nextMinigameInPack() {
                 <div class="select-container scrollbar">
                   <button class="secondary-button select-button">Select minigame</button>
                   <button class="primary-button select-button">Change pack</button>
-                  <button class="error-button select-button">Remove pack</button>
-                  <button class="report-button" onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false}>
+                  <button class="error-button select-button" onclick={removePack}>Remove pack</button>
+                  <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false}>
                     <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
                   </button>
                 </div>
