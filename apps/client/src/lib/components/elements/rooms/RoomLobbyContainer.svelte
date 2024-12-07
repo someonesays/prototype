@@ -478,16 +478,6 @@ function openUrl(evt: MouseEvent) {
         <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
           <div class="game-section scrollbar">
             {#if $room}
-              <!-- testing code -->
-              {#if $room.room.host === $room.user && !$room.minigame}
-                <form onsubmit={setSettingsForm}>
-                  <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                  <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                  <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-                </form>
-              {/if}
-              <!-- end of testing code -->
-  
               {#if $room.minigame}
                 <div class="options-container">
                   <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
@@ -609,6 +599,16 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 </div>
               {:else}
+                <!-- testing code -->
+                {#if $room.room.host === $room.user}
+                  <form onsubmit={setSettingsForm}>
+                    <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
+                    <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
+                    <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
+                  </form>
+                {/if}
+                <!-- end of testing code -->
+                 
                 <p>die</p>
               {/if}
             {/if}
@@ -954,10 +954,11 @@ function openUrl(evt: MouseEvent) {
   .nextup-minigame-preview-image {
     border: 1px #b3b3b3 solid;
     border-radius: 15px;
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    height: auto;
     max-width: 300px;
     max-height: 300px;
+    aspect-ratio: 1 / 1;;
     float: right;
     overflow: auto;
   }
