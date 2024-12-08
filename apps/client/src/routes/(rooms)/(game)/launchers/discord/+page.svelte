@@ -1,6 +1,8 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 
+import Logo from "$lib/components/icons/Logo.svelte";
+
 import { onMount } from "svelte";
 import { DiscordSDK, Platform, RPCCloseCodes } from "@discord/embedded-app-sdk";
 import { MatchmakingType, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
@@ -9,8 +11,15 @@ import { goto } from "$app/navigation";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
 
 let failed = $state(false);
+let transformScale = $state(1);
 
 onMount(() => {
+  const resize = () => {
+    transformScale = Math.min(window.innerWidth / 350, window.innerHeight / 350);
+  };
+  window.addEventListener("resize", resize);
+  resize();
+
   try {
     // Add Discord style
     document.body.classList.add("discord");
@@ -69,6 +78,9 @@ onMount(() => {
         // Set matchmaking store
         $launcherMatchmaking = matchmaking;
 
+        // Remove resizing loading
+        window.removeEventListener("resize", resize);
+
         // Go to rooms page
         goto(`/rooms/${encodeURIComponent(matchmaking.data.room.id)}`);
       } catch (err) {
@@ -89,5 +101,29 @@ onMount(() => {
 {#if failed}
   <p>Failed to load launcher.</p>
 {:else}
-  <p>Loading launcher...</p>
+  <div class="loader-container">
+    <div class="loader-section" style="transform: scale({transformScale});">
+      <div style="width: 150px;"><Logo /></div>
+      <br>
+      <span>Loading...</span>
+    </div>
+  </div>
 {/if}
+
+<style>
+  .loader-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: safe center;
+  }
+  .loader-section {
+    background-color: var(--primary);
+    color: var(--primary-text);
+    font-size: 16px;
+    padding: 50px;
+    border-radius: 15px;
+    text-align: center;
+  }
+</style>

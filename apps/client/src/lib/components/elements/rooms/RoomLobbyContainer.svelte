@@ -354,7 +354,7 @@ function openUrl(evt: MouseEvent) {
         {#if minigamesInPack.packMinigames.minigames.length === 0}
           <p>This pack is empty!</p>
         {:else}
-          <div class="select-minigame-container scrollbar" style="width: 400px; max-width: 100%;">
+          <div class="select-minigame-container" style="width: 400px; max-width: 100%;">
             {#each minigamesInPack.packMinigames.minigames as minigame}
               <div>
                 <button class="primary-button select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>{minigame.name}</button>
@@ -404,7 +404,7 @@ function openUrl(evt: MouseEvent) {
 
   <div class="app">
     <div class="app-section" style="transform: scale({transformScale}); height: {transformScale === 1 ? "100%" : `${window.innerHeight / transformScale}px`};">
-      <div class="nav-container scrollbar">
+      <div class="nav-container">
         <div class="leave">
           {#if $launcher === "normal"}
             <button class="button leave" onclick={leaveGame} tabindex={disableTabIndex}>
@@ -448,13 +448,13 @@ function openUrl(evt: MouseEvent) {
         </div>
       </div>
       <div class="main-container">
-        <div class="players-container scrollbar" class:hidden={activeView !== 'players'}>
+        <div class="players-container" class:hidden={activeView !== 'players'}>
           <div class="players-section">
             <h2 class="players-header load-fade-in" class:loaded={$room}>Players ({$room?.players.length ?? 0})</h2>
             <div class="players-list load-fade-in" class:loaded={$room}>
               {#if $room}
                 {#each $room.players as player}
-                  <div class="player-card scrollbar" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
+                  <div class="player-card" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
                     <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
                     <span class="player-name">
                       {player.displayName}
@@ -481,12 +481,12 @@ function openUrl(evt: MouseEvent) {
             </div>
           </div>
         </div>
-        <div class="game-container scrollbar" class:hidden={activeView !== 'game'}>
-          <div class="game-section scrollbar">
+        <div class="game-container" class:hidden={activeView !== 'game'}>
+          <div class="game-section">
             {#if $room}
               {#if $room.minigame}
                 <div class="options-container load-fade-in" class:loaded={$room}>
-                  <div class="pack-container scrollbar" class:no-pack={!$room.pack}>
+                  <div class="pack-container" class:no-pack={!$room.pack}>
                     {#if $room.pack}
                       <div class="pack-image">
                         {#if $room.pack?.iconImage}
@@ -507,7 +507,7 @@ function openUrl(evt: MouseEvent) {
                       </div>
                     {/if}
                   </div>
-                  <div class="select-container scrollbar">
+                  <div class="select-container">
                     {#if $room.room.host === $room.user}
                       {#if $room.pack}
                         <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
@@ -622,13 +622,13 @@ function openUrl(evt: MouseEvent) {
               {/if}
             {/if}
           </div>
-          <div class="action-container desktop scrollbar">
+          <div class="action-container desktop">
             <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
             <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
           </div>
         </div>
       </div>
-      <div class="action-container mobile scrollbar">
+      <div class="action-container mobile">
         <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
         <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
       </div>
@@ -1089,19 +1089,6 @@ function openUrl(evt: MouseEvent) {
   }
   .playeraction-button.transfer-host {
     width: 120px;
-  }
-
-  .scrollbar::-webkit-scrollbar {
-    width: 10px;
-  }
-  .scrollbar::-webkit-scrollbar-track {
-    background: #fafafa;
-  }
-  .scrollbar::-webkit-scrollbar-thumb {
-    background: #6d7781;
-  }
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #4c5660;
   }
   
   @media (max-height: 319px) {
