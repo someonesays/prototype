@@ -49,7 +49,7 @@ let transformScale = $state(1);
 
 let minigamesInPack = $state<
   | { loading: false; loaded: false }
-  | { loading: true; loaded: boolean; packMinigames?: ApiGetPackMinigames; controller?: AbortController }
+  | { loading: true; loaded: boolean; packId: string; packMinigames?: ApiGetPackMinigames; controller?: AbortController }
 >({
   loading: false,
   loaded: false,
@@ -118,15 +118,29 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   });
 }
 
-async function handleSelectMinigame() {
+async function handleSelectMinigame(noModal = false) {
   if (!$room?.pack) {
     throw new Error("Missing pack on handleSelectMinigame");
   }
 
+  const packId = $room.pack.id;
+
+  // If cached or loading, use that information
+
+  if (minigamesInPack.loading && minigamesInPack.packId === packId) {
+    if (noModal) return;
+
+    $roomLobbyPopupMessage = { type: "select-minigame" };
+    $isModalOpen = true;
+    return;
+  }
+
+  // Get minigames in pack
+
   if (minigamesInPack.loading && minigamesInPack.controller) minigamesInPack.controller.abort();
 
   const controller = new AbortController();
-  minigamesInPack = { loading: true, loaded: false, controller };
+  minigamesInPack = { loading: true, loaded: false, packId, controller };
 
   let url: string;
   switch ($launcher) {
@@ -140,8 +154,10 @@ async function handleSelectMinigame() {
       throw new Error("Invalid launcher for handleSelectMinigame");
   }
 
-  $roomLobbyPopupMessage = { type: "select-minigame" };
-  $isModalOpen = true;
+  if (!noModal) {
+    $roomLobbyPopupMessage = { type: "select-minigame" };
+    $isModalOpen = true;
+  }
 
   try {
     const res = await fetch(url, { method: "get", signal: controller.signal });
@@ -149,13 +165,15 @@ async function handleSelectMinigame() {
 
     if (!res.ok) throw new Error("Failed to load minigames in pack (response is not OK)");
 
-    minigamesInPack = { loading: true, loaded: true, packMinigames, controller: undefined };
+    minigamesInPack = { loading: true, loaded: true, packId, packMinigames, controller: undefined };
   } catch (err) {
     console.error(err);
     minigamesInPack = { loading: false, loaded: false };
 
-    $roomLobbyPopupMessage = { type: "warning", message: "Failed to load minigames in pack." };
-    $isModalOpen = true;
+    if (!noModal) {
+      $roomLobbyPopupMessage = { type: "warning", message: "Failed to load minigames in pack." };
+      $isModalOpen = true;
+    }
   }
 }
 
@@ -510,7 +528,8 @@ function openUrl(evt: MouseEvent) {
                   <div class="select-container">
                     {#if $room.room.host === $room.user}
                       {#if $room.pack}
-                        <button class="secondary-button select-button" onclick={handleSelectMinigame} tabindex={disableTabIndex}>
+                        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+                        <button class="secondary-button select-button" onmouseover={() => handleSelectMinigame(true)} onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
                           Select minigame
                         </button>
                         <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
