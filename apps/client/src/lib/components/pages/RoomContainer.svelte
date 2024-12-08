@@ -12,6 +12,8 @@ import {
   GameStatus,
   MinigameEndReason,
   ErrorMessageCodes,
+  ClientOpcodes,
+  GameSelectPreviousOrNextMinigame,
   type ApiErrorResponse,
 } from "@/public";
 
@@ -194,6 +196,13 @@ onMount(() => {
     switch (evt.reason) {
       case MinigameEndReason.MINIGAME_ENDED: {
         // TODO: Do something with evt.prizes
+
+        // Choose the next minigame in the pack
+        $roomRequestedToChangeSettings = true;
+        $roomWs?.send({
+          opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
+          data: { direction: GameSelectPreviousOrNextMinigame.Next },
+        });
         break;
       }
       case MinigameEndReason.FORCEFUL_END: {
