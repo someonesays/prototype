@@ -29,9 +29,7 @@ matchmaking.post("/", zValidator("json", zodPostMatchmakingValidatorNormal), (c)
   return handlePostMatchmaking({ c, payload });
 });
 
-// The extra "/" on "/discord/" is necessary due to how Hono works.
-// Hono will not accept "/discord" as "/discord/".
-matchmaking.post("/discord/", zValidator("json", zodPostMatchmakingValidatorDiscord), (c) => {
+matchmaking.post("/discord", zValidator("json", zodPostMatchmakingValidatorDiscord), (c) => {
   const payload = c.req.valid("json");
   return handlePostMatchmaking({ c, payload });
 });
