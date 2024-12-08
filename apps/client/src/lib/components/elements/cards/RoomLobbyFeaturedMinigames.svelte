@@ -119,7 +119,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     transform: scale(1.02);
   }
   .featured-pack-text {
-    height: 0px;
+    height: 18px;
   }
   .pack-image.featured {
     margin-right: 0;
