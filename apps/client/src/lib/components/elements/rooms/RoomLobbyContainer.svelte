@@ -609,7 +609,7 @@ function openUrl(evt: MouseEvent) {
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
                   <h2>Choose a minigame pack to play!</h2>
 
-                  <RoomLobbyFeaturedMinigames />
+                  <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
 
                   <br>
 
