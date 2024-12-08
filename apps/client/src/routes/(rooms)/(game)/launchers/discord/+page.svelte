@@ -98,9 +98,9 @@ onMount(() => {
 });
 </script>
 
-<!-- {#if failed}
+{#if failed}
   <p>Failed to load launcher.</p>
-{:else} -->
+{:else}
   <div class="loader-container">
     <div style="transform: scale({transformScale});">
       <div class="loader-section">
@@ -110,7 +110,7 @@ onMount(() => {
       </div>
     </div>
   </div>
-<!-- {/if} -->
+{/if}
 
 <style>
   .loader-container {
