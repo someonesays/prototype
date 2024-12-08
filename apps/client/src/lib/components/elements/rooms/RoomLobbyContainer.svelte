@@ -639,7 +639,7 @@ function openUrl(evt: MouseEvent) {
                       </button>
                     </div>
                   {:else}
-                    <h2>Waiting for the host to pick a pack!</h2>
+                    <h2>Waiting for the host to select a pack!</h2>
                   {/if}
                 </div>
               {/if}
