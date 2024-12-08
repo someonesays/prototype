@@ -116,7 +116,7 @@ onMount(() => {
     <br>
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoin} required>
-      <input class="primary-button margin-top-8" type="submit" value={$roomIdToJoin ? "Join room" : "Create room"} disabled={disableJoin}><br>
+      <input class="primary-button margin-top-8" type="submit" value={$roomIdToJoin ? (disableJoin ? "Joining room..." : "Join room") : (disableJoin ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <div style="margin-top: 10px;">
           <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
