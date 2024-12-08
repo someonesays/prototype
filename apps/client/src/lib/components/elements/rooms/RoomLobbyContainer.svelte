@@ -850,6 +850,10 @@ function openUrl(evt: MouseEvent) {
     padding: 0.75rem;
     border-radius: 0.5rem;
     overflow: auto;
+    
+    animation-name: fade-in-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
   }
   .player-avatar {
     width: 2rem;
