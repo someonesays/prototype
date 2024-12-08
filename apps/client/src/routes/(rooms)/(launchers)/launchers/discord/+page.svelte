@@ -104,7 +104,7 @@ onMount(() => {
   <div class="loader-container">
     <div style="transform: scale({transformScale});">
       <div class="loader-section">
-        <div style="width: 150px;"><Logo /></div>
+        <div style="width: 120px;"><Logo /></div>
         <br>
         <span>Loading...</span>
       </div>
@@ -121,9 +121,8 @@ onMount(() => {
     justify-content: safe center;
   }
   .loader-section {
-    background-color: var(--primary);
     color: var(--primary-text);
-    font-size: 16px;
+    font-size: 12px;
     padding: 50px;
     border-radius: 15px;
     text-align: center;
