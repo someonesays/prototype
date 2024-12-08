@@ -627,16 +627,20 @@ function openUrl(evt: MouseEvent) {
                 {/if}
               {:else}
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
-                  <h2>Choose a minigame pack to play!</h2>
+                  {#if $room && $room.user === $room.room.host}
+                    <h2>Choose a minigame pack to play!</h2>
 
-                  <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
-                  <br>
+                    <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
+                    <br>
 
-                  <div class="nothingselected-buttons">
-                    <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
-                      Select another pack
-                    </button>
-                  </div>
+                    <div class="nothingselected-buttons">
+                      <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                        Select another pack
+                      </button>
+                    </div>
+                  {:else}
+                    <h2>Waiting for the host to pick a pack!</h2>
+                  {/if}
                 </div>
               {/if}
             {/if}

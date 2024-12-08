@@ -5,6 +5,7 @@ import { launcher } from "$lib/components/stores/launcher";
 import { ClientOpcodes, type ApiGetPacks } from "@/public";
 import { isModalOpen } from "$lib/components/stores/modal";
 import {
+  room,
   roomFeaturedPacks,
   roomLobbyPopupMessage,
   roomRequestedToChangeSettings,
@@ -61,7 +62,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   {#if $roomFeaturedPacks.packs.length}
     <div class="featured-container">
       {#each $roomFeaturedPacks.packs as pack}
-        <button class="featured-pack-container loaded" onclick={() => setSettings({ packId: pack.id })} tabindex={tabindex} disabled={$roomRequestedToChangeSettings}>
+        <button class="featured-pack-container loaded" onclick={() => setSettings({ packId: pack.id })} tabindex={tabindex} disabled={!$room || $room.user !== $room.room.host || $roomRequestedToChangeSettings}>
           <div class="pack-image featured">
             {#if pack?.iconImage}
               <img class="pack-image featured" alt="Pack icon" src={
