@@ -1,8 +1,27 @@
 <script>
 import "$lib/styles/index.css";
+
+import { onMount } from "svelte";
 import { preloadData } from "$app/navigation";
 
-preloadData("/rooms/new");
+onMount(() => {
+  // Preload all routes
+
+  preloadData("/rooms/[roomId]");
+  preloadData("/join/[roomId]");
+
+  preloadData("/");
+
+  preloadData("/developers");
+  preloadData("/developers/minigames/[id]");
+  preloadData("/developers/packs/[id]");
+
+  preloadData("/auth/discord");
+
+  preloadData("/credits");
+  preloadData("/terms");
+  preloadData("/privacy");
+});
 </script>
 
 <svelte:head>
