@@ -98,17 +98,19 @@ onMount(() => {
 });
 </script>
 
-{#if failed}
+<!-- {#if failed}
   <p>Failed to load launcher.</p>
-{:else}
+{:else} -->
   <div class="loader-container">
-    <div class="loader-section" style="transform: scale({transformScale});">
-      <div style="width: 150px;"><Logo /></div>
-      <br>
-      <span>Loading...</span>
+    <div style="transform: scale({transformScale});">
+      <div class="loader-section">
+        <div style="width: 150px;"><Logo /></div>
+        <br>
+        <span>Loading...</span>
+      </div>
     </div>
   </div>
-{/if}
+<!-- {/if} -->
 
 <style>
   .loader-container {
@@ -125,5 +127,18 @@ onMount(() => {
     padding: 50px;
     border-radius: 15px;
     text-align: center;
+
+    animation-name: appear-animation;
+    animation-duration: .7s;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes appear-animation {
+    0% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 </style>
