@@ -128,14 +128,16 @@ async function getFeaturedPacks() {
       url = `${env.VITE_BASE_API}/api/packs?featured=true`;
       break;
     case "discord":
-      url = `/api/packs?featured=true`;
+      url = `/.proxy/api/packs?featured=true`;
       break;
     default:
       throw new Error("Invalid launcher for getFeaturedPacks");
   }
 
+  console.log(url);
+
   try {
-    const res = await fetch(url, { method: "get" });
+    const res = await fetch(url);
     const packMinigames = (await res.json()) as ApiGetPacks;
 
     if (!res.ok) throw new Error("Failed to load featured packs (response is not OK)");
@@ -167,7 +169,7 @@ async function handleSelectMinigame() {
       url = `${env.VITE_BASE_API}/api/packs/${$room.pack.id}/minigames`;
       break;
     case "discord":
-      url = `/api/packs/${$room.pack.id}/minigames`;
+      url = `/.proxy/api/packs/${$room.pack.id}/minigames`;
       break;
     default:
       throw new Error("Invalid launcher for handleSelectMinigame");
@@ -434,7 +436,7 @@ function openUrl(evt: MouseEvent) {
       {/if}
 
       <hr class="border" />
-      
+
       <form onsubmit={setSettingsForm}>
         <p>Alternatively, you could select a pack by using its ID.</p>
 
