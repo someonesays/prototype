@@ -402,40 +402,40 @@ function openUrl(evt: MouseEvent) {
 
       <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
-      <form onsubmit={setSettingsForm}>
-        <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
+      <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
 
-        {#if featuredPacks?.success}
-          {#if featuredPacks.packs.length}
-            <div class="featured-container">
-              {#each featuredPacks.packs as pack}
-              <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })}>
-                <div class="pack-image featured">
-                  {#if pack?.iconImage}
-                    <img class="pack-image featured" alt="Pack icon" src={
-                      $launcher === "normal"
-                        ? pack.iconImage.normal
-                        : pack.iconImage.discord
-                    } />
-                  {/if}
-                </div>
-                <div class="featured-pack-text">
-                  {pack.name}
-                </div>
-              </button>
-              {/each}
-            </div>
-          {:else}
-            <p>There are no featured packs currently!</p>
-          {/if}
-        {:else if featuredPacks?.success === false}
-          <p>Failed to load featured packs!</p>
+      {#if featuredPacks?.success}
+        {#if featuredPacks.packs.length}
+          <div class="featured-container">
+            {#each featuredPacks.packs as pack}
+            <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })}>
+              <div class="pack-image featured">
+                {#if pack?.iconImage}
+                  <img class="pack-image featured" alt="Pack icon" src={
+                    $launcher === "normal"
+                      ? pack.iconImage.normal
+                      : pack.iconImage.discord
+                  } />
+                {/if}
+              </div>
+              <div class="featured-pack-text">
+                {pack.name}
+              </div>
+            </button>
+            {/each}
+          </div>
         {:else}
-          <p>Loading featured packs...</p>
+          <p>There are no featured packs currently!</p>
         {/if}
+      {:else if featuredPacks?.success === false}
+        <p>Failed to load featured packs!</p>
+      {:else}
+        <p>Loading featured packs...</p>
+      {/if}
 
-        <hr class="border" />
-
+      <hr class="border" />
+      
+      <form onsubmit={setSettingsForm}>
         <p>Alternatively, you could select a pack by using its ID.</p>
 
         <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
