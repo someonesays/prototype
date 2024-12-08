@@ -118,6 +118,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     background-color: var(--secondary);
     transform: scale(1.02);
   }
+  .featured-pack-text {
+    height: 0px;
+  }
   .pack-image.featured {
     margin-right: 0;
     
@@ -131,9 +134,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     animation-duration: 3s;
     animation-iteration-count: infinite;
   }
-  .pack-image.featured.loading.second {
+  /* .pack-image.featured.loading.second {
     animation-delay: 1.5s;
-  }
+  } */
 
   @keyframes featured-loading {
     0% {
