@@ -304,6 +304,21 @@ body.discord {
   border-radius: 4px;
 }
 
+.pack-image {
+  min-width: 4rem;
+  min-height: 4rem;
+  width: 4rem;
+  height: 4rem;
+
+  margin-right: 6px;
+  border-radius: 0.5rem;
+  background: var(--card-stroke);
+}
+
+.pack-image img {
+  display: flex;
+}
+
 @media (max-width: 120px) {
   .modal-icon {
     display: none;

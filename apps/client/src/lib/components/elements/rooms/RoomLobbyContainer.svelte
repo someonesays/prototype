@@ -13,6 +13,7 @@ import Copy from "$lib/components/icons/Copy.svelte";
 import Flag from "$lib/components/icons/Flag.svelte";
 
 import Modal from "../cards/Modal.svelte";
+import RoomLobbyFeaturedMinigames from "$lib/components/elements/cards/RoomLobbyFeaturedMinigames.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";
@@ -32,8 +33,6 @@ import {
   ErrorMessageCodesToText,
   GameSelectPreviousOrNextMinigame,
   type ApiGetPackMinigames,
-  type ApiGetPacks,
-  type Pack,
 } from "@/public";
 import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
@@ -55,7 +54,6 @@ let minigamesInPack = $state<
   loading: false,
   loaded: false,
 });
-let featuredPacks = $state<{ success: boolean; packs: Pack[] } | null>(null);
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
@@ -85,8 +83,6 @@ onMount(() => {
       }),
     );
   }
-
-  getFeaturedPacks();
 
   return () => {
     $isModalOpen = false;
@@ -119,38 +115,6 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
     data: { packId, minigameId },
   });
-}
-
-async function getFeaturedPacks() {
-  let url: string;
-  switch ($launcher) {
-    case "normal":
-      url = `${env.VITE_BASE_API}/api/packs?featured=true`;
-      break;
-    case "discord":
-      url = `/.proxy/api/packs?featured=true`;
-      break;
-    default:
-      throw new Error("Invalid launcher for getFeaturedPacks");
-  }
-
-  console.log(url);
-
-  try {
-    const res = await fetch(url);
-    const packMinigames = (await res.json()) as ApiGetPacks;
-
-    if (!res.ok) throw new Error("Failed to load featured packs (response is not OK)");
-
-    featuredPacks = { success: true, packs: packMinigames.packs };
-  } catch (err) {
-    console.error(err);
-
-    featuredPacks = { success: false, packs: [] };
-
-    $roomLobbyPopupMessage = { type: "warning", message: "Failed to load featured packs." };
-    $isModalOpen = true;
-  }
 }
 
 async function handleSelectMinigame() {
@@ -406,34 +370,7 @@ function openUrl(evt: MouseEvent) {
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
       <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
 
-      {#if featuredPacks?.success}
-        {#if featuredPacks.packs.length}
-          <div class="featured-container">
-            {#each featuredPacks.packs as pack}
-            <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })}>
-              <div class="pack-image featured">
-                {#if pack?.iconImage}
-                  <img class="pack-image featured" alt="Pack icon" src={
-                    $launcher === "normal"
-                      ? pack.iconImage.normal
-                      : pack.iconImage.discord
-                  } />
-                {/if}
-              </div>
-              <div class="featured-pack-text">
-                {pack.name}
-              </div>
-            </button>
-            {/each}
-          </div>
-        {:else}
-          <p>There are no featured packs currently!</p>
-        {/if}
-      {:else if featuredPacks?.success === false}
-        <p>Failed to load featured packs!</p>
-      {:else}
-        <p>Loading featured packs...</p>
-      {/if}
+      <RoomLobbyFeaturedMinigames />
 
       <hr class="border" />
 
@@ -672,34 +609,7 @@ function openUrl(evt: MouseEvent) {
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
                   <h2>Choose a minigame pack to play!</h2>
 
-                  {#if featuredPacks?.success}
-                    {#if featuredPacks.packs.length}
-                      <div class="featured-container">
-                        {#each featuredPacks.packs as pack}
-                          <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })}>
-                            <div class="pack-image featured">
-                              {#if pack?.iconImage}
-                                <img class="pack-image featured" alt="Pack icon" src={
-                                  $launcher === "normal"
-                                    ? pack.iconImage.normal
-                                    : pack.iconImage.discord
-                                } />
-                              {/if}
-                            </div>
-                            <div class="featured-pack-text">
-                              {pack.name}
-                            </div>
-                          </button>
-                        {/each}
-                      </div>
-                    {:else}
-                      <p>There are no featured packs currently!</p>
-                    {/if}
-                  {:else if featuredPacks?.success === false}
-                    <p>Failed to load featured packs!</p>
-                  {:else}
-                    <p>Loading featured packs...</p>
-                  {/if}
+                  <RoomLobbyFeaturedMinigames />
 
                   <br>
 
@@ -1015,51 +925,6 @@ function openUrl(evt: MouseEvent) {
     width: 99%;
     margin-top: 1rem;
     border-top: 1px solid #b3b3b3;
-  }
-
-  .pack-image {
-    min-width: 4rem;
-    min-height: 4rem;
-    width: 4rem;
-    height: 4rem;
-    
-    margin-right: 6px;
-    border-radius: 0.5rem;
-    background: var(--card-stroke);
-  }
-
-  .featured-container {
-    display: flex;
-    justify-content: safe center;
-    gap: 12px;
-  }
-  .featured-pack-container {
-    background: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    border: 1px transparent solid;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .featured-pack-container:hover {
-    background-color: var(--secondary);
-    transform: scale(1.02);
-  }
-  .pack-image.featured {
-    margin-right: 0;
-    
-    min-width: 6rem;
-    min-height: 6rem;
-    width: 6rem;
-    height: 6rem;
-  }
-
-  .pack-image img {
-    display: flex;
   }
 
   .select-button.primary-button {
