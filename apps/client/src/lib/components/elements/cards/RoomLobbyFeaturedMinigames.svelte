@@ -120,6 +120,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   }
   .featured-pack-text {
     height: 18px;
+
+    animation-name: fade-in;
+    animation-duration: 0.4s;
   }
   .pack-image.featured {
     margin-right: 0;
@@ -138,6 +141,14 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     animation-delay: 1.5s;
   } */
 
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   @keyframes featured-loading {
     0% {
       opacity: 0.6;
