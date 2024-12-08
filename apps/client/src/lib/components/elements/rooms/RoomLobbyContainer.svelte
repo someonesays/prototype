@@ -86,6 +86,7 @@ onMount(() => {
 
   return () => {
     $isModalOpen = false;
+
     window.removeEventListener("resize", resize);
 
     if ($launcher === "discord" && $launcherDiscordSdk && discordActivityLayoutModeUpdate) {
@@ -610,7 +611,6 @@ function openUrl(evt: MouseEvent) {
                   <h2>Choose a minigame pack to play!</h2>
 
                   <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
-
                   <br>
 
                   <div class="nothingselected-buttons">

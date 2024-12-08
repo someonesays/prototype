@@ -26,6 +26,7 @@ import {
   roomMinigameReady,
   roomJoinedLate,
   roomLobbyPopupMessage,
+  roomFeaturedPacks,
 } from "$lib/components/stores/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/launcher";
 import { kickedReason } from "$lib/components/stores/lobby";
@@ -348,6 +349,7 @@ onMount(() => {
     // Remove room from stores
     $room = null;
     $roomHandshakeCount = 0;
+    $roomFeaturedPacks = null;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
     $roomJoinedLate = false;

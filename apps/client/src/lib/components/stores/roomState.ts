@@ -1,9 +1,10 @@
-import type { ParentSdk, RoomWebsocket, ServerOpcodes, ServerTypes } from "@/public";
+import type { Pack, ParentSdk, RoomWebsocket, ServerOpcodes, ServerTypes } from "@/public";
 import { writable } from "svelte/store";
 
 export let room = writable<ServerTypes[ServerOpcodes.GET_INFORMATION] | null>(null);
 export let roomHandshakeCount = writable(0);
 export let roomWs = writable<RoomWebsocket | null>(null);
+export let roomFeaturedPacks = writable<{ success: boolean; packs: Pack[] } | null>(null);
 export let roomRequestedToChangeSettings = writable(false);
 export let roomRequestedToStartGame = writable(false);
 export let roomJoinedLate = writable(false);

@@ -2,12 +2,16 @@
 import env from "$lib/utils/env";
 import { onMount } from "svelte";
 import { launcher } from "$lib/components/stores/launcher";
-import { ClientOpcodes, type ApiGetPacks, type Pack } from "@/public";
-import { roomLobbyPopupMessage, roomRequestedToChangeSettings, roomWs } from "$lib/components/stores/roomState";
+import { ClientOpcodes, type ApiGetPacks } from "@/public";
 import { isModalOpen } from "$lib/components/stores/modal";
+import {
+  roomFeaturedPacks,
+  roomLobbyPopupMessage,
+  roomRequestedToChangeSettings,
+  roomWs,
+} from "$lib/components/stores/roomState";
 
-let { tabIndex = 0 } = $props();
-let featuredPacks = $state<{ success: boolean; packs: Pack[] } | null>(null);
+let { tabindex = 0 } = $props();
 
 onMount(() => {
   getFeaturedPacks();
@@ -32,11 +36,11 @@ async function getFeaturedPacks() {
 
     if (!res.ok) throw new Error("Failed to load featured packs (response is not OK)");
 
-    featuredPacks = { success: true, packs: packMinigames.packs };
+    $roomFeaturedPacks = { success: true, packs: packMinigames.packs };
   } catch (err) {
     console.error(err);
 
-    featuredPacks = { success: false, packs: [] };
+    $roomFeaturedPacks = { success: false, packs: [] };
 
     $roomLobbyPopupMessage = { type: "warning", message: "Failed to load featured packs." };
     $isModalOpen = true;
@@ -53,11 +57,11 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
 }
 </script>
 
-{#if featuredPacks?.success}
-  {#if featuredPacks.packs.length}
+{#if $roomFeaturedPacks?.success}
+  {#if $roomFeaturedPacks.packs.length}
     <div class="featured-container">
-      {#each featuredPacks.packs as pack}
-        <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })} tabindex={tabIndex} disabled={$roomRequestedToChangeSettings}>
+      {#each $roomFeaturedPacks.packs as pack}
+        <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })} tabindex={tabindex} disabled={$roomRequestedToChangeSettings}>
           <div class="pack-image featured">
             {#if pack?.iconImage}
               <img class="pack-image featured" alt="Pack icon" src={
@@ -76,7 +80,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   {:else}
     <p>There are no featured packs currently!</p>
   {/if}
-{:else if featuredPacks?.success === false}
+{:else if $roomFeaturedPacks?.success === false}
   <p>Failed to load featured packs!</p>
 {:else}
   <p>Loading featured packs...</p>
