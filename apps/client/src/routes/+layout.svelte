@@ -2,25 +2,29 @@
 import "$lib/styles/index.css";
 
 import { onMount } from "svelte";
-import { preloadData } from "$app/navigation";
+import { preloadCode } from "$app/navigation";
+import { page } from "$app/stores";
 
 onMount(() => {
+  // Don't preload all routes in Discord activity
+  if ($page.url.pathname === "/launchers/discord") return;
+
   // Preload all routes
 
-  preloadData("/rooms/[roomId]");
-  preloadData("/join/[roomId]");
+  preloadCode("/rooms/[roomId]");
+  preloadCode("/join/[roomId]");
 
-  preloadData("/");
+  preloadCode("/");
 
-  preloadData("/developers");
-  preloadData("/developers/minigames/[id]");
-  preloadData("/developers/packs/[id]");
+  preloadCode("/developers");
+  preloadCode("/developers/minigames/[id]");
+  preloadCode("/developers/packs/[id]");
 
-  preloadData("/auth/discord");
+  preloadCode("/auth/discord");
 
-  preloadData("/credits");
-  preloadData("/terms");
-  preloadData("/privacy");
+  preloadCode("/credits");
+  preloadCode("/terms");
+  preloadCode("/privacy");
 });
 </script>
 
