@@ -88,10 +88,10 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
       <div class="pack-image featured loading"></div>
       <div class="featured-pack-text">&nbsp;</div>
     </div>
-    <div class="featured-pack-container loading">
+    <!-- <div class="featured-pack-container loading">
       <div class="pack-image featured loading second"></div>
       <div class="featured-pack-text">&nbsp;</div>
-    </div>
+    </div> -->
   </div>
 {/if}
 
