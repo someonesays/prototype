@@ -15,6 +15,9 @@ onMount(() => {
     // Add Discord style
     document.body.classList.add("discord");
 
+    // Set the launcher
+    $launcher = "discord";
+
     // Load Discord SDK
     const discordSdk = new DiscordSDK(env.VITE_DISCORD_CLIENT_ID);
 
@@ -61,7 +64,6 @@ onMount(() => {
         await discordSdk.commands.authenticate({ access_token: matchmaking.data.metadata.accessToken });
 
         // Set launcher information
-        $launcher = "discord";
         $launcherDiscordSdk = discordSdk;
 
         // Set matchmaking store
