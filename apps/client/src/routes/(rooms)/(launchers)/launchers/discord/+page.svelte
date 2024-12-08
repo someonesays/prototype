@@ -98,34 +98,42 @@ onMount(() => {
 });
 </script>
 
-{#if failed}
-  <p>Failed to load launcher.</p>
-{:else}
-  <div class="loader-container">
-    <div style="transform: scale({transformScale});">
-      <div class="loader-section">
-        <div style="width: 120px;"><Logo /></div>
-        <br>
-        <span>Loading...</span>
-      </div>
+<div class="loader-container">
+  <div style="transform: scale({transformScale});">
+    <div class="loader-section">
+      <div style="width: 140px;"><Logo /></div>
+      <br>
+      <span>
+        {#if failed}
+          Failed to load launcher.
+        {:else}
+          <span>Loading...</span>
+        {/if}
+      </span>
     </div>
   </div>
-{/if}
+</div>
 
 <style>
   .loader-container {
     display: flex;
     height: 100%;
+    min-height: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: safe center;
   }
   .loader-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     color: var(--primary-text);
-    font-size: 12px;
+    font-size: 14px;
     padding: 50px;
     border-radius: 15px;
-    text-align: center;
+
+    user-select: none;
 
     animation-name: appear-animation;
     animation-duration: .7s;
