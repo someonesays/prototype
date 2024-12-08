@@ -10,3 +10,10 @@ export interface ApiGetPackMinigames {
   total: number;
   minigames: Minigame[];
 }
+
+export interface ApiGetPacks {
+  offset: number;
+  limit: number;
+  total: number;
+  packs: Pack[];
+}

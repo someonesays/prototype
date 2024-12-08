@@ -1,10 +1,10 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, eq, asc, sql } from "drizzle-orm";
+import { and, eq, asc, sql, or } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { transformMinigameToMinigamePublic } from "./minigames";
 import { NOW } from "./utils";
-import type { Pack } from "@/public";
+import { PackPublishType, type Pack } from "@/public";
 
 export async function createPack(pack: typeof schema.packs.$inferInsert) {
   return (await db.insert(schema.packs).values(pack).returning({ id: schema.packs.id }))[0].id;
@@ -50,27 +50,67 @@ export function removeMinigameFromPack({ packId, minigameId }: { packId: string;
     .where(and(eq(schema.packsMinigames.packId, packId), eq(schema.packsMinigames.minigameId, minigameId)));
 }
 
-export async function getPacksByAuthorId({
+export async function getPacks({
+  isPublic,
+  featured,
   authorId,
   offset = 0,
   limit = 50,
-}: { authorId: string; offset?: number; limit?: number }) {
+}: { isPublic?: boolean; featured?: boolean; authorId?: string; offset?: number; limit?: number }) {
   const packs = await db.query.packs.findMany({
     offset,
     limit,
-    where: eq(schema.packs.authorId, authorId),
+    where: getPackWhere({ isPublic, featured, authorId }),
     orderBy: asc(schema.packs.createdAt),
+    with: {
+      author: {
+        columns: { id: true, name: true, createdAt: true },
+      },
+    },
   });
   return {
     offset,
     limit,
-    total: await getPackCountByAuthorId(authorId),
+    total: await getPackCount({ isPublic, featured, authorId }),
     packs,
   };
 }
 
-export function getPackCountByAuthorId(authorId: string) {
-  return db.$count(schema.packs, eq(schema.packs.authorId, authorId));
+export function getPackCount({
+  isPublic,
+  featured,
+  authorId,
+}: { isPublic?: boolean; featured?: boolean; authorId?: string }) {
+  return db.$count(schema.packs, getPackWhere({ isPublic, featured, authorId }));
+}
+
+function getPackWhere({ isPublic, featured, authorId }: { isPublic?: boolean; featured?: boolean; authorId?: string }) {
+  return and(
+    typeof isPublic === "boolean"
+      ? or(
+          eq(schema.packs.publishType, PackPublishType.PUBLIC_OFFICIAL),
+          eq(schema.packs.publishType, PackPublishType.PUBLIC_UNOFFICIAL),
+        )
+      : undefined,
+    typeof featured === "boolean" ? eq(schema.packs.currentlyFeatured, true) : undefined,
+    typeof authorId === "string" ? eq(schema.packs.authorId, authorId) : undefined,
+  );
+}
+
+export async function getPacksPublic({
+  isPublic,
+  featured,
+  authorId,
+  offset = 0,
+  limit = 50,
+}: { isPublic?: boolean; featured?: boolean; authorId?: string; offset?: number; limit?: number }) {
+  const { total, packs } = await getPacks({ isPublic, featured, authorId, offset, limit });
+  return {
+    offset,
+    limit,
+    total,
+    packs: packs.map((p) => transformPackToPackPublic(p)),
+  };
 }
 
 export async function getPack(id: string) {

@@ -18,6 +18,7 @@ export const packs = pgTable("packs", {
   description: text("description").notNull().default(""),
   iconImage: text("icon_image"),
   publishType: smallint("publish_type").$type<PackPublishType>().notNull().default(PackPublishType.UNLISTED),
+  currentlyFeatured: boolean("currently_featured").notNull().default(false),
   randomize: boolean("randomize").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(NOW),

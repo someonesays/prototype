@@ -10,10 +10,10 @@ import {
   getMinigameInPack,
   getMinigamePublic,
   getPackByAuthorId,
-  getPackCountByAuthorId,
+  getPackCount,
   getPackMinigameCount,
   getPackMinigamesPublic,
-  getPacksByAuthorId,
+  getPacks,
   removeMinigameFromPack,
   updatePackWithAuthorId,
 } from "@/db";
@@ -31,7 +31,7 @@ const userPackZod = z.object({
 
 userPacks.get("/", authMiddleware, async (c) => {
   const { offset, limit } = getOffsetAndLimit(c);
-  return c.json(await getPacksByAuthorId({ authorId: c.var.user.id, offset, limit }));
+  return c.json(await getPacks({ authorId: c.var.user.id, offset, limit }));
 });
 
 userPacks.post("/", authMiddleware, zValidator("json", userPackZod), async (c) => {
@@ -46,7 +46,7 @@ userPacks.post("/", authMiddleware, zValidator("json", userPackZod), async (c) =
   if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
   // TODO: Remove hard-coded pack limit of 5
-  const count = await getPackCountByAuthorId(c.var.user.id);
+  const count = await getPackCount({ authorId: c.var.user.id });
   if (count >= 5) return c.json({ code: ErrorMessageCodes.REACHED_PACK_LIMIT }, 429);
 
   const id = await createPack({ authorId: c.var.user.id, ...values });

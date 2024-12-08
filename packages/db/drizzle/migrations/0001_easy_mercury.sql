@@ -1,0 +1,1 @@
+ALTER TABLE "packs" ADD COLUMN "currently_featured" boolean DEFAULT false NOT NULL;

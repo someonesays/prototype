@@ -1,9 +1,16 @@
 import { Hono } from "hono";
 import { ErrorMessageCodes } from "@/public";
-import { getPack, getPackMinigamesPublic, getPackPublic } from "@/db";
-import { sendProxiedImage, getOffsetAndLimit } from "../../utils";
+import { getPackMinigamesPublic, getPackPublic, getPacksPublic } from "@/db";
+import { getOffsetAndLimit } from "../../utils";
 
 export const packs = new Hono();
+
+packs.get("/", async (c) => {
+  const featured = c.req.query("featured")?.toLowerCase() === "true";
+
+  const packs = await getPacksPublic({ isPublic: true, featured });
+  return c.json(packs);
+});
 
 packs.get("/:id", async (c) => {
   const id = c.req.param("id");
