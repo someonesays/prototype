@@ -1,13 +1,12 @@
 <script lang="ts">
 import { page } from "$app/stores";
-import { launcher } from "$lib/components/stores/launcher";
 
 let { children } = $props();
 </script>
 
 <style>
   .container {
-    position: fixed;
+    position: absolute;
     background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
     background-attachment: fixed;
     width: 100%;
@@ -23,14 +22,13 @@ let { children } = $props();
     animation-fill-mode: forwards;
   }
   .bg {
-    position: fixed;
+    position: absolute;
     background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
     opacity: 0;
     background-attachment: fixed;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     min-height: 100%;
-    overflow: hidden;
     
     animation-name: bg-fade-in;
     animation-duration: 0.8s;
@@ -48,7 +46,7 @@ let { children } = $props();
     animation-fill-mode: forwards;
   }
   .child-container {
-    position: fixed;
+    position: absolute;
     width: 100%;
     height: 100%;
     min-height: 100%;
@@ -69,7 +67,7 @@ let { children } = $props();
   }
   .pattern::after {
     content: '';
-    position: fixed;
+    position: absolute;
     inset: 0;
     background-image: radial-gradient(circle at center, #000000 0%, transparent 100%);
     background-size: 1rem 1rem;
@@ -84,16 +82,13 @@ let { children } = $props();
     animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   .glow {
-    position: fixed;
+    position: absolute;
     top: 0;
     background: radial-gradient(50% 50% at 50% 50%, var(--bg-glow) 0%, #ffffff00 100%);
     width: 100%;
     height: 100%;
     min-height: 100%;
     overflow: auto;
-  }
-  .absolute {
-    position: absolute;
   }
   @keyframes bg-fade-in {
     0% {
@@ -133,16 +128,16 @@ let { children } = $props();
   }
 </style>
 
-<div class="container" class:absolute={$launcher === "discord"}>
+<div class="container">
   <div class="bg-container">
-    <div class="bg primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"}></div>
-    <div class="bg secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"}></div>
+    <div class="bg primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")}></div>
+    <div class="bg secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")}></div>
   </div>
 
-  <div class="pattern" class:absolute={$launcher === "discord"}></div>
-  <div class="glow" class:absolute={$launcher === "discord"}></div>
+  <div class="pattern"></div>
+  <div class="glow"></div>
 
-  <div class="child-container" class:absolute={$launcher === "discord"}>
+  <div class="child-container">
     {@render children()}
   </div>
 </div>

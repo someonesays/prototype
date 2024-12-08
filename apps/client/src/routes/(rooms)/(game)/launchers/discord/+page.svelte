@@ -12,9 +12,6 @@ let failed = $state(false);
 
 onMount(() => {
   try {
-    // Set the launcher
-    $launcher = "discord";
-
     // Add Discord style
     document.body.classList.add("discord");
 
@@ -64,6 +61,7 @@ onMount(() => {
         await discordSdk.commands.authenticate({ access_token: matchmaking.data.metadata.accessToken });
 
         // Set launcher information
+        $launcher = "discord";
         $launcherDiscordSdk = discordSdk;
 
         // Set matchmaking store
