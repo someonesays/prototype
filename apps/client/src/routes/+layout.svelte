@@ -33,3 +33,9 @@ onMount(() => {
 </svelte:head>
 
 <slot />
+
+<style>
+  :global(html) {
+    opacity: 1;
+  }
+</style>
