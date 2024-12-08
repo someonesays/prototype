@@ -104,7 +104,7 @@ onMount(() => {
   <br><br>
   <div class="modal-icon"><Ban /></div>
   <p>{$kickedReason}</p>
-  <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+  <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
 </Modal>
 
 <div class="main-container">

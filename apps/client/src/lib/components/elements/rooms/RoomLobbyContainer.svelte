@@ -326,7 +326,7 @@ function openUrl(evt: MouseEvent) {
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
-      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
@@ -338,16 +338,16 @@ function openUrl(evt: MouseEvent) {
       </p>
       <p>
         <a data-sveltekit-preload-data="off" href="{$roomLobbyPopupMessage.url}" target="_blank">
-          <button class="error-button margin-8px">Open</button>
+          <button class="error-button margin-top-8px">Open</button>
         </a>
-        <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
       <br><br>
       <div class="modal-icon"><Copy /></div>
       <p>Copied invite link!</p>
       <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
-      <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>
       {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
@@ -367,7 +367,7 @@ function openUrl(evt: MouseEvent) {
         <p>Loading minigames in pack...</p>
       {/if}
 
-      <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
+      <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
       <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
 
@@ -382,12 +382,12 @@ function openUrl(evt: MouseEvent) {
 
         <br><br>
         <input class="primary-button" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
+        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
       <p>This is is a work in progress!</p>
-      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button>
+      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>
@@ -396,8 +396,8 @@ function openUrl(evt: MouseEvent) {
         Do you wish to continue?
       </p>
       <p>
-        <button class="primary-button margin-8px" onclick={() => startGame(true)}>Start</button>
-        <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+        <button class="primary-button margin-top-8px" onclick={() => startGame(true)}>Start</button>
+        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {/if}
   </Modal>
@@ -469,8 +469,8 @@ function openUrl(evt: MouseEvent) {
                     {#if $room.room.host === $room.user && $room.user !== player.id}
                       <div class="player-actions">
                         <div>
-                          <button class="error-button margin-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
-                          <button class="secondary-button margin-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
+                          <button class="error-button margin-top-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          <button class="secondary-button margin-top-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
                         </div>
                       </div>
                     {/if}
@@ -711,6 +711,8 @@ function openUrl(evt: MouseEvent) {
     grid-template-columns: auto 1fr auto;
     align-items: center;
     margin-bottom: .75rem;
+    
+    padding-top: 5px;
 
     animation-name: appear-animation;
     animation-duration: 0.6s;
@@ -1003,6 +1005,7 @@ function openUrl(evt: MouseEvent) {
   .action-container {
     gap: 1rem;
     overflow: auto;
+    padding-bottom: 25px;
   }
   .previousnext-container {
     display: flex;
@@ -1090,7 +1093,7 @@ function openUrl(evt: MouseEvent) {
   .playeraction-button.transfer-host {
     width: 120px;
   }
-  
+
   @media (max-height: 319px) {
     .app {
       padding: 0;

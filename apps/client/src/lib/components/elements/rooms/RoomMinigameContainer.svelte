@@ -165,14 +165,14 @@ function leaveOrEndGameConfirm() {
           End minigame
         {/if}
       </button>
-      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {:else}
     <div class="modal-icon"><DoorOpen color="black" /></div>
     <p>Are you sure you want to leave the room?</p>
     <p>
       <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>Leave room</button>
-      <button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {/if}
 </Modal>
