@@ -111,7 +111,7 @@ export class RoomWebsocket {
     baseUrl,
   }: { instanceId: string; code: string; mobile: boolean; baseUrl: string }) {
     try {
-      const res = await fetch(`${baseUrl}/api/matchmaking`, {
+      const res = await fetch(`${baseUrl}/api/matchmaking/discord`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ type: MatchmakingType.DISCORD, instanceId, code, mobile }),
