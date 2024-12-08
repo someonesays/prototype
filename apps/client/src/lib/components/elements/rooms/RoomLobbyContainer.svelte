@@ -382,7 +382,7 @@ function openUrl(evt: MouseEvent) {
       <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <h2 style="width: 400px; max-width: 100%;">Select minigame in pack</h2>
+      <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>
       {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
         {#if minigamesInPack.packMinigames.minigames.length === 0}
           <p>This pack is empty!</p>
@@ -403,7 +403,40 @@ function openUrl(evt: MouseEvent) {
       <button class="secondary-button margin-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
       <form onsubmit={setSettingsForm}>
-        <h2 style="width: 400px; max-width: 100%;">Select pack</h2>
+        <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
+
+        {#if featuredPacks?.success}
+          {#if featuredPacks.packs.length}
+            <div class="featured-container">
+              {#each featuredPacks.packs as pack}
+              <button class="featured-pack-container" onclick={() => setSettings({ packId: pack.id })}>
+                <div class="pack-image featured">
+                  {#if pack?.iconImage}
+                    <img class="pack-image featured" alt="Pack icon" src={
+                      $launcher === "normal"
+                        ? pack.iconImage.normal
+                        : pack.iconImage.discord
+                    } />
+                  {/if}
+                </div>
+                <div class="featured-pack-text">
+                  {pack.name}
+                </div>
+              </button>
+              {/each}
+            </div>
+          {:else}
+            <p>There are no featured packs currently!</p>
+          {/if}
+        {:else if featuredPacks?.success === false}
+          <p>Failed to load featured packs!</p>
+        {:else}
+          <p>Loading featured packs...</p>
+        {/if}
+
+        <hr class="border" />
+
+        <p>Alternatively, you could select a pack by using its ID.</p>
 
         <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
 
@@ -635,16 +668,6 @@ function openUrl(evt: MouseEvent) {
                 {/if}
               {:else}
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
-                  <!-- testing code -->
-                  <!-- {#if $room.room.host === $room.user}
-                    <form onsubmit={setSettingsForm}>
-                      <input type="text" name="pack_id" placeholder="Pack ID" disabled={$roomRequestedToChangeSettings}>
-                      <input type="text" name="minigame_id" placeholder="Minigame ID" disabled={$roomRequestedToChangeSettings}>
-                      <input type="submit" value="Set pack/minigame" disabled={$roomRequestedToChangeSettings}>
-                    </form>
-                  {/if} -->
-                  <!-- end of testing code -->
-
                   <h2>Choose a minigame pack to play!</h2>
 
                   {#if featuredPacks?.success}
@@ -680,7 +703,7 @@ function openUrl(evt: MouseEvent) {
 
                   <div class="nothingselected-buttons">
                     <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
-                      Select another pack...
+                      Select another pack
                     </button>
                   </div>
                 </div>
@@ -729,7 +752,7 @@ function openUrl(evt: MouseEvent) {
   .app-section {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: safe center;
   }
 
   .load-fade-in {
@@ -784,7 +807,7 @@ function openUrl(evt: MouseEvent) {
   
   .nav-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: safe center;
     gap: 0.5rem;
   }
   .view-container {
@@ -792,7 +815,7 @@ function openUrl(evt: MouseEvent) {
     gap: 2vw;
   }
   .view-container.main {
-    justify-content: center;
+    justify-content: safe center;
     align-items: center;
   }
   .logo {
@@ -831,6 +854,7 @@ function openUrl(evt: MouseEvent) {
   .settings-menu {
     position: fixed;
     margin-top: 150px;
+    right: 0;
     text-align: right;
     z-index: 10;
   }
@@ -917,7 +941,7 @@ function openUrl(evt: MouseEvent) {
   .player-actions {
     display: none;
     align-items: center;
-    justify-content: center;
+    justify-content: safe center;
     gap: 8px;
   }
   .player-card.client-is-host:hover .player-actions {
@@ -939,7 +963,7 @@ function openUrl(evt: MouseEvent) {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: safe center;
     overflow: auto;
     min-width: 100px;
     text-align: center;
@@ -947,7 +971,7 @@ function openUrl(evt: MouseEvent) {
   .nothingselected-buttons {
     display: flex;
     align-self: center;
-    justify-content: center;
+    justify-content: safe center;
   }
   .nothingselected-button {
     padding: 15px;
@@ -1004,7 +1028,7 @@ function openUrl(evt: MouseEvent) {
 
   .featured-container {
     display: flex;
-    justify-content: center;
+    justify-content: safe center;
     gap: 12px;
   }
   .featured-pack-container {
@@ -1305,58 +1329,6 @@ function openUrl(evt: MouseEvent) {
   @media (max-width: 320px) {
     .nav-container {
       overflow: auto;
-    }
-  }
-
-  /* lazy fixes for very small screens */
-  @media (max-height: 330px) {
-    .nav-container {
-      margin-top: -10px;
-    }
-  }
-  @media (max-height: 280px) {
-    .nav-container {
-      margin-top: 20px;
-    }
-  }
-  @media (max-height: 270px) {
-    .nav-container {
-      margin-top: 40px;
-    }
-  }
-  @media (max-height: 241px) {
-    .nav-container {
-      margin-top: 70px;
-    }
-  }
-  @media (max-height: 223px) {
-    .nav-container {
-      margin-top: 89px;
-    }
-  }
-  @media (max-height: 215px) {
-    .nav-container {
-      margin-top: 100px;
-    }
-  }
-  @media (max-height: 190px) {
-    .nav-container {
-      margin-top: 130px;
-    }
-  }
-  @media (max-height: 160px) {
-    .nav-container {
-      margin-top: 180px;
-    }
-  }
-  @media (max-height: 100px) {
-    .nav-container {
-      margin-top: 220px;
-    }
-  }
-  @media (max-height: 60px) {
-    .nav-container {
-      margin-top: 240px;
     }
   }
 </style>
