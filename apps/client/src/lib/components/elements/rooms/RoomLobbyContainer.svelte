@@ -634,7 +634,7 @@ function openUrl(evt: MouseEvent) {
                     <br>
 
                     <div class="nothingselected-buttons">
-                      <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                      <button class="secondary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
                         Select another pack
                       </button>
                     </div>
@@ -1085,7 +1085,11 @@ function openUrl(evt: MouseEvent) {
   .action-button:active, .previousnext-button {
     top: 1px;
   }
-  .action-button.invite, .previousnext-button {
+  .action-button.invite {
+    background: var(--primary-button);
+    color: var(--primary);
+  }
+  .previousnext-button {
     background: var(--secondary-button);
     color: var(--primary);
   }
