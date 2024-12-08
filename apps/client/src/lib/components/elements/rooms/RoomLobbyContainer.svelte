@@ -1024,7 +1024,6 @@ function openUrl(evt: MouseEvent) {
   .action-container {
     gap: 1rem;
     overflow: auto;
-    padding-bottom: 25px;
   }
   .previousnext-container {
     display: flex;
@@ -1046,6 +1045,7 @@ function openUrl(evt: MouseEvent) {
     display: flex;
     min-height: 50px;
     margin-top: 1rem;
+    padding-bottom: 25px;
   }
   .action-button, .previousnext-button {
     border: none;
