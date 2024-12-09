@@ -339,12 +339,12 @@ function openUrl(evt: MouseEvent) {
   <Modal style="transform: scale({transformScale});">
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
-      <div class="modal-icon"><TriangleExclamation /></div>
+      <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <br><br>
-      <div class="modal-icon"><TriangleExclamation /></div>
+      <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
         <a class="url disabled" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
@@ -359,7 +359,7 @@ function openUrl(evt: MouseEvent) {
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
       <br><br>
-      <div class="modal-icon"><Copy /></div>
+      <div class="modal-icon"><Copy color="#000000" /></div>
       <p>Copied invite link!</p>
       <p><a class="url disabled" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
@@ -393,7 +393,7 @@ function openUrl(evt: MouseEvent) {
       <form onsubmit={setSettingsForm}>
         <p>Alternatively, you could select a pack by using its ID.</p>
 
-        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
+        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
 
         <br><br>
         <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
@@ -405,7 +405,7 @@ function openUrl(evt: MouseEvent) {
       <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
       <br><br>
-      <div class="modal-icon"><TriangleExclamation /></div>
+      <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>
         This minigame doesn't support mobile devices!<br>
         Do you wish to continue?
@@ -476,7 +476,7 @@ function openUrl(evt: MouseEvent) {
                     </span>
     
                     {#if $room.room.host === player.id}
-                      <Crown />
+                      <Crown color="#ffa64d" />
                     {/if}
                     
                     <span class="player-points">{player.points}</span>
@@ -544,7 +544,7 @@ function openUrl(evt: MouseEvent) {
                     {/if}
   
                     <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
-                      <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} />
+                      <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
                     </button>
                   </div>
                 </div>
