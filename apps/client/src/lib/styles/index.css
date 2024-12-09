@@ -83,6 +83,12 @@ body.discord {
   }
 }
 
+.border {
+  width: 99%;
+  margin-top: 1rem;
+  border-top: 1px solid #b3b3b3;
+}
+
 .misc-container {
   display: flex;
   height: 100%;

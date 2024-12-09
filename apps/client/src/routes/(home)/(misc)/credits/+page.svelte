@@ -6,14 +6,10 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
   <BaseCard style="width: 100%; max-width: 600px; text-align: center;">
     <p><a class="url" href="/">Back</a></p>
   
-    <h1>Credits</h1>
-  
-    <h2>Developers</h2>
+    <h2>Credits</h2>
     <div>
       Two (<a class="url" href="https://github.com/real2two" target="_blank">https://github.com/real2two</a>)
     </div>
-    
-    <h2>Logo designer</h2>
     <div>
       Realmy (<a class="url" href="https://realmy.net/" target="_blank">https://realmy.net/</a>)
     </div>

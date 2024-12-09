@@ -946,12 +946,6 @@ function openUrl(evt: MouseEvent) {
     gap: 5px;
     overflow: auto;
   }
-  
-  .border {
-    width: 99%;
-    margin-top: 1rem;
-    border-top: 1px solid #b3b3b3;
-  }
 
   .select-button.primary-button {
     width: 100px;
