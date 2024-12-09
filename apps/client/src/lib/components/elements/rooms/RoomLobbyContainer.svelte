@@ -228,15 +228,11 @@ function transferHost(user: string) {
   });
 }
 
-function copyInviteLinkNormal() {
-  navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
-}
-
 async function copyInviteLink() {
   try {
     switch ($launcher) {
       case "normal": {
-        copyInviteLinkNormal();
+        navigator.clipboard.writeText(`${location.origin}/join/${$room?.room.id}`);
 
         $roomLobbyPopupMessage = { type: "invite" };
         $isModalOpen = true;
@@ -350,7 +346,7 @@ function openUrl(evt: MouseEvent) {
       <div class="modal-icon"><TriangleExclamation /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
-        <a class="url" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
+        <a class="url disabled" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
           {$roomLobbyPopupMessage.url}
         </a>
       </p>
@@ -364,7 +360,7 @@ function openUrl(evt: MouseEvent) {
       <br><br>
       <div class="modal-icon"><Copy /></div>
       <p>Copied invite link!</p>
-      <p><a class="url" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => {evt.preventDefault(); copyInviteLinkNormal();}}>{location.origin}/join/{$room?.room.id}</a></p>
+      <p><a class="url disabled" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()}>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>
