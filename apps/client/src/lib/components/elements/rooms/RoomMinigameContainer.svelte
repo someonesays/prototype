@@ -197,15 +197,17 @@ function leaveOrEndGameConfirm() {
   <div class="minigame-iframe-container">
     <div class="minigame-iframe" style={$roomMinigameReady && $room?.status === GameStatus.STARTED ? "" : "pointer-events:none"} bind:this={container}></div>
     <div class="minigame-notready-container {$roomMinigameReady && $room?.status === GameStatus.STARTED ? "fade" : ""}" style="transform: scale({transformScale});">
-      <div class="minigame-notready">
-        <div class="minigame-notready-box">
-          <div class="loading-animation"></div>
-          <div class="minigame-notready-text">
-            {
-              $roomMinigameReady && !$roomJoinedLate
-                ? `Waiting for players... (${$room?.players.filter(p => p.ready).length}/${$room?.players.length})`
-                : "Loading minigame..."
-            }
+      <div class="minigame-notready-section">
+        <div class="minigame-notready-scale">
+          <div class="minigame-notready-box">
+            <div class="loading-animation"></div>
+            <div class="minigame-notready-text">
+              {
+                $roomMinigameReady && !$roomJoinedLate
+                  ? `Waiting for players... (${$room?.players.filter(p => p.ready).length}/${$room?.players.length})`
+                  : "Loading minigame..."
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -273,13 +275,17 @@ function leaveOrEndGameConfirm() {
     opacity: 0;
     pointer-events: none;
   }
-  .minigame-notready {
+  .minigame-notready-section {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     width: 100%;
     height: 100%;
+  }
+  .minigame-notready-scale {
+    animation-name: notready-appear;
+    animation-duration: 0.5s;
   }
   .minigame-notready-box {
     background-color: var(--primary);
@@ -294,8 +300,18 @@ function leaveOrEndGameConfirm() {
     opacity: 1;
     transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  @keyframes notready-appear {
+    0% {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
   .minigame-notready-box:hover {
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
   .minigame-notready-text {
     margin-top: 16px;
