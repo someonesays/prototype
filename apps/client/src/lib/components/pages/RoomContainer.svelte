@@ -171,12 +171,31 @@ onMount(() => {
       }, 0);
     }
 
+    const oldMinigameId = $room.minigame?.id;
     const oldPackId = $room.pack?.id;
 
     $room.minigame = evt.minigame;
     $room.pack = evt.pack;
 
+    if ($room.minigame && $room.minigame.id !== oldMinigameId) {
+      const minigamePreviewImage = $room.minigame.previewImage;
+      $room.minigame.previewImage = null;
+
+      setTimeout(() => {
+        if (!$room?.minigame) return;
+        $room.minigame.previewImage = minigamePreviewImage;
+      }, 0);
+    }
+
     if ($room.pack && $room.pack.id !== oldPackId) {
+      const packIconImage = $room.pack.iconImage;
+      $room.pack.iconImage = null;
+
+      setTimeout(() => {
+        if (!$room?.pack) return;
+        $room.pack.iconImage = packIconImage;
+      }, 0);
+
       lobbyContainerComponent?.handleSelectMinigame(true);
     }
   });
