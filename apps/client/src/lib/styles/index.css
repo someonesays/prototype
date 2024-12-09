@@ -347,7 +347,7 @@ body.discord {
 
 .image-fade-in {
   opacity: 0;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 .image-fade-in.image-fade-in-loaded {
   opacity: 1;

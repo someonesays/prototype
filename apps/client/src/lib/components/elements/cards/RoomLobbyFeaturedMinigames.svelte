@@ -126,7 +126,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     height: 18px;
 
     animation-name: fade-in;
-    animation-duration: 0.4s;
+    animation-duration: 0.2s;
   }
   .pack-image.featured {
     margin-right: 0;
