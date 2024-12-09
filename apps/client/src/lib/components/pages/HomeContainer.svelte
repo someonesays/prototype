@@ -24,6 +24,7 @@ import { launcherMatchmaking } from "../stores/launcher";
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
 let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
+let resetTurnstile = $state<() => void>();
 
 let saveSamePageKickedReason = $state<string | null>(null);
 
@@ -62,6 +63,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     mobile: isMobileOrTablet(),
     baseUrl: env.VITE_BASE_API,
   });
+
+  resetTurnstile?.();
 
   if (!success) {
     // Allow clicking join again
@@ -125,7 +128,7 @@ onMount(() => {
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={$page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <div style="margin-top: 10px;">
-          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />
+          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
         </div>
       {/if}
     </form>
