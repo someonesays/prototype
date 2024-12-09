@@ -128,7 +128,7 @@ onMount(() => {
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={$page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <div style="margin-top: 10px; height: 65px;">
-          <Turnstile theme="light" class="turnstile" siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
+          <Turnstile class="turnstile" siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
         </div>
       {/if}
     </form>
