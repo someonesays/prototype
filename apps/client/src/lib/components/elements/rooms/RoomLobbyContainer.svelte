@@ -336,7 +336,7 @@ function openUrl(evt: MouseEvent) {
     </div>
   </div>
 {:else}
-  <Modal cardStyle="transform: scale({transformScale});">
+  <Modal style="transform: scale({transformScale});">
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation /></div>

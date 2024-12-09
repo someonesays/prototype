@@ -11,6 +11,7 @@ let { children, style = "" } = $props();
     background-color: var(--primary);
     color: var(--primary-text);
     border-radius: 15px;
-    padding: 5px;
+    padding: 15px;
+    overflow: auto;
   }
 </style>

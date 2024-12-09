@@ -149,8 +149,8 @@ onMount(() => {
     overflow: auto;
     min-width: 100px;
     min-height: 100px;
-    align-items: center;
-    justify-content: center;
+    align-items: safe center;
+    justify-content: safe center;
     text-align: center;
     height: 100%;
     overflow: auto;

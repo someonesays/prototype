@@ -165,7 +165,7 @@ function leaveOrEndGameConfirm() {
 }
 </script>
 
-<Modal cardStyle="transform: scale({transformScale});">
+<Modal style="transform: scale({transformScale});">
   <br><br>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug /></div>

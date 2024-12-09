@@ -80,6 +80,13 @@ body.discord {
   }
 }
 
+.misc-container {
+  display: flex;
+  height: 100%;
+  align-items: safe center;
+  justify-content: safe center;
+}
+
 .loading-animation {
   border: 3px solid #5812e2;
   -webkit-animation: loading-animation-spin 1s linear infinite;
