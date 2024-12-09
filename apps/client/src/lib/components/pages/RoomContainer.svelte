@@ -48,6 +48,9 @@ let connected = $state(false);
 let allowExitingPage = $state(true);
 let exitedPage = $state(false);
 
+// svelte-ignore non_reactive_update
+let lobbyContainerComponent: { handleSelectMinigame: (noModal?: boolean) => void };
+
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
   if (!allowExitingPage && env.VITE_IS_PROD) return cancel();
@@ -168,8 +171,14 @@ onMount(() => {
       }, 0);
     }
 
+    const oldPackId = $room.pack?.id;
+
     $room.minigame = evt.minigame;
     $room.pack = evt.pack;
+
+    if ($room.pack && $room.pack.id !== oldPackId) {
+      lobbyContainerComponent?.handleSelectMinigame(true);
+    }
   });
 
   // Handle minigame
@@ -391,7 +400,7 @@ function kick(reason?: string) {
 </script>
   
 {#if !$room || $room.status === GameStatus.LOBBY}
-  <LobbyContainer />
+  <LobbyContainer  bind:this={lobbyContainerComponent} />
 {:else if $room.status === GameStatus.STARTED || $room.status === GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME}
   <MinigameContainer /> 
 {/if}

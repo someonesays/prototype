@@ -118,7 +118,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   });
 }
 
-async function handleSelectMinigame(noModal = false) {
+export async function handleSelectMinigame(noModal = false) {
   if (!$room?.pack) {
     throw new Error("Missing pack on handleSelectMinigame");
   }
@@ -525,7 +525,7 @@ function openUrl(evt: MouseEvent) {
                     {#if $room.room.host === $room.user}
                       {#if $room.pack}
                         <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-                        <button class="secondary-button select-button" onmouseover={() => handleSelectMinigame(true)} onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
+                        <button class="secondary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
                           Select minigame
                         </button>
                         <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
