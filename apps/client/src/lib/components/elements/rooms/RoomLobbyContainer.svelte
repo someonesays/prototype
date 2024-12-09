@@ -643,13 +643,13 @@ function openUrl(evt: MouseEvent) {
           </div>
           <div class="action-container desktop">
             <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
           </div>
         </div>
       </div>
       <div class="action-container mobile">
         <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start</button>
+        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
       </div>
     </div>
   </div>
