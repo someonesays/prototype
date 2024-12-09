@@ -87,11 +87,15 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   <div class="featured-container">
     <div class="featured-pack-container loading">
       <div class="pack-image featured loading"></div>
-      <div class="featured-pack-text">&nbsp;</div>
+      <div class="featured-pack-text">
+        &nbsp;
+      </div>
     </div>
     <!-- <div class="featured-pack-container loading">
       <div class="pack-image featured loading second"></div>
-      <div class="featured-pack-text">&nbsp;</div>
+      <div class="featured-pack-text">
+        &nbsp;
+      </div>
     </div> -->
   </div>
 {/if}
@@ -130,6 +134,8 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     
     min-width: 7rem;
     width: 7rem;
+
+    height: 18px;
 
     white-space: nowrap;
 
