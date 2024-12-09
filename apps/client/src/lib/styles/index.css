@@ -83,6 +83,15 @@ body.discord {
   }
 }
 
+.turnstile > div {
+  width: 300px;
+  height: 65px;
+  margin: auto;
+  border: 1px solid #b3b3b3 !important;
+  border-radius: 15px !important;
+  overflow: hidden;
+}
+
 .border {
   width: 99%;
   margin-top: 1rem;
