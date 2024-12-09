@@ -124,22 +124,26 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     cursor: wait;
   }
   .featured-pack-text {
-    height: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     
-    min-width: 8rem;
-    width: 8rem;
+    min-width: 7rem;
+    width: 7rem;
+
     white-space: nowrap;
 
-    animation-name: fade-in;
+    animation-name: pack-fade-in;
     animation-duration: 0.2s;
+    animation-timing-function: ease-out;
   }
   .pack-image.featured {
     margin-right: 0;
 
-    min-width: 8rem;
-    min-height: 8rem;
-    width: 8rem;
-    height: 8rem;
+    min-width: 7rem;
+    min-height: 7rem;
+    width: 7rem;
+    height: 7rem;
   }
   .pack-image.featured.loading {
     animation-name: featured-loading;
@@ -150,7 +154,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     animation-delay: 1.5s;
   } */
 
-  @keyframes fade-in {
+  @keyframes pack-fade-in {
     0% {
       opacity: 0;
     }
