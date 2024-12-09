@@ -1,5 +1,5 @@
 <script lang="ts">
-import { isModalOpen } from "$lib/components/stores/modal";
+import { isModalOpen } from "$lib/components/stores/(home)/modal";
 import { clickOutside } from "$lib/utils/clickOutside";
 
 let { children, style = "" } = $props();

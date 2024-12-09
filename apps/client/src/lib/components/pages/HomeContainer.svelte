@@ -1,11 +1,11 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 
-import Ban from "../icons/Ban.svelte";
-import Logo from "../icons/Logo.svelte";
+import Ban from "$lib/components/icons/Ban.svelte";
+import Logo from "$lib/components/icons/Logo.svelte";
 
 import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
-import Modal from "../elements/cards/Modal.svelte";
+import Modal from "$lib/components/elements/cards/Modal.svelte";
 
 import { onMount } from "svelte";
 import { Turnstile } from "svelte-turnstile";
@@ -14,12 +14,12 @@ import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
-import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
+import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/(home)/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
 import { isMobileOrTablet } from "$lib/utils/mobile";
-import { isModalOpen } from "$lib/components/stores/modal";
+import { isModalOpen } from "$lib/components/stores/(home)/modal";
 
-import { launcherMatchmaking } from "../stores/launcher";
+import { launcherMatchmaking } from "$lib/components/stores/(home)/launcher";
 
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { page } from "$app/stores";
-import { launcher } from "$lib/components/stores/launcher";
+import { launcher } from "$lib/components/stores/(home)/launcher";
 
 let { children } = $props();
 </script>
