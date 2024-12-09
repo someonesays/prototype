@@ -16,6 +16,6 @@
   <h2>External assets used</h2>
   <ul>
     <li>Figtree: <a class="url" href="https://www.erikdkennedy.com/projects/figtree.html" target="_blank">https://www.erikdkennedy.com/projects/figtree.html</a></li>
-    <li>Fontawesome: <a class="url" href="https://fontawesome.com/" target="_blank">https://fontawesome.com/</a> <i>(modified icon .svg files into .svelte files and modified their colors/sizes)</i></li>
+    <li>Fontawesome: <a class="url" href="https://fontawesome.com/" target="_blank">https://fontawesome.com/</a></li>
   </ul>
 </main>
