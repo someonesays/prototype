@@ -102,6 +102,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     display: flex;
     justify-content: safe center;
     gap: 12px;
+    flex-flow: row wrap;
   }
   .featured-pack-container {
     background: none;
@@ -124,17 +125,21 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   }
   .featured-pack-text {
     height: 18px;
+    
+    min-width: 8rem;
+    width: 8rem;
+    white-space: nowrap;
 
     animation-name: fade-in;
     animation-duration: 0.2s;
   }
   .pack-image.featured {
     margin-right: 0;
-    
-    min-width: 6rem;
-    min-height: 6rem;
-    width: 6rem;
-    height: 6rem;
+
+    min-width: 8rem;
+    min-height: 8rem;
+    width: 8rem;
+    height: 8rem;
   }
   .pack-image.featured.loading {
     animation-name: featured-loading;
