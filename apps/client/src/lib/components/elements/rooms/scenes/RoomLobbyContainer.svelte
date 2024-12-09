@@ -12,8 +12,9 @@ import Crown from "$lib/components/icons/Crown.svelte";
 import Copy from "$lib/components/icons/Copy.svelte";
 import Flag from "$lib/components/icons/Flag.svelte";
 
-import Modal from "../cards/Modal.svelte";
-import RoomLobbyFeaturedMinigames from "$lib/components/elements/lists/RoomLobbyFeaturedMinigames.svelte";
+import Modal from "$lib/components/elements/cards/Modal.svelte";
+
+import RoomLobbyFeaturedMinigames from "$lib/components/elements/rooms/lists/RoomLobbyFeaturedMinigames.svelte";
 
 import { volumeValue } from "$lib/components/stores/settings";
 import { launcher, launcherDiscordSdk } from "$lib/components/stores/launcher";

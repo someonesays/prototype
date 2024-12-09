@@ -3,7 +3,7 @@ import GearIcon from "$lib/components/icons/GearIcon.svelte";
 import DoorOpen from "$lib/components/icons/DoorOpen.svelte";
 import Plug from "$lib/components/icons/Plug.svelte";
 
-import Modal from "../cards/Modal.svelte";
+import Modal from "$lib/components/elements/cards/Modal.svelte";
 
 import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus } from "@/public";

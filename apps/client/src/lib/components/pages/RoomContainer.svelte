@@ -35,8 +35,8 @@ import { kickedReason } from "$lib/components/stores/lobby";
 import { volumeValue } from "$lib/components/stores/settings";
 import { isModalOpen } from "../stores/modal";
 
-import MinigameContainer from "$lib/components/elements/rooms/RoomMinigameContainer.svelte";
-import LobbyContainer from "$lib/components/elements/rooms/RoomLobbyContainer.svelte";
+import MinigameContainer from "$lib/components/elements/rooms/scenes/RoomMinigameContainer.svelte";
+import LobbyContainer from "$lib/components/elements/rooms/scenes/RoomLobbyContainer.svelte";
 
 import { RPCCloseCodes } from "@discord/embedded-app-sdk";
 
