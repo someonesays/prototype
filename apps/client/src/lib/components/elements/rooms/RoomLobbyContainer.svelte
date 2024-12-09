@@ -1078,6 +1078,7 @@ function openUrl(evt: MouseEvent) {
   .action-button {
     padding: 0.75rem 1.5rem;
     height: 50px;
+    font-size: 18px;
   }
   .previousnext-button {
     width: calc(50% - 2px);
