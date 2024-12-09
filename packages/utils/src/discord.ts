@@ -1,4 +1,5 @@
 import env from "@/env";
+import { fetchAndRetry } from "./rateLimits";
 
 export async function verifyDiscordOAuth2Token({
   clientId,
@@ -6,7 +7,7 @@ export async function verifyDiscordOAuth2Token({
   redirectUri,
   code,
 }: { clientId: string; clientSecret: string; redirectUri: string; code: string }) {
-  const res = await fetch("https://discord.com/api/oauth2/token", {
+  const res = await fetchAndRetry("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: {
       "content-type": "application/x-www-form-urlencoded",
@@ -35,7 +36,7 @@ export async function verifyDiscordOAuth2Token({
 }
 
 export async function getDiscordUser(accessToken: string) {
-  const res = await fetch("https://discord.com/api/users/@me", {
+  const res = await fetchAndRetry("https://discord.com/api/users/@me", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -69,7 +70,7 @@ export async function getDiscordUser(accessToken: string) {
 }
 
 export async function getDiscordMember({ guildId, accessToken }: { guildId: string; accessToken: string }) {
-  const res = await fetch(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
+  const res = await fetchAndRetry(`https://discord.com/api/users/@me/guilds/${guildId}/member`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -91,12 +92,15 @@ export async function getDiscordMember({ guildId, accessToken }: { guildId: stri
 }
 
 export async function getActivityInstance(instanceId: string) {
-  const res = await fetch(`https://discord.com/api/applications/${env.DISCORD_CLIENT_ID}/activity-instances/${instanceId}`, {
-    headers: {
-      authorization: `Bot ${env.DISCORD_TOKEN}`,
-      "content-type": "application/json",
+  const res = await fetchAndRetry(
+    `https://discord.com/api/applications/${env.DISCORD_CLIENT_ID}/activity-instances/${instanceId}`,
+    {
+      headers: {
+        authorization: `Bot ${env.DISCORD_TOKEN}`,
+        "content-type": "application/json",
+      },
     },
-  });
+  );
   if (res.status !== 200) {
     console.error("Failed to get Discord activity instance", await res.json());
     return null;
