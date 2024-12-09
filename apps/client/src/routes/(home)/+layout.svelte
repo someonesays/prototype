@@ -46,6 +46,9 @@ let { children } = $props();
   .secondary-bg {
     background: linear-gradient(90deg, var(--bg-gradient-2-primary-1) 0%, var(--bg-gradient-2-primary-2) 100%);
   }
+  .third-bg {
+    background: linear-gradient(90deg, var(--bg-gradient-3-primary-1) 0%, var(--bg-gradient-3-primary-2) 100%);
+  }
   .bg.hide {
     animation-name: bg-fade-out;
     animation-duration: 0.8s;
@@ -141,6 +144,8 @@ let { children } = $props();
   <div class="bg-container">
     <div class="bg primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
     <div class="bg secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
+    
+    <div class="bg third-bg" class:hide={!["/credits", "/terms", "/privacy"].includes($page.url.pathname)}></div>
   </div>
 
   <div class="pattern" class:absolute={$launcher === "discord"}></div>
