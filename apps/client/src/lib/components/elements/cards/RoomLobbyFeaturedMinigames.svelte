@@ -119,6 +119,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     background-color: var(--secondary);
     transform: scale(1.02);
   }
+  .featured-pack-container.loaded:disabled {
+    cursor: wait;
+  }
   .featured-pack-text {
     height: 18px;
 

@@ -185,6 +185,7 @@ function handleSelectPack() {
 function handleRemoveMinigameAndPack() {
   if (!$room?.minigame?.id) throw new Error("Cannot remove pack without minigame");
 
+  $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
     data: { packId: null, minigameId: null },
@@ -395,7 +396,7 @@ function openUrl(evt: MouseEvent) {
         <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings}>
 
         <br><br>
-        <input class="primary-button" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+        <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
         <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
     {:else if $roomLobbyPopupMessage?.type === "report"}
@@ -410,7 +411,7 @@ function openUrl(evt: MouseEvent) {
         Do you wish to continue?
       </p>
       <p>
-        <button class="primary-button margin-top-8px" onclick={() => startGame(true)}>Start</button>
+        <button class="primary-button margin-top-8px wait-on-disabled" onclick={() => startGame(true)}>Start</button>
         <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {/if}
@@ -537,7 +538,7 @@ function openUrl(evt: MouseEvent) {
                         </button>
                       {/if}
   
-                      <button class="error-button select-button" onclick={handleRemoveMinigameAndPack} tabindex={disableTabIndex}>
+                      <button class="error-button select-button wait-on-disabled" onclick={handleRemoveMinigameAndPack} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
                         Remove
                       </button>
                     {/if}
@@ -643,13 +644,13 @@ function openUrl(evt: MouseEvent) {
           </div>
           <div class="action-container desktop">
             <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-            <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
+            <button class="action-button start wait-on-disabled" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
           </div>
         </div>
       </div>
       <div class="action-container mobile">
         <button class="action-button invite" onclick={copyInviteLink} disabled={!$room} tabindex={disableTabIndex}>Invite</button>
-        <button class="action-button start" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
+        <button class="action-button start wait-on-disabled" onclick={() => startGame(false)} disabled={!$room || $roomRequestedToStartGame} tabindex={disableTabIndex}>Start{$roomRequestedToStartGame ? "ing..." : ""}</button>
       </div>
     </div>
   </div>
@@ -1120,6 +1121,10 @@ function openUrl(evt: MouseEvent) {
   }
   .playeraction-button.transfer-host {
     width: 120px;
+  }
+
+  .wait-on-disabled:disabled {
+    cursor: wait;
   }
 
   @media (max-height: 319px) {
