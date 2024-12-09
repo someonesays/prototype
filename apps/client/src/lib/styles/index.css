@@ -353,6 +353,10 @@ body.discord {
   opacity: 1;
 }
 
+.wait-on-disabled:disabled {
+  cursor: wait;
+}
+
 @media (max-width: 120px) {
   .modal-icon {
     display: none;

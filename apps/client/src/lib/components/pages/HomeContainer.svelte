@@ -11,6 +11,7 @@ import { onMount } from "svelte";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
+import { page } from "$app/stores";
 import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/lobby";
@@ -20,7 +21,10 @@ import { isModalOpen } from "$lib/components/stores/modal";
 
 import { launcherMatchmaking } from "../stores/launcher";
 
-let disableJoin = $state(false);
+let disableJoinPage = $state(false);
+let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
+let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
+
 let saveSamePageKickedReason = $state<string | null>(null);
 
 let transformScale = $state(1);
@@ -36,8 +40,8 @@ beforeNavigate(() => {
 async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
 
-  if (disableJoin) return;
-  disableJoin = true;
+  if (disableJoinPage) return;
+  disableJoinPage = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
   const captcha = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
@@ -61,7 +65,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   if (!success) {
     // Allow clicking join again
-    disableJoin = false;
+    disableJoinPage = false;
     // Set kick reason
     $isModalOpen = true;
     $kickedReason = saveSamePageKickedReason = ErrorMessageCodesToText[code];
@@ -83,6 +87,8 @@ onMount(() => {
   if ($kickedReason) {
     $isModalOpen = true;
   }
+
+  $displayName = $displayName ?? getCookie("displayName");
 
   const resize = () => {
     if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
@@ -115,8 +121,8 @@ onMount(() => {
     </div>
     <br>
     <form onsubmit={joinRoom}>
-      <input class="input input-center" type="text" name="displayName" value={$displayName || getCookie("displayName")} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoin} required>
-      <input class="primary-button margin-top-8" type="submit" value={$roomIdToJoin ? (disableJoin ? "Joining room..." : "Join room") : (disableJoin ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
+      <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
+      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={$page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
       {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
         <div style="margin-top: 10px;">
           <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} />

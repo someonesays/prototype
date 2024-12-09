@@ -1123,10 +1123,6 @@ function openUrl(evt: MouseEvent) {
     width: 120px;
   }
 
-  .wait-on-disabled:disabled {
-    cursor: wait;
-  }
-
   @media (max-height: 319px) {
     .app {
       padding: 0;
