@@ -65,11 +65,11 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
         <button class="featured-pack-container loaded" onclick={() => setSettings({ packId: pack.id })} tabindex={tabindex} disabled={!$room || $room.user !== $room.room.host || $roomRequestedToChangeSettings}>
           <div class="pack-image featured">
             {#if pack?.iconImage}
-              <img class="pack-image featured" alt="Pack icon" src={
+              <img class="pack-image featured image-fade-in" alt="Pack icon" src={
                 $launcher === "normal"
                   ? pack.iconImage.normal
                   : pack.iconImage.discord
-              } />
+              } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
             {/if}
           </div>
           <div class="featured-pack-text">

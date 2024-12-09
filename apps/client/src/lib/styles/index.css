@@ -345,6 +345,14 @@ body.discord {
   display: flex;
 }
 
+.image-fade-in {
+  opacity: 0;
+  transition: 0.3s;
+}
+.image-fade-in.image-fade-in-loaded {
+  opacity: 1;
+}
+
 @media (max-width: 120px) {
   .modal-icon {
     display: none;

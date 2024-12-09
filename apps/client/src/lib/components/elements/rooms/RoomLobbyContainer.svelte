@@ -470,7 +470,7 @@ function openUrl(evt: MouseEvent) {
               {#if $room}
                 {#each $room.players as player}
                   <div class="player-card" class:client-is-host={$room.user === $room.room.host && $room.user !== player.id}>
-                    <img class="player-avatar" src={player.avatar} alt="{player.displayName}'s avatar" />
+                    <img class="player-avatar image-fade-in" src={player.avatar} alt="{player.displayName}'s avatar" onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
                     <span class="player-name">
                       {player.displayName}
                     </span>
@@ -505,11 +505,11 @@ function openUrl(evt: MouseEvent) {
                     {#if $room.pack}
                       <div class="pack-image">
                         {#if $room.pack?.iconImage}
-                          <img class="pack-image" alt="Pack icon" src={
+                          <img class="pack-image image-fade-in" alt="Pack icon" src={
                             $launcher === "normal"
                               ? $room.pack.iconImage.normal
                               : $room.pack.iconImage.discord
-                          } />
+                          } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
                         {/if}
                       </div>
                       <div>
@@ -585,7 +585,7 @@ function openUrl(evt: MouseEvent) {
                   </div>
                   <div class="nextup-minigame-preview">
                     {#if $room.minigame?.previewImage}
-                      <img class="nextup-minigame-preview-image" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} />
+                      <img class="nextup-minigame-preview-image image-fade-in" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
                     {/if}
                   </div>
                   <div class="nextup-minigame-legal-container mobile">
