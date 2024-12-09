@@ -102,12 +102,16 @@ onMount(() => {
   <div style="transform: scale({transformScale});">
     <div class="loader-section">
       <div style="width: 140px;"><Logo /></div>
+      {#if !failed}
+        <br>
+        <div class="loading-animation"></div>
+      {/if}
       <br>
-      <span>
+      <span class="loading-text">
         {#if failed}
           Failed to load launcher.
         {:else}
-          <span>Loading...</span>
+          Loading...
         {/if}
       </span>
     </div>
@@ -129,7 +133,6 @@ onMount(() => {
     align-items: center;
 
     color: var(--primary-text);
-    font-size: 14px;
     padding: 50px;
     border-radius: 15px;
 
@@ -139,7 +142,6 @@ onMount(() => {
     animation-duration: .7s;
     animation-timing-function: ease-out;
   }
-
   @keyframes appear-animation {
     0% {
       transform: scale(1.1);
@@ -147,5 +149,14 @@ onMount(() => {
     100% {
       transform: scale(1);
     }
+  }
+  .loading-text {
+    font-size: 14px;
+  }
+  .loading-animation {
+    border: 3px solid #5812e2;
+    border-top: 3px solid #fafafa;
+    width: 25px;
+    height: 25px;
   }
 </style>

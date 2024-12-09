@@ -183,7 +183,7 @@ function leaveOrEndGameConfirm() {
     <div class="minigame-notready-container {$roomMinigameReady && $room?.status === GameStatus.STARTED ? "fade" : ""}">
       <div class="minigame-notready">
         <div class="minigame-notready-box">
-          <div class="minigame-notready-loader"></div>
+          <div class="loading-animation"></div>
           <div class="minigame-notready-text">
             {
               $roomMinigameReady && !$roomJoinedLate
@@ -285,28 +285,11 @@ function leaveOrEndGameConfirm() {
     margin-top: 16px;
     text-align: center;
   }
-  .minigame-notready-loader {
+  .loading-animation {
     border: 6px solid #5812e2;
-    -webkit-animation: minigame-notready-loader-spin 1s linear infinite;
-    animation: minigame-notready-loader-spin 1s linear infinite;
-    animation-duration: 1.5s;
-    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
     border-top: 6px solid #fafafa;
-    border-radius: 50%;
     width: 50px;
     height: 50px;
-  }
-  @keyframes minigame-notready-loader-spin {
-    0% { 
-      -webkit-transform: rotate(0deg);
-      -ms-transform: rotate(0deg);
-      transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(360deg);
-      -ms-transform: rotate(360deg);
-      transform: rotate(360deg);
-    }
   }
   .minigame-settings {
     position: absolute;

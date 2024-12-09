@@ -80,6 +80,31 @@ body.discord {
   }
 }
 
+.loading-animation {
+  border: 3px solid #5812e2;
+  -webkit-animation: loading-animation-spin 1s linear infinite;
+  animation: loading-animation-spin 1s linear infinite;
+  animation-duration: 1.5s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  border-top: 3px solid #fafafa;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+}
+
+@keyframes loading-animation-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
 .minigame-iframe iframe {
   border-width: 0;
   width: 100%;
