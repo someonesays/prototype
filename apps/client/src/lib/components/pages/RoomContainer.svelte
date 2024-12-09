@@ -29,11 +29,11 @@ import {
   roomJoinedLate,
   roomLobbyPopupMessage,
   roomFeaturedPacks,
-} from "$lib/components/stores/(home)/roomState";
-import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/(home)/launcher";
-import { kickedReason } from "$lib/components/stores/(home)/lobby";
-import { volumeValue } from "$lib/components/stores/(home)/settings";
-import { isModalOpen } from "$lib/components/stores/(home)/modal";
+} from "$lib/components/stores/home/roomState";
+import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/home/launcher";
+import { kickedReason } from "$lib/components/stores/home/lobby";
+import { volumeValue } from "$lib/components/stores/home/settings";
+import { isModalOpen } from "$lib/components/stores/home/modal";
 
 import MinigameContainer from "$lib/components/elements/rooms/scenes/RoomMinigameContainer.svelte";
 import LobbyContainer from "$lib/components/elements/rooms/scenes/RoomLobbyContainer.svelte";

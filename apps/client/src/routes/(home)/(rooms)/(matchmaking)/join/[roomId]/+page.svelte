@@ -6,7 +6,7 @@ import { page } from "$app/stores";
 import env from "$lib/utils/env";
 import { goto } from "$app/navigation";
 import { ErrorMessageCodes, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
-import { roomIdToJoin, kickedReason } from "$lib/components/stores/(home)/lobby";
+import { roomIdToJoin, kickedReason } from "$lib/components/stores/home/lobby";
 
 onMount(() => {
   const roomId = $page.params.roomId;

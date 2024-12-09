@@ -16,10 +16,10 @@ import {
   roomParentSdk,
   roomMinigameReady,
   roomJoinedLate,
-} from "$lib/components/stores/(home)/roomState";
-import { volumeValue } from "$lib/components/stores/(home)/settings";
-import { launcher } from "$lib/components/stores/(home)/launcher";
-import { isModalOpen } from "$lib/components/stores/(home)/modal";
+} from "$lib/components/stores/home/roomState";
+import { volumeValue } from "$lib/components/stores/home/settings";
+import { launcher } from "$lib/components/stores/home/launcher";
+import { isModalOpen } from "$lib/components/stores/home/modal";
 
 let container: HTMLDivElement;
 let isSettingsOpen = $state(false);

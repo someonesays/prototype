@@ -8,7 +8,7 @@ import { DiscordSDK, Platform, RPCCloseCodes } from "@discord/embedded-app-sdk";
 import { MatchmakingType, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
 
 import { goto } from "$app/navigation";
-import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/(home)/launcher";
+import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/components/stores/home/launcher";
 
 let failed = $state(false);
 let transformScale = $state(1);

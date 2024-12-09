@@ -2,7 +2,7 @@
 import { onMount } from "svelte";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
-import { launcherMatchmaking } from "$lib/components/stores/(home)/launcher";
+import { launcherMatchmaking } from "$lib/components/stores/home/launcher";
 
 import RoomContainer from "$lib/components/pages/RoomContainer.svelte";
 
