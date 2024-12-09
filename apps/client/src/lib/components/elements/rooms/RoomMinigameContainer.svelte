@@ -25,8 +25,24 @@ let container: HTMLDivElement;
 let isSettingsOpen = $state(false);
 let isEnding = $state(false);
 
+let transformScale = $state(1);
+
 onMount(() => {
   if (!$room?.minigame) throw new Error("Missing room or minigame");
+
+  // Add resizing
+
+  const resize = () => {
+    if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
+      transformScale = Math.min(window.innerWidth / 1100, window.innerHeight / 660);
+    } else {
+      transformScale = 1;
+    }
+  };
+  window.addEventListener("resize", resize);
+  resize();
+
+  // Handle iframe and SDK
 
   const iframe = document.createElement("iframe") as HTMLIFrameElement;
   iframe.referrerPolicy = "origin";
@@ -149,7 +165,7 @@ function leaveOrEndGameConfirm() {
 }
 </script>
 
-<Modal>
+<Modal cardStyle="transform: scale({transformScale});">
   <br><br>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug /></div>
@@ -180,7 +196,7 @@ function leaveOrEndGameConfirm() {
 <div class="minigame-container">
   <div class="minigame-iframe-container">
     <div class="minigame-iframe" style={$roomMinigameReady && $room?.status === GameStatus.STARTED ? "" : "pointer-events:none"} bind:this={container}></div>
-    <div class="minigame-notready-container {$roomMinigameReady && $room?.status === GameStatus.STARTED ? "fade" : ""}">
+    <div class="minigame-notready-container {$roomMinigameReady && $room?.status === GameStatus.STARTED ? "fade" : ""}" style="transform: scale({transformScale});">
       <div class="minigame-notready">
         <div class="minigame-notready-box">
           <div class="loading-animation"></div>
@@ -195,7 +211,7 @@ function leaveOrEndGameConfirm() {
       </div>
     </div>
   </div>
-  <div class="minigame-settings">
+  <div class="minigame-settings" style="transform: scale({transformScale});">
     <div class="settings-menu" class:active={isSettingsOpen}>
       <div>
         <div>
@@ -294,8 +310,9 @@ function leaveOrEndGameConfirm() {
   .minigame-settings {
     position: absolute;
     color: white;
-    right: calc(16px + 0.5vh);
-    bottom: calc(16px + 0.5vh);
+    right: 18px;
+    bottom: 18px;
+    transform-origin: bottom right;
   }
   .settings-menu {
     margin-bottom: 12px;
