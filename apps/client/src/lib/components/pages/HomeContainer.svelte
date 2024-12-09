@@ -131,13 +131,13 @@ onMount(() => {
     </form>
 
     <p>
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers">Developer Portal</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Developer Portal</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits">Credits</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Credits</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms">Terms of Services</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Terms of Services</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy">Privacy Policy</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Privacy Policy</a>
     </p>
   </BaseCard>
 </div>

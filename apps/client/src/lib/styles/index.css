@@ -126,7 +126,7 @@ body.discord {
 }
 
 .url.disabled {
-  pointer-events: none;
+  cursor: no-drop;
 }
 
 .button {
