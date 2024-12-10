@@ -43,6 +43,6 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
     <p>We may update this Privacy Policy from time to time. The most current version will always be posted on our website. By continuing to use Someone Says after changes to the Policy become effective, you agree to be bound by the revised Privacy Policy.</p>
 
     <h3>6. Contact Us</h3>
-    <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:support@someonesays.io">support@someonesays.io</a>.</p>
+    <p>If you have any questions about this Privacy Policy, please contact us at <a class="url" href="mailto:support@someonesays.io">support@someonesays.io</a>.</p>
   </BaseCard>
 </main>

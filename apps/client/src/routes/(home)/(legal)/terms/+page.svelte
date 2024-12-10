@@ -30,7 +30,7 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
     <ul>
       <li>We collect and store your username for the duration of your use of Someone Says.</li>
       <li>Your username is used to identify you within Someone Says and to provide you with personalized features and services.</li>
-      <li>For more information on how we handle your personal data, please review our Privacy Policy.</li>
+      <li>For more information on how we handle your personal data, please review our <a class="url" href="/privacy">Privacy Policy</a>.</li>
     </ul>
 
     <h3>4. Prohibited Conduct</h3>
@@ -59,7 +59,7 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 
     <h3>8. Contact Information</h3>
     <ul>
-      <li>If you have any questions about these Terms, please contact us at <a href="mailto:support@someonesays.io">support@someonesays.io</a>.</li>
+      <li>If you have any questions about these Terms, please contact us at <a class="url" href="mailto:support@someonesays.io">support@someonesays.io</a>.</li>
     </ul>
   </BaseCard>
 </main>
