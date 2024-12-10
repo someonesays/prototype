@@ -1091,10 +1091,16 @@ function openUrl(evt: MouseEvent) {
     background: var(--secondary-button);
     color: var(--primary);
   }
-  .action-button.invite:hover, .previousnext-button:hover {
+  .action-button.invite:hover {
+    background-color: var(--primary-button-hover);
+  }
+  .action-button.invite:click {
+    background-color: var(--primary-button-hover);
+  }
+  .previousnext-button:hover {
     background-color: #343a40;
   }
-  .action-button.invite:click, .previousnext-button:click {
+  .previousnext-button:click {
     background-color: #343a40;
   }
   .select-minigame-button:disabled {
