@@ -13,7 +13,7 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 
     <h3>1. Information We Collect</h3>
     <ul>
-      <li><strong>Username</strong>: We collect and store your username for the duration of your use of Someone Says to identify you within the service and provide you with personalized features and services.</li>
+      <li><strong>User information</strong>: We collect and store your user information (eg. username) for the duration of your use of Someone Says to identify you within the service and provide you with personalized features and services.</li>
       <li><strong>Authentication Data</strong>: We use Discord for authentication purposes, which may involve the collection of certain information as required by Discord's authentication system.</li>
       <li><strong>User-Generated Content</strong>: Any content you create or submit within Someone Says, such as "Packs" and "Minigames."</li>
     </ul>
