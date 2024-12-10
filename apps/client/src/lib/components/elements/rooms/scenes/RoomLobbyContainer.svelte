@@ -348,7 +348,7 @@ function openUrl(evt: MouseEvent) {
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
-        <a class="url disabled" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()}>
+        <a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={$roomLobbyPopupMessage.url} onclick={evt => evt.preventDefault()} tabindex=-1>
           {$roomLobbyPopupMessage.url}
         </a>
       </p>
@@ -362,7 +362,7 @@ function openUrl(evt: MouseEvent) {
       <br><br>
       <div class="modal-icon"><Copy color="#000000" /></div>
       <p>Copied invite link!</p>
-      <p><a class="url disabled" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()}>{location.origin}/join/{$room?.room.id}</a></p>
+      <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>

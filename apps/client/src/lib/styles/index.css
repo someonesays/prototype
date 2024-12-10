@@ -150,6 +150,9 @@ body.discord {
   color: #2b0081;
 }
 
+.url.disabled-no-pointer {
+  pointer-events: none;
+}
 .url.disabled {
   cursor: no-drop;
 }
