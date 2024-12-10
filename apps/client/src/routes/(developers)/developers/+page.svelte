@@ -172,6 +172,8 @@ async function logoutAllSessions() {
           </a>
         </div>
       {/each}
+
+      <br>
     {:else}
       <p style="display: flex; gap: 5px;">
         <a class="url" href="/">

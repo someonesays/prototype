@@ -493,7 +493,7 @@ function openUrl(evt: MouseEvent) {
                   </div>
                 {/each}
               {/if}
-              <br />
+              <br>
             </div>
           </div>
         </div>
