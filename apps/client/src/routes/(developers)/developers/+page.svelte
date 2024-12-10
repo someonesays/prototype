@@ -3,40 +3,63 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { getCookie } from "$lib/utils/cookies";
-import type { ApiGetUserMinigames, ApiGetUserPacks, ApiGetUserMe } from "@/public";
+import { user, token } from "$lib/stores/developers/cache";
+import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
 
-let user = $state<ApiGetUserMe["user"] | null>(null);
 let minigames = $state<ApiGetUserMinigames>({ offset: 0, limit: 0, total: 0, minigames: [] });
 let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] });
 
 onMount(() => {
   (async () => {
-    const userResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me`, {
-      headers: { authorization: getCookie("token") },
-    });
-    const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
-      headers: { authorization: getCookie("token") },
-    });
-    const packsResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
-      headers: { authorization: getCookie("token") },
-    });
-
-    if (!userResponse.ok || !minigamesResponse.ok || !packsResponse.ok) {
+    if (!$token) {
       window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
       return;
     }
 
-    user = (await userResponse.json()).user;
-    minigames = await minigamesResponse.json();
-    packs = await packsResponse.json();
+    if (!$user) {
+      const userResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me`, {
+        headers: { authorization: $token },
+      });
+
+      if (!userResponse.ok) {
+        window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
+        return;
+      }
+
+      $user = (await userResponse.json()).user;
+    }
+
+    fetchMinigames();
+    fetchPacks();
   })();
 });
+
+async function fetchMinigames() {
+  // TODO: Support pagination
+  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
+    headers: { authorization: $token },
+  });
+  if (!minigamesResponse.ok) return false;
+
+  minigames = await minigamesResponse.json();
+  return true;
+}
+
+async function fetchPacks() {
+  // TODO: Support pagination
+  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
+    headers: { authorization: $token },
+  });
+  if (!minigamesResponse.ok) return false;
+
+  packs = await minigamesResponse.json();
+  return true;
+}
 
 async function createMinigame() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
     method: "POST",
-    headers: { authorization: getCookie("token"), "content-type": "application/json" },
+    headers: { authorization: $token, "content-type": "application/json" },
     body: JSON.stringify({
       name: "[add your minigame name here]",
     }),
@@ -50,7 +73,7 @@ async function createMinigame() {
 async function createPack() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
     method: "POST",
-    headers: { authorization: getCookie("token"), "content-type": "application/json" },
+    headers: { authorization: $token, "content-type": "application/json" },
     body: JSON.stringify({
       name: "[add your pack name here]",
     }),
@@ -69,7 +92,7 @@ async function updateUser(evt: SubmitEvent & { currentTarget: EventTarget & HTML
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me`, {
     method: "PATCH",
-    headers: { authorization: getCookie("token"), "content-type": "application/json" },
+    headers: { authorization: $token, "content-type": "application/json" },
     body: JSON.stringify({ name }),
   });
   if (!res.ok) return alert("Failed to update user");
@@ -80,7 +103,7 @@ async function updateUser(evt: SubmitEvent & { currentTarget: EventTarget & HTML
 async function logoutAllSessions() {
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/sessions`, {
     method: "DELETE",
-    headers: { authorization: getCookie("token") },
+    headers: { authorization: $token },
   });
   if (!res.ok) return alert("Failed to logout of all sessions");
 
@@ -88,29 +111,64 @@ async function logoutAllSessions() {
 }
 </script>
 
-<main>
-  <p><a class="url" href="/">Back</a></p>
-  <form onsubmit={updateUser}>
-    <label for="name">Name:</label>
-    <input name="name" value={user?.name}>
-    <input type="submit">
-  </form>
-  <p><button onclick={logoutAllSessions}>Logout from all sessions</button></p>
-  <h2>Minigames</h2>
-  <p>{JSON.stringify(minigames)}</p>
-  <p><button onclick={createMinigame}>Create minigame</button></p>
-  <ul>
-    {#each minigames.minigames as minigame}
-      <li><a class="url" href="/developers/minigames/{minigame.id}">{minigame.name}</a></li>
-    {/each}
-  </ul>
+<main class="main-container">
+  <div class="developer-container">
+    <p style="display: flex; gap: 5px;">
+      <a class="url" href="/">
+        <button class="secondary-button">
+          Back
+        </button>
+      </a>
+      <button class="error-button" onclick={logoutAllSessions}>
+        Logout
+      </button>
+    </p>
 
-  <h2>Packs</h2>
-  <p>{JSON.stringify(packs)}</p>
-  <p><button onclick={createPack}>Create pack</button></p>
-  <ul>
-    {#each packs.packs as pack}
-      <li><a class="url" href="/developers/packs/{pack.id}">{pack.name}</a></li>
+    <h1>Welcome back, {$user?.name}!</h1>
+
+    <form onsubmit={updateUser}>
+      <input class="input input-center" value={$user?.name}>
+      <input class="primary-button" type="submit" value="Change username">
+    </form>
+
+    <h2>Minigames</h2>
+    <button class="success-button" onclick={createMinigame}>Create minigame</button>
+    <br>
+    {#each minigames.minigames as minigame}
+      <div>
+        <a class="url light" href="/developers/minigames/{minigame.id}">
+          {minigame.name}
+        </a>
+      </div>
     {/each}
-  </ul>
+  
+    <h2>Packs</h2>
+    <button class="success-button" onclick={createPack}>Create pack</button>
+    <br>
+    {#each packs.packs as pack}
+      <div>
+        <a class="url light" href="/developers/packs/{pack.id}">
+          {pack.name}
+        </a>
+      </div>
+    {/each}
+  </div>
 </main>
+
+<style>
+  .main-container {
+    background-color: #090a0c;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 20px;
+  }
+  .developer-container {
+    background-color: rgb(29, 30, 32);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>

@@ -9,6 +9,7 @@
   --leave-button: #f23f43;
 
   --primary-button-hover: #450db5;
+  --success-button-hover: #188043;
   --error-button-hover: #850725;
   --secondary-button-hover: #6d7781;
 
@@ -148,6 +149,13 @@ body.discord {
 }
 .url:hover {
   color: #2b0081;
+}
+
+.url.light {
+  color: #7c3ef9;
+}
+.url.light:hover {
+  color: #9764fc;
 }
 
 .url.disabled-no-pointer {
@@ -348,6 +356,19 @@ body.discord {
   background-color: var(--error-button-hover);
 }
 
+.success-button {
+  background-color: var(--success-button);
+  color: var(--secondary);
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+}
+.success-button:hover {
+  background-color: var(--success-button-hover);
+}
+
 .margin-top-8px {
   margin-top: 8px;
 }
@@ -363,6 +384,10 @@ body.discord {
   box-sizing: border-box;
   border: 1px #b3b3b3 solid;
   border-radius: 4px;
+}
+
+.input-center {
+  text-align: center;
 }
 
 .pack-image {

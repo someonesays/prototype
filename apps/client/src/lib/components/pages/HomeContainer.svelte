@@ -161,9 +161,6 @@ onMount(() => {
     overflow: auto;
     margin: 0 auto;
   }
-  .input-center {
-    text-align: center;
-  }
   .logo-container {
     max-width: 150px;
     display: flex;
