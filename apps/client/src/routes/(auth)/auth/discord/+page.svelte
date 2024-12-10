@@ -5,6 +5,7 @@ import { setCookie } from "$lib/utils/cookies.js";
 import { ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
+import { token } from "$lib/stores/developers/cache";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { kickedReason } from "$lib/stores/home/lobby";
 
@@ -27,6 +28,8 @@ onMount(() => {
       }
 
       setCookie("token", authorization);
+      $token = authorization;
+
       return goto("/developers");
     } catch (err) {
       console.error(err);

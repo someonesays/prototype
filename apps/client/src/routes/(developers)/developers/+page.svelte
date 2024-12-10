@@ -3,6 +3,7 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
+import { page } from "$app/stores";
 import { user, token } from "$lib/stores/developers/cache";
 import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
 
@@ -12,6 +13,8 @@ let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] }
 onMount(() => {
   (async () => {
     if (!$token) {
+      if ($page.url.pathname !== "/developers") return;
+
       window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
       return;
     }
@@ -22,7 +25,9 @@ onMount(() => {
       });
 
       if (!userResponse.ok) {
-        window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
+        if ($page.url.pathname !== "/developers") return;
+
+        // window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
         return;
       }
 
@@ -107,51 +112,66 @@ async function logoutAllSessions() {
   });
   if (!res.ok) return alert("Failed to logout of all sessions.");
 
+  $token = "";
+  $user = null;
+
   return goto("/");
 }
 </script>
 
 <main class="main-container">
   <div class="developer-container">
-    <p style="display: flex; gap: 5px;">
-      <a class="url" href="/">
-        <button class="secondary-button">
-          Back
+    {#if $user}
+      <p style="display: flex; gap: 5px;">
+        <a class="url" href="/">
+          <button class="secondary-button">
+            Back
+          </button>
+        </a>
+        <button class="error-button" onclick={logoutAllSessions}>
+          Logout
         </button>
-      </a>
-      <button class="error-button" onclick={logoutAllSessions}>
-        Logout
-      </button>
-    </p>
+      </p>
 
-    <h1>Welcome back, {$user?.name}!</h1>
+      <h1>Welcome back, {$user?.name}!</h1>
 
-    <form onsubmit={updateUser}>
-      <input class="input input-center" value={$user?.name}>
-      <input class="primary-button" type="submit" value="Change username">
-    </form>
+      <form onsubmit={updateUser}>
+        <input class="input input-center" value={$user?.name}>
+        <input class="primary-button" type="submit" value="Change username">
+      </form>
 
-    <h2>Minigames</h2>
-    <button class="success-button" onclick={createMinigame}>Create minigame</button>
-    <br>
-    {#each minigames.minigames as minigame}
-      <div>
-        <a class="url light" href="/developers/minigames/{minigame.id}">
-          {minigame.name}
+      <h2>Minigames</h2>
+      <button class="success-button" onclick={createMinigame}>Create minigame</button>
+      <br>
+      {#each minigames.minigames as minigame}
+        <div>
+          <a class="url light" href="/developers/minigames/{minigame.id}">
+            {minigame.name}
+          </a>
+        </div>
+      {/each}
+    
+      <h2>Packs</h2>
+      <button class="success-button" onclick={createPack}>Create pack</button>
+      <br>
+      {#each packs.packs as pack}
+        <div>
+          <a class="url light" href="/developers/packs/{pack.id}">
+            {pack.name}
+          </a>
+        </div>
+      {/each}
+    {:else}
+      <p style="display: flex; gap: 5px;">
+        <a class="url" href="/">
+          <button class="secondary-button">
+            Back
+          </button>
         </a>
-      </div>
-    {/each}
-  
-    <h2>Packs</h2>
-    <button class="success-button" onclick={createPack}>Create pack</button>
-    <br>
-    {#each packs.packs as pack}
-      <div>
-        <a class="url light" href="/developers/packs/{pack.id}">
-          {pack.name}
-        </a>
-      </div>
-    {/each}
+      </p>
+
+      <p>Loading...</p>
+    {/if}
   </div>
 </main>
 
