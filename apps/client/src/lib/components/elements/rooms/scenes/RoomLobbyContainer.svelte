@@ -16,8 +16,8 @@ import Modal from "$lib/components/elements/cards/Modal.svelte";
 
 import RoomLobbyFeaturedMinigames from "$lib/components/elements/rooms/lists/RoomLobbyFeaturedMinigames.svelte";
 
-import { volumeValue } from "$lib/components/stores/home/settings";
-import { launcher, launcherDiscordSdk } from "$lib/components/stores/home/launcher";
+import { volumeValue } from "$lib/stores/home/settings";
+import { launcher, launcherDiscordSdk } from "$lib/stores/home/launcher";
 import {
   room,
   roomWs,
@@ -25,8 +25,8 @@ import {
   roomRequestedToStartGame,
   roomRequestedToLeave,
   roomLobbyPopupMessage,
-} from "$lib/components/stores/home/roomState";
-import { isModalOpen } from "$lib/components/stores/home/modal";
+} from "$lib/stores/home/roomState";
+import { isModalOpen } from "$lib/stores/home/modal";
 
 import {
   ClientOpcodes,

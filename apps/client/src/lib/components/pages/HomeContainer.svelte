@@ -14,12 +14,12 @@ import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/stores";
 import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
-import { displayName, roomIdToJoin, kickedReason } from "$lib/components/stores/home/lobby";
+import { displayName, roomIdToJoin, kickedReason } from "$lib/stores/home/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
 import { isMobileOrTablet } from "$lib/utils/mobile";
-import { isModalOpen } from "$lib/components/stores/home/modal";
+import { isModalOpen } from "$lib/stores/home/modal";
 
-import { launcherMatchmaking } from "$lib/components/stores/home/launcher";
+import { launcherMatchmaking } from "$lib/stores/home/launcher";
 
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);

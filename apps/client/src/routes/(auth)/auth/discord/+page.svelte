@@ -5,8 +5,8 @@ import { setCookie } from "$lib/utils/cookies.js";
 import { ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
 import { page } from "$app/stores";
 import { goto } from "$app/navigation";
-import { isModalOpen } from "$lib/components/stores/home/modal";
-import { kickedReason } from "$lib/components/stores/home/lobby";
+import { isModalOpen } from "$lib/stores/home/modal";
+import { kickedReason } from "$lib/stores/home/lobby";
 
 onMount(() => {
   (async () => {

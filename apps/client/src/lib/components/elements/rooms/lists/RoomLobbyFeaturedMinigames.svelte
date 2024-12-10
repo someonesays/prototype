@@ -1,16 +1,16 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 import { onMount } from "svelte";
-import { launcher } from "$lib/components/stores/home/launcher";
+import { launcher } from "$lib/stores/home/launcher";
 import { ClientOpcodes, type ApiGetPacks } from "@/public";
-import { isModalOpen } from "$lib/components/stores/home/modal";
+import { isModalOpen } from "$lib/stores/home/modal";
 import {
   room,
   roomFeaturedPacks,
   roomLobbyPopupMessage,
   roomRequestedToChangeSettings,
   roomWs,
-} from "$lib/components/stores/home/roomState";
+} from "$lib/stores/home/roomState";
 
 let { tabindex = 0 } = $props();
 
