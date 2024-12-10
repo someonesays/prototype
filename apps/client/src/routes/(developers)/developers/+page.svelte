@@ -136,7 +136,7 @@ async function logoutAllSessions() {
       <h1>Welcome back, {$user?.name}!</h1>
 
       <form onsubmit={updateUser}>
-        <input class="input input-center" value={$user?.name}>
+        <input class="input input-center" name="name" value={$user?.name}>
         <input class="primary-button" type="submit" value="Change username">
       </form>
 

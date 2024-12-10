@@ -51,7 +51,7 @@ async function savePack(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   const name = form.get("name") as string;
   const description = form.get("description") as string;
-  const iconImage = form.get("iconImage") as string;
+  const iconImage = (form.get("iconImage") as string) || null;
   const randomize = Boolean(form.get("randomize") as string);
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(pack.id)}`, {

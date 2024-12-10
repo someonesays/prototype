@@ -419,7 +419,7 @@ function kick(reason?: string) {
 </script>
   
 {#if !$room || $room.status === GameStatus.LOBBY}
-  <LobbyContainer  bind:this={lobbyContainerComponent} />
+  <LobbyContainer bind:this={lobbyContainerComponent} />
 {:else if $room.status === GameStatus.STARTED || $room.status === GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME}
   <MinigameContainer /> 
 {/if}

@@ -41,10 +41,10 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
 
   const name = form.get("name") as string;
   const description = form.get("description") as string;
-  const previewImage = form.get("previewImage") as string;
-  const termsOfServices = form.get("termsOfServices") as string;
-  const privacyPolicy = form.get("privacyPolicy") as string;
-  const proxyUrl = form.get("proxyUrl") as string;
+  const previewImage = (form.get("previewImage") as string) || null;
+  const termsOfServices = (form.get("termsOfServices") as string) || null;
+  const privacyPolicy = (form.get("privacyPolicy") as string) || null;
+  const proxyUrl = (form.get("proxyUrl") as string) || null;
   const pathType = Number.parseInt(form.get("pathType") as string);
   const minimumPlayersToStart = Number.parseInt(form.get("minimumPlayersToStart") as string);
   const supportsMobile = Boolean(form.get("supportsMobile"));
@@ -130,33 +130,33 @@ async function regenTestingAccessCode() {
       <h3>Modify minigame</h3>
       <form onsubmit={saveMinigame}>
         <label for="name">Name:</label>
-        <input class="input" name="name" bind:value={minigame.name}>
+        <input class="input" name="name" value={minigame.name}>
 
         <br><br>
 
         <label for="description">Description:</label>
         <br>
-        <textarea class="input" name="description" rows="5" bind:value={minigame.description}></textarea>
+        <textarea class="input" name="description" rows="5" value={minigame.description}></textarea>
 
         <br><br>
 
         <label for="previewImage">Preview image URL:</label>
-        <input class="input" name="previewImage" bind:value={minigame.previewImage}>
+        <input class="input" name="previewImage" value={minigame.previewImage}>
 
         <br><br>
 
         <label for="termsOfServices">Terms of Services:</label>
-        <input class="input" name="termsOfServices" bind:value={minigame.termsOfServices}>
+        <input class="input" name="termsOfServices" value={minigame.termsOfServices}>
 
         <br><br>
         
         <label for="privacyPolicy">Privacy Policy:</label>
-        <input class="input" name="privacyPolicy" bind:value={minigame.privacyPolicy}>
+        <input class="input" name="privacyPolicy" value={minigame.privacyPolicy}>
 
         <br><br>
         
         <label for="proxyUrl">Proxy URL:</label>
-        <input class="input" name="proxyUrl" bind:value={minigame.proxyUrl}>
+        <input class="input" name="proxyUrl" value={minigame.proxyUrl}>
 
         <br><br>
         
@@ -169,12 +169,12 @@ async function regenTestingAccessCode() {
         <br><br>
         
         <label for="minimumPlayersToStart">Minimum players to start:</label>
-        <input class="input" name="minimumPlayersToStart" bind:value={minigame.minimumPlayersToStart}>
+        <input class="input" name="minimumPlayersToStart" value={minigame.minimumPlayersToStart}>
 
         <br><br>
 
         <label for="supportsMobile">Supports mobile:</label>
-        <input type="checkbox" name="supportsMobile" bind:checked={minigame.supportsMobile}>
+        <input type="checkbox" name="supportsMobile" checked={minigame.supportsMobile}>
 
         <br><br>
         
