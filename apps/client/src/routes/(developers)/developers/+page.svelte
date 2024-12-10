@@ -64,7 +64,7 @@ async function createMinigame() {
       name: "[add your minigame name here]",
     }),
   });
-  if (!res.ok) return alert("Failed to create minigame");
+  if (!res.ok) return alert("Failed to create minigame.");
 
   const id = (await res.json()).id;
   return goto(`/developers/minigames/${encodeURIComponent(id)}`);
@@ -78,7 +78,7 @@ async function createPack() {
       name: "[add your pack name here]",
     }),
   });
-  if (!res.ok) return alert("Failed to create pack");
+  if (!res.ok) return alert("Failed to create pack.");
 
   const id = (await res.json()).id;
   return goto(`/developers/packs/${encodeURIComponent(id)}`);
@@ -95,9 +95,9 @@ async function updateUser(evt: SubmitEvent & { currentTarget: EventTarget & HTML
     headers: { authorization: $token, "content-type": "application/json" },
     body: JSON.stringify({ name }),
   });
-  if (!res.ok) return alert("Failed to update user");
+  if (!res.ok) return alert("Failed to update user.");
 
-  return alert("Successfully updated user");
+  return alert("Successfully updated user!");
 }
 
 async function logoutAllSessions() {
@@ -105,7 +105,7 @@ async function logoutAllSessions() {
     method: "DELETE",
     headers: { authorization: $token },
   });
-  if (!res.ok) return alert("Failed to logout of all sessions");
+  if (!res.ok) return alert("Failed to logout of all sessions.");
 
   return goto("/");
 }
