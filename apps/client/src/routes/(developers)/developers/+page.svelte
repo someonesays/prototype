@@ -135,6 +135,17 @@ async function logoutAllSessions() {
 
       <h1>Welcome back, {$user?.name}!</h1>
 
+      <div>
+        Check out the MinigameSdk here:
+        <a class="url" href="https://www.npmjs.com/package/@someonesays/minigame-sdk" target="_blank">https://www.npmjs.com/package/@someonesays/minigame-sdk</a>
+      </div>
+      <div>
+        And join our Discord server to ask for help!
+        <a class="url" href="https://discord.gg/zVWekYCEC9" target="_blank">https://discord.gg/zVWekYCEC9</a>
+      </div>
+
+      <br><br>
+
       <form onsubmit={updateUser}>
         <input class="input input-center" name="name" value={$user?.name}>
         <input class="primary-button" type="submit" value="Change username">
