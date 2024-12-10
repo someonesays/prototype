@@ -27,9 +27,10 @@ onMount(() => {
   
     <h2>Credits</h2>
     <div>
-      Two (<a class="url" href="https://github.com/real2two" target="_blank">https://github.com/real2two</a>)
-    </div>
-    <div>
+      <b>Developer</b><br>
+      Two (<a class="url" href="https://github.com/real2two" target="_blank">https://github.com/real2two</a>)<br>
+      <br>
+      <b>Logo Designer</b><br>
       Realmy (<a class="url" href="https://realmy.net/" target="_blank">https://realmy.net/</a>)
     </div>
   
