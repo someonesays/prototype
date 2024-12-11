@@ -40,6 +40,8 @@ import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk"
 let isSettingsOpen = $state(false);
 let activeView = $state<"players" | "game">("game");
 
+let removeIdsOption = $derived($launcher === "discord"); // temp - if I go for Discord App Pitches (dw about not enforcing it backend)
+
 let discordActivityLayoutModeUpdate = $state<((evt: { layout_mode: 0 | 1 | 2 | -1 }) => void) | null>(null);
 let logoOnly = $state(false);
 
@@ -413,17 +415,22 @@ function joinDiscordServer(evt: MouseEvent) {
 
       <RoomLobbyFeaturedMinigames />
 
-      <hr class="border" />
+      {#if !removeIdsOption}
+        <hr class="border" />
 
-      <form onsubmit={setSettingsForm}>
-        <p>Alternatively, you could select a pack by using its ID.</p>
+        <form onsubmit={setSettingsForm}>
+          <p>Alternatively, you could select a pack by using its ID.</p>
 
-        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
+          <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
 
-        <br><br>
-        <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
-      </form>
+          <br><br>
+          <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+          <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
+        </form>
+      {:else}
+        <br>
+        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      {/if}
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
       <p>
@@ -576,9 +583,11 @@ function joinDiscordServer(evt: MouseEvent) {
                       </button>
                     {/if}
   
-                    <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
-                      <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
-                    </button>
+                    {#if !removeIdsOption}
+                      <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
+                        <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
+                      </button>
+                    {/if}
                   </div>
                 </div>
   
@@ -663,11 +672,13 @@ function joinDiscordServer(evt: MouseEvent) {
                     <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
                     <br>
 
-                    <div class="nothingselected-buttons">
-                      <button class="secondary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-                        Select another pack
-                      </button>
-                    </div>
+                    {#if !removeIdsOption}
+                      <div class="nothingselected-buttons">
+                        <button class="secondary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                          Select another pack
+                        </button>
+                      </div>
+                    {/if}
                   {:else}
                     <h2>Waiting for the host to select a pack!</h2>
                   {/if}
