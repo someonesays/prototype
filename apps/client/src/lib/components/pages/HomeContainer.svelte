@@ -27,7 +27,9 @@ let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
 
 let turnstileInvisibleSuccessOnce = $state(false);
 let triedInvisible = $state(!env.VITE_TURNSTILE_SITE_KEY_INVISIBLE);
-let turnstileIsLoading = $derived(!triedInvisible && !turnstileInvisibleSuccessOnce && !env.VITE_TURNSTILE_BYPASS_SECRET);
+let turnstileIsInvisibleLoading = $derived(
+  !triedInvisible && !turnstileInvisibleSuccessOnce && !env.VITE_TURNSTILE_BYPASS_SECRET,
+);
 let resetTurnstile = $state<() => void>();
 let resetTurnstileInvisible = $state<() => void>();
 
@@ -56,6 +58,18 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
+
+  if (turnstileIsInvisibleLoading) {
+    // This is a really hacky way to check if the invisible captcha is still loading...
+    await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (!turnstileIsInvisibleLoading) return;
+
+        clearInterval(interval);
+        resolve(true);
+      }, 500);
+    });
+  }
 
   // Get room from matchmaking
   const {
@@ -137,7 +151,7 @@ onMount(() => {
     <br>
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
-      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={turnstileIsLoading ? "Loading..." : ($page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin || turnstileIsLoading}><br>
+      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={($page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
       
       {#if !env.VITE_TURNSTILE_BYPASS_SECRET}
         {#if triedInvisible}
