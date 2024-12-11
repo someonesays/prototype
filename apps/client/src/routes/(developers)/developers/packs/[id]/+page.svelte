@@ -146,7 +146,14 @@ async function removeMinigame(evt: SubmitEvent & { currentTarget: EventTarget & 
 
 <main class="main-container">
   <div class="developer-container">
-    <p><a class="url" href="/developers">Back</a></p>
+    <p style="display: flex; gap: 5px;">
+      <a class="url" href="/developers">
+        <button class="secondary-button">
+          Back
+        </button>
+      </a>
+    </p>
+    
     {#if !pack || !packMinigames}
       <p>Loading...</p>
     {:else}
