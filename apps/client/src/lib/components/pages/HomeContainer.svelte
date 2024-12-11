@@ -63,7 +63,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     // This is a really hacky way to check if the invisible captcha is still loading...
     await new Promise((resolve) => {
       const interval = setInterval(() => {
-        if (!turnstileIsInvisibleLoading) return;
+        if (turnstileIsInvisibleLoading) return;
 
         clearInterval(interval);
         resolve(true);
