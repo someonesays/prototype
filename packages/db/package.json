@@ -10,13 +10,13 @@
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.28.1"
+    "drizzle-kit": "^0.30.0"
   },
   "dependencies": {
     "@/env": "workspace:*",
     "@/public": "workspace:*",
     "@/utils": "workspace:*",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.38.0",
     "pg": "^8.13.1"
   }
 }

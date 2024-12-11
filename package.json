@@ -2,7 +2,7 @@
   "name": "someone-says",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/bun": "latest",
+    "@types/bun": "^1.1.14",
     "turbo": "^2.3.3"
   },
   "peerDependencies": {
