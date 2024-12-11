@@ -53,9 +53,6 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   const form = new FormData(evt.target as HTMLFormElement);
 
-  const type = env.VITE_TURNSTILE_BYPASS_SECRET ? "bypass" : triedInvisible ? "managed" : "invisible";
-  const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
-
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
 
@@ -70,6 +67,9 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
       }, 500);
     });
   }
+
+  const type = env.VITE_TURNSTILE_BYPASS_SECRET ? "bypass" : triedInvisible ? "managed" : "invisible";
+  const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
 
   // Get room from matchmaking
   const {
