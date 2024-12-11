@@ -27,9 +27,7 @@ let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
 
 let turnstileInvisibleSuccessOnce = $state(false);
 let triedInvisible = $state(!env.VITE_TURNSTILE_SITE_KEY_INVISIBLE);
-let turnstileIsLoading = $derived(
-  !triedInvisible && !turnstileInvisibleSuccessOnce && !env.VITE_TURNSTILE_BYPASS_SECRET && env.VITE_IS_PROD,
-);
+let turnstileIsLoading = $derived(!triedInvisible && !turnstileInvisibleSuccessOnce && !env.VITE_TURNSTILE_BYPASS_SECRET);
 let resetTurnstile = $state<() => void>();
 let resetTurnstileInvisible = $state<() => void>();
 
@@ -141,14 +139,16 @@ onMount(() => {
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={turnstileIsLoading ? "Loading..." : ($page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin || turnstileIsLoading}><br>
       
-      {#if triedInvisible}
-        <div class="captcha-container">
-          <div class="captcha">
-            <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
+      {#if !env.VITE_TURNSTILE_BYPASS_SECRET}
+        {#if triedInvisible}
+          <div class="captcha-container">
+            <div class="captcha">
+              <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
+            </div>
           </div>
-        </div>
-      {:else}
-        <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => turnstileInvisibleSuccessOnce = true} on:error={() => triedInvisible = true} on:expired={() => triedInvisible = true} bind:reset={resetTurnstileInvisible} />
+        {:else}
+          <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:callback={() => turnstileInvisibleSuccessOnce = true} on:error={() => triedInvisible = true} on:expired={() => triedInvisible = true} bind:reset={resetTurnstileInvisible} />
+        {/if}
       {/if}
     </form>
 
