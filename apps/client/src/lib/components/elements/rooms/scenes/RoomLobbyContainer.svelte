@@ -402,8 +402,16 @@ function openUrl(evt: MouseEvent) {
       </form>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
-      <p>This is is a work in progress!</p>
-      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button>
+      <p>
+        This is still a work in progress!<br>
+        For now, you can report packs/minigames on our Discord server.
+      </p>
+      <p>
+        <a href="https://discord.gg/zVWekYCEC9" target="_blank">
+          <button class="primary-button margin-top-8px">Join Discord server</button>
+        </a>
+        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      </p>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
