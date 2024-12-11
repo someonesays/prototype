@@ -12,7 +12,7 @@ const envs = {
     VITE_BASE_API: import.meta.env.VITE_BASE_API ?? "https://staging-api.someonesays.io",
     VITE_DISCORD_CLIENT_ID: import.meta.env.VITE_DISCORD_CLIENT_ID ?? "1312178792256507924",
     VITE_TURNSTILE_SITE_KEY: import.meta.env.VITE_TURNSTILE_SITE_KEY ?? "0x4AAAAAAA1Krb5_9TKRUaKy",
-    VITE_TURNSTILE_SITE_KEY_INVISIBLE: import.meta.env.VITE_TURNSTILE_SITE_KEY_INVISIBLE as string,
+    VITE_TURNSTILE_SITE_KEY_INVISIBLE: import.meta.env.VITE_TURNSTILE_SITE_KEY_INVISIBLE ?? "0x4AAAAAAA1_tNij9LgiTNNv",
     VITE_TURNSTILE_BYPASS_SECRET: import.meta.env.VITE_TURNSTILE_BYPASS_SECRET as string | undefined,
   },
   production: {
