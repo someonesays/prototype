@@ -51,6 +51,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   if (disableJoinPage) return;
   disableJoinPage = true;
 
+  const form = new FormData(evt.target as HTMLFormElement);
+
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
 
@@ -66,10 +68,9 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     });
   }
 
-  const form = new FormData(evt.target as HTMLFormElement);
-
+  const formCaptcha = new FormData(evt.target as HTMLFormElement); // Reget the form for captcha
   const type = env.VITE_TURNSTILE_BYPASS_SECRET ? "bypass" : triedInvisible ? "managed" : "invisible";
-  const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
+  const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (formCaptcha.get("cf-turnstile-response") as string);
 
   // Get room from matchmaking
   const {
@@ -104,6 +105,10 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     if (location.pathname !== "/") goto("/");
     return;
   }
+
+  // Remove failed reason
+  $kickedReason = null;
+  saveSamePageKickedReason = null;
 
   // Set matchmaking JWT
   $launcherMatchmaking = matchmaking;
