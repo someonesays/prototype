@@ -63,9 +63,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     <div class="featured-container">
       {#each $roomFeaturedPacks.packs as pack}
         <button class="featured-pack-container loaded" onclick={() => setSettings({ packId: pack.id })} tabindex={tabindex} disabled={!$room || $room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-          <div class="pack-image featured">
+          <div class="preview-image featured">
             {#if pack?.iconImage}
-              <img class="pack-image featured image-fade-in" alt="Pack icon" src={
+              <img class="preview-image featured image-fade-in" alt="Pack icon" src={
                 $launcher === "normal"
                   ? pack.iconImage.normal
                   : pack.iconImage.discord
@@ -86,13 +86,13 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
 {:else}
   <div class="featured-container">
     <div class="featured-pack-container loading">
-      <div class="pack-image featured loading"></div>
+      <div class="preview-image featured loading"></div>
       <div class="featured-pack-text">
         &nbsp;
       </div>
     </div>
     <!-- <div class="featured-pack-container loading">
-      <div class="pack-image featured loading second"></div>
+      <div class="preview-image featured loading second"></div>
       <div class="featured-pack-text">
         &nbsp;
       </div>
@@ -143,20 +143,7 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
   }
-  .pack-image.featured {
-    margin-right: 0;
-
-    min-width: 7rem;
-    min-height: 7rem;
-    width: 7rem;
-    height: 7rem;
-  }
-  .pack-image.featured.loading {
-    animation-name: featured-loading;
-    animation-duration: 3s;
-    animation-iteration-count: infinite;
-  }
-  /* .pack-image.featured.loading.second {
+  /* .preview-image.featured.loading.second {
     animation-delay: 1.5s;
   } */
 

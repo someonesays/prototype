@@ -390,7 +390,7 @@ body.discord {
   text-align: center;
 }
 
-.pack-image {
+.preview-image {
   min-width: 4rem;
   min-height: 4rem;
   width: 4rem;
@@ -401,8 +401,22 @@ body.discord {
   background: var(--card-stroke);
 }
 
-.pack-image img {
+.preview-image img {
   display: flex;
+}
+
+.preview-image.featured {
+  margin-right: 0;
+
+  min-width: 7rem;
+  min-height: 7rem;
+  width: 7rem;
+  height: 7rem;
+}
+.preview-image.featured.loading {
+  animation-name: featured-loading;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
 }
 
 .image-fade-in {
