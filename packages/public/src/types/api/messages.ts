@@ -62,8 +62,8 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
   [ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
 
-  [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (10)",
-  [ErrorMessageCodes.REACHED_PACK_LIMIT]: "You have reached the packs limit! (5)",
+  [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (1000)",
+  [ErrorMessageCodes.REACHED_PACK_LIMIT]: "You have reached the packs limit! (1000)",
   [ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT]:
     "You have reached the maximum amount of minigames a pack can have! (1000)",
 

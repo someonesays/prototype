@@ -45,9 +45,8 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
   const success = await minigameCreationLimit.check(c.var.user.id);
   if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
-  // TODO: Remove hard-coded minigame limit of 10
   const count = await getMinigameCountByAuthorId(c.var.user.id);
-  if (count >= 10) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
+  if (count >= 1000) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });
