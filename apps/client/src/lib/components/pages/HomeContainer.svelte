@@ -87,14 +87,14 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   });
 
   resetTurnstile?.();
+  resetTurnstileInvisible?.();
 
   if (!success) {
     // Allow clicking join again
     disableJoinPage = false;
-    // Disable invisible widget
+    // Disable invisible widget if captcha fails
     if (code === ErrorMessageCodes.FAILED_CAPTCHA) {
       triedInvisible = true;
-      resetTurnstileInvisible?.();
     }
     // Set kick reason
     $isModalOpen = true;
