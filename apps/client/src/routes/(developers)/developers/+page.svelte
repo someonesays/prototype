@@ -7,6 +7,8 @@ import { page } from "$app/stores";
 import { user, token } from "$lib/stores/developers/cache";
 import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
 
+let failedToLogin = $state(false);
+
 let minigames = $state<ApiGetUserMinigames>({ offset: 0, limit: 0, total: 0, minigames: [] });
 let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] });
 
@@ -15,7 +17,7 @@ onMount(() => {
     if (!$token) {
       if ($page.url.pathname !== "/developers") return;
 
-      window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
+      failedToLogin = true;
       return;
     }
 
@@ -27,7 +29,7 @@ onMount(() => {
       if (!userResponse.ok) {
         if ($page.url.pathname !== "/developers") return;
 
-        window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
+        failedToLogin = true;
         return;
       }
 
@@ -121,7 +123,25 @@ async function logoutAllSessions() {
 
 <main class="main-container">
   <div class="developer-container">
-    {#if $user}
+    {#if failedToLogin}
+      <p style="display: flex; gap: 5px;">
+        <a class="url" href="/">
+          <button class="secondary-button">
+            Back
+          </button>
+        </a>
+      </p>
+      
+      <h2>Developer portal - Login</h2>
+      <p>You can login into the developer portal here!</p>
+      <p>
+        <a href="{env.VITE_BASE_API}/api/auth/discord/login{env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}">
+          <button class="primary-button">
+            Login with Discord
+          </button>
+        </a>
+      </p>
+    {:else if $user}
       <p style="display: flex; gap: 5px;">
         <a class="url" href="/">
           <button class="secondary-button">
