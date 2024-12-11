@@ -115,7 +115,14 @@ async function regenTestingAccessCode() {
 
 <main class="main-container">
   <div class="developer-container">
-    <p><a class="url" href="/developers">Back</a></p>
+    <p style="display: flex; gap: 5px;">
+      <a class="url" href="/developers">
+        <button class="secondary-button">
+          Back
+        </button>
+      </a>
+    </p>
+    
     {#if !minigame}
       <p>Loading...</p>
     {:else}
