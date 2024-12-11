@@ -24,7 +24,10 @@ import { launcherMatchmaking } from "$lib/stores/home/launcher";
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
 let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
+
+let triedInvisible = $state(!env.VITE_TURNSTILE_SITE_KEY_INVISIBLE);
 let resetTurnstile = $state<() => void>();
+let resetTurnstileInvisible = $state<() => void>();
 
 let saveSamePageKickedReason = $state<string | null>(null);
 
@@ -45,7 +48,9 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   disableJoinPage = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
-  const captcha = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
+
+  const type = env.VITE_TURNSTILE_BYPASS_SECRET ? "bypass" : triedInvisible ? "managed" : "invisible";
+  const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (form.get("cf-turnstile-response") as string);
 
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
@@ -56,7 +61,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     code,
     data: matchmaking,
   } = await RoomWebsocket.getMatchmaking({
-    captcha,
+    captcha: { type, token },
     displayName: $displayName,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
@@ -69,6 +74,11 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   if (!success) {
     // Allow clicking join again
     disableJoinPage = false;
+    // Disable invisible widget
+    if (code === ErrorMessageCodes.FAILED_CAPTCHA) {
+      triedInvisible = true;
+      resetTurnstileInvisible?.();
+    }
     // Set kick reason
     $isModalOpen = true;
     $kickedReason = saveSamePageKickedReason = ErrorMessageCodesToText[code];
@@ -126,12 +136,15 @@ onMount(() => {
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={$page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room")} disabled={disableJoin}><br>
-      {#if env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET}
+      <!-- && env.VITE_IS_PROD && !env.VITE_TURNSTILE_BYPASS_SECRET -->
+      {#if triedInvisible}
         <div class="captcha-container">
           <div class="captcha">
             <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY} bind:reset={resetTurnstile} />
           </div>
         </div>
+      {:else}
+        <Turnstile siteKey={env.VITE_TURNSTILE_SITE_KEY_INVISIBLE} on:error={() => triedInvisible = true} on:expired={() => triedInvisible = true} bind:reset={resetTurnstileInvisible} />
       {/if}
     </form>
 

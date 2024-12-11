@@ -88,12 +88,29 @@ export async function handlePostMatchmaking({
     case MatchmakingType.NORMAL: {
       // Check captcha
       if (env.NODE_ENV !== "development") {
+        const type = c.req.header("x-captcha-type") || "";
         const token = c.req.header("x-captcha-token") || "";
+
         if (
-          (!env.TURNSTILE_BYPASS_SECRET || token !== env.TURNSTILE_BYPASS_SECRET) &&
-          !(await verifyCaptcha({ token, secretKey: env.TURNSTILE_SECRET_KEY }))
+          !["invisible", "managed", "bypass"].includes(type) ||
+          (type === "invisible" && !env.TURNSTILE_SECRET_KEY_INVISIBLE) ||
+          (type === "bypass" && !env.TURNSTILE_BYPASS_SECRET)
         ) {
-          return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
+          return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 400);
+        }
+
+        if (type === "bypass") {
+          if (!env.TURNSTILE_BYPASS_SECRET || token !== env.TURNSTILE_BYPASS_SECRET) {
+            return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
+          }
+        } else {
+          if (
+            type === "invisible" && env.TURNSTILE_SECRET_KEY_INVISIBLE
+              ? !(await verifyCaptcha({ token, secretKey: env.TURNSTILE_SECRET_KEY_INVISIBLE }))
+              : !(await verifyCaptcha({ token, secretKey: env.TURNSTILE_SECRET_KEY }))
+          ) {
+            return c.json({ code: ErrorMessageCodes.FAILED_CAPTCHA }, 429);
+          }
         }
       }
 
