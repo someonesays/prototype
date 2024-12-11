@@ -1,6 +1,6 @@
 /*
   Access-Control-Allow-Credentials: true
-  Content-Security-Policy: default-src 'self'; script-src http://localhost:3001 https://challenges.cloudflare.com 'self' 'unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' blob:; img-src http://localhost:3001 'self' blob: data:; font-src 'self' data:; connect-src http://localhost:3001 ws://localhost:3001 ws://localhost:3002 data: blob:; media-src 'self' blob: data:; frame-src http://localhost:3001 https://challenges.cloudflare.com; child-src http://localhost:3001 blob:; worker-src http://localhost:3001 blob:; frame-ancestors 'none'; base-uri 'none'
+  Content-Security-Policy: default-src 'self'; script-src https://*.someonesays.io https://challenges.cloudflare.com 'self' 'unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' blob:; img-src https://*.someonesays.io 'self' blob: data:; font-src 'self' data:; connect-src https://*.someonesays.io wss://*.someonesays.io data: blob:; media-src 'self' blob: data:; frame-src https://*.someonesays.io https://challenges.cloudflare.com; child-src https://*.someonesays.io blob:; worker-src https://*.someonesays.io blob:; frame-ancestors 'none'; base-uri 'none'
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
   Origin-Agent-Cluster: ?1
