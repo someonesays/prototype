@@ -328,6 +328,14 @@ function openUrl(evt: MouseEvent) {
       break;
   }
 }
+
+function joinDiscordServer(evt: MouseEvent) {
+  if ($launcher === "discord") {
+    evt.preventDefault();
+    $launcherDiscordSdk?.commands.openExternalLink({ url: "https://discord.gg/zVWekYCEC9" });
+    return;
+  }
+}
 </script>
 
 {#if logoOnly}
@@ -373,8 +381,24 @@ function openUrl(evt: MouseEvent) {
           <div class="select-minigame-container" style="width: 400px; max-width: 100%;">
             {#each minigamesInPack.packMinigames.minigames as minigame}
               <div>
-                <button class="primary-button select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>{minigame.name}</button>
+                <button class="select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>
+                  
+                  <div class="preview-image">
+                    {#if minigame?.previewImage}
+                      <img class="preview-image image-fade-in" alt="Pack icon" src={
+                        $launcher === "normal"
+                          ? minigame.previewImage.normal
+                          : minigame.previewImage.discord
+                      } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
+                    {/if}
+                  </div>
+                  <div class="featured-pack-text">
+                    {minigame.name}
+                  </div>
+
+                </button>
               </div>
+
             {/each}
           </div>
           <br>
@@ -407,7 +431,7 @@ function openUrl(evt: MouseEvent) {
         For now, you can report packs/minigames on our Discord server.
       </p>
       <p>
-        <a href="https://discord.gg/zVWekYCEC9" target="_blank">
+        <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
           <button class="primary-button margin-top-8px">Join Discord server</button>
         </a>
         <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
@@ -512,9 +536,9 @@ function openUrl(evt: MouseEvent) {
                 <div class="options-container load-fade-in" class:loaded={$room}>
                   <div class="pack-container" class:no-pack={!$room.pack}>
                     {#if $room.pack}
-                      <div class="pack-image">
+                      <div class="preview-image">
                         {#if $room.pack?.iconImage}
-                          <img class="pack-image image-fade-in" alt="Pack icon" src={
+                          <img class="preview-image image-fade-in" alt="Pack icon" src={
                             $launcher === "normal"
                               ? $room.pack.iconImage.normal
                               : $room.pack.iconImage.discord
@@ -1110,6 +1134,25 @@ function openUrl(evt: MouseEvent) {
   }
   .previousnext-button:click {
     background-color: #343a40;
+  }
+  .select-minigame-button {
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 15px;
+    width: 98%;
+    cursor: pointer;
+    padding: 6px;
+    overflow: auto;
+    font-size: 16px;
+    gap: 10px;
+    transition: 0.2s;
+    transform: scale(0.99);
+  }
+  .select-minigame-button:hover {
+    background: #fafafa;
+    transform: scale(1);
   }
   .select-minigame-button:disabled {
     cursor: wait;
