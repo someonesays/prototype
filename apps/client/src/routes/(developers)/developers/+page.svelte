@@ -27,7 +27,7 @@ onMount(() => {
       if (!userResponse.ok) {
         if ($page.url.pathname !== "/developers") return;
 
-        // window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
+        window.location.href = `${env.VITE_BASE_API}/api/auth/discord/login${env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}`;
         return;
       }
 
