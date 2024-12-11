@@ -2,5 +2,4 @@ User-Agent: *
 Allow: /
 Allow: /terms
 Allow: /privacy
-Allow: /developers
 Disallow: /cdn-cgi/
