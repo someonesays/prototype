@@ -230,6 +230,7 @@ async function removeMinigame(evt: SubmitEvent & { currentTarget: EventTarget & 
     border-radius: 15px;
     padding: 20px;
     display: flex;
+    text-align: center;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
