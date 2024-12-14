@@ -41,7 +41,7 @@ onMount(() => {
           response_type: "code",
           state: "",
           prompt: "none",
-          scope: ["identify", "guilds", "guilds.members.read"],
+          scope: ["identify", "guilds", "guilds.members.read", "rpc.activities.write"],
         });
 
         // Get instance ID
@@ -80,6 +80,15 @@ onMount(() => {
 
         // Remove resizing loading
         window.removeEventListener("resize", resize);
+
+        // Set Discord activity
+        await discordSdk.commands.setActivity({
+          activity: {
+            type: 0,
+            timestamps: { start: Date.now() },
+            instance: true,
+          },
+        });
 
         // Go to rooms page
         goto(`/rooms/${encodeURIComponent(matchmaking.data.room.id)}`);
