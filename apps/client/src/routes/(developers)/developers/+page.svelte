@@ -42,8 +42,7 @@ onMount(() => {
 });
 
 async function fetchMinigames() {
-  // TODO: Support pagination
-  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
+  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames?limit=1000`, {
     headers: { authorization: $token },
   });
   if (!minigamesResponse.ok) return false;
@@ -53,8 +52,7 @@ async function fetchMinigames() {
 }
 
 async function fetchPacks() {
-  // TODO: Support pagination
-  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
+  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs?limit=1000`, {
     headers: { authorization: $token },
   });
   if (!minigamesResponse.ok) return false;
