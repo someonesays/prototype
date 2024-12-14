@@ -74,7 +74,6 @@ onMount(() => {
 
   // Handle the WebSocket
   $roomWs = new RoomWebsocket({
-    debug: env.VITE_IS_PROD,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
     messageType: env.VITE_IS_PROD ? "Oppack" : "Json",
