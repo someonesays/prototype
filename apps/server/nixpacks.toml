@@ -1,10 +1,5 @@
-[phases.install]
-cmds = [
-  "nix-channel --add https://nixos.org/channels/nixos-23.05 nixpkgs",
-  "nix-channel --update",
-  "nix-env -iA nixpkgs.bun",
-  "bun install"
-]
+[phases.build]
+cmds = []
 
 [start]
 cmd = "cd apps/server && bun start"
