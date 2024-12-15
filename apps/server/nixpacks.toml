@@ -1,5 +1,5 @@
-[phases]
-install = "nix-env -iA nixpkgs.bun"
+[phases.install]
+cmds = ["nix-env -iA nixpkgs.bun"]
 
-[commands]
-start = "bun start"
+[start]
+cmd = "bun start"
