@@ -74,13 +74,12 @@ onMount(() => {
 
   // Handle the WebSocket
   $roomWs = new RoomWebsocket({
-    debug: env.VITE_IS_PROD,
     url: $launcherMatchmaking.data.room.server.url,
     authorization: $launcherMatchmaking.authorization,
     messageType: env.VITE_IS_PROD ? "Oppack" : "Json",
   });
 
-  // TODO: Handle error
+  // Handle error
   $roomWs.on(ServerOpcodes.ERROR, (evt) => {
     if ($room?.status !== GameStatus.LOBBY) return;
 
@@ -214,35 +213,52 @@ onMount(() => {
 
     $roomParentSdk?.destroy();
 
+    const forcefullyEndedAfterStarted = $room.status === GameStatus.STARTED;
+
     $room.status = GameStatus.LOBBY;
     $room.room.state = null;
     $room.players = evt.players.sort((a, b) => b.points - a.points); // (sort players by points)
 
     $roomMinigameReady = false;
 
-    // TODO: Do something with evt.reason
-    switch (evt.reason) {
-      case MinigameEndReason.MINIGAME_ENDED: {
-        // TODO: Do something with evt.prizes
-
-        // Choose the next minigame in the pack
-        $roomRequestedToChangeSettings = true;
-        $roomWs?.send({
-          opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
-          data: { direction: GameSelectPreviousOrNextMinigame.Next },
-        });
-        break;
+    setTimeout(() => {
+      switch (evt.reason) {
+        case MinigameEndReason.MINIGAME_ENDED: {
+          // Choose the next minigame in the pack
+          $roomRequestedToChangeSettings = true;
+          $roomWs?.send({
+            opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
+            data: { direction: GameSelectPreviousOrNextMinigame.Next },
+          });
+          break;
+        }
+        case MinigameEndReason.FORCEFUL_END: {
+          if (forcefullyEndedAfterStarted) {
+            $isModalOpen = true;
+            $roomLobbyPopupMessage = { type: "warning", message: "The host has forcefully ended the minigame." };
+          }
+          break;
+        }
+        case MinigameEndReason.HOST_LEFT: {
+          $isModalOpen = true;
+          $roomLobbyPopupMessage = {
+            type: "warning",
+            message: "The minigame has forcefully ended because the host has left the game.",
+          };
+          break;
+        }
+        case MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START: {
+          if ($room && $room.user === $room.room.host) {
+            $isModalOpen = true;
+            $roomLobbyPopupMessage = {
+              type: "warning",
+              message: ErrorMessageCodesToText[ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS],
+            };
+          }
+          break;
+        }
       }
-      case MinigameEndReason.FORCEFUL_END: {
-        break;
-      }
-      case MinigameEndReason.HOST_LEFT: {
-        break;
-      }
-      case MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START: {
-        break;
-      }
-    }
+    }, 0);
   });
   $roomWs.on(ServerOpcodes.MINIGAME_PLAYER_READY, (evt) => {
     if (!$room) throw new Error("Cannot find $room on end minigame");

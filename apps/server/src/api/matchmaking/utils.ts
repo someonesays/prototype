@@ -207,7 +207,12 @@ export async function handlePostMatchmaking({
       if (!oauth2) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
 
       const scopes = oauth2.scope.split(" ");
-      if (!scopes.includes("identify") || !scopes.includes("guilds") || !scopes.includes("guilds.members.read")) {
+      if (
+        !scopes.includes("identify") ||
+        !scopes.includes("guilds") ||
+        !scopes.includes("guilds.members.read") ||
+        !scopes.includes("rpc.activities.write")
+      ) {
         return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
       }
 
