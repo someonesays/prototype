@@ -1,11 +1,8 @@
-[phases.setup]
-aptPkgs = ['unzip', 'curl']
-nixpkgs = ['nodejs_18', 'bun']
-
 [phases.install]
 cmds = [
-  "nix-env -iA nixpkgs.bun",
-  "bun install"
+  "nix-channel --add https://nixos.org/channels/nixos-23.05 nixpkgs",
+  "nix-channel --update",
+  "nix-env -iA nixpkgs.bun"
 ]
 
 [start]
