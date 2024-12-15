@@ -1,3 +1,7 @@
+[phases.setup]
+aptPkgs = ['unzip', 'curl']
+nixpkgs = ['nodejs_18', 'bun']
+
 [phases.install]
 cmds = [
   "nix-env -iA nixpkgs.bun",
