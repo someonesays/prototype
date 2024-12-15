@@ -1,5 +1,0 @@
-[phases.build]
-cmds = []
-
-[start]
-cmd = "cd apps/server && bun start"
