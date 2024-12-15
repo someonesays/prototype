@@ -33,6 +33,8 @@ import {
   ErrorMessageCodes,
   ErrorMessageCodesToText,
   GameSelectPreviousOrNextMinigame,
+  MinigamePublishType,
+  PackPublishType,
   type ApiGetPackMinigames,
 } from "@/public";
 import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
@@ -433,10 +435,7 @@ function joinDiscordServer(evt: MouseEvent) {
       {/if}
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
-      <p>
-        This is still a work in progress!<br>
-        For now, you can report packs/minigames on our Discord server.
-      </p>
+      <p>You can report packs and minigames on our Discord server!</p>
       <p>
         <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
           <button class="primary-button margin-top-8px">Join Discord server</button>
@@ -583,7 +582,7 @@ function joinDiscordServer(evt: MouseEvent) {
                       </button>
                     {/if}
   
-                    {#if !removeIdsOption}
+                    {#if $room.pack?.publishType !== PackPublishType.PUBLIC_OFFICIAL || $room.minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL}
                       <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
                         <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
                       </button>
