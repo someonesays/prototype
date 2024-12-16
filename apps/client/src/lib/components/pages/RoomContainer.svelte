@@ -233,7 +233,7 @@ onMount(() => {
           break;
         }
         case MinigameEndReason.FORCEFUL_END: {
-          if (forcefullyEndedAfterStarted) {
+          if (forcefullyEndedAfterStarted && $room?.user !== $room?.room.host) {
             $isModalOpen = true;
             $roomLobbyPopupMessage = { type: "warning", message: "The host has forcefully ended the minigame." };
           }
@@ -248,7 +248,7 @@ onMount(() => {
           break;
         }
         case MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START: {
-          if ($room && $room.user === $room.room.host) {
+          if ($room?.user === $room?.room.host) {
             $isModalOpen = true;
             $roomLobbyPopupMessage = {
               type: "warning",
