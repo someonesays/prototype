@@ -37,7 +37,7 @@ import {
   PackPublishType,
   type ApiGetPackMinigames,
 } from "@/public";
-import { Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
+import { Common, Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
 let activeView = $state<"players" | "game">("game");
@@ -64,6 +64,8 @@ onMount(() => {
   $roomRequestedToChangeSettings = false;
   $roomRequestedToStartGame = false;
 
+  // Add resizing
+
   const resize = () => {
     if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
       transformScale = Math.min(window.innerWidth / 1100, window.innerHeight / 660);
@@ -74,11 +76,21 @@ onMount(() => {
   window.addEventListener("resize", resize);
   resize();
 
+  // Handles DiscordSdk for the Discord activity
+
   if ($launcher === "discord" && $launcherDiscordSdk) {
+    // Unlocks orientation lock state
+    $launcherDiscordSdk.commands.setOrientationLockState({
+      lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
+      picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
+      grid_lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
+    });
+
+    // Handles layout mode changes
     $launcherDiscordSdk.subscribe(
       Events.ACTIVITY_LAYOUT_MODE_UPDATE,
       (discordActivityLayoutModeUpdate = ({ layout_mode: layoutMode }) => {
-        logoOnly = layoutMode === 0 ? false : true;
+        logoOnly = !!layoutMode;
 
         if (layoutMode === 0) {
           document.body.classList.add("discord");

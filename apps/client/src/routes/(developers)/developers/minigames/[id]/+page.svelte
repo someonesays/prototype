@@ -9,7 +9,7 @@ import { goto } from "$app/navigation";
 import { page } from "$app/stores";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
-import type { ApiGetUserMinigame } from "@/public";
+import { MinigameOrientation, MinigamePathType, type ApiGetUserMinigame } from "@/public";
 
 const minigameId = $page.params.id;
 let minigame = $state<ApiGetUserMinigame["minigame"]>();
@@ -48,6 +48,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
   const pathType = Number.parseInt(form.get("pathType") as string);
   const minimumPlayersToStart = Number.parseInt(form.get("minimumPlayersToStart") as string);
   const supportsMobile = Boolean(form.get("supportsMobile"));
+  const mobileOrientation = Number.parseInt(form.get("mobileOrientation") as string);
 
   const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}`, {
     method: "PATCH",
@@ -62,6 +63,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
       pathType,
       minimumPlayersToStart,
       supportsMobile,
+      mobileOrientation,
     }),
   });
 
@@ -169,8 +171,12 @@ async function regenTestingAccessCode() {
         
         <label for="pathType">Path type:</label>
         <select class="input" name="pathType">
-          <option value="0" selected={minigame.pathType === 0}>Original</option>
-          <option value="1" selected={minigame.pathType === 1}>Whole path</option>
+          <option value={MinigamePathType.ORIGINAL} selected={minigame.pathType === MinigamePathType.ORIGINAL}>
+            Original
+          </option>
+          <option value={MinigamePathType.WHOLE_PATH} selected={minigame.pathType === MinigamePathType.WHOLE_PATH}>
+            Whole path
+          </option>
         </select>
 
         <br><br>
@@ -182,6 +188,21 @@ async function regenTestingAccessCode() {
 
         <label for="supportsMobile">Supports mobile:</label>
         <input type="checkbox" name="supportsMobile" checked={minigame.supportsMobile}>
+
+        <br><br>
+        
+        <label for="mobileOrientation">Mobile orientation (Discord activity only):</label>
+        <select class="input" name="mobileOrientation">
+          <option value={MinigameOrientation.NONE} selected={minigame.mobileOrientation === MinigameOrientation.NONE}>
+            None
+          </option>
+          <option value={MinigameOrientation.HORIZONTAL} selected={minigame.mobileOrientation === MinigameOrientation.HORIZONTAL}>
+            Horizontal
+          </option>
+          <option value={MinigameOrientation.PORTRAIT} selected={minigame.mobileOrientation === MinigameOrientation.PORTRAIT}>
+            Portrait
+          </option>
+        </select>
 
         <br><br>
         

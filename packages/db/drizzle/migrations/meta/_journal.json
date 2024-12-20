@@ -15,6 +15,13 @@
       "when": 1733617070134,
       "tag": "0001_easy_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1734735283836,
+      "tag": "0002_green_karma",
+      "breakpoints": true
     }
   ]
 }

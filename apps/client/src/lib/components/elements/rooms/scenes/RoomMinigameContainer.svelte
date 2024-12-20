@@ -6,7 +6,8 @@ import Plug from "$lib/components/icons/Plug.svelte";
 import Modal from "$lib/components/elements/cards/Modal.svelte";
 
 import { onMount } from "svelte";
-import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus } from "@/public";
+import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus, MinigameOrientation } from "@/public";
+import { Common } from "@discord/embedded-app-sdk";
 
 import {
   room,
@@ -18,7 +19,7 @@ import {
   roomJoinedLate,
 } from "$lib/stores/home/roomState";
 import { volumeValue } from "$lib/stores/home/settings";
-import { launcher } from "$lib/stores/home/launcher";
+import { launcher, launcherDiscordSdk } from "$lib/stores/home/launcher";
 import { isModalOpen } from "$lib/stores/home/modal";
 
 let container: HTMLDivElement;
@@ -29,6 +30,32 @@ let transformScale = $state(1);
 
 onMount(() => {
   if (!$room?.minigame) throw new Error("Missing room or minigame");
+
+  // Set horizontal or vertical layout for Discord
+
+  switch ($room.minigame.mobileOrientation) {
+    case MinigameOrientation.NONE:
+      $launcherDiscordSdk?.commands.setOrientationLockState({
+        lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
+        picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
+        grid_lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
+      });
+      break;
+    case MinigameOrientation.HORIZONTAL:
+      $launcherDiscordSdk?.commands.setOrientationLockState({
+        lock_state: Common.OrientationLockStateTypeObject.LANDSCAPE,
+        picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.LANDSCAPE,
+        grid_lock_state: Common.OrientationLockStateTypeObject.LANDSCAPE,
+      });
+      break;
+    case MinigameOrientation.PORTRAIT:
+      $launcherDiscordSdk?.commands.setOrientationLockState({
+        lock_state: Common.OrientationLockStateTypeObject.PORTRAIT,
+        picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.PORTRAIT,
+        grid_lock_state: Common.OrientationLockStateTypeObject.PORTRAIT,
+      });
+      break;
+  }
 
   // Add resizing
 
@@ -247,12 +274,14 @@ function leaveOrEndGameConfirm() {
 <style>
   .minigame-container {
     position: absolute;
-    display: flex;
     width: 100%;
     height: 100%;
+
+    display: flex;
     flex-direction: column;
     flex-flow: column;
     align-items: stretch;
+
     overflow: hidden;
   }
   .minigame-iframe-container {

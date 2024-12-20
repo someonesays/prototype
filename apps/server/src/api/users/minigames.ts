@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { ErrorMessageCodes, MatchmakingLocation, MinigamePathType } from "@/public";
+import { ErrorMessageCodes, MatchmakingLocation, MinigameOrientation, MinigamePathType } from "@/public";
 import {
   createMinigame,
   deleteMinigameWithAuthorId,
@@ -27,6 +27,7 @@ const userMinigameZod = z.object({
   pathType: z.nativeEnum(MinigamePathType).default(MinigamePathType.WHOLE_PATH),
   minimumPlayersToStart: z.number().int().min(1).max(25).default(1),
   supportsMobile: z.boolean().default(false),
+  mobileOrientation: z.nativeEnum(MinigameOrientation).default(MinigameOrientation.NONE),
 });
 
 userMinigames.get("/", authMiddleware, async (c) => {
