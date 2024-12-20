@@ -1,4 +1,4 @@
-import type { MinigamePublishType } from "../../types";
+import type { MinigameOrientation, MinigamePublishType } from "../../types";
 
 export interface Minigame {
   id: string;
@@ -20,6 +20,7 @@ export interface Minigame {
   } | null;
   minimumPlayersToStart: number;
   supportsMobile: boolean;
+  mobileOrientation: MinigameOrientation;
   privacyPolicy: string | null;
   termsOfServices: string | null;
   createdAt: string;

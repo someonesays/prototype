@@ -1,0 +1,1 @@
+ALTER TABLE "minigames" ADD COLUMN "mobile_orientation" smallint DEFAULT 0 NOT NULL;
