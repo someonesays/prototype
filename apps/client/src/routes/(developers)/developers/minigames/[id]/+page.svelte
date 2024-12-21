@@ -131,6 +131,7 @@ async function regenTestingAccessCode() {
       <h2>Minigame: {minigame.name}</h2>
 
       <p style="text-align: center;">
+        ID: <u>{minigame.id}</u><br>
         Testing access code: <u>{minigame.testingAccessCode}</u>
         <br><br>
         <button class="error-button" onclick={regenTestingAccessCode}>Reset testing access code</button>
