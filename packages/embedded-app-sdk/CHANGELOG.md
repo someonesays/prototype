@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.8.1](https://github.com/discord/embedded-app-sdk/compare/v1.8.0...v1.8.1) (2024-12-16)
+
+
+### Bug Fixes
+
+* add new params to IDiscordSDK ([#293](https://github.com/discord/embedded-app-sdk/issues/293)) ([6182474](https://github.com/discord/embedded-app-sdk/commit/618247414b6ae18e9c2fea5b58e2cb49bdeba354))
+
+## [1.8.0](https://github.com/discord/embedded-app-sdk/compare/v1.7.1...v1.8.0) (2024-12-16)
+
+
+### Features
+
+* add custom_id and referrer_id query params ([96777ac](https://github.com/discord/embedded-app-sdk/commit/96777ac976693309be9019657a60af4044765436))
+
+## [1.7.1](https://github.com/discord/embedded-app-sdk/compare/v1.7.0...v1.7.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* don't infinitely set the src which triggers the mutation observer again ([#287](https://github.com/discord/embedded-app-sdk/issues/287)) ([7adc57e](https://github.com/discord/embedded-app-sdk/commit/7adc57e9aa020d8beac8839eb4da948d115fe40b))
+
+## [1.7.0](https://github.com/discord/embedded-app-sdk/compare/v1.6.1...v1.7.0) (2024-11-19)
+
+
+### Features
+
+* openExternalLink returns a `{ opened: boolean | null }` result ([#282](https://github.com/discord/embedded-app-sdk/issues/282)) ([d3bd375](https://github.com/discord/embedded-app-sdk/commit/d3bd375094735a5994f302a29f1845510cc7e045))
+* **locationId** added as SDK instance variable ([#281](https://github.com/discord/embedded-app-sdk/pull/281/files)) ([2cb879a](https://github.com/discord/embedded-app-sdk/commit/2cb879af80535b87d4a80cd98597f8ce3062f1cc))
+
+
+### Bug Fixes
+
+* **authorize:** remove token response type ([#273](https://github.com/discord/embedded-app-sdk/issues/273)) ([f45973b](https://github.com/discord/embedded-app-sdk/commit/f45973babc63dcd33281370b2db969c4cb1b38ca))
+
 ## [1.6.1](https://github.com/discord/embedded-app-sdk/compare/v1.6.0...v1.6.1) (2024-10-21)
 
 
