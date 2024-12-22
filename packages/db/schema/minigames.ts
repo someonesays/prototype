@@ -19,6 +19,7 @@ export const minigames = pgTable("minigames", {
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
   publishType: smallint("publish_type").$type<MinigamePublishType>().notNull().default(MinigamePublishType.UNLISTED),
+  publicallyAddableToPack: boolean("publically_addable_to_pack").notNull().default(true),
 
   termsOfServices: text("terms_of_services"),
   privacyPolicy: text("privacy_policy"),

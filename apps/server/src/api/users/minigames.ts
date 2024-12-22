@@ -9,6 +9,7 @@ import {
   getMinigameByAuthorId,
   getMinigameCountByAuthorId,
   getMinigamesByAuthorId,
+  removeMinigameFromAllPacks,
   updateMinigameWithAuthorId,
 } from "@/db";
 import { createCode, resetRoom, validateUrl } from "@/utils";
@@ -21,6 +22,7 @@ const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
+  publicallyAddableToPack: z.boolean().default(true),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
   privacyPolicy: z.string().refine(validateUrl).nullable().default(null),
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),
@@ -98,6 +100,16 @@ userMinigames.post(
     return c.json({ testingLocation: values.location, testingAccessCode });
   },
 );
+
+userMinigames.delete("/:id/packs", authMiddleware, async (c) => {
+  const id = c.req.param("id");
+
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+  await removeMinigameFromAllPacks(minigame.id);
+  return c.json({ success: true });
+});
 
 userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
   const id = c.req.param("id");
