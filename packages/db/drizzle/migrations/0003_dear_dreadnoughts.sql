@@ -1,0 +1,1 @@
+ALTER TABLE "minigames" ADD COLUMN "publically_addable_to_pack" boolean DEFAULT true NOT NULL;

@@ -10,6 +10,7 @@ export enum ErrorMessageCodes {
   INVALID_CONTENT_TYPE = "invalid_content_type",
 
   CANNOT_FIND_MINIGAME_FOR_PACK = "cannot_find_minigame_for_pack",
+  MINIGAME_DISABLED_FROM_BEING_ADDED_TO_PACKS = "minigame_disabled_from_being_added_to_packs",
   MINIGAME_ALREADY_IN_PACK = "minigame_already_in_pack",
   REACHED_PACK_MINIGAME_LIMIT = "reached_pack_minigame_limit",
 
@@ -60,6 +61,8 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
 
   [ErrorMessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
+  [ErrorMessageCodes.MINIGAME_DISABLED_FROM_BEING_ADDED_TO_PACKS]:
+    "This minigame has disabled permission to be added to packs.",
   [ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
 
   [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (1000)",

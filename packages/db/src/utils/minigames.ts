@@ -108,6 +108,10 @@ export async function getMinigamesByIdsPublic(ids: string[]) {
   return minigames.map((m) => transformMinigameToMinigamePublic(m));
 }
 
+export async function removeMinigameFromAllPacks(id: string) {
+  await db.delete(schema.packsMinigames).where(eq(schema.packsMinigames.minigameId, id));
+}
+
 export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof getMinigame>>): Minigame {
   if (!minigame) throw new Error("Missing minigame");
   return {
@@ -115,6 +119,7 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     name: minigame.name,
     description: minigame.description,
     publishType: minigame.publishType,
+    publicallyAddableToPack: minigame.publicallyAddableToPack,
     author: {
       id: minigame.author.id,
       name: minigame.author.name,

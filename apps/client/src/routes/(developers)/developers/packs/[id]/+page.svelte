@@ -29,7 +29,7 @@ async function refreshStates() {
     headers: { authorization: $token },
   });
   const packMinigamesResponse = await fetch(
-    `${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(packId)}/minigames`,
+    `${env.VITE_BASE_API}/api/users/@me/packs/${encodeURIComponent(packId)}/minigames?limit=1000`,
     {
       headers: { authorization: $token },
     },

@@ -106,14 +106,18 @@ userPacks.post("/:id/minigames/:minigameId", authMiddleware, async (c) => {
   const pack = await getPackByAuthorId({ id, authorId: c.var.user.id });
   if (!pack) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
+  const count = await getPackMinigameCount(pack.id);
+  if (count > 1000) return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
+
   const minigame = await getMinigamePublic(minigameId);
   if (!minigame) return c.json({ code: ErrorMessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK }, 404);
 
+  if (!minigame.publicallyAddableToPack && minigame.author.id !== c.var.user.id) {
+    return c.json({ code: ErrorMessageCodes.MINIGAME_DISABLED_FROM_BEING_ADDED_TO_PACKS }, 403);
+  }
+
   const alreadyInPack = await getMinigameInPack({ packId: pack.id, minigameId: minigame.id });
   if (alreadyInPack) return c.json({ code: ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK }, 409);
-
-  const count = await getPackMinigameCount(pack.id);
-  if (count > 1000) return c.json({ code: ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT }, 409);
 
   try {
     await addMinigameToPack({ packId: pack.id, minigameId });
