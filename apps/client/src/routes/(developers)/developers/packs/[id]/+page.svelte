@@ -6,12 +6,12 @@ import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelt
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
 import type { ApiGetUserPack, ApiGetUserPackMinigames } from "@/public";
 
-const packId = $page.params.id;
+const packId = page.params.id;
 
 let pack = $state<ApiGetUserPack["pack"]>();
 let packMinigames = $state<ApiGetUserPackMinigames>();

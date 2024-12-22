@@ -1,5 +1,5 @@
 <script lang="ts">
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { launcher } from "$lib/stores/home/launcher";
 
 let { children } = $props();
@@ -142,10 +142,10 @@ let { children } = $props();
 
 <div class="container" class:absolute={$launcher === "discord"}>
   <div class="bg-container">
-    <div class="bg primary-bg" class:hide={!$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
-    <div class="bg secondary-bg" class:hide={$page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
+    <div class="bg primary-bg" class:hide={!page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
+    <div class="bg secondary-bg" class:hide={page.url.pathname.startsWith("/rooms")} class:absolute={$launcher === "discord"} class:discord={$launcher === "discord"}></div>
     
-    <div class="bg third-bg" class:hide={!["/credits", "/terms", "/privacy"].includes($page.url.pathname)}></div>
+    <div class="bg third-bg" class:hide={!["/credits", "/terms", "/privacy"].includes(page.url.pathname)}></div>
   </div>
 
   <div class="pattern" class:absolute={$launcher === "discord"}></div>

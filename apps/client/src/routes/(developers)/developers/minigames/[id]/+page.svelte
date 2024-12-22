@@ -6,12 +6,12 @@ import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelt
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
 import { MinigameOrientation, MinigamePathType, type ApiGetUserMinigame } from "@/public";
 
-const minigameId = $page.params.id;
+const minigameId = page.params.id;
 let minigame = $state<ApiGetUserMinigame["minigame"]>();
 
 onMount(() => {
@@ -131,6 +131,7 @@ async function regenTestingAccessCode() {
       <h2>Minigame: {minigame.name}</h2>
 
       <p style="text-align: center;">
+        ID: <u>{minigame.id}</u><br>
         Testing access code: <u>{minigame.testingAccessCode}</u>
         <br><br>
         <button class="error-button" onclick={regenTestingAccessCode}>Reset testing access code</button>

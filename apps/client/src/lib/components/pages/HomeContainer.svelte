@@ -11,7 +11,7 @@ import { onMount } from "svelte";
 import { Turnstile } from "svelte-turnstile";
 
 import { beforeNavigate, goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
 import { displayName, roomIdToJoin, kickedReason } from "$lib/stores/home/lobby";
@@ -22,7 +22,7 @@ import { isModalOpen } from "$lib/stores/home/modal";
 import { launcherMatchmaking } from "$lib/stores/home/launcher";
 
 let disableJoinPage = $state(false);
-let loadedRoomToJoin = $derived(!$page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
+let loadedRoomToJoin = $derived(!page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
 let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
 
 let turnstileInvisibleSuccessOnce = $state(false);
@@ -156,7 +156,7 @@ onMount(() => {
     <br>
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
-      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={($page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
+      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
       
       {#if !env.VITE_TURNSTILE_BYPASS_SECRET}
         {#if triedInvisible}

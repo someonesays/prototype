@@ -3,7 +3,7 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 
 import {
   ErrorMessageCodesToText,
@@ -41,7 +41,7 @@ import LobbyContainer from "$lib/components/elements/rooms/scenes/RoomLobbyConta
 import { RPCCloseCodes } from "@discord/embedded-app-sdk";
 
 // Get params
-const roomId = $page.params.roomId;
+const roomId = page.params.roomId;
 
 // States
 let connected = $state(false);
