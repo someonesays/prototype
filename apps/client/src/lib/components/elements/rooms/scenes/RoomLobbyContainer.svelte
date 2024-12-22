@@ -11,6 +11,7 @@ import TriangleExclamation from "$lib/components/icons/TriangleExclamation.svelt
 import Crown from "$lib/components/icons/Crown.svelte";
 import Copy from "$lib/components/icons/Copy.svelte";
 import Flag from "$lib/components/icons/Flag.svelte";
+import Discord from "$lib/components/icons/Discord.svelte";
 
 import Modal from "$lib/components/elements/cards/Modal.svelte";
 
@@ -508,6 +509,15 @@ function joinDiscordServer(evt: MouseEvent) {
               <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} tabindex={disableTabIndex} />
             </div>
           </div>
+
+          {#if $launcher === "discord"}
+            <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
+              <button class="button discord">
+                <div><Discord /></div>
+              </button>
+            </a>
+          {/if}
+
           <button class="button settings" class:active={isSettingsOpen} onclick={() => isSettingsOpen = !isSettingsOpen} tabindex={disableTabIndex}>
             <div><GearIcon /></div>
           </button>

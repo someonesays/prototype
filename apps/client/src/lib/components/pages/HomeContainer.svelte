@@ -149,11 +149,18 @@ onMount(() => {
 
 <div class="main-container">
   <BaseCard style="padding: 20px; transform: scale({transformScale});">
+    <p class="indev-warning">
+      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/zVWekYCEC9" target="_blank">Discord server</a> if you're curious.
+    </p>
+
     <br>
+
     <div class="logo-container">
       <Logo />
     </div>
+
     <br>
+
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
@@ -184,6 +191,19 @@ onMount(() => {
 </div>
 
 <style>
+  .indev-warning {
+    background-color: var(--error-button);
+    color: #fafafa;
+    padding: 15px;
+    border-radius: 6px;
+  }
+  .url.discord {
+  color: #c4bbff;
+  }
+  .url.discord:hover {
+    color: #fafafa;
+  }
+
   .main-container {
     display: flex;
     flex-direction: column;

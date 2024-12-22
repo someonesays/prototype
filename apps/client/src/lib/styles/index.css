@@ -216,6 +216,16 @@ body.discord {
   }
 }
 
+.button.discord {
+  background-color: #5865f2;
+  border: 2px #4a56db solid;
+  margin-right: 4px;
+}
+
+.button.discord:hover {
+  background-color: #4a56db;
+}
+
 .settings-menu {
   display: none;
   border-radius: 2px;
