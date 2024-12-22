@@ -3,7 +3,7 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import { user, token } from "$lib/stores/developers/cache";
 import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
 
@@ -15,7 +15,7 @@ let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] }
 onMount(() => {
   (async () => {
     if (!$token) {
-      if ($page.url.pathname !== "/developers") return;
+      if (page.url.pathname !== "/developers") return;
 
       failedToLogin = true;
       return;
@@ -27,7 +27,7 @@ onMount(() => {
       });
 
       if (!userResponse.ok) {
-        if ($page.url.pathname !== "/developers") return;
+        if (page.url.pathname !== "/developers") return;
 
         failedToLogin = true;
         return;

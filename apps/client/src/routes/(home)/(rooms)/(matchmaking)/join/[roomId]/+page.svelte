@@ -2,14 +2,14 @@
 import HomeContainer from "$lib/components/pages/HomeContainer.svelte";
 
 import { onMount } from "svelte";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 import env from "$lib/utils/env";
 import { goto } from "$app/navigation";
 import { ErrorMessageCodes, ErrorMessageCodesToText, RoomWebsocket } from "@/public";
 import { roomIdToJoin, kickedReason } from "$lib/stores/home/lobby";
 
 onMount(() => {
-  const roomId = $page.params.roomId;
+  const roomId = page.params.roomId;
   (async () => {
     const exists = await RoomWebsocket.getIfRoomExists({
       roomId,

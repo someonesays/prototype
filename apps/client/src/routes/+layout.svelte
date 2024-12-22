@@ -3,11 +3,11 @@ import "$lib/styles/index.css";
 
 import { onMount } from "svelte";
 import { preloadCode } from "$app/navigation";
-import { page } from "$app/stores";
+import { page } from "$app/state";
 
 onMount(() => {
   // Don't preload all routes in Discord activity
-  if ($page.url.pathname === "/launchers/discord") return;
+  if (page.url.pathname === "/launchers/discord") return;
 
   // Preload all routes
 
