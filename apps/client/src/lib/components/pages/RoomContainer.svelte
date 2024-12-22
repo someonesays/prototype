@@ -49,7 +49,7 @@ let allowExitingPage = $state(true);
 let exitedPage = $state(false);
 
 // svelte-ignore non_reactive_update
-let lobbyContainerComponent: { handleSelectMinigame: (noModal?: boolean) => void };
+let lobbyContainerComponent: { handleSelectMinigameInPack: (noModal?: boolean) => void };
 
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
@@ -155,7 +155,7 @@ onMount(() => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
 
     $roomRequestedToChangeSettings = false;
-    if (["select-minigame", "select-pack"].includes($roomLobbyPopupMessage?.type ?? "")) {
+    if (["select-minigame", "select-minigame-in-pack", "select-pack"].includes($roomLobbyPopupMessage?.type ?? "")) {
       $roomLobbyPopupMessage = null;
       $isModalOpen = false;
     }
@@ -195,7 +195,7 @@ onMount(() => {
         $room.pack.iconImage = packIconImage;
       }, 0);
 
-      lobbyContainerComponent?.handleSelectMinigame(true);
+      lobbyContainerComponent?.handleSelectMinigameInPack(true);
     }
   });
 

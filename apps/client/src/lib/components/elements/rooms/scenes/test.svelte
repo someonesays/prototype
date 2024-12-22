@@ -136,14 +136,9 @@ function setSettings({ packId = null, minigameId = null }: { packId?: string | n
   });
 }
 
-export async function handleSelectMinigame() {
-  $roomLobbyPopupMessage = { type: "select-minigame" };
-  $isModalOpen = true;
-}
-
-export async function handleSelectMinigameInPack(noModal = false) {
+export async function handleSelectMinigame(noModal = false) {
   if (!$room?.pack) {
-    throw new Error("Missing pack on handleSelectMinigameInPack");
+    throw new Error("Missing pack on handleSelectMinigame");
   }
 
   const packId = $room.pack.id;
@@ -174,7 +169,7 @@ export async function handleSelectMinigameInPack(noModal = false) {
       url = `/.proxy/api/packs/${$room.pack.id}/minigames`;
       break;
     default:
-      throw new Error("Invalid launcher for handleSelectMinigameInPack");
+      throw new Error("Invalid launcher for handleSelectMinigame");
   }
 
   if (!noModal) {
@@ -394,16 +389,6 @@ function joinDiscordServer(evt: MouseEvent) {
       <p>Copied invite link!</p>
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
-    {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <h2 style="width: 400px; max-width: 100%;">Select a minigame by ID</h2>
-
-      <form onsubmit={setSettingsForm}>
-        <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
-
-        <br><br>
-        <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
-      </form>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame-in-pack"}
       <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>
       {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
@@ -602,7 +587,7 @@ function joinDiscordServer(evt: MouseEvent) {
                     {#if $room.room.host === $room.user}
                       {#if $room.pack}
                         <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-                        <button class="secondary-button select-button" onclick={() => handleSelectMinigameInPack()} tabindex={disableTabIndex}>
+                        <button class="secondary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
                           Select minigame
                         </button>
                         <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
@@ -692,11 +677,17 @@ function joinDiscordServer(evt: MouseEvent) {
                   </div>
                 </div>
   
-                {#if $room.room.host === $room.user && $room.pack}
+                {#if $room.room.host === $room.user}
                   <div class="previousnext-container load-fade-in" class:loaded={$room}>
                     <div class="previousnext-section">
-                      <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
-                      <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
+                      <button class="previousnext-button previous" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>
+                        &larr;
+                        Clock Attack
+                      </button>
+                      <button class="previousnext-button next" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>
+                        Click the buttons
+                        &rarr;
+                      </button>
                     </div>
                   </div>
                 {/if}
@@ -710,10 +701,7 @@ function joinDiscordServer(evt: MouseEvent) {
 
                     {#if !removeIdsOption}
                       <div class="nothingselected-buttons">
-                        <button class="secondary-button nothingselected-button" onclick={handleSelectMinigame} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-                          Select minigame
-                        </button>
-                        <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                        <button class="secondary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
                           Select another pack
                         </button>
                       </div>
@@ -998,8 +986,6 @@ function joinDiscordServer(evt: MouseEvent) {
     display: flex;
     align-self: center;
     justify-content: safe center;
-    white-space: nowrap;
-    gap: 4px;
   }
   .nothingselected-button {
     padding: 15px;
@@ -1093,8 +1079,8 @@ function joinDiscordServer(evt: MouseEvent) {
     width: 50%;
 
     border-radius: 15px;
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 290px;
+    max-height: 290px;
     aspect-ratio: 1 / 1;
     float: right;
     overflow: auto;
@@ -1103,8 +1089,8 @@ function joinDiscordServer(evt: MouseEvent) {
     border-radius: 15px;
     width: 100%;
     height: auto;
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 290px;
+    max-height: 290px;
     aspect-ratio: 1 / 1;
     float: right;
     overflow: auto;
@@ -1153,7 +1139,7 @@ function joinDiscordServer(evt: MouseEvent) {
     flex-direction: column;
   }
   .previousnext-button {
-    padding: 0.45rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     font-size: 14px;
   }
   .action-button {
@@ -1175,6 +1161,12 @@ function joinDiscordServer(evt: MouseEvent) {
     background: var(--secondary-button);
     color: var(--primary);
   }
+  .previousnext-button.previous {
+    text-align: left;
+  }
+  .previousnext-button.next {
+    text-align: right;
+  }
   .action-button.invite:hover {
     background-color: var(--primary-button-hover);
   }
@@ -1182,10 +1174,10 @@ function joinDiscordServer(evt: MouseEvent) {
     background-color: var(--primary-button-hover);
   }
   .previousnext-button:hover {
-    background-color: #343a40;
+    background-color: var(--secondary-button-hover);
   }
   .previousnext-button:click {
-    background-color: #343a40;
+    background-color: var(--secondary-button-hover);
   }
   .select-minigame-button {
     background: var(--primary);
@@ -1324,11 +1316,6 @@ function joinDiscordServer(evt: MouseEvent) {
   @media (max-width: 320px) {
     .nav-container {
       overflow: auto;
-    }
-  }
-  @media (max-width: 380px) {
-    .nothingselected-buttons {
-      gap: 2px;
     }
   }
 </style>
