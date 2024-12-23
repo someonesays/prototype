@@ -272,15 +272,24 @@ websocket.get(
                 );
               }
 
-              if (
-                newSettings.pack &&
-                newSettings.minigame &&
-                !(await isMinigameInPack({
-                  packId: newSettings.pack.id,
-                  minigameId: newSettings.minigame.id,
-                }))
-              ) {
-                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK);
+              if (newSettings.pack && newSettings.minigame) {
+                if (
+                  !(await isMinigameInPack({
+                    packId: newSettings.pack.id,
+                    minigameId: newSettings.minigame.id,
+                  }))
+                ) {
+                  return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK);
+                }
+              } else if (state.serverRoom.pack && newSettings.minigame) {
+                if (
+                  await isMinigameInPack({
+                    packId: state.serverRoom.pack.id,
+                    minigameId: newSettings.minigame.id,
+                  })
+                ) {
+                  newSettings.pack = state.serverRoom.pack;
+                }
               }
 
               // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
