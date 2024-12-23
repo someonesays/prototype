@@ -12,7 +12,16 @@ export let roomRequestedToLeave = writable(false);
 export let roomLobbyPopupMessage = writable<
   | { type: "warning"; message: string }
   | { type: "link"; url: string }
-  | { type: "invite" | "select-minigame" | "select-minigame-in-pack" | "select-pack" | "report" | "mobile" }
+  | {
+      type:
+        | "invite"
+        | "select-minigame"
+        | "select-minigame-in-pack"
+        | "select-pack"
+        | "select-pack-featured"
+        | "report"
+        | "mobile";
+    }
   | null
 >(null);
 export let roomParentSdk = writable<ParentSdk | null>(null);

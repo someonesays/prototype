@@ -205,6 +205,11 @@ function handleSelectPack() {
   $isModalOpen = true;
 }
 
+function handleSelectPackFeatured() {
+  $roomLobbyPopupMessage = { type: "select-pack-featured" };
+  $isModalOpen = true;
+}
+
 function handleRemoveMinigameAndPack() {
   if (!$room?.minigame?.id) throw new Error("Cannot remove pack without minigame");
 
@@ -398,7 +403,7 @@ function joinDiscordServer(evt: MouseEvent) {
       <h2 style="width: 400px; max-width: 100%;">Select a minigame by ID</h2>
 
       <form onsubmit={setSettingsForm}>
-        <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
+        <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
 
         <br><br>
         <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
@@ -439,28 +444,34 @@ function joinDiscordServer(evt: MouseEvent) {
         <p>Loading minigames in pack...</p>
       {/if}
 
+      {#if !removeIdsOption}
+        <button class="primary-button" onclick={(evt) => { evt.preventDefault(); handleSelectMinigame(); }} tabindex={disableTabIndex}>
+          Select minigame by ID
+        </button>
+      {/if}
       <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
     {:else if $roomLobbyPopupMessage?.type === "select-pack"}
+      <h2 style="width: 400px; max-width: 100%;">Select a pack by ID</h2>
+      
+      <form onsubmit={setSettingsForm}>
+        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
+
+        <br><br>
+        <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
+        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
+      </form>
+    {:else if $roomLobbyPopupMessage?.type === "select-pack-featured"}
       <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
 
       <RoomLobbyFeaturedMinigames />
 
       {#if !removeIdsOption}
-        <hr class="border" />
-
-        <form onsubmit={setSettingsForm}>
-          <p>Alternatively, you could select a pack by using its ID.</p>
-
-          <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
-
-          <br><br>
-          <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
-          <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
-        </form>
-      {:else}
-        <br>
+        <button class="primary-button margin-top-16px" onclick={() => handleSelectPack()}>Set pack by ID</button>
         <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      {:else}
+        <button class="secondary-button margin-top-16px" onclick={() => $isModalOpen = false}>Cancel</button>
       {/if}
+      
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report</h2>
       <p>You can report packs and minigames on our Discord server!</p>
@@ -605,11 +616,14 @@ function joinDiscordServer(evt: MouseEvent) {
                         <button class="secondary-button select-button" onclick={() => handleSelectMinigameInPack()} tabindex={disableTabIndex}>
                           Select minigame
                         </button>
-                        <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                        <button class="primary-button select-button" onclick={handleSelectPackFeatured} tabindex={disableTabIndex}>
                           Change pack
                         </button>
                       {:else}
-                        <button class="primary-button select-button" onclick={handleSelectPack} tabindex={disableTabIndex}>
+                      <button class="secondary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
+                        Select minigame
+                      </button>
+                        <button class="primary-button select-button" onclick={handleSelectPackFeatured} tabindex={disableTabIndex}>
                           Select pack
                         </button>
                       {/if}
