@@ -149,17 +149,15 @@ onMount(() => {
 
 <div class="main-container">
   <BaseCard style="padding: 20px; transform: scale({transformScale});">
-    <p class="indev-warning">
-      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/zVWekYCEC9" target="_blank">Discord server</a> if you're curious.
-    </p>
-
     <br>
-
+    
     <div class="logo-container">
       <Logo />
     </div>
 
-    <br>
+    <p class="indev-warning">
+      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/zVWekYCEC9" target="_blank">Discord server</a> if you're curious.
+    </p>
 
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
