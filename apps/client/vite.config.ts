@@ -1,10 +1,11 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type UserConfig } from "vite";
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
+export default ({ mode }: UserConfig) => {
+  const env = loadEnv(mode as string, process.cwd());
   const port = Number(env.VITE_PORT ?? 3000);
-  return {
+
+  return defineConfig({
     envPrefix: "VITE_",
     server: {
       port,
@@ -26,5 +27,5 @@ export default defineConfig(({ mode }) => {
     },
     preview: { port },
     plugins: [sveltekit()],
-  };
-});
+  });
+};
