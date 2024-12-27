@@ -733,7 +733,7 @@ function joinDiscordServer(evt: MouseEvent) {
                       </div>
                     {/if}
                   {:else}
-                    <h2>Waiting for the host to select a pack!</h2>
+                    <h2>Waiting for the host to select a minigame!</h2>
                   {/if}
                 </div>
               {/if}
