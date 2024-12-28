@@ -11,7 +11,6 @@ export function transformToGamePlayer(player: ServerPlayer): GamePlayer {
     displayName: player.displayName,
     avatar: player.avatar,
     mobile: player.mobile,
-    points: player.points,
     ready: player.ready,
     state: player.state,
   };

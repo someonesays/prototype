@@ -1,4 +1,4 @@
-import { MinigameEndReason, GameStatus, ServerOpcodes, type GamePrize } from "@/public";
+import { MinigameEndReason, GameStatus, ServerOpcodes } from "@/public";
 import { broadcastMessage } from "./messages";
 import { transformToGamePlayers } from "./transform";
 import type { ServerRoom, WSState } from "./types";
@@ -55,7 +55,7 @@ export function endGame(
           | MinigameEndReason.HOST_LEFT
           | MinigameEndReason.FAILED_TO_SATISFY_MINIMUM_PLAYERS_TO_START;
       }
-    | { room: ServerRoom; reason: MinigameEndReason.MINIGAME_ENDED; prizes: GamePrize[] },
+    | { room: ServerRoom; reason: MinigameEndReason.MINIGAME_ENDED },
 ) {
   // Set room state to lobby
   opts.room.status = GameStatus.LOBBY;
@@ -78,7 +78,6 @@ export function endGame(
         ? {
             players: transformToGamePlayers(opts.room.players),
             reason: opts.reason,
-            prizes: opts.prizes,
           }
         : {
             players: transformToGamePlayers(opts.room.players),

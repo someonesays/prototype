@@ -2,7 +2,6 @@ import type {
   ServerOpcodes,
   MinigameEndReason,
   GamePlayer,
-  GamePrize,
   GameRoomPrivate,
   GameStatus,
   Minigame,
@@ -37,7 +36,6 @@ export interface ServerTypes {
     | {
         players: GamePlayer[];
         reason: MinigameEndReason.MINIGAME_ENDED;
-        prizes: GamePrize[];
       };
   [ServerOpcodes.MINIGAME_PLAYER_READY]: { user: string };
   [ServerOpcodes.MINIGAME_START_GAME]: {};

@@ -10,13 +10,8 @@ export enum MinigameOpcodes {
    */
   HANDSHAKE = "handshake",
   /**
-   * When the host ends the game, they'll also provide information, such as who's the winner, second place and third place.
-   * 
-   * The minigame should display who won and gained points once the game ends, before sending the END_GAME message.
-   * 
-   * The minigame will never recieve the END_GAME message, because when the game ends, the iframe will be deleted
-and it will display the leaderboards.
-   * 
+   * End the minigame.
+   *
    * Only the host can send this message.
    */
   END_GAME = "end_game",

@@ -16,7 +16,6 @@ import {
   ServerOpcodes,
   GameStatus,
   MinigameEndReason,
-  GamePrizePoints,
   ErrorMessageCodes,
   MatchmakingType,
   GameSelectPreviousOrNextMinigame,
@@ -109,7 +108,6 @@ websocket.get(
             mobile: "mobile" in metadata ? metadata.mobile : false,
             ready: false,
             state: null,
-            points: 0,
           } as ServerPlayer,
           serverRoom: rooms.get(room.id) as ServerRoom,
         };
@@ -468,34 +466,17 @@ websocket.get(
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
 
-              if (data.prizes) {
+              if (data.force) {
+                // The game was forcefully ended
+                endGame({ room: state.serverRoom, reason: MinigameEndReason.FORCEFUL_END });
+              } else {
                 if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
-
-                // Filters prizes with valid user IDs
-                const prizes = data.prizes.filter((p) => !!state.serverRoom.players.get(p.user));
-
-                // Disallows duplicate user IDs
-                if (prizes.length !== new Set(prizes.map(({ user }) => user)).size) {
-                  return sendError(state.user, ErrorMessageCodes.WS_CANNOT_HAVE_MULTIPLE_PRIZES);
-                }
-
-                // Give prizes
-                for (const { type, user } of prizes) {
-                  const player = state.serverRoom.players.get(user);
-                  if (player) {
-                    player.points += GamePrizePoints[type];
-                  }
-                }
 
                 // Broadcasts end game message
                 endGame({
                   room: state.serverRoom,
                   reason: MinigameEndReason.MINIGAME_ENDED,
-                  prizes,
                 });
-              } else {
-                // If there isn't prizes, the game was forcefully ended
-                endGame({ room: state.serverRoom, reason: MinigameEndReason.FORCEFUL_END });
               }
 
               // If it was a testing room, delete the room

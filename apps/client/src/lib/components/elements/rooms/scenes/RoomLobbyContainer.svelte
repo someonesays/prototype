@@ -566,8 +566,6 @@ function joinDiscordServer(evt: MouseEvent) {
                       <Crown color="#ffa64d" />
                     {/if}
                     
-                    <span class="player-points">{player.points}</span>
-                    
                     {#if $room.room.host === $room.user && $room.user !== player.id}
                       <div class="player-actions">
                         <div>
@@ -974,8 +972,7 @@ function joinDiscordServer(evt: MouseEvent) {
   }
 
   .player-card.client-is-host:hover .player-avatar,
-  .player-card.client-is-host:hover .player-name,
-  .player-card.client-is-host:hover .player-points {
+  .player-card.client-is-host:hover .player-name {
     display: none;
   }
   .player-actions {

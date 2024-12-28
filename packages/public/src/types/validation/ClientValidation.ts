@@ -1,5 +1,5 @@
 import z from "zod";
-import { ClientOpcodes, GameSelectPreviousOrNextMinigame, GamePrizeArrayZod, StateZod } from "../../types";
+import { ClientOpcodes, GameSelectPreviousOrNextMinigame, StateZod } from "../../types";
 
 export const ClientValidation = {
   [ClientOpcodes.PING]: z.object({}),
@@ -14,7 +14,7 @@ export const ClientValidation = {
   }),
   [ClientOpcodes.BEGIN_GAME]: z.object({}),
   [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({ roomHandshakeCount: z.number().optional() }),
-  [ClientOpcodes.MINIGAME_END_GAME]: z.object({ prizes: GamePrizeArrayZod.optional() }),
+  [ClientOpcodes.MINIGAME_END_GAME]: z.object({ force: z.boolean() }),
   [ClientOpcodes.MINIGAME_SET_GAME_STATE]: z.object({ state: StateZod }),
   [ClientOpcodes.MINIGAME_SET_PLAYER_STATE]: z.object({ user: z.string().min(1).max(50), state: StateZod }),
   [ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE]: z.object({ message: StateZod }),
