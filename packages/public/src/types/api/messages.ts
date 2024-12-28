@@ -45,7 +45,6 @@ export enum ErrorMessageCodes {
   WS_CANNOT_HANDSHAKE_IF_READY = "ws_cannot_handshake_if_ready",
   WS_NOT_READY = "ws_not_ready",
   WS_CANNOT_FIND_READY_PLAYER = "ws_cannot_find_ready_player_to_send_message_to",
-  WS_CANNOT_HAVE_MULTIPLE_PRIZES = "ws_cannot_have_multiple_prizes",
   WS_NOT_HOST_PRIVATE_MESSAGE = "ws_not_host_private_message",
 }
 
@@ -99,6 +98,5 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.WS_CANNOT_HANDSHAKE_IF_READY]: "Cannot handshake if already ready.",
   [ErrorMessageCodes.WS_NOT_READY]: "Cannot run this action if you are not ready.",
   [ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER]: "Cannot find ready player with given id to run this action",
-  [ErrorMessageCodes.WS_CANNOT_HAVE_MULTIPLE_PRIZES]: "A user cannot have multiple prizes.",
   [ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE]: "Only the host can send private messages to other players.",
 };

@@ -93,7 +93,7 @@ onMount(() => {
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
-      data: evt,
+      data: { force: false },
     });
   });
   sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
@@ -183,7 +183,7 @@ function leaveOrEndGameConfirm() {
 
     return $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
-      data: {},
+      data: { force: true },
     });
   }
 
@@ -197,8 +197,7 @@ function leaveOrEndGameConfirm() {
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug color="#000000" /></div>
     <p>
-      Are you sure you want to end this minigame?<br>
-      Points will not be awarded.
+      Are you sure you want to end this minigame?
     </p>
     <p>
       <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>

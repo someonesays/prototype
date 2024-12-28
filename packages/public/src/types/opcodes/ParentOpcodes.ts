@@ -31,8 +31,6 @@ export enum ParentOpcodes {
    * If a player leaves, a player left state will be given.
    *
    * If the host leaves, the PlayerLeft event will not be given to the minigame, because the game will alert every player that the host has left and forcibly end the minigame.
-   *
-   * The minigame will end with "no winner" and nobody will gain points.
    */
   PLAYER_LEFT = "player_left",
   /**
