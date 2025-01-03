@@ -5,12 +5,11 @@ import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { user, token } from "$lib/stores/developers/cache";
-import type { ApiGetUserMinigames, ApiGetUserPacks } from "@/public";
+import type { ApiGetUserMinigames } from "@/public";
 
 let failedToLogin = $state(false);
 
 let minigames = $state<ApiGetUserMinigames>({ offset: 0, limit: 0, total: 0, minigames: [] });
-let packs = $state<ApiGetUserPacks>({ offset: 0, limit: 0, total: 0, packs: [] });
 
 onMount(() => {
   (async () => {
@@ -37,7 +36,6 @@ onMount(() => {
     }
 
     fetchMinigames();
-    fetchPacks();
   })();
 });
 
@@ -48,16 +46,6 @@ async function fetchMinigames() {
   if (!minigamesResponse.ok) return false;
 
   minigames = await minigamesResponse.json();
-  return true;
-}
-
-async function fetchPacks() {
-  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs?limit=1000`, {
-    headers: { authorization: $token },
-  });
-  if (!minigamesResponse.ok) return false;
-
-  packs = await minigamesResponse.json();
   return true;
 }
 
@@ -73,20 +61,6 @@ async function createMinigame() {
 
   const id = (await res.json()).id;
   return goto(`/developers/minigames/${encodeURIComponent(id)}`);
-}
-
-async function createPack() {
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/packs`, {
-    method: "POST",
-    headers: { authorization: $token, "content-type": "application/json" },
-    body: JSON.stringify({
-      name: "[add your pack name here]",
-    }),
-  });
-  if (!res.ok) return alert("Failed to create pack.");
-
-  const id = (await res.json()).id;
-  return goto(`/developers/packs/${encodeURIComponent(id)}`);
 }
 
 async function updateUser(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
@@ -176,17 +150,6 @@ async function logoutAllSessions() {
         <div>
           <a class="url light" href="/developers/minigames/{minigame.id}">
             {minigame.name}
-          </a>
-        </div>
-      {/each}
-    
-      <h2>Packs</h2>
-      <button class="success-button" onclick={createPack}>Create pack</button>
-      <br>
-      {#each packs.packs as pack}
-        <div>
-          <a class="url light" href="/developers/packs/{pack.id}">
-            {pack.name}
           </a>
         </div>
       {/each}

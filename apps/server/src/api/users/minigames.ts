@@ -7,9 +7,8 @@ import {
   deleteMinigameWithAuthorId,
   findBestTestingServerByHashAndLocation,
   getMinigameByAuthorId,
-  getMinigameCountByAuthorId,
-  getMinigamesByAuthorId,
-  removeMinigameFromAllPacks,
+  getMinigames,
+  getMinigamesCount,
   updateMinigameWithAuthorId,
 } from "@/db";
 import { createCode, resetRoom, validateUrl } from "@/utils";
@@ -22,7 +21,6 @@ const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
-  publicallyAddableToPack: z.boolean().default(true),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
   privacyPolicy: z.string().refine(validateUrl).nullable().default(null),
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),
@@ -34,7 +32,7 @@ const userMinigameZod = z.object({
 
 userMinigames.get("/", authMiddleware, async (c) => {
   const { offset, limit } = getOffsetAndLimit(c);
-  return c.json(await getMinigamesByAuthorId({ authorId: c.var.user.id, offset, limit }));
+  return c.json(await getMinigames({ authorId: c.var.user.id, offset, limit }));
 });
 
 userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
@@ -48,7 +46,7 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
   const success = await minigameCreationLimit.check(c.var.user.id);
   if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
-  const count = await getMinigameCountByAuthorId(c.var.user.id);
+  const count = await getMinigamesCount({ authorId: c.var.user.id });
   if (count >= 1000) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
@@ -100,16 +98,6 @@ userMinigames.post(
     return c.json({ testingLocation: values.location, testingAccessCode });
   },
 );
-
-userMinigames.delete("/:id/packs", authMiddleware, async (c) => {
-  const id = c.req.param("id");
-
-  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
-  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
-
-  await removeMinigameFromAllPacks(minigame.id);
-  return c.json({ success: true });
-});
 
 userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
   const id = c.req.param("id");

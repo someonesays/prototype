@@ -18,9 +18,3 @@ export const minigameAccessCodeResetLimit = new RateLimiter({
   maximum: env.NODE_ENV !== "development" ? 1 : Infinity,
   interval: 5,
 });
-
-export const packCreationLimit = new RateLimiter({
-  keyspace: "pack_creation",
-  maximum: env.NODE_ENV !== "development" ? 1 : Infinity,
-  interval: 10,
-});

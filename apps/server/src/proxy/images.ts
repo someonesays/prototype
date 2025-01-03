@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
-import { getMinigame, getPack } from "@/db";
+import { getMinigame } from "@/db";
 import { ErrorMessageCodes } from "@/public";
 import { sendProxiedImage } from "../utils";
 
@@ -20,13 +20,4 @@ images.get("/minigames/:id/preview", async (c) => {
   if (!minigame?.previewImage) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
   return sendProxiedImage(c, minigame.previewImage);
-});
-
-images.get("/packs/:id/icon", async (c) => {
-  const id = c.req.param("id");
-
-  const pack = await getPack(id);
-  if (!pack?.iconImage) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
-
-  return sendProxiedImage(c, pack.iconImage);
 });

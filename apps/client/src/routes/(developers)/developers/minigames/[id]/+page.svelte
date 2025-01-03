@@ -42,7 +42,6 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
   const name = form.get("name") as string;
   const description = form.get("description") as string;
   const previewImage = (form.get("previewImage") as string) || null;
-  const publicallyAddableToPack = Boolean(form.get("publicallyAddableToPack"));
   const termsOfServices = (form.get("termsOfServices") as string) || null;
   const privacyPolicy = (form.get("privacyPolicy") as string) || null;
   const proxyUrl = (form.get("proxyUrl") as string) || null;
@@ -58,7 +57,6 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
       name,
       description,
       previewImage,
-      publicallyAddableToPack,
       termsOfServices,
       privacyPolicy,
       proxyUrl,
@@ -103,19 +101,6 @@ async function regenTestingAccessCode() {
 
   alert("Success!");
   refreshStates();
-}
-
-async function removeMinigameFromAllPacks() {
-  if (!minigame) throw new Error("Minigame hasn't loaded yet");
-
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/packs`, {
-    method: "DELETE",
-    headers: { authorization: $token },
-  });
-
-  if (!res.ok) return alert(await res.text());
-
-  alert("Success!");
 }
 </script>
 
@@ -167,11 +152,6 @@ async function removeMinigameFromAllPacks() {
 
         <label for="previewImage">Preview image URL:</label>
         <input class="input" name="previewImage" value={minigame.previewImage}>
-
-        <br><br>
-
-        <label for="publicallyAddableToPack">Publically addable to pack:</label>
-        <input type="checkbox" name="publicallyAddableToPack" checked={minigame.publicallyAddableToPack}>
 
         <br><br>
 
@@ -234,7 +214,6 @@ async function removeMinigameFromAllPacks() {
       <p>These actions are dangerous and not undoable.</p>
 
       <p>
-        <button class="error-button" onclick={removeMinigameFromAllPacks}>Remove minigame from all packs</button><br><br>
         <button class="error-button" onclick={deleteMinigame}>Delete minigame</button>
       </p>
     {/if}

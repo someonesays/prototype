@@ -19,7 +19,6 @@ export const minigames = pgTable("minigames", {
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
   publishType: smallint("publish_type").$type<MinigamePublishType>().notNull().default(MinigamePublishType.UNLISTED),
-  publicallyAddableToPack: boolean("publically_addable_to_pack").notNull().default(true),
 
   termsOfServices: text("terms_of_services"),
   privacyPolicy: text("privacy_policy"),
@@ -36,6 +35,8 @@ export const minigames = pgTable("minigames", {
 
   supportsMobile: boolean("supports_mobile").notNull().default(false),
   mobileOrientation: smallint("mobile_orientation").$type<MinigameOrientation>().notNull().default(MinigameOrientation.NONE),
+
+  currentlyFeatured: boolean("currently_featured").notNull().default(false),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(NOW),

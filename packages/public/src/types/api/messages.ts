@@ -9,13 +9,7 @@ export enum ErrorMessageCodes {
   FAILED_TO_FETCH = "failed_to_fetch",
   INVALID_CONTENT_TYPE = "invalid_content_type",
 
-  CANNOT_FIND_MINIGAME_FOR_PACK = "cannot_find_minigame_for_pack",
-  MINIGAME_DISABLED_FROM_BEING_ADDED_TO_PACKS = "minigame_disabled_from_being_added_to_packs",
-  MINIGAME_ALREADY_IN_PACK = "minigame_already_in_pack",
-  REACHED_PACK_MINIGAME_LIMIT = "reached_pack_minigame_limit",
-
   REACHED_MINIGAME_LIMIT = "reached_minigame_limit",
-  REACHED_PACK_LIMIT = "reached_pack_limit",
 
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
@@ -33,11 +27,8 @@ export enum ErrorMessageCodes {
   WS_DISABLED_DURING_GAME = "ws_disabled_during_game",
   WS_CANNOT_KICK_SELF = "ws_cannot_kick_self",
   WS_CANNOT_TRANSFER_SELF = "ws_cannot_transfer_self",
-  WS_CANNOT_FIND_PACK = "ws_cannot_find_pack",
-  WS_PACK_IS_EMPTY = "ws_pack_is_empty",
   WS_CANNOT_FIND_MINIGAME = "ws_cannot_find_minigame",
   WS_MINIGAME_MISSING_PROXY_URL = "ws_minigame_missing_proxy_url",
-  WS_CANNOT_FIND_MINIGAME_IN_PACK = "ws_cannot_find_minigame_in_pack",
   WS_CANNOT_START_WITHOUT_MINIGAME = "ws_cannot_start_without_minigame",
   WS_CANNOT_START_FAILED_REQUIREMENTS = "ws_cannot_start_failed_requirements",
   WS_GAME_HAS_NOT_STARTED = "ws_game_has_not_started",
@@ -59,15 +50,7 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.FAILED_TO_FETCH]: "Failed to fetch.",
   [ErrorMessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
 
-  [ErrorMessageCodes.CANNOT_FIND_MINIGAME_FOR_PACK]: "Failed to find the minigame to add to the pack.",
-  [ErrorMessageCodes.MINIGAME_DISABLED_FROM_BEING_ADDED_TO_PACKS]:
-    "This minigame has disabled permission to be added to packs.",
-  [ErrorMessageCodes.MINIGAME_ALREADY_IN_PACK]: "The minigame is already in the pack.",
-
   [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (1000)",
-  [ErrorMessageCodes.REACHED_PACK_LIMIT]: "You have reached the packs limit! (1000)",
-  [ErrorMessageCodes.REACHED_PACK_MINIGAME_LIMIT]:
-    "You have reached the maximum amount of minigames a pack can have! (1000)",
 
   [ErrorMessageCodes.MISSING_LOCATION]: "Missing location.",
   [ErrorMessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",
@@ -85,11 +68,8 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.WS_DISABLED_DURING_GAME]: "Cannot run this action during a game.",
   [ErrorMessageCodes.WS_CANNOT_KICK_SELF]: "Cannot kick yourself.",
   [ErrorMessageCodes.WS_CANNOT_TRANSFER_SELF]: "Cannot transfer host to yourself.",
-  [ErrorMessageCodes.WS_CANNOT_FIND_PACK]: "A pack with given ID doesn't exist!",
-  [ErrorMessageCodes.WS_PACK_IS_EMPTY]: "The pack is empty! It doesn't contain any minigames.",
   [ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME]: "A minigame with given ID doesn't exist!",
   [ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL]: "Cannot select a minigame missing a proxy URL",
-  [ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK]: "Cannot find minigame in pack.",
   [ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME]: "Cannot start game without selecting a minigame.",
   [ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS]:
     "Cannot start game that fails to satisfy the minigame's minimum players to start requirement.",

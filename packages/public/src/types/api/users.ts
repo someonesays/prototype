@@ -1,5 +1,5 @@
 import type { schema } from "@/db";
-import type { Minigame, User } from "../../types";
+import type { User } from "../../types";
 
 export interface ApiGetUserMe {
   user: typeof schema.users.$inferSelect;
@@ -21,27 +21,5 @@ export interface ApiGetUserMinigame {
 }
 
 export interface ApiPostUserMinigame {
-  id: string;
-}
-
-export interface ApiGetUserPacks {
-  offset: number;
-  limit: number;
-  total: number;
-  packs: (typeof schema.packs.$inferSelect)[];
-}
-
-export interface ApiGetUserPack {
-  pack: typeof schema.packs.$inferSelect;
-}
-
-export interface ApiGetUserPackMinigames {
-  offset: number;
-  limit: number;
-  total: number;
-  minigames: Minigame[];
-}
-
-export interface ApiPostUserPack {
   id: string;
 }

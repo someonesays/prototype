@@ -4,7 +4,6 @@ import { relations } from "drizzle-orm";
 import { NOW } from "../src/utils/utils";
 
 import { minigames } from "./minigames";
-import { packs } from "./packs";
 
 export const users = pgTable("users", {
   id: text("id")
@@ -19,5 +18,4 @@ export const users = pgTable("users", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   minigames: many(minigames),
-  packs: many(packs),
 }));
