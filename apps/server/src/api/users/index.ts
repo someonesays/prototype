@@ -6,12 +6,10 @@ import { getUserPublic, resetUserLastRevokedToken, updateUser } from "@/db";
 import { ErrorMessageCodes } from "@/public";
 
 import { userMinigames } from "./minigames";
-import { userPacks } from "./packs";
 
 export const users = new Hono();
 
 users.route("/@me/minigames", userMinigames);
-users.route("/@me/packs", userPacks);
 
 users.get("/@me", authMiddleware, async (c) => {
   return c.json({ user: c.var.user });

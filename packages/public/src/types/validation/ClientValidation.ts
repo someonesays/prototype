@@ -6,11 +6,7 @@ export const ClientValidation = {
   [ClientOpcodes.KICK_PLAYER]: z.object({ user: z.string().min(1).max(50) }),
   [ClientOpcodes.TRANSFER_HOST]: z.object({ user: z.string().min(1).max(50) }),
   [ClientOpcodes.SET_ROOM_SETTINGS]: z.object({
-    packId: z.string().min(1).max(50).nullable(),
     minigameId: z.string().min(1).max(50).nullable(),
-  }),
-  [ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME]: z.object({
-    direction: z.nativeEnum(GameSelectPreviousOrNextMinigame),
   }),
   [ClientOpcodes.BEGIN_GAME]: z.object({}),
   [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({ roomHandshakeCount: z.number().optional() }),
@@ -41,7 +37,6 @@ export type ClientOpcodeAndDatas =
   | ClientOpcodeAndData<ClientOpcodes.KICK_PLAYER>
   | ClientOpcodeAndData<ClientOpcodes.TRANSFER_HOST>
   | ClientOpcodeAndData<ClientOpcodes.SET_ROOM_SETTINGS>
-  | ClientOpcodeAndData<ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME>
   | ClientOpcodeAndData<ClientOpcodes.BEGIN_GAME>
   | ClientOpcodeAndData<ClientOpcodes.MINIGAME_HANDSHAKE>
   | ClientOpcodeAndData<ClientOpcodes.MINIGAME_END_GAME>

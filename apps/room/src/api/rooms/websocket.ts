@@ -5,10 +5,6 @@ import {
   findBestTestingServerByHashAndLocation,
   getMinigameByIdAndTestingAccessCode,
   getMinigamePublic,
-  getPackMinigameCount,
-  getPackMinigamesPublic,
-  getPackPublic,
-  isMinigameInPack,
   transformMinigameToMinigamePublic,
 } from "@/db";
 import {
@@ -20,7 +16,6 @@ import {
   MatchmakingType,
   GameSelectPreviousOrNextMinigame,
   type MatchmakingDataJWT,
-  type Pack,
   type Minigame,
 } from "@/public";
 import {
@@ -153,13 +148,10 @@ websocket.get(
               host: state.user.id,
               state: null,
             },
-            pack: null,
             minigame: defaultMinigame, // defaults as null, sets the minigame for testing rooms
             players,
             testingShutdown: false,
             roomHandshakeCount: 0,
-            packMinigameOrder: null,
-            packRandomSeed: null,
           };
 
           rooms.set(room.id, state.serverRoom);
@@ -221,24 +213,7 @@ websocket.get(
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
-              const newSettings: { pack: Pack | null; minigame: Minigame | null; packRandomSeed: number | null } = {
-                pack: null,
-                minigame: null,
-                packRandomSeed: null,
-              };
-
-              if (data.packId) {
-                // Get minigame pack
-                const pack = await getPackPublic(data.packId);
-                if (!pack) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_PACK);
-
-                // Set pack in new settings
-                newSettings.pack = pack;
-
-                if (newSettings.pack?.randomize) {
-                  newSettings.packRandomSeed = Math.random() * 2 - 1;
-                }
-              }
+              const newSettings: { minigame: Minigame | null } = { minigame: null };
 
               if (data.minigameId) {
                 // Get minigame
@@ -246,132 +221,21 @@ websocket.get(
                 if (!minigame) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
                 if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
 
-                // Set pack in new settings
+                // Set minigame in new settings
                 newSettings.minigame = minigame;
-              } else if (newSettings.pack) {
-                // Get the first minigame in the pack and set it
-                const { minigames } = await getPackMinigamesPublic({
-                  id: newSettings.pack.id,
-                  limit: 1,
-                  randomSeed: newSettings.packRandomSeed,
-                });
-                if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_PACK_IS_EMPTY);
-
-                const minigame = minigames[0];
-                if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
-
-                // Set pack in new settings
-                newSettings.minigame = minigame;
-              }
-
-              if (newSettings.pack && !newSettings.minigame) {
-                throw new Error(
-                  "An unexpected error has occurred where a pack was selected when a minigame wasn't selected. This should never happen.",
-                );
-              }
-
-              if (newSettings.pack && newSettings.minigame) {
-                if (
-                  !(await isMinigameInPack({
-                    packId: newSettings.pack.id,
-                    minigameId: newSettings.minigame.id,
-                  }))
-                ) {
-                  return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK);
-                }
-              } else if (state.serverRoom.pack && newSettings.minigame) {
-                if (
-                  await isMinigameInPack({
-                    packId: state.serverRoom.pack.id,
-                    minigameId: newSettings.minigame.id,
-                  })
-                ) {
-                  newSettings.pack = state.serverRoom.pack;
-                }
               }
 
               // Recheck if the user is the host and there isn't an ongoing game (prevents any race-condition bug)
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
 
-              // Set pack and minigame (!== undefined is necessary as they can be null)
-              state.serverRoom.pack = newSettings.pack;
-              state.serverRoom.minigame = newSettings.minigame;
-              state.serverRoom.packRandomSeed = newSettings.packRandomSeed;
-
-              if (state.serverRoom.pack) {
-                state.serverRoom.packMinigameOrder = 0;
-              } else {
-                state.serverRoom.packMinigameOrder = null;
-              }
-
-              broadcastMessage({
-                room: state.serverRoom,
-                opcode: ServerOpcodes.UPDATED_ROOM_SETTINGS,
-                data: {
-                  pack: state.serverRoom.pack,
-                  minigame: state.serverRoom.minigame,
-                },
-              });
-
-              return;
-            }
-            case ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME: {
-              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
-              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
-
-              if (!state.serverRoom.pack) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_PACK);
-              if (state.serverRoom.packMinigameOrder === null) {
-                throw new Error("Pack minigame order is null. This should never happen!");
-              }
-
-              // Get minigame count in pack
-              const count = await getPackMinigameCount(state.serverRoom.pack.id);
-
-              // Check if you want to get the previous minigame or the next one
-              let newDirection =
-                data.direction === GameSelectPreviousOrNextMinigame.Previous
-                  ? state.serverRoom.packMinigameOrder - 1
-                  : state.serverRoom.packMinigameOrder + 1;
-
-              // Disallow going negative
-              if (newDirection < 0) {
-                newDirection = count - 1;
-              }
-
-              // Disallow going over the limit
-              if (newDirection >= count) {
-                newDirection = 0;
-              }
-
-              // Get the minigame
-              const { minigames } = await getPackMinigamesPublic({
-                id: state.serverRoom.pack.id,
-                offset: newDirection,
-                limit: 1,
-                randomSeed: state.serverRoom.packRandomSeed,
-              });
-              if (!minigames.length) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME);
-
-              // Missing proxy URL
-              const minigame = minigames[0];
-              if (!minigame.proxies) return sendError(state.user, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL);
-
-              // Race condition check
-              if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
-              if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
-
               // Set minigame
-              state.serverRoom.packMinigameOrder = newDirection;
-              state.serverRoom.minigame = minigame;
+              state.serverRoom.minigame = newSettings.minigame;
 
               broadcastMessage({
                 room: state.serverRoom,
                 opcode: ServerOpcodes.UPDATED_ROOM_SETTINGS,
-                data: {
-                  pack: state.serverRoom.pack,
-                  minigame: state.serverRoom.minigame,
-                },
+                data: { minigame: state.serverRoom.minigame },
               });
 
               return;
@@ -775,7 +639,6 @@ websocket.get(
             status: state.serverRoom.status,
             user: state.user.id,
             room: state.serverRoom.room,
-            pack: state.serverRoom.pack,
             minigame: state.serverRoom.minigame,
             players: transformToGamePlayers(state.serverRoom.players),
           },

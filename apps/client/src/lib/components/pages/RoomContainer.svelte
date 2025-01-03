@@ -28,7 +28,7 @@ import {
   roomMinigameReady,
   roomJoinedLate,
   roomLobbyPopupMessage,
-  roomFeaturedPacks,
+  roomFeaturedMinigames,
 } from "$lib/stores/home/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/stores/home/launcher";
 import { kickedReason } from "$lib/stores/home/lobby";
@@ -47,9 +47,6 @@ const roomId = page.params.roomId;
 let connected = $state(false);
 let allowExitingPage = $state(true);
 let exitedPage = $state(false);
-
-// svelte-ignore non_reactive_update
-let lobbyContainerComponent: { handleSelectMinigameInPack: (noModal?: boolean) => void };
 
 // Warning when you try to leave the page
 beforeNavigate(({ cancel }) => {
@@ -86,26 +83,15 @@ onMount(() => {
     const code = evt.code as ErrorMessageCodes;
     if (
       ![
-        ErrorMessageCodes.WS_CANNOT_FIND_PACK,
-        ErrorMessageCodes.WS_PACK_IS_EMPTY,
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
         ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
-        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
         ErrorMessageCodes.WS_CANNOT_START_WITHOUT_MINIGAME,
         ErrorMessageCodes.WS_CANNOT_START_FAILED_REQUIREMENTS,
       ].includes(code)
     )
       return;
 
-    if (
-      [
-        ErrorMessageCodes.WS_CANNOT_FIND_PACK,
-        ErrorMessageCodes.WS_PACK_IS_EMPTY,
-        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
-        ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL,
-        ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME_IN_PACK,
-      ].includes(code)
-    ) {
+    if ([ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME, ErrorMessageCodes.WS_MINIGAME_MISSING_PROXY_URL].includes(code)) {
       $roomRequestedToChangeSettings = false;
     }
 
@@ -154,11 +140,7 @@ onMount(() => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
 
     $roomRequestedToChangeSettings = false;
-    if (
-      ["select-minigame", "select-minigame-in-pack", "select-pack", "select-pack-featured"].includes(
-        $roomLobbyPopupMessage?.type ?? "",
-      )
-    ) {
+    if ($roomLobbyPopupMessage?.type === "select-minigame") {
       $roomLobbyPopupMessage = null;
       $isModalOpen = false;
     }
@@ -174,10 +156,8 @@ onMount(() => {
     }
 
     const oldMinigameId = $room.minigame?.id;
-    const oldPackId = $room.pack?.id;
 
     $room.minigame = evt.minigame;
-    $room.pack = evt.pack;
 
     if ($room.minigame && $room.minigame.id !== oldMinigameId) {
       const minigamePreviewImage = $room.minigame.previewImage;
@@ -187,18 +167,6 @@ onMount(() => {
         if (!$room?.minigame) return;
         $room.minigame.previewImage = minigamePreviewImage;
       }, 0);
-    }
-
-    if ($room.pack && $room.pack.id !== oldPackId) {
-      const packIconImage = $room.pack.iconImage;
-      $room.pack.iconImage = null;
-
-      setTimeout(() => {
-        if (!$room?.pack) return;
-        $room.pack.iconImage = packIconImage;
-      }, 0);
-
-      lobbyContainerComponent?.handleSelectMinigameInPack(true);
     }
   });
 
@@ -227,12 +195,7 @@ onMount(() => {
     setTimeout(() => {
       switch (evt.reason) {
         case MinigameEndReason.MINIGAME_ENDED: {
-          // Choose the next minigame in the pack
           $roomRequestedToChangeSettings = true;
-          $roomWs?.send({
-            opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
-            data: { direction: GameSelectPreviousOrNextMinigame.Next },
-          });
           break;
         }
         case MinigameEndReason.FORCEFUL_END: {
@@ -405,7 +368,7 @@ onMount(() => {
     // Remove room from stores
     $room = null;
     $roomHandshakeCount = 0;
-    $roomFeaturedPacks = null;
+    $roomFeaturedMinigames = null;
     $launcherMatchmaking = null;
     $roomMinigameReady = false;
     $roomJoinedLate = false;
@@ -438,7 +401,7 @@ function kick(reason?: string) {
 </script>
   
 {#if !$room || $room.status === GameStatus.LOBBY}
-  <LobbyContainer bind:this={lobbyContainerComponent} />
+  <LobbyContainer />
 {:else if $room.status === GameStatus.STARTED || $room.status === GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME}
   <MinigameContainer /> 
 {/if}

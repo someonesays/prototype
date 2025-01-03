@@ -8,8 +8,8 @@
     "dev": "bun --filter './apps/*' dev",
     "preview": "bun --filter './apps/*' preview",
     "format": "biome format --write ./",
-    "schema/push": "bun --filter @/db schema/push",
-    "schema/generate": "bun --filter @/db schema/generate",
+    "schema/push": "cd packages/db && bun schema/push",
+    "schema/generate": "cd packages/db && bun schema/generate",
     "schema/migrate": "bun --filter @/db schema/migrate"
   },
   "devDependencies": {

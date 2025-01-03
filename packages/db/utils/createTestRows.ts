@@ -1,9 +1,9 @@
-import { MatchmakingLocation, MinigamePathType, MinigamePublishType, PackPublishType } from "@/public";
-import { addMinigameToPack, createMinigame, createPack, createServer, createUser } from "../src/utils";
+import { MatchmakingLocation, MinigamePathType, MinigamePublishType } from "@/public";
+import { createMinigame, createServer, createUser } from "../src/utils";
 
 const authorId = await createUser({ name: "Two", discordId: "276497792526974996" });
 
-const minigameId = await createMinigame({
+await createMinigame({
   id: "whwj9rs8vvd6alyznh",
   name: "Click the buttons",
   authorId,
@@ -18,17 +18,6 @@ const minigameId = await createMinigame({
   minimumPlayersToStart: 1, // (there's nothing stopping a player from leaving AFTER a game starts)
   supportsMobile: true,
 });
-
-const packId = await createPack({
-  id: "aq23ndwgztlt16vjwz",
-  authorId,
-  name: "Example pack name",
-  description: "This is the pack's description.",
-  iconImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/PlaceholderLC.png",
-  publishType: PackPublishType.PUBLIC_OFFICIAL,
-});
-
-await addMinigameToPack({ packId, minigameId });
 
 await createServer({
   id: "000",

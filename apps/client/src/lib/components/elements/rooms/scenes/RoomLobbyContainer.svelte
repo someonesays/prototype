@@ -1,6 +1,4 @@
 <script lang="ts">
-import env from "$lib/utils/env";
-
 import { onMount } from "svelte";
 import { clickOutside } from "$lib/utils/clickOutside";
 
@@ -29,15 +27,7 @@ import {
 } from "$lib/stores/home/roomState";
 import { isModalOpen } from "$lib/stores/home/modal";
 
-import {
-  ClientOpcodes,
-  ErrorMessageCodes,
-  ErrorMessageCodesToText,
-  GameSelectPreviousOrNextMinigame,
-  MinigamePublishType,
-  PackPublishType,
-  type ApiGetPackMinigames,
-} from "@/public";
+import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, MinigamePublishType } from "@/public";
 import { Common, Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
 
 let isSettingsOpen = $state(false);
@@ -52,14 +42,6 @@ let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
 let transformScale = $state(1);
-
-let minigamesInPack = $state<
-  | { loading: false; loaded: false }
-  | { loading: true; loaded: boolean; packId: string; packMinigames?: ApiGetPackMinigames; controller?: AbortController }
->({
-  loading: false,
-  loaded: false,
-});
 
 onMount(() => {
   $roomRequestedToChangeSettings = false;
@@ -119,20 +101,11 @@ function setSettingsForm(evt: SubmitEvent & { currentTarget: EventTarget & HTMLF
   $roomRequestedToChangeSettings = true;
 
   const form = new FormData(evt.target as HTMLFormElement);
-  const packId = (form.get("pack_id") as string) || null;
   const minigameId = (form.get("minigame_id") as string) || null;
 
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { packId, minigameId },
-  });
-}
-
-function setSettings({ packId = null, minigameId = null }: { packId?: string | null; minigameId?: string | null }) {
-  $roomRequestedToChangeSettings = true;
-  $roomWs?.send({
-    opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { packId, minigameId },
+    data: { minigameId },
   });
 }
 
@@ -141,82 +114,11 @@ export async function handleSelectMinigame() {
   $isModalOpen = true;
 }
 
-export async function handleSelectMinigameInPack(noModal = false) {
-  if (!$room?.pack) {
-    throw new Error("Missing pack on handleSelectMinigameInPack");
-  }
-
-  const packId = $room.pack.id;
-
-  // If cached or loading, use that information
-
-  if (minigamesInPack.loading && minigamesInPack.packId === packId) {
-    if (noModal) return;
-
-    $roomLobbyPopupMessage = { type: "select-minigame-in-pack" };
-    $isModalOpen = true;
-    return;
-  }
-
-  // Get minigames in pack
-
-  if (minigamesInPack.loading && minigamesInPack.controller) minigamesInPack.controller.abort();
-
-  const controller = new AbortController();
-  minigamesInPack = { loading: true, loaded: false, packId, controller };
-
-  let url: string;
-  switch ($launcher) {
-    case "normal":
-      url = `${env.VITE_BASE_API}/api/packs/${$room.pack.id}/minigames`;
-      break;
-    case "discord":
-      url = `/.proxy/api/packs/${$room.pack.id}/minigames`;
-      break;
-    default:
-      throw new Error("Invalid launcher for handleSelectMinigameInPack");
-  }
-
-  if (!noModal) {
-    $roomLobbyPopupMessage = { type: "select-minigame-in-pack" };
-    $isModalOpen = true;
-  }
-
-  try {
-    const res = await fetch(url, { method: "get", signal: controller.signal });
-    const packMinigames = (await res.json()) as ApiGetPackMinigames;
-
-    if (!res.ok) throw new Error("Failed to load minigames in pack (response is not OK)");
-
-    minigamesInPack = { loading: true, loaded: true, packId, packMinigames, controller: undefined };
-  } catch (err) {
-    console.error(err);
-    minigamesInPack = { loading: false, loaded: false };
-
-    if (!noModal) {
-      $roomLobbyPopupMessage = { type: "warning", message: "Failed to load minigames in pack." };
-      $isModalOpen = true;
-    }
-  }
-}
-
-function handleSelectPack() {
-  $roomLobbyPopupMessage = { type: "select-pack" };
-  $isModalOpen = true;
-}
-
-function handleSelectPackFeatured() {
-  $roomLobbyPopupMessage = { type: "select-pack-featured" };
-  $isModalOpen = true;
-}
-
-function handleRemoveMinigameAndPack() {
-  if (!$room?.minigame?.id) throw new Error("Cannot remove pack without minigame");
-
+function handleRemoveMinigame() {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { packId: null, minigameId: null },
+    data: { minigameId: null },
   });
 }
 
@@ -225,22 +127,6 @@ function handleReport() {
 
   $roomLobbyPopupMessage = { type: "report" };
   $isModalOpen = true;
-}
-
-function previousMinigameInPack() {
-  $roomRequestedToChangeSettings = true;
-  $roomWs?.send({
-    opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
-    data: { direction: GameSelectPreviousOrNextMinigame.Previous },
-  });
-}
-
-function nextMinigameInPack() {
-  $roomRequestedToChangeSettings = true;
-  $roomWs?.send({
-    opcode: ClientOpcodes.SELECT_PREVIOUS_OR_NEXT_MINIGAME,
-    data: { direction: GameSelectPreviousOrNextMinigame.Next },
-  });
 }
 
 function kickPlayer(user: string) {
@@ -409,72 +295,9 @@ function joinDiscordServer(evt: MouseEvent) {
         <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
         <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
-    {:else if $roomLobbyPopupMessage?.type === "select-minigame-in-pack"}
-      <h2 style="width: 400px; max-width: 100%;">Select minigame in the pack!</h2>
-      {#if minigamesInPack.loaded && minigamesInPack.packMinigames}
-        {#if minigamesInPack.packMinigames.minigames.length === 0}
-          <p>This pack is empty!</p>
-        {:else}
-          <div class="select-minigame-container" style="width: 400px; max-width: 100%;">
-            {#each minigamesInPack.packMinigames.minigames as minigame}
-              <div>
-                <button class="select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ packId: $room?.pack?.id, minigameId: minigame.id })}>
-                  
-                  <div class="preview-image">
-                    {#if minigame?.previewImage}
-                      <img class="preview-image image-fade-in" alt="Pack icon" src={
-                        $launcher === "normal"
-                          ? minigame.previewImage.normal
-                          : minigame.previewImage.discord
-                      } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
-                    {/if}
-                  </div>
-                  <div class="featured-pack-text">
-                    {minigame.name}
-                  </div>
-
-                </button>
-              </div>
-
-            {/each}
-          </div>
-          <br>
-        {/if}
-      {:else}
-        <p>Loading minigames in pack...</p>
-      {/if}
-
-      {#if !removeIdsOption}
-        <button class="primary-button" onclick={(evt) => { evt.preventDefault(); handleSelectMinigame(); }} tabindex={disableTabIndex}>
-          Select minigame by ID
-        </button>
-      {/if}
-      <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
-    {:else if $roomLobbyPopupMessage?.type === "select-pack"}
-      <h2 style="width: 400px; max-width: 100%;">Select a pack by ID</h2>
-      
-      <form onsubmit={setSettingsForm}>
-        <input class="input" type="text" name="pack_id" placeholder="Pack ID" value={$room?.pack?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
-
-        <br><br>
-        <input class="primary-button wait-on-disabled" type="submit" value="Set pack" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
-      </form>
-    {:else if $roomLobbyPopupMessage?.type === "select-pack-featured"}
-      <h2 style="width: 400px; max-width: 100%;">Select a featured pack!</h2>
-
-      <RoomLobbyFeaturedMinigames />
-
-      {#if !removeIdsOption}
-        <button class="primary-button margin-top-16px" onclick={() => handleSelectPack()}>Set pack by ID</button>
-        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
-      {:else}
-        <button class="secondary-button margin-top-16px" onclick={() => $isModalOpen = false}>Cancel</button>
-      {/if}
-      
     {:else if $roomLobbyPopupMessage?.type === "report"}
-      <h2>Report</h2>
-      <p>You can report packs and minigames on our Discord server!</p>
+      <h2>Report minigame</h2>
+      <p>You can report minigames on our Discord server!</p>
       <p>
         <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
           <button class="primary-button margin-top-8px">Join Discord server</button>
@@ -586,52 +409,22 @@ function joinDiscordServer(evt: MouseEvent) {
             {#if $room}
               {#if $room.minigame}
                 <div class="options-container load-fade-in" class:loaded={$room}>
-                  <div class="pack-container" class:no-pack={!$room.pack}>
-                    {#if $room.pack}
-                      <div class="preview-image">
-                        {#if $room.pack?.iconImage}
-                          <img class="preview-image image-fade-in" alt="Pack icon" src={
-                            $launcher === "normal"
-                              ? $room.pack.iconImage.normal
-                              : $room.pack.iconImage.discord
-                          } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
-                        {/if}
-                      </div>
-                      <div>
-                        <div class="pack-name">{$room.pack.name}</div>
-                        <div class="pack-author">by {$room.pack.author.name}</div>
-                      </div>
-                    {:else}
-                      <div>
-                        <div class="pack-name">No pack selected!</div>
-                      </div>
-                    {/if}
+                  <div class="options-section">
+                    <div>
+                      <div class="options-name">A minigame has been selected!</div>
+                    </div>
                   </div>
                   <div class="select-container">
                     {#if $room.room.host === $room.user}
-                      {#if $room.pack}
-                        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-                        <button class="secondary-button select-button" onclick={() => handleSelectMinigameInPack()} tabindex={disableTabIndex}>
-                          Select minigame
-                        </button>
-                        <button class="primary-button select-button" onclick={handleSelectPackFeatured} tabindex={disableTabIndex}>
-                          Change pack
-                        </button>
-                      {:else}
-                      <button class="secondary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
-                        Select minigame
+                      <button class="primary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
+                        Change minigame
                       </button>
-                        <button class="primary-button select-button" onclick={handleSelectPackFeatured} tabindex={disableTabIndex}>
-                          Select pack
-                        </button>
-                      {/if}
-  
-                      <button class="error-button select-button wait-on-disabled" onclick={handleRemoveMinigameAndPack} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
+                      <button class="error-button select-button wait-on-disabled" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
                         Remove
                       </button>
                     {/if}
   
-                    {#if $room.pack?.publishType !== PackPublishType.PUBLIC_OFFICIAL || $room.minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL}
+                    {#if $room.minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL}
                       <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
                         <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
                       </button>
@@ -647,75 +440,42 @@ function joinDiscordServer(evt: MouseEvent) {
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                     <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
                     <p class="nextup-minigame-description">{$room.minigame.description}</p>
-  
-                    <div class="nextup-minigame-legal-container desktop">
-                      {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                        <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
-                          {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
-                            privacy policy
-                          </a>
-                          and
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
-                            terms of service
-                          </a>
-                          {:else if $room.minigame.privacyPolicy}
-                            <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
-                              privacy policy
-                            </a>
-                          {:else if $room.minigame.termsOfServices}
-                            <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
-                              terms of service
-                            </a>
-                          {/if}
-                          apply to this minigame.
-                        </p>
-                      {/if}
-                    </div>
                   </div>
                   <div class="nextup-minigame-preview">
                     {#if $room.minigame?.previewImage}
                       <img class="nextup-minigame-preview-image image-fade-in" alt="Minigame preview" src={$launcher === "normal" ? $room.minigame.previewImage.normal : $room.minigame.previewImage.discord} onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
                     {/if}
                   </div>
-                  <div class="nextup-minigame-legal-container mobile">
-                    {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                      <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name}</b>'s
-                        {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                </div>
+                
+                <div class="nextup-minigame-legal-container">
+                  {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
+                    <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name.length > 30 ? `${$room.minigame.name.slice(0, 27)}...` : $room.minigame.name}</b>'s
+                      {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
+                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
+                        privacy policy
+                      </a>
+                      and
+                      <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
+                        terms of service
+                      </a>
+                      {:else if $room.minigame.privacyPolicy}
                         <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
                           privacy policy
                         </a>
-                        and
+                      {:else if $room.minigame.termsOfServices}
                         <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
                           terms of service
                         </a>
-                        {:else if $room.minigame.privacyPolicy}
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
-                            privacy policy
-                          </a>
-                        {:else if $room.minigame.termsOfServices}
-                          <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.termsOfServices} onclick={openUrl} tabindex={disableTabIndex}>
-                            terms of service
-                          </a>
-                        {/if}
-                        apply to this minigame.
-                      </p>
-                    {/if}
-                  </div>
+                      {/if}
+                      apply to this minigame.
+                    </p>
+                  {/if}
                 </div>
-  
-                {#if $room.room.host === $room.user && $room.pack}
-                  <div class="previousnext-container load-fade-in" class:loaded={$room}>
-                    <div class="previousnext-section">
-                      <button class="previousnext-button" onclick={previousMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Previous</button>
-                      <button class="previousnext-button" onclick={nextMinigameInPack} tabindex={disableTabIndex} disabled={$roomRequestedToChangeSettings}>Next</button>
-                    </div>
-                  </div>
-                {/if}
               {:else}
                 <div class="nothingselected-container load-fade-in" class:loaded={$room}>
                   {#if $room && $room.user === $room.room.host}
-                    <h2>Choose a minigame pack to play!</h2>
+                    <h2>Choose a featured minigame to play!</h2>
 
                     <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
                     <br>
@@ -723,10 +483,7 @@ function joinDiscordServer(evt: MouseEvent) {
                     {#if !removeIdsOption}
                       <div class="nothingselected-buttons">
                         <button class="secondary-button nothingselected-button" onclick={handleSelectMinigame} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-                          Select minigame
-                        </button>
-                        <button class="primary-button nothingselected-button" onclick={handleSelectPack} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-                          Select another pack
+                          Select another minigame
                         </button>
                       </div>
                     {/if}
@@ -1025,22 +782,17 @@ function joinDiscordServer(evt: MouseEvent) {
     justify-content: space-between;
     white-space: pre-line;
   }
-  .pack-container {
+  .options-section {
     display: flex;
     align-items: center;
     gap: 5px;
     white-space: nowrap;
     overflow: auto;
-  }
-  .pack-container.no-pack {
     margin-top: 12px;
     margin-bottom: 6px;
   }
-  .pack-name {
+  .options-name {
     font-weight: bold;
-  }
-  .pack-author {
-    font-size: 14px;
   }
   .select-container {
     display: flex;
@@ -1049,10 +801,7 @@ function joinDiscordServer(evt: MouseEvent) {
   }
 
   .select-button.primary-button {
-    width: 100px;
-  }
-  .select-button.secondary-button {
-    width: 120px;
+    width: 130px;
   }
   .select-button.error-button {
     width: 75px;
@@ -1088,11 +837,8 @@ function joinDiscordServer(evt: MouseEvent) {
   .nextup-minigame-description {
     margin: 12px 0;
   }
-  .nextup-minigame-legal-container.mobile {
-    display: block;
-  }
-  .nextup-minigame-legal-container.desktop {
-    display: none;
+  .nextup-minigame-legal-container {
+    margin-top: 6px;
   }
   .nextup-minigame-legal {
     font-size: 0.8rem;
@@ -1102,10 +848,10 @@ function joinDiscordServer(evt: MouseEvent) {
     background: var(--card-stroke);
     margin-left: 12px;
     width: 50%;
+    max-width: 325px;
+    max-height: 325px;
 
     border-radius: 15px;
-    max-width: 300px;
-    max-height: 300px;
     aspect-ratio: 1 / 1;
     float: right;
     overflow: auto;
@@ -1114,28 +860,16 @@ function joinDiscordServer(evt: MouseEvent) {
     border-radius: 15px;
     width: 100%;
     height: auto;
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 325px;
+    max-height: 325px;
     aspect-ratio: 1 / 1;
     float: right;
     overflow: auto;
   }
-  
+
   .action-container {
     gap: 1rem;
     overflow: auto;
-  }
-  .previousnext-container {
-    display: flex;
-    margin-top: 12px;
-    gap: 1rem;
-    flex: 1;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-  }
-  .previousnext-section {
-    width: 100%;
   }
   .action-container.desktop {
     display: none;
@@ -1147,7 +881,7 @@ function joinDiscordServer(evt: MouseEvent) {
     margin-top: 1rem;
     padding-bottom: 25px;
   }
-  .action-button, .previousnext-button {
+  .action-button {
     border: none;
     border-radius: 0.5rem;
     font-size: 1rem;
@@ -1156,34 +890,16 @@ function joinDiscordServer(evt: MouseEvent) {
     flex: 1;
     transition: 0.3s;
   }
-  .select-minigame-container {
-    display: flex;
-    max-height: 200px;
-    overflow: auto;
-    gap: 3px;
-    flex-direction: column;
-  }
-  .previousnext-button {
-    padding: 0.45rem 1.5rem;
-    font-size: 14px;
-  }
   .action-button {
     padding: 0.75rem 1.5rem;
     height: 50px;
     font-size: 18px;
   }
-  .previousnext-button {
-    width: calc(50% - 2px);
-  }
-  .action-button:active, .previousnext-button {
+  .action-button:active {
     top: 1px;
   }
   .action-button.invite {
     background: var(--primary-button);
-    color: var(--primary);
-  }
-  .previousnext-button {
-    background: var(--secondary-button);
     color: var(--primary);
   }
   .action-button.invite:hover {
@@ -1191,37 +907,6 @@ function joinDiscordServer(evt: MouseEvent) {
   }
   .action-button.invite:click {
     background-color: var(--primary-button-hover);
-  }
-  .previousnext-button:hover {
-    background-color: #343a40;
-  }
-  .previousnext-button:click {
-    background-color: #343a40;
-  }
-  .select-minigame-button {
-    background: var(--primary);
-    display: flex;
-    align-items: center;
-    border: none;
-    border-radius: 15px;
-    width: 98%;
-    cursor: pointer;
-    padding: 6px;
-    overflow: auto;
-    font-size: 16px;
-    gap: 10px;
-    transition: 0.2s;
-    transform: scale(0.99);
-  }
-  .select-minigame-button:hover {
-    background: #fafafa;
-    transform: scale(1);
-  }
-  .select-minigame-button:disabled {
-    cursor: wait;
-  }
-  .previousnext-button:disabled {
-    cursor: wait;
   }
   .action-button.start {
     background: var(--success-button);
@@ -1297,13 +982,6 @@ function joinDiscordServer(evt: MouseEvent) {
       flex-direction: row;
     }
     .hidden {
-      display: block;
-    }
-    
-    .nextup-minigame-legal-container.mobile {
-      display: none;
-    }
-    .nextup-minigame-legal-container.desktop {
       display: block;
     }
 

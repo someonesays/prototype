@@ -29,6 +29,13 @@
       "when": 1734885887705,
       "tag": "0003_dear_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1735869311984,
+      "tag": "0004_steady_crystal",
+      "breakpoints": true
     }
   ]
 }

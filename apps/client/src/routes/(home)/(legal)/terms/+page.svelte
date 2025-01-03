@@ -20,7 +20,7 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
 
     <h3>2. User-Generated Content</h3>
     <ul>
-      <li>Users may create their own "Packs" and "Minigames" within Someone Says.</li>
+      <li>Users may create their own "Minigames" within Someone Says.</li>
       <li>By creating and submitting content to Someone Says, you grant us a worldwide, non-exclusive, royalty-free, transferable, and sublicensable license to use, reproduce, modify, distribute, display, and perform your content in connection with Someone Says.</li>
       <li>You represent and warrant that you own or have the necessary rights to your content and that your content does not infringe or violate any third-party rights.</li>
       <li>We are not responsible for the content, functionality, or any issues arising from user-generated minigames.</li>

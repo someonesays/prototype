@@ -1,9 +1,9 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, or } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { NOW } from "./utils";
-import type { Minigame } from "@/public";
+import { MinigamePublishType, type Minigame } from "@/public";
 
 export async function createMinigame(minigame: typeof schema.minigames.$inferInsert) {
   return (await db.insert(schema.minigames).values(minigame).returning({ id: schema.minigames.id }))[0].id;
@@ -33,39 +33,78 @@ export async function deleteMinigameWithAuthorId({ id, authorId }: { id: string;
   await db.delete(schema.minigames).where(and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)));
 }
 
-export function getMinigamesByIds(ids: string[]) {
-  return db.query.minigames.findMany({
-    where: inArray(schema.minigames.id, ids),
-    orderBy: asc(schema.minigames.createdAt),
-    with: {
-      author: {
-        columns: { id: true, name: true, createdAt: true },
-      },
-    },
-  });
-}
-
-export async function getMinigamesByAuthorId({
+export async function getMinigames({
   authorId,
+  publicOnly,
+  currentlyFeatured,
   offset = 0,
   limit = 50,
-}: { authorId: string; offset?: number; limit?: number }) {
-  const minigames = await db.query.minigames.findMany({
-    offset,
-    limit,
-    where: eq(schema.minigames.authorId, authorId),
-    orderBy: asc(schema.minigames.createdAt),
-  });
+}: {
+  authorId?: string;
+  publicOnly?: boolean;
+  currentlyFeatured?: boolean;
+  offset?: number;
+  limit?: number;
+}) {
+  const where = createMinigamesWhereCondition({ authorId, publicOnly, currentlyFeatured });
   return {
     offset,
     limit,
-    total: await getMinigameCountByAuthorId(authorId),
-    minigames,
+    total: await db.$count(schema.minigames, where),
+    minigames: await db.query.minigames.findMany({
+      offset,
+      limit,
+      where,
+      orderBy: asc(schema.minigames.createdAt),
+      with: {
+        author: { columns: { id: true, name: true, createdAt: true } },
+      },
+    }),
   };
 }
 
-export function getMinigameCountByAuthorId(authorId: string) {
-  return db.$count(schema.minigames, eq(schema.minigames.authorId, authorId));
+export async function getMinigamesPublic(opts: {
+  authorId?: string;
+  publicOnly?: boolean;
+  currentlyFeatured?: boolean;
+  offset?: number;
+  limit?: number;
+}) {
+  const { offset, limit, total, minigames } = await getMinigames(opts);
+  return { offset, limit, total, minigames: minigames.map((m) => transformMinigameToMinigamePublic(m)) };
+}
+
+export function getMinigamesCount({
+  authorId,
+  publicOnly,
+  currentlyFeatured,
+}: {
+  authorId?: string;
+  publicOnly?: boolean;
+  currentlyFeatured?: boolean;
+}) {
+  return db.$count(schema.minigames, createMinigamesWhereCondition({ authorId, publicOnly, currentlyFeatured }));
+}
+
+function createMinigamesWhereCondition({
+  authorId,
+  publicOnly,
+  currentlyFeatured,
+}: {
+  authorId?: string;
+  publicOnly?: boolean;
+  currentlyFeatured?: boolean;
+}) {
+  return and(
+    publicOnly
+      ? or(
+          eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_OFFICIAL),
+          eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_UNOFFICIAL),
+        )
+      : undefined,
+    authorId ? eq(schema.minigames.authorId, authorId) : undefined,
+    currentlyFeatured ? eq(schema.minigames.currentlyFeatured, true) : undefined,
+  );
 }
 
 export function getMinigame(id: string) {
@@ -103,15 +142,6 @@ export async function getMinigamePublic(id: string) {
   return transformMinigameToMinigamePublic(minigame);
 }
 
-export async function getMinigamesByIdsPublic(ids: string[]) {
-  const minigames = await getMinigamesByIds(ids);
-  return minigames.map((m) => transformMinigameToMinigamePublic(m));
-}
-
-export async function removeMinigameFromAllPacks(id: string) {
-  await db.delete(schema.packsMinigames).where(eq(schema.packsMinigames.minigameId, id));
-}
-
 export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<typeof getMinigame>>): Minigame {
   if (!minigame) throw new Error("Missing minigame");
   return {
@@ -119,7 +149,6 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     name: minigame.name,
     description: minigame.description,
     publishType: minigame.publishType,
-    publicallyAddableToPack: minigame.publicallyAddableToPack,
     author: {
       id: minigame.author.id,
       name: minigame.author.name,

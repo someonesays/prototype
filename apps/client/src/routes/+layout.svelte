@@ -18,7 +18,6 @@ onMount(() => {
 
   preloadCode("/developers");
   preloadCode("/developers/minigames/[id]");
-  preloadCode("/developers/packs/[id]");
 
   preloadCode("/auth/discord");
 
