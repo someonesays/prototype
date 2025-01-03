@@ -36,9 +36,9 @@ onMount(() => {
   switch ($room.minigame.mobileOrientation) {
     case MinigameOrientation.NONE:
       $launcherDiscordSdk?.commands.setOrientationLockState({
-        lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
-        picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
-        grid_lock_state: Common.OrientationLockStateTypeObject.UNHANDLED,
+        lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
+        picture_in_picture_lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
+        grid_lock_state: Common.OrientationLockStateTypeObject.UNLOCKED,
       });
       break;
     case MinigameOrientation.HORIZONTAL:
