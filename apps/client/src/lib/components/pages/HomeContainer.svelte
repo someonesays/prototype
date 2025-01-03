@@ -20,6 +20,7 @@ import { isMobileOrTablet } from "$lib/utils/mobile";
 import { isModalOpen } from "$lib/stores/home/modal";
 
 import { launcherMatchmaking } from "$lib/stores/home/launcher";
+import { getFeaturedMinigames } from "$lib/utils/minigames";
 
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
@@ -71,6 +72,13 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   const formCaptcha = new FormData(evt.target as HTMLFormElement); // Reget the form for captcha
   const type = env.VITE_TURNSTILE_BYPASS_SECRET ? "bypass" : triedInvisible ? "managed" : "invisible";
   const token = env.VITE_TURNSTILE_BYPASS_SECRET ?? (formCaptcha.get("cf-turnstile-response") as string);
+
+  if (!(await getFeaturedMinigames())) {
+    disableJoinPage = false;
+    $isModalOpen = true;
+    $kickedReason = saveSamePageKickedReason = "Failed to connect. Check your internet connection.";
+    return;
+  }
 
   // Get room from matchmaking
   const {

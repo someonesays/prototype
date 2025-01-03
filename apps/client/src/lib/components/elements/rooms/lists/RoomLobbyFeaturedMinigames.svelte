@@ -1,54 +1,10 @@
 <script lang="ts">
-import env from "$lib/utils/env";
-import { onMount } from "svelte";
 import { launcher } from "$lib/stores/home/launcher";
-import { ClientOpcodes, type ApiGetMinigames } from "@/public";
-import { isModalOpen } from "$lib/stores/home/modal";
-import {
-  room,
-  roomFeaturedMinigames,
-  roomLobbyPopupMessage,
-  roomRequestedToChangeSettings,
-  roomWs,
-} from "$lib/stores/home/roomState";
+import { ClientOpcodes } from "@/public";
+import { room, roomFeaturedMinigames, roomRequestedToChangeSettings, roomWs } from "$lib/stores/home/roomState";
 
 let { tabindex = 0 } = $props();
 
-onMount(() => {
-  getFeaturedMinigames();
-});
-
-async function getFeaturedMinigames() {
-  let url: string;
-  switch ($launcher) {
-    case "normal":
-      url = `${env.VITE_BASE_API}/api/minigames?featured=true`;
-      break;
-    case "discord":
-      url = `/.proxy/api/minigames?featured=true`;
-      break;
-    default:
-      throw new Error("Invalid launcher for getFeaturedMinigames");
-  }
-
-  try {
-    const res = await fetch(url);
-    const featuredMinigames = (await res.json()) as ApiGetMinigames;
-
-    if (!res.ok) throw new Error("Failed to load featured minigames (response is not OK)");
-
-    $roomFeaturedMinigames = { success: true, minigames: featuredMinigames.minigames };
-  } catch (err) {
-    console.error(err);
-
-    $roomFeaturedMinigames = { success: false, minigames: [] };
-
-    $roomLobbyPopupMessage = { type: "warning", message: "Failed to load featured minigames." };
-    $isModalOpen = true;
-  }
-}
-
-// (copy and pasted from RoomLobbyContainer)
 function setSettings({ minigameId = null }: { minigameId?: string | null }) {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({
@@ -73,7 +29,7 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
             {/if}
           </div>
           <div class="featured-minigame-text">
-            {minigame.name}
+            {minigame.name.length > 30 ? `${minigame.name.slice(0, 30 - 3)}...` : minigame.name}
           </div>
         </button>
       {/each}
@@ -81,23 +37,8 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
   {:else}
     <p>There are no featured minigames currently!</p>
   {/if}
-{:else if $roomFeaturedMinigames?.success === false}
-  <p>Failed to load featured minigames!</p>
 {:else}
-  <div class="featured-container">
-    <div class="featured-minigame-container loading">
-      <div class="preview-image featured loading"></div>
-      <div class="featured-minigame-text">
-        &nbsp;
-      </div>
-    </div>
-    <div class="featured-minigame-container loading">
-      <div class="preview-image featured loading second"></div>
-      <div class="featured-minigame-text">
-        &nbsp;
-      </div>
-    </div>
-  </div>
+  <p>Failed to load featured minigames!</p>
 {/if}
 
 
@@ -133,18 +74,10 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
     align-items: center;
     
     min-width: 7rem;
-    width: 7rem;
-
-    height: 18px;
-
-    white-space: nowrap;
 
     animation-name: minigames-fade-in;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
-  }
-  .preview-image.featured.loading.second {
-    animation-delay: 1.5s;
   }
 
   @keyframes minigames-fade-in {

@@ -9,6 +9,7 @@ import { MatchmakingType, ErrorMessageCodesToText, RoomWebsocket } from "@/publi
 
 import { goto } from "$app/navigation";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/stores/home/launcher";
+import { getFeaturedMinigames } from "$lib/utils/minigames";
 
 let failed = $state(false);
 let transformScale = $state(1);
@@ -77,6 +78,11 @@ onMount(() => {
 
         // Set matchmaking store
         $launcherMatchmaking = matchmaking;
+
+        // Fetch featured minigames
+        if (!(await getFeaturedMinigames())) {
+          return discordSdk.close(RPCCloseCodes.CLOSE_ABNORMAL, "Failed to fetch featured minigames.");
+        }
 
         // Remove resizing loading
         window.removeEventListener("resize", resize);
