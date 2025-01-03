@@ -91,12 +91,12 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
         &nbsp;
       </div>
     </div>
-    <!-- <div class="featured-minigame-container loading">
+    <div class="featured-minigame-container loading">
       <div class="preview-image featured loading second"></div>
       <div class="featured-minigame-text">
         &nbsp;
       </div>
-    </div> -->
+    </div>
   </div>
 {/if}
 
@@ -143,9 +143,9 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
   }
-  /* .preview-image.featured.loading.second {
+  .preview-image.featured.loading.second {
     animation-delay: 1.5s;
-  } */
+  }
 
   @keyframes minigames-fade-in {
     0% {
