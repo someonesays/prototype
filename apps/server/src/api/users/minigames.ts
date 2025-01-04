@@ -1,7 +1,13 @@
 import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { ErrorMessageCodes, MatchmakingLocation, MinigameOrientation, MinigamePathType } from "@/public";
+import {
+  ErrorMessageCodes,
+  MatchmakingLocation,
+  MinigameOrientation,
+  MinigamePathType,
+  MinigamePublishType,
+} from "@/public";
 import {
   createMinigame,
   deleteMinigameWithAuthorId,
@@ -21,6 +27,7 @@ const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
+  publishType: z.nativeEnum(MinigamePublishType).default(MinigamePublishType.UNLISTED),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
   privacyPolicy: z.string().refine(validateUrl).nullable().default(null),
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),
@@ -48,6 +55,11 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
 
   const count = await getMinigamesCount({ authorId: c.var.user.id });
   if (count >= 100) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
+
+  if (values.publishType === MinigamePublishType.PUBLIC_OFFICIAL) {
+    // Disallow people from publishing games as official minigames
+    values.publishType = MinigamePublishType.PUBLIC_UNOFFICIAL;
+  }
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });
@@ -109,6 +121,14 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
   if (values.previewImage) {
     const canAccessPage = await validateImageUrl(values.previewImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
+  }
+
+  if (
+    minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL &&
+    values.publishType === MinigamePublishType.PUBLIC_OFFICIAL
+  ) {
+    // Disallow people from publishing games as official minigames
+    values.publishType = MinigamePublishType.PUBLIC_UNOFFICIAL;
   }
 
   await updateMinigameWithAuthorId({ id, authorId: c.var.user.id, ...values });

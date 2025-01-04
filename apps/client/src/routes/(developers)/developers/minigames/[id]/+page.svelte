@@ -9,7 +9,7 @@ import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
-import { MinigameOrientation, MinigamePathType, type ApiGetUserMinigame } from "@/public";
+import { MinigameOrientation, MinigamePathType, MinigamePublishType, type ApiGetUserMinigame } from "@/public";
 
 const minigameId = page.params.id;
 let minigame = $state<ApiGetUserMinigame["minigame"]>();
@@ -42,6 +42,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
   const name = form.get("name") as string;
   const description = form.get("description") as string;
   const previewImage = (form.get("previewImage") as string) || null;
+  const publishType = Number.parseInt(form.get("publishType") as string);
   const termsOfServices = (form.get("termsOfServices") as string) || null;
   const privacyPolicy = (form.get("privacyPolicy") as string) || null;
   const proxyUrl = (form.get("proxyUrl") as string) || null;
@@ -57,6 +58,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
       name,
       description,
       previewImage,
+      publishType,
       termsOfServices,
       privacyPolicy,
       proxyUrl,
@@ -152,6 +154,23 @@ async function regenTestingAccessCode() {
 
         <label for="previewImage">Preview image URL:</label>
         <input class="input" name="previewImage" value={minigame.previewImage}>
+        
+        <br><br>
+
+        <label for="publishType">Publish type:</label>
+        <select class="input" name="publishType">
+          <option value={MinigamePublishType.UNLISTED} selected={minigame.publishType === MinigamePublishType.UNLISTED}>
+            Unlisted
+          </option>
+          {#if minigame.publishType === MinigamePublishType.PUBLIC_OFFICIAL}
+            <option value={MinigamePublishType.PUBLIC_OFFICIAL} selected>
+              Public (official)
+            </option>
+          {/if}
+          <option value={MinigamePublishType.PUBLIC_UNOFFICIAL} selected={minigame.publishType === MinigamePublishType.PUBLIC_UNOFFICIAL}>
+            Public
+          </option>
+        </select>
 
         <br><br>
 
