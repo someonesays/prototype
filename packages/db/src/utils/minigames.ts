@@ -1,6 +1,6 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, asc, eq, or } from "drizzle-orm";
+import { and, asc, eq, or, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { NOW } from "./utils";
 import { MinigamePublishType, type Minigame } from "@/public";
@@ -34,19 +34,21 @@ export async function deleteMinigameWithAuthorId({ id, authorId }: { id: string;
 }
 
 export async function getMinigames({
+  query,
   authorId,
   publicOnly,
   currentlyFeatured,
   offset = 0,
   limit = 50,
 }: {
+  query?: string;
   authorId?: string;
   publicOnly?: boolean;
   currentlyFeatured?: boolean;
   offset?: number;
   limit?: number;
 }) {
-  const where = createMinigamesWhereCondition({ authorId, publicOnly, currentlyFeatured });
+  const where = createMinigamesWhereCondition({ query, authorId, publicOnly, currentlyFeatured });
   return {
     offset,
     limit,
@@ -64,6 +66,7 @@ export async function getMinigames({
 }
 
 export async function getMinigamesPublic(opts: {
+  query?: string;
   authorId?: string;
   publicOnly?: boolean;
   currentlyFeatured?: boolean;
@@ -87,15 +90,18 @@ export function getMinigamesCount({
 }
 
 function createMinigamesWhereCondition({
+  query,
   authorId,
   publicOnly,
   currentlyFeatured,
 }: {
+  query?: string;
   authorId?: string;
   publicOnly?: boolean;
   currentlyFeatured?: boolean;
 }) {
   return and(
+    typeof query === "string" ? sql`strpos(lower(${schema.minigames.name}), ${query.toLowerCase()}) > 0` : undefined,
     publicOnly
       ? or(
           eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_OFFICIAL),

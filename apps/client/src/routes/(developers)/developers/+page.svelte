@@ -40,7 +40,7 @@ onMount(() => {
 });
 
 async function fetchMinigames() {
-  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames?limit=1000`, {
+  const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames?limit=100`, {
     headers: { authorization: $token },
   });
   if (!minigamesResponse.ok) return false;
