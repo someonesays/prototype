@@ -132,7 +132,7 @@ websocket.get(
           }
 
           // Set user ID
-          const ids = [...state.serverRoom.players.values().map(({ id }) => id)];
+          const ids = [...state.serverRoom.players.values()].map(({ id }) => id);
           while (ids.includes(state.user.id)) {
             state.user.id++;
           }
