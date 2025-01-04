@@ -9,18 +9,18 @@ import type {
 } from "../../types";
 
 export interface ServerTypes {
-  [ServerOpcodes.PING]: {};
-  [ServerOpcodes.ERROR]: { code: string };
+  [ServerOpcodes.PING]: null;
+  [ServerOpcodes.ERROR]: string;
   [ServerOpcodes.GET_INFORMATION]: {
     status: GameStatus;
-    user: string; // (user = player id)
+    user: number; // (user = player id)
     room: GameRoomPrivate;
     minigame: Minigame | null;
     players: GamePlayer[];
   };
-  [ServerOpcodes.PLAYER_JOIN]: { player: GamePlayer };
-  [ServerOpcodes.PLAYER_LEFT]: { user: string };
-  [ServerOpcodes.TRANSFER_HOST]: { user: string };
+  [ServerOpcodes.PLAYER_JOIN]: GamePlayer;
+  [ServerOpcodes.PLAYER_LEFT]: number;
+  [ServerOpcodes.TRANSFER_HOST]: number;
   [ServerOpcodes.UPDATED_ROOM_SETTINGS]: { minigame: Minigame | null };
   [ServerOpcodes.LOAD_MINIGAME]: { players: GamePlayer[]; roomHandshakeCount: number };
   [ServerOpcodes.END_MINIGAME]:
@@ -35,27 +35,16 @@ export interface ServerTypes {
         players: GamePlayer[];
         reason: MinigameEndReason.MINIGAME_ENDED;
       };
-  [ServerOpcodes.MINIGAME_PLAYER_READY]: { user: string };
-  [ServerOpcodes.MINIGAME_START_GAME]: {};
-  [ServerOpcodes.MINIGAME_SET_GAME_STATE]: { state: State };
-  [ServerOpcodes.MINIGAME_SET_PLAYER_STATE]: { user: string; state: State };
-  [ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE]: { message: State };
-  [ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: { user: string; message: State };
-  [ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: {
-    fromUser: string; // User who sent it
-    toUser: string; // Who it was sent by (mainly for the host)
-    message: State;
-  };
+  [ServerOpcodes.MINIGAME_PLAYER_READY]: number;
+  [ServerOpcodes.MINIGAME_START_GAME]: null;
+  [ServerOpcodes.MINIGAME_SET_GAME_STATE]: State;
+  [ServerOpcodes.MINIGAME_SET_PLAYER_STATE]: [number, State]; // [user, state]
+  [ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE]: State;
+  [ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: [number, State]; // [user, message]
+  [ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: [number, number, State]; // [fromUser - user who sent it, toUser - who it was sent by (mainly for the host), message]
   [ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE]: Uint8Array;
-  [ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE]: {
-    user: string;
-    message: Uint8Array;
-  };
-  [ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: {
-    fromUser: string; // User who sent it
-    toUser: string; // Who it was sent by (mainly for the host)
-    message: Uint8Array;
-  };
+  [ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE]: [number, Uint8Array];
+  [ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: [number, number, Uint8Array]; // [fromUser - user who sent it, toUser - who it was sent by (mainly for the host), message]
 }
 
 export interface ServerOpcodeAndData<O extends ServerOpcodes> {

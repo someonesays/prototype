@@ -3,7 +3,7 @@ import type { State } from "../../types";
 export interface GameRoomSettings {}
 
 export interface GameRoom extends GameRoomSettings {
-  host: string;
+  host: number;
   state: State;
 }
 

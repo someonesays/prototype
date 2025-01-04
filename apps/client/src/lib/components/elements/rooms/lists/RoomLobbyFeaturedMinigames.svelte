@@ -10,7 +10,7 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { minigameId },
+    data: minigameId,
   });
 }
 </script>

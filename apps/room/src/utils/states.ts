@@ -3,6 +3,10 @@ import { broadcastMessage } from "./messages";
 import { transformToGamePlayers } from "./transform";
 import type { ServerRoom, WSState } from "./types";
 
+export function getUserById(state: WSState, user: number) {
+  return [...state.serverRoom.players.values()].find((p) => p.id === user);
+}
+
 export function isHost(state: WSState) {
   return state.serverRoom.room.host === state.user.id;
 }
@@ -19,16 +23,16 @@ export function isReady(state: WSState) {
   return state.user.ready;
 }
 
-export function isNotUser(state: WSState, user: string) {
+export function isNotUser(state: WSState, user: number) {
   return user !== state.user.id;
 }
 
-export function isNotUserOrHost(state: WSState, user: string) {
-  return isNotUser(state, user) && (!isHost(state) || !state.serverRoom.players.get(user)?.ready);
+export function isNotUserOrHost(state: WSState, user: number) {
+  return isNotUser(state, user) && (!isHost(state) || !getUserById(state, user)?.ready);
 }
 
-export function isUserReady(state: WSState, user: string) {
-  return !!state.serverRoom.players.get(user)?.ready;
+export function isUserReady(state: WSState, user: number) {
+  return !!getUserById(state, user)?.ready;
 }
 
 export function startGame(room: ServerRoom) {
@@ -42,7 +46,7 @@ export function startGame(room: ServerRoom) {
   return broadcastMessage({
     room,
     opcode: ServerOpcodes.MINIGAME_START_GAME,
-    data: {},
+    data: null,
   });
 }
 

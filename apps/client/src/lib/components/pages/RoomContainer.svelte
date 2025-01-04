@@ -12,8 +12,6 @@ import {
   GameStatus,
   MinigameEndReason,
   ErrorMessageCodes,
-  ClientOpcodes,
-  GameSelectPreviousOrNextMinigame,
   type ApiErrorResponse,
 } from "@/public";
 
@@ -80,7 +78,7 @@ onMount(() => {
   $roomWs.on(ServerOpcodes.ERROR, (evt) => {
     if ($room?.status !== GameStatus.LOBBY) return;
 
-    const code = evt.code as ErrorMessageCodes;
+    const code = evt as ErrorMessageCodes;
     if (
       ![
         ErrorMessageCodes.WS_CANNOT_FIND_MINIGAME,
@@ -113,30 +111,30 @@ onMount(() => {
 
     $room = evt;
   });
-  $roomWs.on(ServerOpcodes.PLAYER_JOIN, (evt) => {
-    $room?.players.push(evt.player);
+  $roomWs.on(ServerOpcodes.PLAYER_JOIN, (player) => {
+    $room?.players.push(player);
   });
-  $roomWs.on(ServerOpcodes.PLAYER_LEFT, (evt) => {
-    const player = $room?.players.find((p) => p.id === evt.user);
+  $roomWs.on(ServerOpcodes.PLAYER_LEFT, (user) => {
+    const player = $room?.players.find((p) => p.id === user);
     if (!player) return; // !player will be true when the host leaves the room during a game
 
     if ($roomMinigameReady) {
       // If the host leave, sending remove player is unnecessary because the game will end anyways
-      $roomParentSdk?.removePlayer(evt);
+      $roomParentSdk?.removePlayer({ user });
     }
 
     $room?.players.splice($room?.players.indexOf(player), 1);
   });
-  $roomWs.on(ServerOpcodes.TRANSFER_HOST, (evt) => {
+  $roomWs.on(ServerOpcodes.TRANSFER_HOST, (user) => {
     if (!$room) throw new Error("Cannot find $room on transfer host event");
 
     if ($room.user === $room.room.host) {
       $roomRequestedToChangeSettings = false;
     }
 
-    $room.room.host = evt.user;
+    $room.room.host = user;
   });
-  $roomWs.on(ServerOpcodes.UPDATED_ROOM_SETTINGS, (evt) => {
+  $roomWs.on(ServerOpcodes.UPDATED_ROOM_SETTINGS, ({ minigame }) => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
 
     $roomRequestedToChangeSettings = false;
@@ -157,7 +155,7 @@ onMount(() => {
 
     const oldMinigameId = $room.minigame?.id;
 
-    $room.minigame = evt.minigame;
+    $room.minigame = minigame;
 
     if ($room.minigame && $room.minigame.id !== oldMinigameId) {
       const minigamePreviewImage = $room.minigame.previewImage;
@@ -226,10 +224,10 @@ onMount(() => {
       }
     }, 0);
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_PLAYER_READY, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_PLAYER_READY, (user) => {
     if (!$room) throw new Error("Cannot find $room on end minigame");
 
-    const player = $room.players.find((p) => p.id === evt.user);
+    const player = $room.players.find((p) => p.id === user);
     if (!player) throw new Error("Cannot find the player who readied up");
 
     player.ready = true;
@@ -302,48 +300,48 @@ onMount(() => {
     $roomJoinedLate = false;
     $roomParentSdk?.setGameStarted({ joinedLate: false });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SET_GAME_STATE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SET_GAME_STATE, (state) => {
     if (!$room) throw new Error("Cannot find $room on start minigame");
 
-    $room.room.state = evt.state;
+    $room.room.state = state;
 
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.updateGameState(evt);
+    $roomParentSdk?.updateGameState({ state });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SET_PLAYER_STATE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SET_PLAYER_STATE, ([user, state]) => {
     if (!$room) throw new Error("Cannot find $room on start minigame");
 
-    const player = $room.players.find((p) => p.id === evt.user);
+    const player = $room.players.find((p) => p.id === user);
     if (!player) throw new Error("Cannot find the player who set player state");
 
-    player.state = evt.state;
+    player.state = state;
 
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.updatePlayerState(evt);
+    $roomParentSdk?.updatePlayerState({ user, state });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_GAME_MESSAGE, (message) => {
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.sendGameMessage(evt);
+    $roomParentSdk?.sendGameMessage({ message });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_PLAYER_MESSAGE, ([user, message]) => {
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.sendPlayerMessage(evt);
+    $roomParentSdk?.sendPlayerMessage({ user, message });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE, ([fromUser, toUser, message]) => {
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.sendPrivateMessage(evt);
+    $roomParentSdk?.sendPrivateMessage({ fromUser, toUser, message });
   });
   $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE, (evt) => {
     if (!$roomMinigameReady) return;
     $roomParentSdk?.sendBinaryGameMessage(evt);
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE, ([user, message]) => {
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.sendBinaryPlayerMessage(evt);
+    $roomParentSdk?.sendBinaryPlayerMessage({ user, message });
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE, (evt) => {
+  $roomWs.on(ServerOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE, ([fromUser, toUser, message]) => {
     if (!$roomMinigameReady) return;
-    $roomParentSdk?.sendBinaryPrivateMessage(evt);
+    $roomParentSdk?.sendBinaryPrivateMessage({ fromUser, toUser, message });
   });
 
   // Handles WebSocket closure

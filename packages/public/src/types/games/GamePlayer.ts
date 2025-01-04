@@ -1,7 +1,7 @@
 import type { State } from "../../types";
 
 export interface MinigamePlayer {
-  id: string;
+  id: number;
   displayName: string;
   avatar: string;
   mobile: boolean;

@@ -111,7 +111,7 @@ function setSettingsForm(evt: SubmitEvent & { currentTarget: EventTarget & HTMLF
 
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { minigameId },
+    data: minigameId,
   });
 }
 
@@ -119,7 +119,7 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { minigameId },
+    data: minigameId,
   });
 }
 
@@ -155,7 +155,7 @@ function handleRemoveMinigame() {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
-    data: { minigameId: null },
+    data: null,
   });
 }
 
@@ -168,17 +168,17 @@ function handleReport() {
   // $isModalOpen = true;
 }
 
-function kickPlayer(user: string) {
+function kickPlayer(user: number) {
   $roomWs?.send({
     opcode: ClientOpcodes.KICK_PLAYER,
-    data: { user },
+    data: user,
   });
 }
 
-function transferHost(user: string) {
+function transferHost(user: number) {
   $roomWs?.send({
     opcode: ClientOpcodes.TRANSFER_HOST,
-    data: { user },
+    data: user,
   });
 }
 
@@ -258,7 +258,7 @@ function startGame(ignoreWarning: boolean) {
   }
 
   $roomRequestedToStartGame = true;
-  $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: {} });
+  $roomWs?.send({ opcode: ClientOpcodes.BEGIN_GAME, data: null });
 }
 
 function leaveGame() {
