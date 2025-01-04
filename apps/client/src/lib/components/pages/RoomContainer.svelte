@@ -192,10 +192,6 @@ onMount(() => {
 
     setTimeout(() => {
       switch (reason) {
-        case MinigameEndReason.MINIGAME_ENDED: {
-          $roomRequestedToChangeSettings = true;
-          break;
-        }
         case MinigameEndReason.FORCEFUL_END: {
           if (forcefullyEndedAfterStarted && $room?.user !== $room?.room.host) {
             $isModalOpen = true;

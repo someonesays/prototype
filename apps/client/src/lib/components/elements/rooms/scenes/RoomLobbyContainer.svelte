@@ -104,11 +104,10 @@ onMount(() => {
 function setSettingsForm(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   evt.preventDefault();
 
-  $roomRequestedToChangeSettings = true;
-
   const form = new FormData(evt.target as HTMLFormElement);
   const minigameId = (form.get("minigame_id") as string) || null;
 
+  $roomRequestedToChangeSettings = true;
   $roomWs?.send({
     opcode: ClientOpcodes.SET_ROOM_SETTINGS,
     data: minigameId,
