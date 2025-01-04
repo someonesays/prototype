@@ -578,13 +578,11 @@ function reportMinigame() {
                     <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
                     <br>
 
-                    {#if !removeIdsOption}
-                      <div class="nothingselected-buttons">
-                        <button class="secondary-button nothingselected-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
-                          Select another minigame
-                        </button>
-                      </div>
-                    {/if}
+                    <div class="nothingselected-buttons">
+                      <button class="secondary-button nothingselected-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                        Select another minigame
+                      </button>
+                    </div>
                   {:else}
                     <h2>Waiting for the host to select a minigame!</h2>
                   {/if}
