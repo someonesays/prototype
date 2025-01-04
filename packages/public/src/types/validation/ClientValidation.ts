@@ -1,5 +1,5 @@
 import z from "zod";
-import { ClientOpcodes, GameSelectPreviousOrNextMinigame, StateZod } from "../../types";
+import { ClientOpcodes, StateZod } from "../../types";
 
 export const ClientValidation = {
   [ClientOpcodes.PING]: z.object({}),
