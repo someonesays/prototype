@@ -375,20 +375,19 @@ websocket.get(
             case ClientOpcodes.MINIGAME_SET_PLAYER_STATE: {
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
-              if (!isUserReady(state, data.user))
-                return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
+              if (!isUserReady(state, data[0])) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
-              const player = getUserById(state, data.user);
+              const player = getUserById(state, data[0]);
               if (!player?.ready) return; // (should never happen)
 
-              player.state = data.state;
+              player.state = data[1];
 
               broadcastMessage({
                 room: state.serverRoom,
                 readyOnly: false, // (client must keep track of states before player is ready as well)
                 opcode: ServerOpcodes.MINIGAME_SET_PLAYER_STATE,
-                data: [data.user, data.state],
+                data: [data[0], data[1]],
               });
 
               return;

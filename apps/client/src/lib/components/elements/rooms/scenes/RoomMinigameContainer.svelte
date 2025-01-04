@@ -86,7 +86,7 @@ onMount(() => {
       data: $roomHandshakeCount,
     });
   });
-  sdk.on(MinigameOpcodes.END_GAME, (evt) => {
+  sdk.on(MinigameOpcodes.END_GAME, () => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can end the game");
 
     $roomWs?.send({
@@ -94,66 +94,66 @@ onMount(() => {
       data: false, // force: false
     });
   });
-  sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
+  sdk.on(MinigameOpcodes.SET_GAME_STATE, ({ state }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can set the game state");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_GAME_STATE,
-      data: evt,
+      data: state,
     });
   });
-  sdk.on(MinigameOpcodes.SET_PLAYER_STATE, (evt) => {
+  sdk.on(MinigameOpcodes.SET_PLAYER_STATE, ({ user, state }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host a player's state");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_PLAYER_STATE,
-      data: evt,
+      data: [user, state],
     });
   });
-  sdk.on(MinigameOpcodes.SEND_GAME_MESSAGE, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_GAME_MESSAGE, ({ message }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE,
-      data: evt,
+      data: message,
     });
   });
-  sdk.on(MinigameOpcodes.SEND_PLAYER_MESSAGE, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_PLAYER_MESSAGE, ({ message }) => {
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE,
-      data: evt,
+      data: message,
     });
   });
-  sdk.on(MinigameOpcodes.SEND_PRIVATE_MESSAGE, (evt) => {
-    if ($room.user !== $room.room.host && evt.user && evt.user !== $room.room.host)
+  sdk.on(MinigameOpcodes.SEND_PRIVATE_MESSAGE, ({ message, user }) => {
+    if ($room.user !== $room.room.host && user && user !== $room.room.host)
       throw new Error("Only the host can send a private message to other players");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
-      data: [evt.message, evt.user],
+      data: [message, user],
     });
   });
-  sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, (message) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE,
-      data: evt,
+      data: message,
     });
   });
-  sdk.on(MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE, (evt) => {
+  sdk.on(MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE, (message) => {
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE,
-      data: evt,
+      data: message,
     });
   });
-  sdk.on(MinigameOpcodes.SEND_BINARY_PRIVATE_MESSAGE, (evt) => {
-    if ($room.user !== $room.room.host && evt.user && evt.user !== $room.room.host)
+  sdk.on(MinigameOpcodes.SEND_BINARY_PRIVATE_MESSAGE, ({ message, user }) => {
+    if ($room.user !== $room.room.host && user && user !== $room.room.host)
       throw new Error("Only the host can send a private message to other players");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
-      data: [evt.message, evt.user],
+      data: [message, user],
     });
   });
 
