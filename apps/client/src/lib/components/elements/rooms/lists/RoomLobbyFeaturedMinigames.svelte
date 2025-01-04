@@ -5,6 +5,7 @@ import { room, roomFeaturedMinigames, roomRequestedToChangeSettings, roomWs } fr
 
 let { tabindex = 0 } = $props();
 
+// (copy and pasted from RoomLobbyContainer.svelte)
 function setSettings({ minigameId = null }: { minigameId?: string | null }) {
   $roomRequestedToChangeSettings = true;
   $roomWs?.send({

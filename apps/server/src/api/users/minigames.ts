@@ -47,7 +47,7 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
   if (!success) return c.json({ code: ErrorMessageCodes.RATE_LIMITED }, 429);
 
   const count = await getMinigamesCount({ authorId: c.var.user.id });
-  if (count >= 1000) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
+  if (count >= 100) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });

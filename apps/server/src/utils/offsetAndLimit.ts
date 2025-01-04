@@ -8,7 +8,7 @@ export function getOffsetAndLimit(c: Context) {
   if (offset > Number.MAX_SAFE_INTEGER) offset = Number.MAX_SAFE_INTEGER;
 
   if (limit < 1) limit = 1;
-  if (limit > 1000) limit = 1000;
+  if (limit > 100) limit = 100;
 
   return { offset, limit };
 }

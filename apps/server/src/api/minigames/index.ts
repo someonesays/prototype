@@ -7,9 +7,10 @@ export const minigames = new Hono();
 
 minigames.get("/", async (c) => {
   const { offset, limit } = getOffsetAndLimit(c);
+  const query = c.req.query("query");
   const featured = c.req.query("featured")?.toLowerCase() === "true";
 
-  const minigames = await getMinigamesPublic({ publicOnly: true, currentlyFeatured: featured, offset, limit });
+  const minigames = await getMinigamesPublic({ publicOnly: true, query, currentlyFeatured: featured, offset, limit });
   return c.json(minigames);
 });
 

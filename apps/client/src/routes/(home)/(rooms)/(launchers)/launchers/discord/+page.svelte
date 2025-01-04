@@ -168,10 +168,4 @@ onMount(() => {
   .loading-text {
     font-size: 14px;
   }
-  .loading-animation {
-    border: 3px solid #5812e2;
-    border-top: 3px solid #fafafa;
-    width: 25px;
-    height: 25px;
-  }
 </style>

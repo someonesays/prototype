@@ -1,18 +1,27 @@
 import env from "./env";
 import { get } from "svelte/store";
-import { isModalOpen } from "$lib/stores/home/modal";
 import { launcher } from "$lib/stores/home/launcher";
-import { roomFeaturedMinigames, roomLobbyPopupMessage } from "$lib/stores/home/roomState";
+import { roomFeaturedMinigames } from "$lib/stores/home/roomState";
 import type { ApiGetMinigames } from "@/public";
 
 export async function getFeaturedMinigames() {
+  const minigames = await searchMinigames({ featured: true });
+
+  roomFeaturedMinigames.set(minigames);
+  return minigames.success;
+}
+
+export async function searchMinigames(opts: { query?: string; offset?: number; limit?: number; featured?: boolean }) {
+  // @ts-ignore This piece of code works perfectly fine
+  const params = new URLSearchParams(opts).toString();
+
   let url: string;
   switch (get(launcher)) {
     case "normal":
-      url = `${env.VITE_BASE_API}/api/minigames?featured=true`;
+      url = `${env.VITE_BASE_API}/api/minigames?${params}`;
       break;
     case "discord":
-      url = `/.proxy/api/minigames?featured=true`;
+      url = `/.proxy/api/minigames?${params}`;
       break;
     default:
       throw new Error("Invalid launcher for getFeaturedMinigames");
@@ -20,16 +29,12 @@ export async function getFeaturedMinigames() {
 
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error("Failed to load featured minigames (response is not OK)");
+    if (!res.ok) throw new Error("Failed to fetch minigames (response is not OK)");
 
-    const featuredMinigames = (await res.json()) as ApiGetMinigames;
-    roomFeaturedMinigames.set({ success: true, minigames: featuredMinigames.minigames });
-
-    return true;
+    const { offset, limit, total, minigames } = (await res.json()) as ApiGetMinigames;
+    return { success: true, offset, limit, total, minigames };
   } catch (err) {
     console.error(err);
-
-    roomFeaturedMinigames.set({ success: false, minigames: [] });
-    return false;
+    return { success: false, offset: 0, limit: 0, total: 0, minigames: [] };
   }
 }

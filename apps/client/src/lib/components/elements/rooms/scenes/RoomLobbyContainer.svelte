@@ -24,8 +24,11 @@ import {
   roomRequestedToStartGame,
   roomRequestedToLeave,
   roomLobbyPopupMessage,
+  roomSearchedMinigames,
 } from "$lib/stores/home/roomState";
 import { isModalOpen } from "$lib/stores/home/modal";
+
+import { searchMinigames } from "$lib/utils/minigames";
 
 import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, MinigamePublishType } from "@/public";
 import { Common, Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
@@ -40,6 +43,9 @@ let logoOnly = $state(false);
 
 let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
+
+let searchMinigameQuery = $state("");
+let searchMinigameTimeout: Timer | null = $state(null);
 
 let transformScale = $state(1);
 
@@ -109,9 +115,40 @@ function setSettingsForm(evt: SubmitEvent & { currentTarget: EventTarget & HTMLF
   });
 }
 
+function setSettings({ minigameId = null }: { minigameId?: string | null }) {
+  $roomRequestedToChangeSettings = true;
+  $roomWs?.send({
+    opcode: ClientOpcodes.SET_ROOM_SETTINGS,
+    data: { minigameId },
+  });
+}
+
 export async function handleSelectMinigame() {
   $roomLobbyPopupMessage = { type: "select-minigame" };
   $isModalOpen = true;
+}
+
+export async function handleSelectMinigameSearch() {
+  if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
+
+  $roomSearchedMinigames = null;
+  searchMinigameQuery = "";
+  searchMinigameTimeout = null;
+
+  $roomLobbyPopupMessage = { type: "select-minigame-search" };
+  $isModalOpen = true;
+
+  handleSearchingMinigames();
+}
+
+async function handleSearchingMinigames() {
+  if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
+  searchMinigameTimeout = setTimeout(() => ($roomSearchedMinigames = null), 500);
+
+  const res = await searchMinigames({ query: searchMinigameQuery });
+
+  clearTimeout(searchMinigameTimeout);
+  $roomSearchedMinigames = res;
 }
 
 function handleRemoveMinigame() {
@@ -286,7 +323,7 @@ function joinDiscordServer(evt: MouseEvent) {
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
-      <h2 style="width: 400px; max-width: 100%;">Select a minigame by ID</h2>
+      <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
 
       <form onsubmit={setSettingsForm}>
         <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
@@ -295,6 +332,60 @@ function joinDiscordServer(evt: MouseEvent) {
         <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
         <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
+      <br>
+    {:else if $roomLobbyPopupMessage?.type === "select-minigame-search"}
+      <h2 style="width: 400px; max-width: 100%;">Select minigame</h2>
+      
+      <input class="input" type="text" placeholder="Search minigames..." maxlength="100" bind:value={searchMinigameQuery} oninput={handleSearchingMinigames}>
+
+      <br><br>
+
+      <div class="select-minigame-container" class:center={!$roomSearchedMinigames?.minigames.length}>
+        {#if !$roomSearchedMinigames}
+          <div class="loading-animation large" style="margin-bottom: 12px;"></div>
+          <span>Loading...</span>
+        {:else if !$roomSearchedMinigames.success}
+          <div class="modal-icon" style="margin-bottom: 24px;">
+            <TriangleExclamation color="#000000" />
+          </div>
+          <span>Failed to fetch minigames...</span>
+        {:else if $roomSearchedMinigames.minigames.length === 0}
+          <div class="modal-icon" style="margin-bottom: 24px;">
+            <TriangleExclamation color="#000000" />
+          </div>
+          <span>Couldn't find any minigames...</span>
+        {:else}
+          {#each $roomSearchedMinigames.minigames as minigame}
+            <div>
+              <button class="select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ minigameId: minigame.id })}>
+                
+                <div class="preview-image">
+                  {#if minigame?.previewImage}
+                    <img class="preview-image image-fade-in" alt="Minigame preview" src={
+                      $launcher === "normal"
+                        ? minigame.previewImage.normal
+                        : minigame.previewImage.discord
+                    } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
+                  {/if}
+                </div>
+                <div class="featured-minigame-text">
+                  {minigame.name}
+                </div>
+              </button>
+            </div>
+          {/each}
+        {/if}
+      </div>
+      <br>
+
+      {#if !removeIdsOption}
+        <button class="primary-button" onclick={(evt) => { evt.preventDefault(); handleSelectMinigame(); }} tabindex={disableTabIndex}>
+          Select minigame using an ID
+        </button>
+      {/if}
+
+      <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
+      <br><br>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report minigame</h2>
       <p>You can report minigames on our Discord server!</p>
@@ -416,7 +507,7 @@ function joinDiscordServer(evt: MouseEvent) {
                   </div>
                   <div class="select-container">
                     {#if $room.room.host === $room.user}
-                      <button class="primary-button select-button" onclick={() => handleSelectMinigame()} tabindex={disableTabIndex}>
+                      <button class="primary-button select-button" onclick={() => handleSelectMinigameSearch()} tabindex={disableTabIndex}>
                         Change minigame
                       </button>
                       <button class="error-button select-button wait-on-disabled" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
@@ -482,7 +573,7 @@ function joinDiscordServer(evt: MouseEvent) {
 
                     {#if !removeIdsOption}
                       <div class="nothingselected-buttons">
-                        <button class="secondary-button nothingselected-button" onclick={handleSelectMinigame} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
+                        <button class="secondary-button nothingselected-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>
                           Select another minigame
                         </button>
                       </div>
@@ -914,6 +1005,45 @@ function joinDiscordServer(evt: MouseEvent) {
   }
   .action-button.start:hover {
     background-color: #19713e;
+  }
+
+  .select-minigame-container.center {
+    align-items: center;
+    justify-content: center;
+  }
+  .select-minigame-container {
+    display: flex;
+    width: 400px;
+    height: 200px;
+    max-width: 100%;
+    gap: 3px;
+    overflow: auto;
+    flex-direction: column;
+  }
+  .select-minigame-button {
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 15px;
+    width: 98%;
+    cursor: pointer;
+    padding: 6px;
+    overflow: auto;
+    font-size: 16px;
+    gap: 10px;
+    transition: 0.2s;
+    transform: scale(0.99);
+  }
+  .select-minigame-button:hover {
+    background: #fafafa;
+    transform: scale(1);
+  }
+  .select-minigame-button:disabled {
+    cursor: wait;
+  }
+  .featured-minigame-text {
+    text-align: left;
   }
 
   .playeraction-button {
