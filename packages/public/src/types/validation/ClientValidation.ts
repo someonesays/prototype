@@ -1,30 +1,40 @@
 import z from "zod";
-import { ClientOpcodes, GameSelectPreviousOrNextMinigame, StateZod } from "../../types";
+import { ClientOpcodes, StateZod } from "../../types";
 
 export const ClientValidation = {
   [ClientOpcodes.PING]: z.object({}),
-  [ClientOpcodes.KICK_PLAYER]: z.object({ user: z.string().min(1).max(50) }),
-  [ClientOpcodes.TRANSFER_HOST]: z.object({ user: z.string().min(1).max(50) }),
-  [ClientOpcodes.SET_ROOM_SETTINGS]: z.object({
-    minigameId: z.string().min(1).max(50).nullable(),
-  }),
-  [ClientOpcodes.BEGIN_GAME]: z.object({}),
-  [ClientOpcodes.MINIGAME_HANDSHAKE]: z.object({ roomHandshakeCount: z.number().optional() }),
-  [ClientOpcodes.MINIGAME_END_GAME]: z.object({ force: z.boolean() }),
-  [ClientOpcodes.MINIGAME_SET_GAME_STATE]: z.object({ state: StateZod }),
-  [ClientOpcodes.MINIGAME_SET_PLAYER_STATE]: z.object({ user: z.string().min(1).max(50), state: StateZod }),
-  [ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE]: z.object({ message: StateZod }),
-  [ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: z.object({ message: StateZod }),
-  [ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: z.object({
-    user: z.string().min(1).max(50).optional(), // Defaults to host
-    message: StateZod,
-  }),
+  [ClientOpcodes.KICK_PLAYER]: z.number().min(0).max(99),
+  [ClientOpcodes.TRANSFER_HOST]: z.number().min(0).max(99),
+  [ClientOpcodes.SET_ROOM_SETTINGS]: z.string().min(1).max(50).nullable().optional(),
+  [ClientOpcodes.BEGIN_GAME]: z.null().optional(),
+  [ClientOpcodes.MINIGAME_HANDSHAKE]: z.number().nullable().optional(),
+  [ClientOpcodes.MINIGAME_END_GAME]: z.boolean(),
+  [ClientOpcodes.MINIGAME_SET_GAME_STATE]: StateZod,
+  [ClientOpcodes.MINIGAME_SET_PLAYER_STATE]: z.object({ user: z.number().min(0).max(99), state: StateZod }),
+  [ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE]: StateZod,
+  [ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE]: StateZod,
+  [ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE]: z.tuple([
+    StateZod,
+    // Defaults to host
+    z
+      .number()
+      .min(0)
+      .max(99)
+      .nullable()
+      .optional(),
+  ]),
   [ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE]: z.instanceof(Uint8Array),
   [ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE]: z.instanceof(Uint8Array),
-  [ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: z.object({
-    user: z.string().min(1).max(50).optional(), // Defaults to host
-    message: z.instanceof(Uint8Array),
-  }),
+  [ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE]: z.tuple([
+    z.instanceof(Uint8Array),
+    // Defaults to host
+    z
+      .number()
+      .min(0)
+      .max(99)
+      .nullable()
+      .optional(),
+  ]),
 };
 
 export interface ClientOpcodeAndData<O extends ClientOpcodes> {

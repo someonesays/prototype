@@ -52,7 +52,7 @@ export function sendError(user: ServerPlayer, code: ErrorMessageCodes) {
   return sendMessage({
     user,
     opcode: ServerOpcodes.ERROR,
-    data: { code },
+    data: code,
   });
 }
 

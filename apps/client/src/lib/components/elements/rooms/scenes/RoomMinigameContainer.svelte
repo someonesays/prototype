@@ -83,9 +83,7 @@ onMount(() => {
   sdk.once(MinigameOpcodes.HANDSHAKE, () => {
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_HANDSHAKE,
-      data: {
-        roomHandshakeCount: $roomHandshakeCount,
-      },
+      data: $roomHandshakeCount,
     });
   });
   sdk.on(MinigameOpcodes.END_GAME, (evt) => {
@@ -93,7 +91,7 @@ onMount(() => {
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
-      data: { force: false },
+      data: false, // force: false
     });
   });
   sdk.on(MinigameOpcodes.SET_GAME_STATE, (evt) => {
@@ -132,7 +130,7 @@ onMount(() => {
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
-      data: evt,
+      data: [evt.message, evt.user],
     });
   });
   sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, (evt) => {
@@ -155,7 +153,7 @@ onMount(() => {
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,
-      data: evt,
+      data: [evt.message, evt.user],
     });
   });
 
@@ -183,7 +181,7 @@ function leaveOrEndGameConfirm() {
 
     return $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_END_GAME,
-      data: { force: true },
+      data: true, // force: true
     });
   }
 
