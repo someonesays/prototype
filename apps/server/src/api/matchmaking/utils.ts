@@ -256,7 +256,7 @@ export async function handlePostMatchmaking({
   }
 
   // Get user and room information
-  const user = { id: createCuid(), displayName: displayName, avatar };
+  const user = { id: createCuid(), displayName, avatar };
   const room = { id: roomId, server };
 
   // Set metadata
