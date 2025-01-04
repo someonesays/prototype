@@ -162,8 +162,10 @@ function handleRemoveMinigame() {
 function handleReport() {
   if (!$room?.minigame) return;
 
-  $roomLobbyPopupMessage = { type: "report" };
-  $isModalOpen = true;
+  reportMinigame();
+
+  // $roomLobbyPopupMessage = { type: "report" };
+  // $isModalOpen = true;
 }
 
 function kickPlayer(user: string) {
@@ -286,6 +288,16 @@ function joinDiscordServer(evt: MouseEvent) {
     return;
   }
 }
+
+function reportMinigame() {
+  const url = `https://docs.google.com/forms/d/e/1FAIpQLSdMVj4BJXS8gFKy5Yb6TLXW_TFRfEqOy7TPTg5C9Jry3oc7AQ/viewform?usp=pp_url&entry.458752900=${$room?.minigame?.id}`;
+
+  if ($launcher === "normal") {
+    window.open(url, "_blank");
+  } else if ($launcher === "discord") {
+    $launcherDiscordSdk?.commands.openExternalLink({ url });
+  }
+}
 </script>
 
 {#if logoOnly}
@@ -388,13 +400,8 @@ function joinDiscordServer(evt: MouseEvent) {
       <br><br>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report minigame</h2>
-      <p>You can report minigames on our Discord server!</p>
-      <p>
-        <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
-          <button class="primary-button margin-top-8px">Join Discord server</button>
-        </a>
-        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
-      </p>
+      <p>This UI is a work in progress!</p>
+      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
