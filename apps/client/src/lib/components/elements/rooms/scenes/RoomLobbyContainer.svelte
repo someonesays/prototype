@@ -495,7 +495,9 @@ function reportMinigame() {
                     {#if $room.room.host === $room.user && $room.user !== player.id}
                       <div class="player-actions">
                         <div>
-                          <button class="error-button margin-top-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          {#if $launcher === "normal"}
+                            <button class="error-button margin-top-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          {/if}
                           <button class="secondary-button margin-top-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
                         </div>
                       </div>

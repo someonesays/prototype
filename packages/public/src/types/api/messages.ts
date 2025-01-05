@@ -23,6 +23,7 @@ export enum ErrorMessageCodes {
   TESTING_ENDED = "testing_ended",
 
   WS_DISABLED_IN_TESTING_ROOM = "ws_disabled_in_testing_room",
+  WS_DISABLED_IN_DISCORD_ROOM = "ws_disabled_in_discord_room",
   WS_NOT_HOST = "ws_not_host",
   WS_DISABLED_DURING_GAME = "ws_disabled_during_game",
   WS_CANNOT_KICK_SELF = "ws_cannot_kick_self",
@@ -64,6 +65,7 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.TESTING_ENDED]: "The minigame has ended on the testing server",
 
   [ErrorMessageCodes.WS_DISABLED_IN_TESTING_ROOM]: "Cannot use disabled opcode in testing room.",
+  [ErrorMessageCodes.WS_DISABLED_IN_DISCORD_ROOM]: "Cannot use disabled opcode in the Discord activity.",
   [ErrorMessageCodes.WS_NOT_HOST]: "Only the host can run this action!",
   [ErrorMessageCodes.WS_DISABLED_DURING_GAME]: "Cannot run this action during a game.",
   [ErrorMessageCodes.WS_CANNOT_KICK_SELF]: "Cannot kick yourself.",

@@ -188,6 +188,10 @@ websocket.get(
           // Handle opcodes
           switch (opcode) {
             case ClientOpcodes.KICK_PLAYER: {
+              if (metadata.type === MatchmakingType.DISCORD) {
+                return sendError(state.user, ErrorMessageCodes.WS_DISABLED_IN_DISCORD_ROOM);
+              }
+
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isLobby(state)) return sendError(state.user, ErrorMessageCodes.WS_DISABLED_DURING_GAME);
               if (state.user.id === data) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_KICK_SELF);
