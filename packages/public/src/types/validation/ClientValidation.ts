@@ -5,7 +5,9 @@ export const ClientValidation = {
   [ClientOpcodes.PING]: z.object({}),
   [ClientOpcodes.KICK_PLAYER]: z.number().min(0).max(99),
   [ClientOpcodes.TRANSFER_HOST]: z.number().min(0).max(99),
-  [ClientOpcodes.SET_ROOM_SETTINGS]: z.string().min(1).max(50).nullable().optional(),
+  [ClientOpcodes.SET_ROOM_SETTINGS]: z.object({
+    minigameId: z.string().min(1).max(50).nullable().optional(),
+  }),
   [ClientOpcodes.BEGIN_GAME]: z.null().optional(),
   [ClientOpcodes.MINIGAME_HANDSHAKE]: z.number().nullable().optional(),
   [ClientOpcodes.MINIGAME_END_GAME]: z.boolean(),

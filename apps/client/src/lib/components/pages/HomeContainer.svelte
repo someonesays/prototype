@@ -22,6 +22,8 @@ import { isModalOpen } from "$lib/stores/home/modal";
 import { launcherMatchmaking } from "$lib/stores/home/launcher";
 import { getFeaturedMinigames } from "$lib/utils/minigames";
 
+let minigameId = $state(page.url.searchParams.get("minigame"));
+
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
 let disableJoin = $derived(disableJoinPage || !loadedRoomToJoin);
