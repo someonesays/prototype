@@ -2,11 +2,11 @@
 import { isModalOpen } from "$lib/stores/home/modal";
 import { clickOutside } from "$lib/utils/clickOutside";
 
-let { children, style = "" } = $props();
+let { children, style = "", onclose } = $props<{ children: any; style?: string; onclose?: () => unknown }>();
 </script>
 
 <div class="modal" class:hidden={!$isModalOpen} role="dialog">
-	<div class="content" style={style} use:clickOutside={() => $isModalOpen = false}>
+	<div class="content" style={style} use:clickOutside={() => { if ($isModalOpen) onclose?.(); return $isModalOpen = false; }}>
     {@render children()}
 	</div>
 </div>

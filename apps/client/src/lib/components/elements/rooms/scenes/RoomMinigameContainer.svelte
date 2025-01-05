@@ -9,6 +9,8 @@ import { onMount } from "svelte";
 import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus, MinigameOrientation } from "@/public";
 import { Common } from "@discord/embedded-app-sdk";
 
+import { audio } from "$lib/utils/audio";
+
 import {
   room,
   roomWs,
@@ -190,7 +192,7 @@ function leaveOrEndGameConfirm() {
 }
 </script>
 
-<Modal style="transform: scale({transformScale});">
+<Modal style="transform: scale({transformScale});" onclose={() => audio.close.play()}>
   <br><br>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug color="#000000" /></div>
@@ -205,14 +207,14 @@ function leaveOrEndGameConfirm() {
           End minigame
         {/if}
       </button>
-      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {:else}
     <div class="modal-icon"><DoorOpen color="#000000" /></div>
     <p>Are you sure you want to leave the room?</p>
     <p>
       <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>Leave room</button>
-      <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+      <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Cancel</button>
     </p>
   {/if}
 </Modal>
