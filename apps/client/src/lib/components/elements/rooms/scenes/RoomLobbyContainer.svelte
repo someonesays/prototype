@@ -463,7 +463,7 @@ function reportMinigame() {
           </div>
 
           {#if $launcher === "discord"}
-            <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
+            <a href="https://discord.gg/Hce5qUTx5s" onclick={joinDiscordServer} target="_blank">
               <button class="button discord">
                 <div><Discord /></div>
               </button>
