@@ -1,4 +1,4 @@
-import { type ErrorMessageCodes } from "../../types";
+import type { ErrorMessageCodes } from "../../types";
 
 export interface ApiErrorResponse {
   code: ErrorMessageCodes;

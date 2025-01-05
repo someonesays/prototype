@@ -32,9 +32,8 @@ import { isModalOpen } from "$lib/stores/home/modal";
 
 import { searchMinigames } from "$lib/utils/minigames";
 
-import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, MinigamePublishType } from "@/public";
+import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText } from "@/public";
 import { Common, Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
-import { encodeTimeSpecToTimestamp } from "@msgpack/msgpack";
 
 let isSettingsOpen = $state(false);
 let activeView = $state<"players" | "game">("game");
@@ -295,7 +294,7 @@ function joinDiscordServer(evt: MouseEvent) {
 }
 
 function reportMinigame() {
-  const url = `https://docs.google.com/forms/d/e/1FAIpQLSdMVj4BJXS8gFKy5Yb6TLXW_TFRfEqOy7TPTg5C9Jry3oc7AQ/viewform?usp=pp_url&entry.458752900=${$room?.minigame?.id}`;
+  const url = `https://tally.so/r/mKvl5z?minigame_id=${$room?.minigame?.id}`;
 
   if ($launcher === "normal") {
     window.open(url, "_blank");
@@ -529,7 +528,7 @@ function reportMinigame() {
                       </button>
                     {/if}
   
-                    {#if $room.minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL}
+                    {#if !$room.minigame.official}
                       <button class="report-button" onclick={handleReport} onmouseenter={() => isHoveringFlag = true} onmouseleave={() => isHoveringFlag = false} tabindex={disableTabIndex}>
                         <Flag color={isHoveringFlag ? "#d00000" : "#ff0000"} width="18px" />
                       </button>

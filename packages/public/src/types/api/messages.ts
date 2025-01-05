@@ -10,6 +10,11 @@ export enum ErrorMessageCodes {
   INVALID_CONTENT_TYPE = "invalid_content_type",
 
   REACHED_MINIGAME_LIMIT = "reached_minigame_limit",
+  ALREADY_CAN_PUBLISH = "already_can_publish",
+  MISSING_LEGAL_REVIEW = "missing_legal_review",
+  MISSING_LEGAL_PUBLISH = "missing_legal_publish",
+  MISSING_PROXY_URL_REVIEW = "missing_proxy_url_review",
+  MISSING_PROXY_URL_PUBLISH = "missing_proxy_url_publish",
 
   MISSING_LOCATION = "missing_location",
   ROOM_NOT_FOUND = "room_not_found",
@@ -52,6 +57,12 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.INVALID_CONTENT_TYPE]: "Invalid Content-Type.",
 
   [ErrorMessageCodes.REACHED_MINIGAME_LIMIT]: "You have reached the minigames limit! (100)",
+  [ErrorMessageCodes.ALREADY_CAN_PUBLISH]: "You can already publish this minigame.",
+  [ErrorMessageCodes.MISSING_LEGAL_REVIEW]:
+    "Must have a terms of services and privacy policy to request to publish a minigame.",
+  [ErrorMessageCodes.MISSING_LEGAL_PUBLISH]: "Cannot have an empty terms of services and/or privacy policy field.",
+  [ErrorMessageCodes.MISSING_PROXY_URL_REVIEW]: "Must have a proxy url to request to publish a minigame.",
+  [ErrorMessageCodes.MISSING_PROXY_URL_PUBLISH]: "Cannot have a empty proxy url on a published minigame.",
 
   [ErrorMessageCodes.MISSING_LOCATION]: "Missing location.",
   [ErrorMessageCodes.ROOM_NOT_FOUND]: "The room could not be found.",

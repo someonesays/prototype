@@ -36,6 +36,13 @@
       "when": 1735869311984,
       "tag": "0004_steady_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1736117687363,
+      "tag": "0005_easy_skreet",
+      "breakpoints": true
     }
   ]
 }

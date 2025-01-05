@@ -1,4 +1,4 @@
-import { MatchmakingLocation, MinigamePathType, MinigamePublishType } from "@/public";
+import { MatchmakingLocation, MinigamePathType } from "@/public";
 import { createMinigame, createServer, createUser } from "../src/utils";
 
 const authorId = await createUser({ name: "Two", discordId: "276497792526974996" });
@@ -9,7 +9,8 @@ await createMinigame({
   authorId,
   description: "The objective of this game is to click the buttons.",
   previewImage: "https://upload.wikimedia.org/wikipedia/commons/e/e0/PlaceholderLC.png",
-  publishType: MinigamePublishType.PUBLIC_OFFICIAL,
+  published: true,
+  official: true,
   termsOfServices: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   privacyPolicy: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   proxyUrl: "http://localhost:5173",

@@ -6,7 +6,7 @@ import {
   MatchmakingLocation,
   MinigameOrientation,
   MinigamePathType,
-  MinigamePublishType,
+  type PrivateMinigame,
 } from "@/public";
 import {
   createMinigame,
@@ -15,6 +15,7 @@ import {
   getMinigameByAuthorId,
   getMinigames,
   getMinigamesCount,
+  requestMinigameReview,
   updateMinigameWithAuthorId,
 } from "@/db";
 import { createCode, resetRoom, validateUrl } from "@/utils";
@@ -27,7 +28,7 @@ const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
-  publishType: z.nativeEnum(MinigamePublishType).default(MinigamePublishType.UNLISTED),
+  published: z.boolean().default(false),
   termsOfServices: z.string().refine(validateUrl).nullable().default(null),
   privacyPolicy: z.string().refine(validateUrl).nullable().default(null),
   proxyUrl: z.string().refine(validateUrl).nullable().default(null),
@@ -56,10 +57,7 @@ userMinigames.post("/", authMiddleware, zValidator("json", userMinigameZod), asy
   const count = await getMinigamesCount({ authorId: c.var.user.id });
   if (count >= 100) return c.json({ code: ErrorMessageCodes.REACHED_MINIGAME_LIMIT }, 429);
 
-  if (values.publishType === MinigamePublishType.PUBLIC_OFFICIAL) {
-    // Disallow people from publishing games as official minigames
-    values.publishType = MinigamePublishType.PUBLIC_UNOFFICIAL;
-  }
+  values.published = false; // disallow creating a published minigame
 
   const id = await createMinigame({ authorId: c.var.user.id, ...values });
   return c.json({ id });
@@ -111,24 +109,65 @@ userMinigames.post(
   },
 );
 
-userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
+userMinigames.post("/:id/review", authMiddleware, async (c) => {
   const id = c.req.param("id");
-  const values = c.req.valid("json");
 
   const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
   if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
+  if (minigame.canPublish) return c.json({ code: ErrorMessageCodes.ALREADY_CAN_PUBLISH }, 403);
+
+  if (!minigame.proxyUrl) return c.json({ code: ErrorMessageCodes.MISSING_PROXY_URL_REVIEW }, 403);
+  if (!minigame.termsOfServices || !minigame.privacyPolicy) {
+    return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_REVIEW }, 403);
+  }
+
+  await requestMinigameReview({ id: minigame.id, authorId: c.var.user.id });
+  return c.json({ success: true });
+});
+
+userMinigames.delete("/:id/review", authMiddleware, async (c) => {
+  const id = c.req.param("id");
+
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+  await updateMinigameWithAuthorId({ id, authorId: c.var.user.id, underReview: null });
+  return c.json({ success: true });
+});
+
+userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod), async (c) => {
+  const id = c.req.param("id");
+  const values: Partial<PrivateMinigame> = c.req.valid("json");
+
+  const minigame = await getMinigameByAuthorId({ id, authorId: c.var.user.id });
+  if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+  if (!minigame.canPublish) {
+    values.published = false; // disallow creating a published minigame
+  }
+
+  if (!values.proxyUrl) {
+    if (minigame.underReview) return c.json({ code: ErrorMessageCodes.MISSING_PROXY_URL_REVIEW }, 403);
+    if (values.published) return c.json({ code: ErrorMessageCodes.MISSING_PROXY_URL_PUBLISH }, 403);
+
+    // (preventing any race-condition)
+    values.underReview = null;
+    minigame.published = false;
+  }
+
+  if (!values.termsOfServices || !values.privacyPolicy) {
+    if (minigame.underReview) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_REVIEW }, 403);
+    if (values.published) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_PUBLISH }, 403);
+
+    // (preventing any race-condition)
+    values.underReview = null;
+    values.published = false;
+  }
+
   if (values.previewImage) {
     const canAccessPage = await validateImageUrl(values.previewImage);
     if (!canAccessPage.success) return c.json({ code: canAccessPage.code }, canAccessPage.status);
-  }
-
-  if (
-    minigame.publishType !== MinigamePublishType.PUBLIC_OFFICIAL &&
-    values.publishType === MinigamePublishType.PUBLIC_OFFICIAL
-  ) {
-    // Disallow people from publishing games as official minigames
-    values.publishType = MinigamePublishType.PUBLIC_UNOFFICIAL;
   }
 
   await updateMinigameWithAuthorId({ id, authorId: c.var.user.id, ...values });

@@ -1,5 +1,5 @@
 import { createCode, createCuid } from "@/utils";
-import { MatchmakingLocation, MinigameOrientation, MinigamePathType, MinigamePublishType } from "@/public";
+import { MatchmakingLocation, MinigameOrientation, MinigamePathType } from "@/public";
 import { boolean, text, smallint, pgTable, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { NOW } from "../src/utils/utils";
@@ -18,7 +18,15 @@ export const minigames = pgTable("minigames", {
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
   previewImage: text("preview_image"),
-  publishType: smallint("publish_type").$type<MinigamePublishType>().notNull().default(MinigamePublishType.UNLISTED),
+
+  underReview: timestamp("under_review", { withTimezone: true }),
+  canPublish: boolean("can_publish").notNull().default(false),
+
+  published: boolean("published").notNull().default(false),
+  official: boolean("official").notNull().default(false),
+
+  currentlyFeatured: boolean("currently_featured").notNull().default(false),
+  previouslyFeaturedDate: timestamp("previously_featured_date", { withTimezone: true }).$type<Date | typeof NOW | null>(),
 
   termsOfServices: text("terms_of_services"),
   privacyPolicy: text("privacy_policy"),
@@ -35,8 +43,6 @@ export const minigames = pgTable("minigames", {
 
   supportsMobile: boolean("supports_mobile").notNull().default(false),
   mobileOrientation: smallint("mobile_orientation").$type<MinigameOrientation>().notNull().default(MinigameOrientation.NONE),
-
-  currentlyFeatured: boolean("currently_featured").notNull().default(false),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(NOW),

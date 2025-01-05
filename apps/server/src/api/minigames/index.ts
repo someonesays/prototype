@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { ErrorMessageCodes, MinigamePublishType } from "@/public";
+import { ErrorMessageCodes } from "@/public";
 import { getMinigamePublic, getMinigamesPublic } from "@/db";
 import { getOffsetAndLimit } from "../../utils";
 

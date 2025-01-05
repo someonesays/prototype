@@ -9,15 +9,17 @@ export interface ApiGetUser {
   user: User;
 }
 
+export type PrivateMinigame = typeof schema.minigames.$inferSelect;
+
 export interface ApiGetUserMinigames {
   offset: number;
   limit: number;
   total: number;
-  minigames: (typeof schema.minigames.$inferSelect)[];
+  minigames: PrivateMinigame[];
 }
 
 export interface ApiGetUserMinigame {
-  minigame: typeof schema.minigames.$inferSelect;
+  minigame: PrivateMinigame;
 }
 
 export interface ApiPostUserMinigame {
