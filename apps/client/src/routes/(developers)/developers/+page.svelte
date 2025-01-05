@@ -133,7 +133,7 @@ async function logoutAllSessions() {
       </div>
       <div>
         And join our Discord server to ask for help!
-        <a class="url" href="https://discord.gg/zVWekYCEC9" target="_blank">https://discord.gg/zVWekYCEC9</a>
+        <a class="url" href="https://discord.gg/Hce5qUTx5s" target="_blank">https://discord.gg/Hce5qUTx5s</a>
       </div>
 
       <br><br>
