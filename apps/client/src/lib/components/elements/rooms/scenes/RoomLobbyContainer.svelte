@@ -1,6 +1,8 @@
 <script lang="ts">
 import { onMount } from "svelte";
+
 import { clickOutside } from "$lib/utils/clickOutside";
+import { audio } from "$lib/utils/audio";
 
 import Logo from "$lib/components/icons/Logo.svelte";
 import GearIcon from "$lib/components/icons/GearIcon.svelte";
@@ -32,6 +34,7 @@ import { searchMinigames } from "$lib/utils/minigames";
 
 import { ClientOpcodes, ErrorMessageCodes, ErrorMessageCodesToText, MinigamePublishType } from "@/public";
 import { Common, Events, Permissions, PermissionUtils } from "@discord/embedded-app-sdk";
+import { encodeTimeSpecToTimestamp } from "@msgpack/msgpack";
 
 let isSettingsOpen = $state(false);
 let activeView = $state<"players" | "game">("game");
@@ -309,12 +312,12 @@ function reportMinigame() {
     </div>
   </div>
 {:else}
-  <Modal style="transform: scale({transformScale});">
+  <Modal style="transform: scale({transformScale});" onclose={() => audio.close.play()}>
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
-      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
@@ -328,14 +331,14 @@ function reportMinigame() {
         <a data-sveltekit-preload-data="off" href="{$roomLobbyPopupMessage.url}" target="_blank">
           <button class="error-button margin-top-8px">Open</button>
         </a>
-        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+        <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
       <br><br>
       <div class="modal-icon"><Copy color="#000000" /></div>
       <p>Copied invite link!</p>
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
-      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
 
@@ -344,7 +347,7 @@ function reportMinigame() {
 
         <br><br>
         <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
-        <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
+        <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
       <br>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame-search"}
@@ -398,12 +401,12 @@ function reportMinigame() {
         </button>
       {/if}
 
-      <button class="secondary-button margin-top-8px" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
+      <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
       <br><br>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report minigame</h2>
       <p>This UI is a work in progress!</p>
-      <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+      <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
@@ -413,7 +416,7 @@ function reportMinigame() {
       </p>
       <p>
         <button class="primary-button margin-top-8px wait-on-disabled" onclick={() => startGame(true)}>Start</button>
-        <button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Cancel</button>
+        <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {/if}
   </Modal>

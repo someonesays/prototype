@@ -21,8 +21,7 @@ import { isModalOpen } from "$lib/stores/home/modal";
 
 import { launcherMatchmaking } from "$lib/stores/home/launcher";
 import { getFeaturedMinigames } from "$lib/utils/minigames";
-
-let minigameId = $state(page.url.searchParams.get("minigame"));
+import { audio } from "$lib/utils/audio";
 
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
@@ -53,6 +52,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
 
   if (disableJoinPage) return;
   disableJoinPage = true;
+
+  audio.press.play();
 
   const form = new FormData(evt.target as HTMLFormElement);
 
@@ -150,11 +151,11 @@ onMount(() => {
 });
 </script>
 
-<Modal>
+<Modal onclose={() => audio.close.play()}>
   <br><br>
   <div class="modal-icon"><Ban color="#000000" /></div>
   <p>{$kickedReason}</p>
-  <p><button class="secondary-button margin-top-8px" onclick={() => $isModalOpen = false}>Close</button></p>
+  <p><button class="secondary-button margin-top-8px" onclick={() => {$isModalOpen = false; audio.close.play();}}>Close</button></p>
 </Modal>
 
 <div class="main-container">

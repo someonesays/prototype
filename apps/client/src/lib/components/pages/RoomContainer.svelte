@@ -5,9 +5,12 @@ import { onMount } from "svelte";
 import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 
+import { audio } from "$lib/utils/audio";
+
 import {
   ErrorMessageCodesToText,
   RoomWebsocket,
+  ClientOpcodes,
   ServerOpcodes,
   GameStatus,
   MinigameEndReason,
@@ -27,6 +30,7 @@ import {
   roomJoinedLate,
   roomLobbyPopupMessage,
   roomFeaturedMinigames,
+  roomMinigameIdOnJoin,
 } from "$lib/stores/home/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/stores/home/launcher";
 import { kickedReason } from "$lib/stores/home/lobby";
@@ -110,6 +114,15 @@ onMount(() => {
   $roomWs.once(ServerOpcodes.GET_INFORMATION, (evt) => {
     connected = true;
     $room = evt;
+
+    if ($roomMinigameIdOnJoin && $room.room.host === $room.user) {
+      $roomRequestedToChangeSettings = true;
+      $roomWs?.send({
+        opcode: ClientOpcodes.SET_ROOM_SETTINGS,
+        data: { minigameId: $roomMinigameIdOnJoin },
+      });
+    }
+    $roomMinigameIdOnJoin = null;
   });
   $roomWs.on(ServerOpcodes.PLAYER_JOIN, (player) => {
     $room?.players.push(player);
@@ -176,6 +189,8 @@ onMount(() => {
     $roomHandshakeCount = evt.roomHandshakeCount;
 
     $room.status = GameStatus.WAITING_PLAYERS_TO_LOAD_MINIGAME;
+
+    audio.start.play();
   });
   $roomWs.on(ServerOpcodes.END_MINIGAME, ({ players, reason }) => {
     if (!$room) throw new Error("Cannot find $room on end minigame");
@@ -355,6 +370,36 @@ onMount(() => {
     }
   };
 
+  // Audio
+  const clickButton = (evt: MouseEvent) => {
+    let targetElement = evt.target;
+    while (targetElement) {
+      if (
+        targetElement &&
+        "tagName" in targetElement &&
+        typeof targetElement.tagName === "string" &&
+        ["A", "BUTTON"].includes(targetElement.tagName)
+      ) {
+        if (
+          "dataset" in targetElement &&
+          targetElement.dataset &&
+          typeof targetElement.dataset === "object" &&
+          "audioType" in targetElement.dataset &&
+          typeof targetElement.dataset.audioType === "string" &&
+          targetElement.dataset.audioType === "close"
+        ) {
+          return audio.close.play();
+        }
+
+        return audio.press.play();
+      }
+
+      if (!("parentElement" in targetElement)) break;
+      targetElement = targetElement.parentElement as EventTarget | null;
+    }
+  };
+  window.addEventListener("click", clickButton);
+
   return () => {
     // Make exitedPage = true for additional race-condition prevention checks
     exitedPage = true;
@@ -373,6 +418,9 @@ onMount(() => {
     $roomWs?.close();
     $roomWs = null;
     $roomParentSdk = null;
+
+    // Remove audio
+    window.removeEventListener("click", clickButton);
   };
 });
 
