@@ -1,11 +1,13 @@
-import type { MinigameOrientation, MinigamePublishType } from "../../types";
+import type { MinigameOrientation } from "../../types";
 
 export interface Minigame {
   id: string;
   name: string;
   description: string;
-  publishType: MinigamePublishType;
+  published: boolean;
+  official: boolean;
   currentlyFeatured: boolean;
+  previouslyFeaturedDate: string | null;
   author: {
     id: string;
     name: string;

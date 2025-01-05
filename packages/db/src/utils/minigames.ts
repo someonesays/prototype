@@ -1,28 +1,41 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, asc, eq, or, sql } from "drizzle-orm";
+import { and, asc, eq, isNotNull, or, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { NOW } from "./utils";
-import { MinigamePublishType, type Minigame } from "@/public";
+import type { Minigame, PrivateMinigame } from "@/public";
 
 export async function createMinigame(minigame: typeof schema.minigames.$inferInsert) {
   return (await db.insert(schema.minigames).values(minigame).returning({ id: schema.minigames.id }))[0].id;
 }
 
-export async function updateMinigame(minigame: Partial<typeof schema.minigames.$inferSelect> & { id: string }) {
+export async function updateMinigame(minigame: Partial<PrivateMinigame> & { id: string }) {
   await db
     .update(schema.minigames)
     .set({ ...minigame, updatedAt: NOW })
     .where(eq(schema.minigames.id, minigame.id));
 }
 
-export async function updateMinigameWithAuthorId(
-  minigame: Partial<typeof schema.minigames.$inferSelect> & { id: string; authorId: string },
-) {
+export async function updateMinigameWithAuthorId(minigame: Partial<PrivateMinigame> & { id: string; authorId: string }) {
   await db
     .update(schema.minigames)
     .set({ ...minigame, updatedAt: NOW })
     .where(and(eq(schema.minigames.id, minigame.id), eq(schema.minigames.authorId, minigame.authorId)));
+}
+
+export async function requestMinigameReview({ id, authorId }: { id: string; authorId: string }) {
+  await db
+    .update(schema.minigames)
+    .set({ updatedAt: NOW, underReview: NOW })
+    .where(
+      and(
+        eq(schema.minigames.id, id),
+        eq(schema.minigames.authorId, authorId),
+        eq(schema.minigames.canPublish, false),
+        isNotNull(schema.minigames.termsOfServices),
+        isNotNull(schema.minigames.privacyPolicy),
+      ),
+    );
 }
 
 export async function deleteMinigame(id: string) {
@@ -98,19 +111,14 @@ function createMinigamesWhereCondition({
 }) {
   return and(
     typeof query === "string" ? sql`strpos(lower(${schema.minigames.name}), ${query.toLowerCase()}) > 0` : undefined,
-    publicOnly
-      ? or(
-          eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_OFFICIAL),
-          eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_UNOFFICIAL),
-        )
-      : undefined,
+    publicOnly ? eq(schema.minigames.published, true) : undefined,
     include?.length
       ? or(
-          include.includes("official") ? eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_OFFICIAL) : undefined,
-          include.includes("unofficial")
-            ? eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_UNOFFICIAL)
+          include.includes("official") ? eq(schema.minigames.official, true) : undefined,
+          include.includes("unofficial") ? eq(schema.minigames.official, false) : undefined,
+          include.includes("featured")
+            ? or(eq(schema.minigames.currentlyFeatured, true), isNotNull(schema.minigames.previouslyFeaturedDate))
             : undefined,
-          include.includes("featured") ? eq(schema.minigames.currentlyFeatured, true) : undefined,
         )
       : undefined,
     authorId ? eq(schema.minigames.authorId, authorId) : undefined,
@@ -158,8 +166,10 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     id: minigame.id,
     name: minigame.name,
     description: minigame.description,
-    publishType: minigame.publishType,
+    published: minigame.published,
+    official: minigame.official,
     currentlyFeatured: minigame.currentlyFeatured,
+    previouslyFeaturedDate: minigame.previouslyFeaturedDate?.toString() ?? null,
     author: {
       id: minigame.author.id,
       name: minigame.author.name,

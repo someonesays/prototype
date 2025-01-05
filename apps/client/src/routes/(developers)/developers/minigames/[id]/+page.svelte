@@ -9,7 +9,7 @@ import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
-import { MinigameOrientation, MinigamePathType, MinigamePublishType, type ApiGetUserMinigame } from "@/public";
+import { MinigameOrientation, MinigamePathType, type ApiGetUserMinigame } from "@/public";
 
 const minigameId = page.params.id;
 let minigame = $state<ApiGetUserMinigame["minigame"]>();
@@ -42,7 +42,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
   const name = form.get("name") as string;
   const description = form.get("description") as string;
   const previewImage = (form.get("previewImage") as string) || null;
-  const publishType = Number.parseInt(form.get("publishType") as string);
+  const published = Boolean(form.get("published"));
   const termsOfServices = (form.get("termsOfServices") as string) || null;
   const privacyPolicy = (form.get("privacyPolicy") as string) || null;
   const proxyUrl = (form.get("proxyUrl") as string) || null;
@@ -58,7 +58,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
       name,
       description,
       previewImage,
-      publishType,
+      published,
       termsOfServices,
       privacyPolicy,
       proxyUrl,
@@ -104,6 +104,34 @@ async function regenTestingAccessCode() {
   alert("Success!");
   refreshStates();
 }
+
+async function requestToPublishMinigameAccess() {
+  if (!minigame) throw new Error("Minigame hasn't loaded yet");
+
+  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
+    method: "POST",
+    headers: { authorization: $token },
+  });
+
+  if (!res.ok) return alert(await res.text());
+
+  alert("Success!");
+  refreshStates();
+}
+
+async function removeRequestToPublishMinigameAccess() {
+  if (!minigame) throw new Error("Minigame hasn't loaded yet");
+
+  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
+    method: "DELETE",
+    headers: { authorization: $token },
+  });
+
+  if (!res.ok) return alert(await res.text());
+
+  alert("Success!");
+  refreshStates();
+}
 </script>
 
 <Modal>
@@ -132,13 +160,20 @@ async function regenTestingAccessCode() {
     {:else}
       <h2>Minigame: {minigame.name}</h2>
 
-      {#if minigame.proxyUrl}
-        <p>
+      <p>
+        {#if minigame.proxyUrl}
           <a href={`/?minigame=${minigame.id}`} target="_blank">
             <button class="primary-button">Play minigame</button>
           </a>
-        </p>
-      {/if}
+        {/if}
+        {#if !minigame.canPublish}
+          {#if minigame.underReview}
+            <button class="error-button" onclick={removeRequestToPublishMinigameAccess}>Remove request access to publish minigame</button>
+          {:else}
+            <button class="success-button" onclick={requestToPublishMinigameAccess}>Request access to publish minigame</button>
+          {/if}
+        {/if}
+      </p>
 
       <p style="text-align: center;">
         ID: <u>{minigame.id}</u><br>
@@ -165,22 +200,12 @@ async function regenTestingAccessCode() {
         
         <br><br>
 
-        <label for="publishType">Publish type:</label>
-        <select class="input" name="publishType">
-          <option value={MinigamePublishType.UNLISTED} selected={minigame.publishType === MinigamePublishType.UNLISTED}>
-            Unlisted
-          </option>
-          {#if minigame.publishType === MinigamePublishType.PUBLIC_OFFICIAL}
-            <option value={MinigamePublishType.PUBLIC_OFFICIAL} selected>
-              Public (official)
-            </option>
-          {/if}
-          <option value={MinigamePublishType.PUBLIC_UNOFFICIAL} selected={minigame.publishType === MinigamePublishType.PUBLIC_UNOFFICIAL}>
-            Public
-          </option>
-        </select>
+        {#if minigame.canPublish}
+          <label for="published">Published:</label>
+          <input type="checkbox" name="published" checked={minigame.published}>
 
-        <br><br>
+          <br><br>
+        {/if}
 
         <label for="termsOfServices">Terms of Services:</label>
         <input class="input" name="termsOfServices" value={minigame.termsOfServices}>
