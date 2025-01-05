@@ -156,13 +156,15 @@ userMinigames.patch("/:id", authMiddleware, zValidator("json", userMinigameZod),
     minigame.published = false;
   }
 
-  if (!values.termsOfServices || !values.privacyPolicy) {
-    if (minigame.underReview) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_REVIEW }, 403);
-    if (values.published) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_PUBLISH }, 403);
+  if (!minigame.official) {
+    if (!values.termsOfServices || !values.privacyPolicy) {
+      if (minigame.underReview) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_REVIEW }, 403);
+      if (values.published) return c.json({ code: ErrorMessageCodes.MISSING_LEGAL_PUBLISH }, 403);
 
-    // (preventing any race-condition)
-    values.underReview = null;
-    values.published = false;
+      // (preventing any race-condition)
+      values.underReview = null;
+      values.published = false;
+    }
   }
 
   if (values.previewImage) {
