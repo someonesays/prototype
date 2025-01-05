@@ -82,7 +82,7 @@ export async function getMinigamesPublic(opts: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured"];
+  include?: ["official", "unofficial", "featured", "currently_featured"];
   offset?: number;
   limit?: number;
 }) {
@@ -93,7 +93,7 @@ export async function getMinigamesPublic(opts: {
 export function getMinigamesCount(opts: {
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured"];
+  include?: ["official", "unofficial", "featured", "currently_featured"];
 }) {
   return db.$count(schema.minigames, createMinigamesWhereCondition(opts));
 }
@@ -107,7 +107,7 @@ function createMinigamesWhereCondition({
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured"];
+  include?: ["official", "unofficial", "featured", "currently_featured"];
 }) {
   return and(
     typeof query === "string" ? sql`strpos(lower(${schema.minigames.name}), ${query.toLowerCase()}) > 0` : undefined,
@@ -116,9 +116,8 @@ function createMinigamesWhereCondition({
       ? or(
           include.includes("official") ? eq(schema.minigames.official, true) : undefined,
           include.includes("unofficial") ? eq(schema.minigames.official, false) : undefined,
-          include.includes("featured")
-            ? or(eq(schema.minigames.currentlyFeatured, true), isNotNull(schema.minigames.previouslyFeaturedDate))
-            : undefined,
+          include.includes("featured") ? isNotNull(schema.minigames.previouslyFeaturedDate) : undefined,
+          include.includes("currently_featured") ? eq(schema.minigames.currentlyFeatured, true) : undefined,
         )
       : undefined,
     authorId ? eq(schema.minigames.authorId, authorId) : undefined,
