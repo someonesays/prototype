@@ -5,7 +5,7 @@ import { roomFeaturedMinigames } from "$lib/stores/home/roomState";
 import type { ApiGetMinigames } from "@/public";
 
 export async function getFeaturedMinigames() {
-  const minigames = await searchMinigames({ include: ["featured"] });
+  const minigames = await searchMinigames({ include: ["currently_featured"] });
 
   roomFeaturedMinigames.set(minigames);
   return minigames.success;
@@ -13,7 +13,7 @@ export async function getFeaturedMinigames() {
 
 export async function searchMinigames(opts: {
   query?: string;
-  include?: ("official" | "unofficial" | "featured")[];
+  include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
   offset?: number;
   limit?: number;
 }) {

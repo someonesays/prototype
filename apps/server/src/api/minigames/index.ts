@@ -13,7 +13,12 @@ minigames.get("/", async (c) => {
     ?.toLowerCase()
     .trim()
     .split(",")
-    .filter((i) => ["official", "unofficial", "featured"].includes(i)) as ["official", "unofficial", "featured"];
+    .filter((i) => ["official", "unofficial", "featured", "currently_featured"].includes(i)) as [
+    "official",
+    "unofficial",
+    "featured",
+    "currently_featured",
+  ];
 
   const minigames = await getMinigamesPublic({ publicOnly: true, query, include, offset, limit });
   return c.json(minigames);
