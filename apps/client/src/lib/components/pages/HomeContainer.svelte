@@ -167,7 +167,7 @@ onMount(() => {
     </div>
 
     <p class="indev-warning">
-      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/zVWekYCEC9" target="_blank">Discord server</a> if you're curious.
+      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/Hce5qUTx5s" target="_blank">Discord server</a> if you're curious.
     </p>
 
     <form onsubmit={joinRoom}>
