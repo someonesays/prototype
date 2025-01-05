@@ -289,7 +289,7 @@ function openUrl(evt: MouseEvent) {
 function joinDiscordServer(evt: MouseEvent) {
   if ($launcher === "discord") {
     evt.preventDefault();
-    $launcherDiscordSdk?.commands.openExternalLink({ url: "https://discord.gg/Hce5qUTx5s" });
+    $launcherDiscordSdk?.commands.openExternalLink({ url: "https://discord.gg/zVWekYCEC9" });
     return;
   }
 }
@@ -426,7 +426,7 @@ function reportMinigame() {
       <div class="nav-container">
         <div class="leave">
           {#if $launcher === "normal"}
-            <button class="button leave" onclick={leaveGame} tabindex={disableTabIndex}>
+            <button class="button leave" data-audio-type="close" onclick={leaveGame} tabindex={disableTabIndex}>
               <div><DoorOpen /></div>
             </button>
           {:else}
@@ -463,7 +463,7 @@ function reportMinigame() {
           </div>
 
           {#if $launcher === "discord"}
-            <a href="https://discord.gg/Hce5qUTx5s" onclick={joinDiscordServer} target="_blank">
+            <a href="https://discord.gg/zVWekYCEC9" onclick={joinDiscordServer} target="_blank">
               <button class="button discord">
                 <div><Discord /></div>
               </button>
@@ -495,7 +495,9 @@ function reportMinigame() {
                     {#if $room.room.host === $room.user && $room.user !== player.id}
                       <div class="player-actions">
                         <div>
-                          <button class="error-button margin-top-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          {#if $launcher === "normal"}
+                            <button class="error-button margin-top-8px playeraction-button kick" onclick={() => kickPlayer(player.id)} tabindex={disableTabIndex}>Kick</button>
+                          {/if}
                           <button class="secondary-button margin-top-8px playeraction-button transfer-host" onclick={() => transferHost(player.id)} tabindex={disableTabIndex}>Transfer Host</button>
                         </div>
                       </div>
