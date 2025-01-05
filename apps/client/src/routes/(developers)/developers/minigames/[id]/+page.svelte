@@ -132,6 +132,14 @@ async function regenTestingAccessCode() {
     {:else}
       <h2>Minigame: {minigame.name}</h2>
 
+      {#if minigame.proxyUrl}
+        <p>
+          <a href={`/?minigame=${minigame.id}`} target="_blank">
+            <button class="primary-button">Play minigame</button>
+          </a>
+        </p>
+      {/if}
+
       <p style="text-align: center;">
         ID: <u>{minigame.id}</u><br>
         Testing access code: <u>{minigame.testingAccessCode}</u>

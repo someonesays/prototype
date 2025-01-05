@@ -8,6 +8,7 @@ import { page } from "$app/state";
 import {
   ErrorMessageCodesToText,
   RoomWebsocket,
+  ClientOpcodes,
   ServerOpcodes,
   GameStatus,
   MinigameEndReason,
@@ -27,6 +28,7 @@ import {
   roomJoinedLate,
   roomLobbyPopupMessage,
   roomFeaturedMinigames,
+  roomMinigameIdOnJoin,
 } from "$lib/stores/home/roomState";
 import { launcher, launcherDiscordSdk, launcherMatchmaking } from "$lib/stores/home/launcher";
 import { kickedReason } from "$lib/stores/home/lobby";
@@ -110,6 +112,15 @@ onMount(() => {
   $roomWs.once(ServerOpcodes.GET_INFORMATION, (evt) => {
     connected = true;
     $room = evt;
+
+    if ($roomMinigameIdOnJoin && $room.room.host === $room.user) {
+      $roomRequestedToChangeSettings = true;
+      $roomWs?.send({
+        opcode: ClientOpcodes.SET_ROOM_SETTINGS,
+        data: { minigameId: $roomMinigameIdOnJoin },
+      });
+    }
+    $roomMinigameIdOnJoin = null;
   });
   $roomWs.on(ServerOpcodes.PLAYER_JOIN, (player) => {
     $room?.players.push(player);
