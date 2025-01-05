@@ -5,13 +5,18 @@ import { roomFeaturedMinigames } from "$lib/stores/home/roomState";
 import type { ApiGetMinigames } from "@/public";
 
 export async function getFeaturedMinigames() {
-  const minigames = await searchMinigames({ featured: true });
+  const minigames = await searchMinigames({ include: ["featured"] });
 
   roomFeaturedMinigames.set(minigames);
   return minigames.success;
 }
 
-export async function searchMinigames(opts: { query?: string; offset?: number; limit?: number; featured?: boolean }) {
+export async function searchMinigames(opts: {
+  query?: string;
+  include?: ("official" | "unofficial" | "featured")[];
+  offset?: number;
+  limit?: number;
+}) {
   // @ts-ignore This piece of code works perfectly fine
   const params = new URLSearchParams(opts).toString();
 

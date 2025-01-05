@@ -144,7 +144,10 @@ async function handleSearchingMinigames() {
   if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
   searchMinigameTimeout = setTimeout(() => ($roomSearchedMinigames = null), 500);
 
-  const res = await searchMinigames({ query: searchMinigameQuery });
+  const res = await searchMinigames({
+    query: searchMinigameQuery,
+    include: removeIdsOption ? ["official", "featured"] : ["official", "unofficial", "featured"],
+  });
 
   clearTimeout(searchMinigameTimeout);
   $roomSearchedMinigames = res;
@@ -567,6 +570,8 @@ function reportMinigame() {
                       {/if}
                       apply to this minigame.
                     </p>
+                  {:else}
+                    <p class="nextup-minigame-legal">This is an official minigame from Someone Says.</p>
                   {/if}
                 </div>
               {:else}
