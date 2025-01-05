@@ -37,18 +37,18 @@ export async function getMinigames({
   query,
   authorId,
   publicOnly,
-  currentlyFeatured,
+  include,
   offset = 0,
   limit = 50,
 }: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  currentlyFeatured?: boolean;
+  include?: ["official", "unofficial", "featured"];
   offset?: number;
   limit?: number;
 }) {
-  const where = createMinigamesWhereCondition({ query, authorId, publicOnly, currentlyFeatured });
+  const where = createMinigamesWhereCondition({ query, authorId, publicOnly, include });
   return {
     offset,
     limit,
@@ -69,7 +69,7 @@ export async function getMinigamesPublic(opts: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  currentlyFeatured?: boolean;
+  include?: ["official", "unofficial", "featured"];
   offset?: number;
   limit?: number;
 }) {
@@ -77,28 +77,24 @@ export async function getMinigamesPublic(opts: {
   return { offset, limit, total, minigames: minigames.map((m) => transformMinigameToMinigamePublic(m)) };
 }
 
-export function getMinigamesCount({
-  authorId,
-  publicOnly,
-  currentlyFeatured,
-}: {
+export function getMinigamesCount(opts: {
   authorId?: string;
   publicOnly?: boolean;
-  currentlyFeatured?: boolean;
+  include?: ["official", "unofficial", "featured"];
 }) {
-  return db.$count(schema.minigames, createMinigamesWhereCondition({ authorId, publicOnly, currentlyFeatured }));
+  return db.$count(schema.minigames, createMinigamesWhereCondition(opts));
 }
 
 function createMinigamesWhereCondition({
   query,
   authorId,
   publicOnly,
-  currentlyFeatured,
+  include,
 }: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  currentlyFeatured?: boolean;
+  include?: ["official", "unofficial", "featured"];
 }) {
   return and(
     typeof query === "string" ? sql`strpos(lower(${schema.minigames.name}), ${query.toLowerCase()}) > 0` : undefined,
@@ -108,8 +104,16 @@ function createMinigamesWhereCondition({
           eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_UNOFFICIAL),
         )
       : undefined,
+    include?.length
+      ? or(
+          include.includes("official") ? eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_OFFICIAL) : undefined,
+          include.includes("unofficial")
+            ? eq(schema.minigames.publishType, MinigamePublishType.PUBLIC_UNOFFICIAL)
+            : undefined,
+          include.includes("featured") ? eq(schema.minigames.currentlyFeatured, true) : undefined,
+        )
+      : undefined,
     authorId ? eq(schema.minigames.authorId, authorId) : undefined,
-    currentlyFeatured ? eq(schema.minigames.currentlyFeatured, true) : undefined,
   );
 }
 
@@ -155,6 +159,7 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     name: minigame.name,
     description: minigame.description,
     publishType: minigame.publishType,
+    currentlyFeatured: minigame.currentlyFeatured,
     author: {
       id: minigame.author.id,
       name: minigame.author.name,

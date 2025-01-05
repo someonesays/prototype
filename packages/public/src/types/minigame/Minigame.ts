@@ -5,6 +5,7 @@ export interface Minigame {
   name: string;
   description: string;
   publishType: MinigamePublishType;
+  currentlyFeatured: boolean;
   author: {
     id: string;
     name: string;

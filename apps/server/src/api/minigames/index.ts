@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { ErrorMessageCodes } from "@/public";
+import { ErrorMessageCodes, MinigamePublishType } from "@/public";
 import { getMinigamePublic, getMinigamesPublic } from "@/db";
 import { getOffsetAndLimit } from "../../utils";
 
@@ -8,9 +8,14 @@ export const minigames = new Hono();
 minigames.get("/", async (c) => {
   const { offset, limit } = getOffsetAndLimit(c);
   const query = c.req.query("query");
-  const featured = c.req.query("featured")?.toLowerCase() === "true";
+  const include = c.req
+    .query("include")
+    ?.toLowerCase()
+    .trim()
+    .split(",")
+    .filter((i) => ["official", "unofficial", "featured"].includes(i)) as ["official", "unofficial", "featured"];
 
-  const minigames = await getMinigamesPublic({ publicOnly: true, query, currentlyFeatured: featured, offset, limit });
+  const minigames = await getMinigamesPublic({ publicOnly: true, query, include, offset, limit });
   return c.json(minigames);
 });
 
