@@ -295,7 +295,7 @@ function joinDiscordServer(evt: MouseEvent) {
 }
 
 function reportMinigame() {
-  const url = `https://docs.google.com/forms/d/e/1FAIpQLSdMVj4BJXS8gFKy5Yb6TLXW_TFRfEqOy7TPTg5C9Jry3oc7AQ/viewform?usp=pp_url&entry.458752900=${$room?.minigame?.id}`;
+  const url = `https://tally.so/r/mKvl5z?minigame_id=${$room?.minigame?.id}`;
 
   if ($launcher === "normal") {
     window.open(url, "_blank");
