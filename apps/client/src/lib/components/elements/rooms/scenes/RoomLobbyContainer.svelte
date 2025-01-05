@@ -289,7 +289,7 @@ function openUrl(evt: MouseEvent) {
 function joinDiscordServer(evt: MouseEvent) {
   if ($launcher === "discord") {
     evt.preventDefault();
-    $launcherDiscordSdk?.commands.openExternalLink({ url: "https://discord.gg/zVWekYCEC9" });
+    $launcherDiscordSdk?.commands.openExternalLink({ url: "https://discord.gg/Hce5qUTx5s" });
     return;
   }
 }
