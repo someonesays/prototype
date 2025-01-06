@@ -43,6 +43,13 @@
       "when": 1736117687363,
       "tag": "0005_easy_skreet",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1736120176877,
+      "tag": "0006_complete_steel_serpent",
+      "breakpoints": true
     }
   ]
 }
