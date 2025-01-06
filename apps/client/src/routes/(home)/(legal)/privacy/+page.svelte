@@ -7,7 +7,7 @@ import BaseCard from "$lib/components/elements/cards/BaseCard.svelte";
     <p><a class="url" href="/">Back</a></p>
 
     <h1>Privacy Policy - Someone Says</h1>
-    <h2>Effective Date: January 2, 2025</h2>
+    <h2>Effective Date: January 5, 2025</h2>
     
     <p>Welcome to Someone Says. This Privacy Policy (the "Policy") describes how we collect, use, disclose, and protect your personal information when you use Someone Says, including any content, functionality, and services offered on or through it. By accessing or using Someone Says, you agree to the terms of this Policy. If you do not agree with the practices described in this Policy, please do not use Someone Says.</p>
 
