@@ -90,7 +90,10 @@ async function deleteMinigameConfirm() {
     headers: { authorization: $token },
   });
 
-  if (res.ok) return goto("/developers");
+  if (res.ok) {
+    $isModalOpen = false;
+    return goto("/developers");
+  }
 }
 
 async function regenTestingAccessCode() {
