@@ -1,6 +1,6 @@
 import env from "@/env";
 import schema from "../main/schema";
-import { and, asc, eq, isNotNull, or, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNotNull, or, sql } from "drizzle-orm";
 import { db } from "../connectors/pool";
 import { NOW } from "./utils";
 import type { Minigame, PrivateMinigame } from "@/public";
@@ -46,10 +46,21 @@ export async function deleteMinigameWithAuthorId({ id, authorId }: { id: string;
   await db.delete(schema.minigames).where(and(eq(schema.minigames.id, id), eq(schema.minigames.authorId, authorId)));
 }
 
+export function featureMinigames(ids: string[]) {
+  return db.transaction(async (tx) => {
+    await tx.update(schema.minigames).set({ currentlyFeatured: false });
+    await tx
+      .update(schema.minigames)
+      .set({ currentlyFeatured: true, previouslyFeaturedDate: NOW })
+      .where(inArray(schema.minigames.id, ids));
+  });
+}
+
 export async function getMinigames({
   query,
   authorId,
   publicOnly,
+  underReview,
   include,
   offset = 0,
   limit = 50,
@@ -57,11 +68,12 @@ export async function getMinigames({
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured"];
+  underReview?: boolean;
+  include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
   offset?: number;
   limit?: number;
 }) {
-  const where = createMinigamesWhereCondition({ query, authorId, publicOnly, include });
+  const where = createMinigamesWhereCondition({ query, authorId, publicOnly, underReview, include });
   return {
     offset,
     limit,
@@ -82,7 +94,8 @@ export async function getMinigamesPublic(opts: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured", "currently_featured"];
+  underReview?: boolean;
+  include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
   offset?: number;
   limit?: number;
 }) {
@@ -93,7 +106,8 @@ export async function getMinigamesPublic(opts: {
 export function getMinigamesCount(opts: {
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured", "currently_featured"];
+  underReview?: boolean;
+  include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
 }) {
   return db.$count(schema.minigames, createMinigamesWhereCondition(opts));
 }
@@ -102,16 +116,20 @@ function createMinigamesWhereCondition({
   query,
   authorId,
   publicOnly,
+  underReview,
   include,
 }: {
   query?: string;
   authorId?: string;
   publicOnly?: boolean;
-  include?: ["official", "unofficial", "featured", "currently_featured"];
+  underReview?: boolean;
+  include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
 }) {
   return and(
     typeof query === "string" ? sql`strpos(lower(${schema.minigames.name}), ${query.toLowerCase()}) > 0` : undefined,
+    authorId ? eq(schema.minigames.authorId, authorId) : undefined,
     publicOnly ? eq(schema.minigames.published, true) : undefined,
+    underReview ? isNotNull(schema.minigames.underReview) : undefined,
     include?.length
       ? or(
           include.includes("official") ? eq(schema.minigames.official, true) : undefined,
@@ -120,7 +138,6 @@ function createMinigamesWhereCondition({
           include.includes("currently_featured") ? eq(schema.minigames.currentlyFeatured, true) : undefined,
         )
       : undefined,
-    authorId ? eq(schema.minigames.authorId, authorId) : undefined,
   );
 }
 

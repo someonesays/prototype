@@ -1,5 +1,5 @@
 import { createCuid } from "@/utils";
-import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
+import { boolean, text, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { NOW } from "../src/utils/utils";
 
@@ -12,6 +12,7 @@ export const users = pgTable("users", {
     .$defaultFn(() => createCuid()),
   name: text("name").notNull(),
   discordId: text("discord_id").unique(),
+  admin: boolean("admin").notNull().default(false),
   lastRevokedToken: timestamp("last_revoked_tokens", { withTimezone: true }).notNull().default(NOW),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(NOW),
 });

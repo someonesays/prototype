@@ -36,3 +36,13 @@ export const authMiddleware = createMiddleware<{
     return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 401);
   }
 });
+
+export const adminMiddleware = createMiddleware<{
+  Variables: {
+    user: typeof schema.users.$inferSelect;
+  };
+}>(async (c, next) => {
+  const user = c.get("user");
+  if (!user.admin) return c.json({ code: ErrorMessageCodes.INVALID_AUTHORIZATION }, 403);
+  return next();
+});
