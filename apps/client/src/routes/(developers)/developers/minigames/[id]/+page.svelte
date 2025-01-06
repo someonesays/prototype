@@ -18,6 +18,7 @@ onMount(() => {
   $isModalOpen = false;
 
   (async () => {
+    $isModalOpen = false;
     if (!(await refreshStates())) return goto("/developers");
   })();
 });
