@@ -50,6 +50,13 @@
       "when": 1736120176877,
       "tag": "0006_complete_steel_serpent",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1736122949166,
+      "tag": "0007_great_crusher_hogan",
+      "breakpoints": true
     }
   ]
 }

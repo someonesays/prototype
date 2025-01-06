@@ -13,6 +13,10 @@ export interface Minigame {
     name: string;
     createdAt: string;
   };
+  iconImage: {
+    normal: string;
+    discord: string;
+  } | null;
   previewImage: {
     normal: string;
     discord: string;

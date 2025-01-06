@@ -17,6 +17,8 @@ export const minigames = pgTable("minigames", {
 
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
+
+  iconImage: text("icon_image"),
   previewImage: text("preview_image"),
 
   underReview: timestamp("under_review", { withTimezone: true }),
