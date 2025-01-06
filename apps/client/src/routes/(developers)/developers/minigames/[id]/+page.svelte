@@ -163,7 +163,7 @@ async function removeRequestToPublishMinigameAccess() {
 
       <p>
         {#if minigame.proxyUrl}
-          <a href={`/?minigame=${minigame.id}`} target="_blank">
+          <a href={`/?minigame_id=${minigame.id}`} target="_blank">
             <button class="primary-button">Play minigame</button>
           </a>
         {/if}

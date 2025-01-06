@@ -7,7 +7,7 @@ import { launcherMatchmaking } from "$lib/stores/home/launcher";
 import { roomMinigameIdOnJoin } from "$lib/stores/home/roomState";
 
 onMount(() => {
-  const minigameId = page.url.searchParams.get("minigame");
+  const minigameId = page.url.searchParams.get("minigame_id");
   if (typeof minigameId === "string" && minigameId.length >= 1 && minigameId.length <= 50) {
     $roomMinigameIdOnJoin = minigameId;
     return () => {
