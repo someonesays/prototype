@@ -1,3 +1,5 @@
+import { getSize } from "@/public";
+
 let db: IDBDatabase;
 const opener: IDBOpenDBRequest = indexedDB.open("someonesays", 1);
 
@@ -19,7 +21,13 @@ export function getMinigameStore(id: string) {
 
     const request = store.get(id);
 
-    request.onsuccess = (evt) => resolve((evt.target as IDBRequest).result?.value ?? null);
+    request.onsuccess = (evt) => {
+      const data = (evt.target as IDBRequest).result?.value ?? null;
+      if (typeof data !== "string" && !(data instanceof Uint8Array)) return null;
+      if (getSize(data) > 1024) return null;
+
+      return resolve(data);
+    };
     request.onerror = () => resolve(null);
   });
 }
