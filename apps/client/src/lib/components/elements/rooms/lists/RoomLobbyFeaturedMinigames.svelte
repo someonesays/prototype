@@ -21,11 +21,11 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
       {#each $roomFeaturedMinigames.minigames as minigame}
         <button class="featured-minigame-container loaded" onclick={() => setSettings({ minigameId: minigame.id })} tabindex={tabindex} disabled={!$room || $room.user !== $room.room.host || $roomRequestedToChangeSettings}>
           <div class="preview-image featured">
-            {#if minigame?.previewImage}
+            {#if minigame?.iconImage}
               <img class="preview-image featured image-fade-in" alt="Minigame preview" src={
                 $launcher === "normal"
-                  ? minigame.previewImage.normal
-                  : minigame.previewImage.discord
+                  ? minigame.iconImage.normal
+                  : minigame.iconImage.discord
               } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
             {/if}
           </div>

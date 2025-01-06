@@ -171,11 +171,16 @@ onMount(() => {
     $room.minigame = minigame;
 
     if ($room.minigame && $room.minigame.id !== oldMinigameId) {
+      const minigameIconImage = $room.minigame.iconImage;
       const minigamePreviewImage = $room.minigame.previewImage;
+
+      $room.minigame.iconImage = null;
       $room.minigame.previewImage = null;
 
       setTimeout(() => {
         if (!$room?.minigame) return;
+
+        $room.minigame.iconImage = minigameIconImage;
         $room.minigame.previewImage = minigamePreviewImage;
       }, 0);
     }

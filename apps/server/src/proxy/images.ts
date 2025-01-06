@@ -13,6 +13,15 @@ images.use(
   }),
 );
 
+images.get("/minigames/:id/icon", async (c) => {
+  const id = c.req.param("id");
+
+  const minigame = await getMinigame(id);
+  if (!minigame?.iconImage) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
+
+  return sendProxiedImage(c, minigame.iconImage);
+});
+
 images.get("/minigames/:id/preview", async (c) => {
   const id = c.req.param("id");
 

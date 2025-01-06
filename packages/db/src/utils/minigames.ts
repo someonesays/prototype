@@ -197,6 +197,12 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
           discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/proxy/${encodeURIComponent(minigame.id)}/`,
         }
       : null,
+    iconImage: minigame.iconImage
+      ? {
+          normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/icon?v=${minigame.updatedAt.getTime()}`,
+          discord: `https://${env.DISCORD_CLIENT_ID}.discordsays.com/.proxy/api/images/minigames/${encodeURIComponent(minigame.id)}/icon?v=${minigame.updatedAt.getTime()}`,
+        }
+      : null,
     previewImage: minigame.previewImage
       ? {
           normal: `${env.BASE_API}/api/images/minigames/${encodeURIComponent(minigame.id)}/preview?v=${minigame.updatedAt.getTime()}`,

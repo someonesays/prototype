@@ -376,11 +376,11 @@ function reportMinigame() {
               <button class="select-minigame-button" disabled={$roomRequestedToChangeSettings} onclick={() => setSettings({ minigameId: minigame.id })}>
                 
                 <div class="preview-image">
-                  {#if minigame?.previewImage}
+                  {#if minigame?.iconImage}
                     <img class="preview-image image-fade-in" alt="Minigame preview" src={
                       $launcher === "normal"
-                        ? minigame.previewImage.normal
-                        : minigame.previewImage.discord
+                        ? minigame.iconImage.normal
+                        : minigame.iconImage.discord
                     } onload={(el) => (el.target as HTMLImageElement).classList.add("image-fade-in-loaded")} />
                   {/if}
                 </div>
