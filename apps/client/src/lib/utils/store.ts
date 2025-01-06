@@ -1,62 +1,69 @@
-import { getSize } from "@/public";
+export const { get: getMinigameStore, set: setMinigameStore, delete: deleteMinigameStore } = await getIndexedDB();
 
-let db: IDBDatabase;
-const opener: IDBOpenDBRequest = indexedDB.open("someonesays", 1);
+export function getIndexedDB(): Promise<{
+  get: (id: string) => Promise<string | Uint8Array | null>;
+  set: (id: string, value: string | Uint8Array | null | undefined) => Promise<boolean>;
+  delete: (id: string) => Promise<boolean>;
+}> {
+  return new Promise((resolve) => {
+    const opener: IDBOpenDBRequest = indexedDB.open("someonesays", 1);
 
-opener.onupgradeneeded = (evt: IDBVersionChangeEvent) => {
-  db = (evt.target as IDBOpenDBRequest).result;
-  db.createObjectStore("minigames", { keyPath: "id" });
-};
-
-opener.onsuccess = (evt: Event) => {
-  db = (evt.target as IDBOpenDBRequest).result;
-};
-
-export function getMinigameStore(id: string) {
-  if (!db) return null;
-
-  return new Promise<string | Uint8Array | null>((resolve) => {
-    const tx = db.transaction("minigames", "readonly");
-    const store = tx.objectStore("minigames");
-
-    const request = store.get(id);
-
-    request.onsuccess = (evt) => {
-      const data = (evt.target as IDBRequest).result?.value ?? null;
-      if (typeof data !== "string" && !(data instanceof Uint8Array)) return null;
-      if (getSize(data) > 1024) return null;
-
-      return resolve(data);
+    opener.onupgradeneeded = (evt: IDBVersionChangeEvent) => {
+      const db = (evt.target as IDBOpenDBRequest).result;
+      db.createObjectStore("minigames", { keyPath: "id" });
     };
-    request.onerror = () => resolve(null);
-  });
-}
 
-export function setMinigameStore(id: string, value: string | Uint8Array | null | undefined) {
-  if (!db) return false;
-  if (value === undefined || value === null) return deleteMinigameStore(id);
+    opener.onerror = (err: Event) => {
+      console.error(err);
+      resolve({
+        get: async (_id: string) => null,
+        set: async (_id: string, _value: string | Uint8Array | null | undefined) => false,
+        delete: async (_id: string) => false,
+      });
+    };
 
-  return new Promise<boolean>((resolve) => {
-    const tx = db.transaction("minigames", "readwrite");
-    const store = tx.objectStore("minigames");
+    opener.onsuccess = (evt: Event) => {
+      const db = (evt.target as IDBOpenDBRequest).result;
+      return resolve({
+        get: (id: string) => {
+          return new Promise((resolve) => {
+            const tx = db.transaction("minigames", "readonly");
+            const store = tx.objectStore("minigames");
 
-    const request = store.put({ id, value });
+            const request = store.get(id);
 
-    request.onsuccess = () => resolve(true);
-    request.onerror = () => resolve(false);
-  });
-}
+            request.onsuccess = (evt) => resolve((evt.target as IDBRequest).result?.value ?? null);
+            request.onerror = () => resolve(null);
+          });
+        },
+        set: (id: string, value: string | Uint8Array | null | undefined) => {
+          return new Promise<boolean>((resolve) => {
+            const tx = db.transaction("minigames", "readwrite");
+            const store = tx.objectStore("minigames");
 
-export function deleteMinigameStore(id: string) {
-  if (!db) return false;
+            let request: IDBRequest;
+            if (value === null || value === undefined) {
+              request = store.delete(id);
+            } else {
+              request = store.put({ id, value });
+            }
 
-  return new Promise<boolean>((resolve) => {
-    const tx = db.transaction("minigames", "readwrite");
-    const store = tx.objectStore("minigames");
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => resolve(false);
+          });
+        },
+        delete: (id: string) => {
+          return new Promise<boolean>((resolve) => {
+            const tx = db.transaction("minigames", "readwrite");
+            const store = tx.objectStore("minigames");
 
-    const request = store.delete(id);
+            const request = store.delete(id);
 
-    request.onsuccess = () => resolve(true);
-    request.onerror = () => resolve(false);
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => resolve(false);
+          });
+        },
+      });
+    };
   });
 }
