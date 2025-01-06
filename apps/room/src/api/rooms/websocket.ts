@@ -8,6 +8,8 @@ import {
   transformMinigameToMinigamePublic,
 } from "@/db";
 import {
+  getSize,
+  exceedsStateSize,
   ClientOpcodes,
   ServerOpcodes,
   GameStatus,
@@ -365,6 +367,8 @@ websocket.get(
               if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
+              if (exceedsStateSize(data)) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
+
               state.serverRoom.room.state = data;
 
               broadcastMessage({
@@ -381,6 +385,8 @@ websocket.get(
               if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (!isUserReady(state, data[0])) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+
+              if (exceedsStateSize(data[1])) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
 
               const player = getUserById(state, data[0]);
               if (!player?.ready) return; // (should never happen)
@@ -401,6 +407,8 @@ websocket.get(
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
+              if (exceedsStateSize(data)) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
+
               broadcastMessage({
                 room: state.serverRoom,
                 readyOnly: true,
@@ -413,6 +421,8 @@ websocket.get(
             case ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE: {
               if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+
+              if (exceedsStateSize(data)) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -431,6 +441,8 @@ websocket.get(
               if (!isHost(state) && data[1] !== state.serverRoom.room.host)
                 return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE);
               if (!isUserReady(state, data[1])) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
+
+              if (exceedsStateSize(data[0])) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
 
               // Get host and the toUser
               const host = getUserById(state, state.serverRoom.room.host);
@@ -470,6 +482,8 @@ websocket.get(
               if (!isHost(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
 
+              if (getSize(data) > 1e6) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
+
               broadcastMessage({
                 room: state.serverRoom,
                 readyOnly: true,
@@ -482,6 +496,8 @@ websocket.get(
             case ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE: {
               if (!isStarted(state)) return sendError(state.user, ErrorMessageCodes.WS_GAME_HAS_NOT_STARTED);
               if (!isReady(state)) return sendError(state.user, ErrorMessageCodes.WS_NOT_READY);
+
+              if (getSize(data) > 1e6) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
 
               broadcastMessage({
                 room: state.serverRoom,
@@ -500,6 +516,8 @@ websocket.get(
               if (!isHost(state) && data[1] !== state.serverRoom.room.host)
                 return sendError(state.user, ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE);
               if (!isUserReady(state, data[1])) return sendError(state.user, ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER);
+
+              if (getSize(data[0]) > 1e6) return sendError(state.user, ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE);
 
               // Get host and the toUser
               const host = getUserById(state, state.serverRoom.room.host);

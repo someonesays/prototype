@@ -6,10 +6,19 @@ import Plug from "$lib/components/icons/Plug.svelte";
 import Modal from "$lib/components/elements/cards/Modal.svelte";
 
 import { onMount } from "svelte";
-import { ParentSdk, MinigameOpcodes, ClientOpcodes, GameStatus, MinigameOrientation } from "@/public";
+import {
+  ParentSdk,
+  MinigameOpcodes,
+  ClientOpcodes,
+  GameStatus,
+  MinigameOrientation,
+  getSize,
+  exceedsStateSize,
+} from "@/public";
 import { Common } from "@discord/embedded-app-sdk";
 
 import { audio } from "$lib/utils/audio";
+import { getMinigameStore, setMinigameStore } from "$lib/utils/store";
 
 import {
   room,
@@ -96,8 +105,17 @@ onMount(() => {
       data: false, // force: false
     });
   });
+  sdk.on(MinigameOpcodes.SAVE_LOCAL_DATA, ({ data }) => {
+    if (!$room.players.find((p) => p.id === $room.user)?.ready)
+      throw new Error("Cannot save local data before readying the minigame");
+    if (!$room.minigame?.id) throw new Error("Cannot find minigame ID (should never happen)");
+    if (getSize(data) > 1024) throw new Error("Exceeds 1KB limit");
+
+    setMinigameStore($room.minigame.id, data);
+  });
   sdk.on(MinigameOpcodes.SET_GAME_STATE, ({ state }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can set the game state");
+    if (exceedsStateSize(state)) throw new Error("Cannot have a state that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_GAME_STATE,
@@ -106,6 +124,7 @@ onMount(() => {
   });
   sdk.on(MinigameOpcodes.SET_PLAYER_STATE, ({ user, state }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host a player's state");
+    if (exceedsStateSize(state)) throw new Error("Cannot have a state that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SET_PLAYER_STATE,
@@ -114,6 +133,7 @@ onMount(() => {
   });
   sdk.on(MinigameOpcodes.SEND_GAME_MESSAGE, ({ message }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
+    if (exceedsStateSize(message)) throw new Error("Cannot have a message that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_GAME_MESSAGE,
@@ -121,6 +141,8 @@ onMount(() => {
     });
   });
   sdk.on(MinigameOpcodes.SEND_PLAYER_MESSAGE, ({ message }) => {
+    if (exceedsStateSize(message)) throw new Error("Cannot have a message that exceeds 1MB");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PLAYER_MESSAGE,
       data: message,
@@ -129,21 +151,25 @@ onMount(() => {
   sdk.on(MinigameOpcodes.SEND_PRIVATE_MESSAGE, ({ message, user }) => {
     if ($room.user !== $room.room.host && user && user !== $room.room.host)
       throw new Error("Only the host can send a private message to other players");
+    if (exceedsStateSize(message)) throw new Error("Cannot have a message that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_PRIVATE_MESSAGE,
       data: [message, user],
     });
   });
-  sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, (message) => {
+  sdk.on(MinigameOpcodes.SEND_BINARY_GAME_MESSAGE, ({ message }) => {
     if ($room.user !== $room.room.host) throw new Error("Only the host can send a game message");
+    if (getSize(message) > 1e6) throw new Error("Cannot have a binary message that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_GAME_MESSAGE,
       data: message,
     });
   });
-  sdk.on(MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE, (message) => {
+  sdk.on(MinigameOpcodes.SEND_BINARY_PLAYER_MESSAGE, ({ message }) => {
+    if (getSize(message) > 1e6) throw new Error("Cannot have a binary message that exceeds 1MB");
+
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PLAYER_MESSAGE,
       data: message,
@@ -152,6 +178,7 @@ onMount(() => {
   sdk.on(MinigameOpcodes.SEND_BINARY_PRIVATE_MESSAGE, ({ message, user }) => {
     if ($room.user !== $room.room.host && user && user !== $room.room.host)
       throw new Error("Only the host can send a private message to other players");
+    if (getSize(message) > 1e6) throw new Error("Cannot have a binary message that exceeds 1MB");
 
     $roomWs?.send({
       opcode: ClientOpcodes.MINIGAME_SEND_BINARY_PRIVATE_MESSAGE,

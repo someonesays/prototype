@@ -16,6 +16,10 @@ export enum MinigameOpcodes {
    */
   END_GAME = "end_game",
   /**
+   * Set the minigame's local data store
+   */
+  SAVE_LOCAL_DATA = "save_local_data",
+  /**
    * Set the game's state (persistent until the minigame ends).
    *
    * Only the host can send this message.
