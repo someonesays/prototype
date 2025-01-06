@@ -6,16 +6,19 @@ import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 
 import { audio } from "$lib/utils/audio";
+import { getMinigameStore } from "$lib/utils/store";
 
 import {
   ErrorMessageCodesToText,
   RoomWebsocket,
   ClientOpcodes,
+  ParentOpcodes,
   ServerOpcodes,
   GameStatus,
   MinigameEndReason,
   ErrorMessageCodes,
   type ApiErrorResponse,
+  type ParentTypes,
 } from "@/public";
 
 import {
@@ -240,8 +243,9 @@ onMount(() => {
       }
     }, 0);
   });
-  $roomWs.on(ServerOpcodes.MINIGAME_PLAYER_READY, (user) => {
-    if (!$room) throw new Error("Cannot find $room on end minigame");
+  $roomWs.on(ServerOpcodes.MINIGAME_PLAYER_READY, async (user) => {
+    if (!$room) throw new Error("Cannot find $room on player ready");
+    if (!$room.minigame?.id) throw new Error("Cannot find $room.minigame?.id on player ready");
 
     const player = $room.players.find((p) => p.id === user);
     if (!player) throw new Error("Cannot find the player who readied up");
@@ -263,6 +267,7 @@ onMount(() => {
               host: $room.room.host,
               state: $room.room.state,
             },
+            data: await getMinigameStore($room.minigame.id),
             players: $room.players
               .filter((p) => p.ready)
               .map((p) => ({
@@ -272,7 +277,7 @@ onMount(() => {
                 avatar: p.avatar,
                 state: p.state,
               })),
-          }),
+          } as ParentTypes[ParentOpcodes.READY]),
         ),
       );
 
@@ -300,7 +305,7 @@ onMount(() => {
               state: player.state,
             },
             joinedLate: $room.status === GameStatus.STARTED,
-          }),
+          } as ParentTypes[ParentOpcodes.MINIGAME_PLAYER_READY]),
         ),
       );
     }

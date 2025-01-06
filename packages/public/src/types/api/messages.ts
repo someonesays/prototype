@@ -43,6 +43,7 @@ export enum ErrorMessageCodes {
   WS_NOT_READY = "ws_not_ready",
   WS_CANNOT_FIND_READY_PLAYER = "ws_cannot_find_ready_player_to_send_message_to",
   WS_NOT_HOST_PRIVATE_MESSAGE = "ws_not_host_private_message",
+  WS_PAYLOAD_TOO_LARGE = "ws_payload_too_large",
 }
 
 export const ErrorMessageCodesToText = {
@@ -92,4 +93,5 @@ export const ErrorMessageCodesToText = {
   [ErrorMessageCodes.WS_NOT_READY]: "Cannot run this action if you are not ready.",
   [ErrorMessageCodes.WS_CANNOT_FIND_READY_PLAYER]: "Cannot find ready player with given id to run this action",
   [ErrorMessageCodes.WS_NOT_HOST_PRIVATE_MESSAGE]: "Only the host can send private messages to other players.",
+  [ErrorMessageCodes.WS_PAYLOAD_TOO_LARGE]: "The given payload was too large so your request was ignored.",
 };
