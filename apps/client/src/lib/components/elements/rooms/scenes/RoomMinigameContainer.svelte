@@ -18,7 +18,7 @@ import {
 import { Common } from "@discord/embedded-app-sdk";
 
 import { audio } from "$lib/utils/audio";
-import { getMinigameStore, setMinigameStore } from "$lib/utils/store";
+import { setMinigameStore } from "$lib/utils/store";
 
 import {
   room,
