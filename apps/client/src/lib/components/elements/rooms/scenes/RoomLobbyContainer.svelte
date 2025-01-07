@@ -1,6 +1,10 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
+import SvelteMarkdown from "svelte-markdown";
+import MarkdownDisabled from "$lib/components/markdown/MarkdownDisabled.svelte";
+import MarkdownLink from "$lib/components/markdown/MarkdownLink.svelte";
+
 import { clickOutside } from "$lib/utils/clickOutside";
 import { audio } from "$lib/utils/audio";
 
@@ -288,15 +292,23 @@ function leaveGame() {
 }
 
 function openUrl(evt: MouseEvent) {
-  evt.preventDefault();
-
   const url = (evt.target as HTMLLinkElement).href;
+
   switch ($launcher) {
     case "normal":
+      try {
+        if (["someonesays.io", "www.someonesays.io"].includes(new URL(url).hostname)) {
+          return;
+        }
+      } catch (err) {}
+
+      evt.preventDefault();
+
       $roomLobbyPopupMessage = { type: "link", url };
       $isModalOpen = true;
       break;
     case "discord":
+      evt.preventDefault();
       $launcherDiscordSdk?.commands.openExternalLink({ url });
       break;
   }
@@ -328,7 +340,7 @@ function reportMinigame() {
     </div>
   </div>
 {:else}
-  <Modal style="transform: scale({transformScale});" onclose={() => audio.close.play()}>
+  <Modal onclose={() => audio.close.play()}>
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
@@ -357,7 +369,13 @@ function reportMinigame() {
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "credits"}
       <h2 style="width: 400px; max-width: 100%;">Credits for "{shortenedMinigameName}"</h2>
-      <p class="credits-text">{$room?.minigame?.credits}</p>
+      <p class="credits-text">
+        <SvelteMarkdown renderers={{
+          html: MarkdownDisabled,
+          image: MarkdownDisabled,
+          link: MarkdownLink,
+        }} source={$room?.minigame?.credits} />
+      </p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
@@ -569,7 +587,13 @@ function reportMinigame() {
                     <h3 class="nextup-text">NEXT UP</h3>
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                     <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-                    <p class="nextup-minigame-description">{$room?.minigame?.description}</p>
+                    <p class="nextup-minigame-description">
+                      <SvelteMarkdown renderers={{
+                        html: MarkdownDisabled,
+                        image: MarkdownDisabled,
+                        link: MarkdownLink,
+                      }} source={$room?.minigame?.description} />
+                    </p>
                   </div>
                   <div class="nextup-minigame-preview">
                     {#if $room.minigame?.previewImage}

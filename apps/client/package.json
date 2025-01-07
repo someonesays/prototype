@@ -24,6 +24,7 @@
     "@discord/embedded-app-sdk": "workspace:*",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@sveltejs/adapter-static": "^3.0.8",
-    "eventemitter3": "^5.0.1"
+    "eventemitter3": "^5.0.1",
+    "svelte-markdown": "^0.4.1"
   }
 }
