@@ -143,7 +143,7 @@ onMount(() => {
     $isModalOpen = true;
   }
 
-  $displayName = $displayName ?? getCookie("displayName");
+  $displayName = $displayName ?? getCookie("displayName").slice(0, 32);
 
   const resize = () => {
     if (window.innerWidth >= 1100 && window.innerHeight >= 660) {
@@ -207,15 +207,15 @@ function changeColor(dir: boolean) {
 
     <div class="avatar-container">
       <div class="avatar-option-container">
-        <button class="avatar-option" onclick={() => changeShape(false)}>←</button>
-        <button class="avatar-option" onclick={() => changeColor(false)}>←</button>
+        <button class="avatar-option" onclick={() => changeShape(false)} disabled={disableJoinPage}>←</button>
+        <button class="avatar-option" onclick={() => changeColor(false)} disabled={disableJoinPage}>←</button>
       </div>
       <div class="image-container">
         <Avatar shape={$shape} color={$color} />
       </div>
       <div class="avatar-option-container">
-        <button class="avatar-option" onclick={() => changeShape(true)}>→</button>
-        <button class="avatar-option" onclick={() => changeColor(true)}>→</button>
+        <button class="avatar-option" onclick={() => changeShape(true)} disabled={disableJoinPage}>→</button>
+        <button class="avatar-option" onclick={() => changeColor(true)} disabled={disableJoinPage}>→</button>
       </div>
     </div>
 
