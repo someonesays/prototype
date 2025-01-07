@@ -46,6 +46,10 @@ let logoOnly = $state(false);
 let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
+let shortenedMinigameName = $derived(
+  $room?.minigame ? ($room.minigame.name.length > 30 ? `${$room.minigame.name.slice(0, 27)}...` : $room.minigame.name) : "",
+);
+
 let searchMinigameQuery = $state("");
 let searchMinigameTimeout: Timer | null = $state(null);
 let searchMinigameAbortController: AbortController | null = $state(null);
@@ -127,6 +131,11 @@ function setSettings({ minigameId = null }: { minigameId?: string | null }) {
 
 export async function handleSelectMinigame() {
   $roomLobbyPopupMessage = { type: "select-minigame" };
+  $isModalOpen = true;
+}
+
+export async function handleCredits() {
+  $roomLobbyPopupMessage = { type: "credits" };
   $isModalOpen = true;
 }
 
@@ -346,6 +355,10 @@ function reportMinigame() {
       <p>Copied invite link!</p>
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
+    {:else if $roomLobbyPopupMessage?.type === "credits"}
+      <h2 style="width: 400px; max-width: 100%;">Credits for "{shortenedMinigameName}"</h2>
+      <p>{$room?.minigame?.credits}</p>
+      <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
 
@@ -527,8 +540,13 @@ function reportMinigame() {
                     </div>
                   </div>
                   <div class="select-container">
+                    {#if $room.minigame.credits}
+                      <button class="secondary-button select-button" onclick={handleCredits} tabindex={disableTabIndex}>
+                        Credits
+                      </button>
+                    {/if}
                     {#if $room.room.host === $room.user}
-                      <button class="primary-button select-button" onclick={() => handleSelectMinigameSearch()} tabindex={disableTabIndex}>
+                      <button class="primary-button select-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex}>
                         Change minigame
                       </button>
                       <button class="error-button select-button wait-on-disabled" data-audio-type="close" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
@@ -562,7 +580,7 @@ function reportMinigame() {
                 
                 <div class="nextup-minigame-legal-container">
                   {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                    <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name.length > 30 ? `${$room.minigame.name.slice(0, 27)}...` : $room.minigame.name}</b>'s
+                    <p class="nextup-minigame-legal">The developer of <b>{shortenedMinigameName}</b>'s
                       {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
                       <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
                         privacy policy
@@ -912,6 +930,9 @@ function reportMinigame() {
     overflow: auto;
   }
 
+  .select-button.secondary-button {
+    width: 65px;
+  }
   .select-button.primary-button {
     width: 130px;
   }
@@ -1065,6 +1086,9 @@ function reportMinigame() {
   }
   .featured-minigame-text {
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .playeraction-button {

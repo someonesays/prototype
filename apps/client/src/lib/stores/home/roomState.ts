@@ -15,7 +15,7 @@ export let roomLobbyPopupMessage = writable<
   | { type: "warning"; message: string }
   | { type: "link"; url: string }
   | {
-      type: "invite" | "select-minigame" | "select-minigame-search" | "report" | "mobile";
+      type: "invite" | "credits" | "select-minigame" | "select-minigame-search" | "report" | "mobile";
     }
   | null
 >(null);

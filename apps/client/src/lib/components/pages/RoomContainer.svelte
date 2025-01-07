@@ -154,7 +154,7 @@ onMount(() => {
     if (!$room) throw new Error("Cannot find $room on updated room settings event");
 
     $roomRequestedToChangeSettings = false;
-    if (["select-minigame", "select-minigame-search"].includes($roomLobbyPopupMessage?.type ?? "")) {
+    if (["credits", "select-minigame", "select-minigame-search"].includes($roomLobbyPopupMessage?.type ?? "")) {
       $roomLobbyPopupMessage = null;
       $isModalOpen = false;
     }

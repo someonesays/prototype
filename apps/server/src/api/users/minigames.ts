@@ -27,6 +27,7 @@ export const userMinigames = new Hono();
 const userMinigameZod = z.object({
   name: z.string().min(1).max(100),
   description: z.string().min(0).max(4000).default(""),
+  credits: z.string().min(0).max(4000).default(""),
   iconImage: z.string().refine(validateUrl).nullable().default(null),
   previewImage: z.string().refine(validateUrl).nullable().default(null),
   published: z.boolean().default(false),

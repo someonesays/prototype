@@ -1,0 +1,1 @@
+ALTER TABLE "minigames" ADD COLUMN "credits" text DEFAULT '' NOT NULL;

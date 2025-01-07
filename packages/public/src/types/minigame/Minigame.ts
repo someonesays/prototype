@@ -4,6 +4,7 @@ export interface Minigame {
   id: string;
   name: string;
   description: string;
+  credits: string;
   published: boolean;
   official: boolean;
   currentlyFeatured: boolean;
