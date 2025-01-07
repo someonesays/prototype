@@ -1,6 +1,6 @@
 export default {
   // Global
-  NODE_ENV: process.env.NODE_ENV as "production" | "staging" | "development",
+  NODE_ENV: (process.env.NODE_ENV as "production" | "staging" | "development") ?? "production",
 
   PORT: Number(process.env.PORT),
 

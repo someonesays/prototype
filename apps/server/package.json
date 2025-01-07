@@ -4,9 +4,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "start": "NODE_ENV=production TZ=UTC bun .",
-    "start/staging": "NODE_ENV=staging TZ=UTC bun .",
-    "dev": "NODE_ENV=development TZ=UTC bun --watch .",
+    "start": "TZ=UTC bun .",
+    "start/staging": "TZ=UTC bun .",
+    "dev": "TZ=UTC bun --watch .",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {

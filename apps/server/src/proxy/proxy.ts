@@ -16,10 +16,6 @@ proxy.use(route, async (c, next) => {
   if (fetchMetadata === "document") return c.text("Cannot access page as a document.", 401);
 
   const frameAncestors = ["'self'", env.BASE_FRONTEND];
-  if (env.NODE_ENV !== "production") {
-    // Add localhost:3000 to the frame ancestor in development and staging environments
-    frameAncestors.push("http://localhost:3000");
-  }
 
   return secureHeaders({
     originAgentCluster: "",
@@ -75,10 +71,11 @@ proxy.all(route, async (c) => {
       },
       signal: AbortSignal.timeout(60000), // 1 minute to complete the request
     });
+
     if (res.status === 101) return c.newResponse(null);
 
     return c.newResponse(res.body, {
-      status: res.status,
+      status: res.status as any,
       headers: {
         ...res.headers,
         "access-control-allow-origin": "*",
