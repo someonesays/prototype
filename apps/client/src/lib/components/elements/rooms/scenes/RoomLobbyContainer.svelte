@@ -357,7 +357,7 @@ function reportMinigame() {
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "credits"}
       <h2 style="width: 400px; max-width: 100%;">Credits for "{shortenedMinigameName}"</h2>
-      <p>{$room?.minigame?.credits}</p>
+      <p class="credits-text">{$room?.minigame?.credits}</p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
@@ -569,7 +569,7 @@ function reportMinigame() {
                     <h3 class="nextup-text">NEXT UP</h3>
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                     <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-                    <p class="nextup-minigame-description">{$room.minigame.description}</p>
+                    <p class="nextup-minigame-description">{$room?.minigame?.description}</p>
                   </div>
                   <div class="nextup-minigame-preview">
                     {#if $room.minigame?.previewImage}
@@ -1101,6 +1101,10 @@ function reportMinigame() {
   }
   .playeraction-button.transfer-host {
     width: 120px;
+  }
+
+  .credits-text {
+    white-space: pre-line;
   }
 
   @media (max-height: 319px) {
