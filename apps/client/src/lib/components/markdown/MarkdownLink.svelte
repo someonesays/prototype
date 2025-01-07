@@ -9,23 +9,20 @@ export let href = "";
 export let title = undefined;
 
 function openUrl(evt: MouseEvent) {
+  evt.preventDefault();
   const url = (evt.target as HTMLLinkElement).href;
 
   switch ($launcher) {
     case "normal":
       try {
         if (["someonesays.io", "www.someonesays.io"].includes(new URL(url).hostname)) {
-          return;
+          return window.open(url, "_blank");
         }
       } catch (err) {}
-
-      evt.preventDefault();
-
       $roomLobbyPopupMessage = { type: "link", url };
       $isModalOpen = true;
       break;
     case "discord":
-      evt.preventDefault();
       $launcherDiscordSdk?.commands.openExternalLink({ url });
       break;
   }
