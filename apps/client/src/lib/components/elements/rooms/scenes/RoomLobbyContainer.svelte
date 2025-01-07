@@ -48,6 +48,7 @@ let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
 let searchMinigameQuery = $state("");
 let searchMinigameTimeout: Timer | null = $state(null);
+let searchMinigameAbortController: AbortController | null = $state(null);
 
 let transformScale = $state(1);
 
@@ -146,10 +147,17 @@ async function handleSearchingMinigames() {
   if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
   searchMinigameTimeout = setTimeout(() => ($roomSearchedMinigames = null), 500);
 
+  const oldController = searchMinigameAbortController;
+  const controller = (searchMinigameAbortController = new AbortController());
+  oldController?.abort();
+
   const res = await searchMinigames({
     query: searchMinigameQuery,
     include: removeIdsOption ? ["official", "featured"] : ["official", "unofficial", "featured"],
+    signal: searchMinigameAbortController.signal,
   });
+
+  if (controller !== searchMinigameAbortController) return;
 
   clearTimeout(searchMinigameTimeout);
   $roomSearchedMinigames = res;
