@@ -10,7 +10,7 @@
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.14"
+    "@types/bun": "^1.1.15"
   },
   "peerDependencies": {
     "typescript": "^5.7.2"
@@ -21,7 +21,7 @@
     "@/public": "workspace:*",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@hono/zod-validator": "^0.4.2",
-    "hono": "^4.6.15",
+    "hono": "^4.6.16",
     "zod": "^3.24.1"
   }
 }
