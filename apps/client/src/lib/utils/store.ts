@@ -1,4 +1,22 @@
-export const { get: getMinigameStore, set: setMinigameStore, delete: deleteMinigameStore } = await getIndexedDB();
+let db: ReturnType<typeof getIndexedDB> | Awaited<ReturnType<typeof getIndexedDB>> = getIndexedDB();
+export const {
+  get: getMinigameStore,
+  set: setMinigameStore,
+  delete: deleteMinigameStore,
+} = {
+  get: async (id: string) => {
+    db = await db;
+    return db.get(id);
+  },
+  set: async (id: string, value: string | Uint8Array | null | undefined) => {
+    db = await db;
+    return db.set(id, value);
+  },
+  delete: async (id: string) => {
+    db = await db;
+    return db.delete(id);
+  },
+};
 
 export function getIndexedDB(): Promise<{
   get: (id: string) => Promise<string | Uint8Array | null>;
