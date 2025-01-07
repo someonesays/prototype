@@ -23,7 +23,10 @@ import { isModalOpen } from "$lib/stores/home/modal";
 
 import { launcherMatchmaking } from "$lib/stores/home/launcher";
 import { getFeaturedMinigames } from "$lib/utils/minigames";
+
 import { audio } from "$lib/utils/audio";
+import { shapes } from "$lib/utils/avatars";
+import { colors } from "$lib/utils/avatars";
 
 let disableJoinPage = $state(false);
 let loadedRoomToJoin = $derived(!page.url.pathname.startsWith("/join/") || !!$roomIdToJoin);
@@ -62,11 +65,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
 
-  // $shape = form.get("shape") as string;
-  // setCookie("shape", $shape);
-
-  // $color = form.get("color") as string;
-  // setCookie("color", $color);
+  setCookie("shape", $shape);
+  setCookie("color", $color);
 
   if (turnstileIsInvisibleLoading) {
     // This is a really hacky way to check if the invisible captcha is still loading...
@@ -159,6 +159,31 @@ onMount(() => {
     window.removeEventListener("resize", resize);
   };
 });
+
+function changeShape(dir: boolean) {
+  if (dir) {
+    let index = shapes.indexOf($shape) + 1;
+    if (index >= shapes.length) index = 0;
+    $shape = shapes[index];
+  } else {
+    let index = shapes.indexOf($shape) - 1;
+    if (index < 0) index = shapes.length - 1;
+    $shape = shapes[index];
+  }
+}
+
+function changeColor(dir: boolean) {
+  if (dir) {
+    let index = colors.indexOf($color) + 1;
+    if (index >= colors.length) index = 0;
+    console.log(index);
+    $color = colors[index];
+  } else {
+    let index = colors.indexOf($color) - 1;
+    if (index < 0) index = colors.length - 1;
+    $color = colors[index];
+  }
+}
 </script>
 
 <Modal onclose={() => audio.close.play()}>
@@ -180,15 +205,21 @@ onMount(() => {
       This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/Hce5qUTx5s" target="_blank">Discord server</a> if you're curious.
     </p>
 
-    <form onsubmit={joinRoom}>
-      <div class="avatar-container">
-        <!-- <div>left</div> -->
-        <div class="image-container">
-          <Avatar shape={$shape} color={$color} />
-        </div>
-        <!-- <div>right</div> -->
+    <div class="avatar-container">
+      <div class="avatar-option-container">
+        <button class="avatar-option" onclick={() => changeShape(false)}>←</button>
+        <button class="avatar-option" onclick={() => changeColor(false)}>←</button>
       </div>
+      <div class="image-container">
+        <Avatar shape={$shape} color={$color} />
+      </div>
+      <div class="avatar-option-container">
+        <button class="avatar-option" onclick={() => changeShape(true)}>→</button>
+        <button class="avatar-option" onclick={() => changeColor(true)}>→</button>
+      </div>
+    </div>
 
+    <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
       
@@ -269,5 +300,24 @@ onMount(() => {
   .image-container {
     border-radius: 100px;
     border: solid #fafafa 3px;
+  }
+  .avatar-option-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px;
+  }
+  .avatar-option {
+    border: none;
+    background-color: #fafafa;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 100px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .avatar-option:hover {
+    background-color: #ffffff;
+    transform: translate(0, 1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 </style>
