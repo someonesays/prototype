@@ -1,6 +1,5 @@
 <script lang="ts">
-export let shape: string;
-export let color: string;
+let { shape = "", color = "" } = $props();
 
 const colors = {
   aqua: ["#c0fffe", "#478d8d", "#cdbcff", "#94d2ee"],
@@ -15,8 +14,10 @@ const colors = {
   yellow: ["#fff783", "#888446", "#ffd78d", "#fff1aa"],
 };
 
-const [fill, stroke, gradientLeft, gradientRight] =
-  colors[color as "aqua" | "blue" | "brown" | "gray" | "green" | "orange" | "pink" | "purple" | "red" | "yellow"];
+let fill = $derived(colors[color as keyof typeof colors][0]);
+let stroke = $derived(colors[color as keyof typeof colors][1]);
+let gradientLeft = $derived(colors[color as keyof typeof colors][2]);
+let gradientRight = $derived(colors[color as keyof typeof colors][3]);
 </script>
 
 <div class="avatar" style={`background: linear-gradient(${gradientLeft}, ${gradientRight});`}>
