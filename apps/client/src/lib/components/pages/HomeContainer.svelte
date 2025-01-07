@@ -1,6 +1,8 @@
 <script lang="ts">
 import env from "$lib/utils/env";
 
+import Avatar from "$lib/components/elements/cards/Avatar.svelte";
+
 import Ban from "$lib/components/icons/Ban.svelte";
 import Logo from "$lib/components/icons/Logo.svelte";
 
@@ -14,7 +16,7 @@ import { beforeNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 import { MatchmakingLocation, ErrorMessageCodesToText, RoomWebsocket, ErrorMessageCodes } from "@/public";
 
-import { displayName, roomIdToJoin, kickedReason } from "$lib/stores/home/lobby";
+import { displayName, shape, color, roomIdToJoin, kickedReason } from "$lib/stores/home/lobby";
 import { getCookie, setCookie } from "$lib/utils/cookies";
 import { isMobileOrTablet } from "$lib/utils/mobile";
 import { isModalOpen } from "$lib/stores/home/modal";
@@ -60,6 +62,12 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   $displayName = form.get("displayName") as string;
   setCookie("displayName", $displayName);
 
+  // $shape = form.get("shape") as string;
+  // setCookie("shape", $shape);
+
+  // $color = form.get("color") as string;
+  // setCookie("color", $color);
+
   if (turnstileIsInvisibleLoading) {
     // This is a really hacky way to check if the invisible captcha is still loading...
     await new Promise((resolve) => {
@@ -91,6 +99,8 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   } = await RoomWebsocket.getMatchmaking({
     captcha: { type, token },
     displayName: $displayName,
+    shape: $shape,
+    color: $color,
     location: MatchmakingLocation.USA,
     roomId: $roomIdToJoin ?? undefined,
     mobile: isMobileOrTablet(),
@@ -171,6 +181,14 @@ onMount(() => {
     </p>
 
     <form onsubmit={joinRoom}>
+      <div class="avatar-container">
+        <!-- <div>left</div> -->
+        <div class="image-container">
+          <Avatar shape={$shape} color={$color} />
+        </div>
+        <!-- <div>right</div> -->
+      </div>
+
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
       <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
       
@@ -239,5 +257,17 @@ onMount(() => {
   .captcha-container {
     margin-top: 10px;
     height: 65px;
+  }
+
+  .avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .image-container {
+    border-radius: 100px;
+    border: solid #fafafa 3px;
   }
 </style>

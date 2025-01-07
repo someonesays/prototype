@@ -523,7 +523,7 @@ function reportMinigame() {
                       <button class="primary-button select-button" onclick={() => handleSelectMinigameSearch()} tabindex={disableTabIndex}>
                         Change minigame
                       </button>
-                      <button class="error-button select-button wait-on-disabled" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
+                      <button class="error-button select-button wait-on-disabled" data-audio-type="close" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
                         Remove
                       </button>
                     {/if}
