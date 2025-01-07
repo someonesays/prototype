@@ -227,7 +227,7 @@ function leaveOrEndGameConfirm() {
       Are you sure you want to end this minigame?
     </p>
     <p>
-      <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGameConfirm}>
+      <button class="leave-button {isEnding ? "loading" : ""}" data-audio-type="close" onclick={leaveOrEndGameConfirm}>
         {#if isEnding}
           Ending minigame...
         {:else}

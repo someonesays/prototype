@@ -36,6 +36,8 @@ import type { Context } from "hono";
 export const zodPostMatchmakingValidatorNormal = z.object({
   type: z.literal(MatchmakingType.NORMAL),
   displayName: z.string().min(1).max(32),
+  shape: z.enum(["circle", "diamond", "half", "heptagon", "hexagon", "pentagon", "square", "star", "triangle"]),
+  color: z.enum(["aqua", "blue", "brown", "gray", "green", "orange", "pink", "purple", "red", "yellow"]),
   location: z.nativeEnum(MatchmakingLocation).optional(),
   roomId: z.string().length(10).optional(),
   mobile: z.boolean(),
@@ -116,7 +118,7 @@ export async function handlePostMatchmaking({
 
       // Set display name and avatar
       displayName = payload.displayName;
-      avatar = `${env.BASE_API}/api/images/avatars/default.png`;
+      avatar = `${env.BASE_API}/api/images/avatars/${payload.shape}/${payload.color}.png`;
 
       // Handle finding/creating room
       if (payload.roomId) {

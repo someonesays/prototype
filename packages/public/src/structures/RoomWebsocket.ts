@@ -37,6 +37,8 @@ export class RoomWebsocket {
   static async getMatchmaking({
     captcha,
     displayName,
+    shape,
+    color,
     location,
     roomId,
     mobile,
@@ -45,6 +47,8 @@ export class RoomWebsocket {
     auth?: string;
     captcha: { type: "invisible" | "managed" | "bypass"; token: string };
     displayName: string;
+    shape: string;
+    color: string;
     location?: MatchmakingLocation;
     roomId?: string;
     mobile: boolean;
@@ -64,6 +68,8 @@ export class RoomWebsocket {
           location,
           roomId,
           displayName,
+          shape,
+          color,
           mobile,
         }),
       });
