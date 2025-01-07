@@ -219,7 +219,7 @@ function leaveOrEndGameConfirm() {
 }
 </script>
 
-<Modal style="transform: scale({transformScale});" onclose={() => audio.close.play()}>
+<Modal onclose={() => audio.close.play()}>
   <br><br>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug color="#000000" /></div>

@@ -16,6 +16,7 @@ export async function searchMinigames(opts: {
   include?: ("official" | "unofficial" | "featured" | "currently_featured")[];
   offset?: number;
   limit?: number;
+  signal?: AbortSignal;
 }) {
   // @ts-ignore This piece of code works perfectly fine
   const params = new URLSearchParams(opts).toString();
@@ -33,7 +34,7 @@ export async function searchMinigames(opts: {
   }
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: opts.signal });
     if (!res.ok) throw new Error("Failed to fetch minigames (response is not OK)");
 
     const { offset, limit, total, minigames } = (await res.json()) as ApiGetMinigames;

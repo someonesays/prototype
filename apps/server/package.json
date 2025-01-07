@@ -4,13 +4,13 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "start": "NODE_ENV=production TZ=UTC bun .",
-    "start/staging": "NODE_ENV=staging TZ=UTC bun .",
-    "dev": "NODE_ENV=development TZ=UTC bun --watch .",
+    "start": "TZ=UTC bun .",
+    "start/staging": "TZ=UTC bun .",
+    "dev": "TZ=UTC bun --watch .",
     "format": "cd ../../ && bun format"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.14"
+    "@types/bun": "^1.1.15"
   },
   "peerDependencies": {
     "typescript": "^5.7.2"
@@ -21,7 +21,7 @@
     "@/public": "workspace:*",
     "@/utils": "workspace:*",
     "@hono/zod-validator": "^0.4.2",
-    "hono": "^4.6.15",
+    "hono": "^4.6.16",
     "zod": "^3.24.1"
   }
 }

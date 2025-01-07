@@ -42,6 +42,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
 
   const name = form.get("name") as string;
   const description = form.get("description") as string;
+  const credits = form.get("credits") as string;
   const iconImage = (form.get("iconImage") as string) || null;
   const previewImage = (form.get("previewImage") as string) || null;
   const published = Boolean(form.get("published"));
@@ -59,6 +60,7 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
     body: JSON.stringify({
       name,
       description,
+      credits,
       iconImage,
       previewImage,
       published,
@@ -198,6 +200,12 @@ async function removeRequestToPublishMinigameAccess() {
         <label for="description">Description:</label>
         <br>
         <textarea class="input" name="description" rows="5" value={minigame.description}></textarea>
+
+        <br><br>
+
+        <label for="credits">Credits:</label>
+        <br>
+        <textarea class="input" name="credits" rows="5" value={minigame.credits}></textarea>
 
         <br><br>
 

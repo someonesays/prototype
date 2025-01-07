@@ -182,6 +182,7 @@ export function transformMinigameToMinigamePublic(minigame: Awaited<ReturnType<t
     id: minigame.id,
     name: minigame.name,
     description: minigame.description,
+    credits: minigame.credits,
     published: minigame.published,
     official: minigame.official,
     currentlyFeatured: minigame.currentlyFeatured,

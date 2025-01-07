@@ -45,15 +45,15 @@ onMount(() => {
     <h3>Sounds</h3>
     <div>
       "press.mp3" sampled from "DSGNSynth_bubble pops synth singular_Funky Audio_FASS.wav" by Funky_Audio of freesound.org:
-      <a class="url" href="https://freesound.org/people/Funky_Audio/sounds/698818/">https://freesound.org/people/Funky_Audio/sounds/698818/</a>
+      <a class="url" href="https://freesound.org/people/Funky_Audio/sounds/698818/" target="_blank">https://freesound.org/people/Funky_Audio/sounds/698818/</a>
     </div>
     <div>
       "close.mp3" sampled from "DM_FX_close" by amitYunger123 of freesound.org:
-      <a class="url" href="https://freesound.org/people/amitYunger123/sounds/737638/">https://freesound.org/people/amitYunger123/sounds/737638/</a>
+      <a class="url" href="https://freesound.org/people/amitYunger123/sounds/737638/" target="_blank">https://freesound.org/people/amitYunger123/sounds/737638/</a>
     </div>
     <div>
       "start.mp3" sampled from "New bubble pulse.WAV" by metrostock99 of freesound.org:
-      <a class="url" href="https://freesound.org/people/metrostock99/sounds/345081/">https://freesound.org/people/metrostock99/sounds/345081/</a>
+      <a class="url" href="https://freesound.org/people/metrostock99/sounds/345081/" target="_blank">https://freesound.org/people/metrostock99/sounds/345081/</a>
     </div>
     <br>
   </BaseCard>

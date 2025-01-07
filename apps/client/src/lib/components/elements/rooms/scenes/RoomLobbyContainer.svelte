@@ -1,6 +1,10 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
+import SvelteMarkdown from "svelte-markdown";
+import MarkdownDisabled from "$lib/components/markdown/MarkdownDisabled.svelte";
+import MarkdownLink from "$lib/components/markdown/MarkdownLink.svelte";
+
 import { clickOutside } from "$lib/utils/clickOutside";
 import { audio } from "$lib/utils/audio";
 
@@ -46,8 +50,13 @@ let logoOnly = $state(false);
 let isHoveringFlag = $state(false);
 let disableTabIndex = $derived($isModalOpen ? -1 : 0);
 
+let shortenedMinigameName = $derived(
+  $room?.minigame ? ($room.minigame.name.length > 30 ? `${$room.minigame.name.slice(0, 27)}...` : $room.minigame.name) : "",
+);
+
 let searchMinigameQuery = $state("");
 let searchMinigameTimeout: Timer | null = $state(null);
+let searchMinigameAbortController: AbortController | null = $state(null);
 
 let transformScale = $state(1);
 
@@ -129,6 +138,11 @@ export async function handleSelectMinigame() {
   $isModalOpen = true;
 }
 
+export async function handleCredits() {
+  $roomLobbyPopupMessage = { type: "credits" };
+  $isModalOpen = true;
+}
+
 export async function handleSelectMinigameSearch() {
   if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
 
@@ -146,10 +160,17 @@ async function handleSearchingMinigames() {
   if (searchMinigameTimeout) clearTimeout(searchMinigameTimeout);
   searchMinigameTimeout = setTimeout(() => ($roomSearchedMinigames = null), 500);
 
+  const oldController = searchMinigameAbortController;
+  const controller = (searchMinigameAbortController = new AbortController());
+  oldController?.abort();
+
   const res = await searchMinigames({
     query: searchMinigameQuery,
     include: removeIdsOption ? ["official", "featured"] : ["official", "unofficial", "featured"],
+    signal: searchMinigameAbortController.signal,
   });
+
+  if (controller !== searchMinigameAbortController) return;
 
   clearTimeout(searchMinigameTimeout);
   $roomSearchedMinigames = res;
@@ -271,15 +292,23 @@ function leaveGame() {
 }
 
 function openUrl(evt: MouseEvent) {
-  evt.preventDefault();
-
   const url = (evt.target as HTMLLinkElement).href;
+
   switch ($launcher) {
     case "normal":
+      try {
+        if (["someonesays.io", "www.someonesays.io"].includes(new URL(url).hostname)) {
+          return;
+        }
+      } catch (err) {}
+
+      evt.preventDefault();
+
       $roomLobbyPopupMessage = { type: "link", url };
       $isModalOpen = true;
       break;
     case "discord":
+      evt.preventDefault();
       $launcherDiscordSdk?.commands.openExternalLink({ url });
       break;
   }
@@ -311,7 +340,7 @@ function reportMinigame() {
     </div>
   </div>
 {:else}
-  <Modal style="transform: scale({transformScale});" onclose={() => audio.close.play()}>
+  <Modal onclose={() => audio.close.play()}>
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
@@ -337,6 +366,16 @@ function reportMinigame() {
       <div class="modal-icon"><Copy color="#000000" /></div>
       <p>Copied invite link!</p>
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
+      <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
+    {:else if $roomLobbyPopupMessage?.type === "credits"}
+      <h2 style="width: 400px; max-width: 100%;">Credits for "{shortenedMinigameName}"</h2>
+      <p class="credits-text">
+        <SvelteMarkdown renderers={{
+          html: MarkdownDisabled,
+          image: MarkdownDisabled,
+          link: MarkdownLink,
+        }} source={$room?.minigame?.credits} />
+      </p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame"}
       <h2 style="width: 400px; max-width: 100%;">Select a minigame using an ID</h2>
@@ -519,8 +558,13 @@ function reportMinigame() {
                     </div>
                   </div>
                   <div class="select-container">
+                    {#if $room.minigame.credits}
+                      <button class="secondary-button select-button" onclick={handleCredits} tabindex={disableTabIndex}>
+                        Credits
+                      </button>
+                    {/if}
                     {#if $room.room.host === $room.user}
-                      <button class="primary-button select-button" onclick={() => handleSelectMinigameSearch()} tabindex={disableTabIndex}>
+                      <button class="primary-button select-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex}>
                         Change minigame
                       </button>
                       <button class="error-button select-button wait-on-disabled" data-audio-type="close" onclick={handleRemoveMinigame} disabled={$roomRequestedToChangeSettings} tabindex={disableTabIndex}>
@@ -543,7 +587,13 @@ function reportMinigame() {
                     <h3 class="nextup-text">NEXT UP</h3>
                     <h1 class="nextup-minigame-name">{$room.minigame.name}</h1>
                     <p class="nextup-minigame-author">by {$room.minigame.author.name}</p>
-                    <p class="nextup-minigame-description">{$room.minigame.description}</p>
+                    <p class="nextup-minigame-description">
+                      <SvelteMarkdown renderers={{
+                        html: MarkdownDisabled,
+                        image: MarkdownDisabled,
+                        link: MarkdownLink,
+                      }} source={$room?.minigame?.description} />
+                    </p>
                   </div>
                   <div class="nextup-minigame-preview">
                     {#if $room.minigame?.previewImage}
@@ -554,7 +604,7 @@ function reportMinigame() {
                 
                 <div class="nextup-minigame-legal-container">
                   {#if $room.minigame.privacyPolicy || $room.minigame.termsOfServices}
-                    <p class="nextup-minigame-legal">The developer of <b>{$room.minigame.name.length > 30 ? `${$room.minigame.name.slice(0, 27)}...` : $room.minigame.name}</b>'s
+                    <p class="nextup-minigame-legal">The developer of <b>{shortenedMinigameName}</b>'s
                       {#if $room.minigame.privacyPolicy && $room.minigame.termsOfServices}
                       <a class="url" data-sveltekit-preload-data="off" href={$room.minigame.privacyPolicy} onclick={openUrl} tabindex={disableTabIndex}>
                         privacy policy
@@ -904,6 +954,9 @@ function reportMinigame() {
     overflow: auto;
   }
 
+  .select-button.secondary-button {
+    width: 65px;
+  }
   .select-button.primary-button {
     width: 130px;
   }
@@ -1057,6 +1110,9 @@ function reportMinigame() {
   }
   .featured-minigame-text {
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .playeraction-button {
@@ -1069,6 +1125,10 @@ function reportMinigame() {
   }
   .playeraction-button.transfer-host {
     width: 120px;
+  }
+
+  .credits-text {
+    white-space: pre-line;
   }
 
   @media (max-height: 319px) {
