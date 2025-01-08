@@ -9,10 +9,20 @@ import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { isModalOpen } from "$lib/stores/home/modal";
 import { token } from "$lib/stores/developers/cache";
-import { MinigameOrientation, MinigamePathType, type ApiGetUserMinigame } from "@/public";
+import {
+  type ErrorMessageCodes,
+  ErrorMessageCodesToText,
+  MinigameOrientation,
+  MinigamePathType,
+  type ApiGetUserMinigame,
+} from "@/public";
+
+let message = $state<{ state: "success" | "failed"; text: string } | null>(null);
 
 const minigameId = page.params.id;
 let minigame = $state<ApiGetUserMinigame["minigame"]>();
+
+const validateUrl = (v: string) => /^(https?):\/\/(?=.*\.[a-z]{2,})[^\s$.?#].[^\s]*$/i.test(v);
 
 onMount(() => {
   $isModalOpen = false;
@@ -38,46 +48,76 @@ async function saveMinigame(evt: SubmitEvent & { currentTarget: EventTarget & HT
 
   if (!minigame) throw new Error("Minigame hasn't loaded yet");
 
-  const form = new FormData(evt.target as HTMLFormElement);
+  try {
+    const form = new FormData(evt.target as HTMLFormElement);
 
-  const name = form.get("name") as string;
-  const description = form.get("description") as string;
-  const credits = form.get("credits") as string;
-  const iconImage = (form.get("iconImage") as string) || null;
-  const previewImage = (form.get("previewImage") as string) || null;
-  const published = Boolean(form.get("published"));
-  const termsOfServices = (form.get("termsOfServices") as string) || null;
-  const privacyPolicy = (form.get("privacyPolicy") as string) || null;
-  const proxyUrl = (form.get("proxyUrl") as string) || null;
-  const pathType = Number.parseInt(form.get("pathType") as string);
-  const minimumPlayersToStart = Number.parseInt(form.get("minimumPlayersToStart") as string);
-  const supportsMobile = Boolean(form.get("supportsMobile"));
-  const mobileOrientation = Number.parseInt(form.get("mobileOrientation") as string);
+    const name = form.get("name") as string;
+    const description = form.get("description") as string;
+    const credits = form.get("credits") as string;
+    const iconImage = (form.get("iconImage") as string) || null;
+    const previewImage = (form.get("previewImage") as string) || null;
+    const published = Boolean(form.get("published"));
+    const termsOfServices = (form.get("termsOfServices") as string) || null;
+    const privacyPolicy = (form.get("privacyPolicy") as string) || null;
+    const proxyUrl = (form.get("proxyUrl") as string) || null;
+    const pathType = Number.parseInt(form.get("pathType") as string);
+    const minimumPlayersToStart = Number.parseInt(form.get("minimumPlayersToStart") as string);
+    const supportsMobile = Boolean(form.get("supportsMobile"));
+    const mobileOrientation = Number.parseInt(form.get("mobileOrientation") as string);
 
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}`, {
-    method: "PATCH",
-    headers: { authorization: $token, "content-type": "application/json" },
-    body: JSON.stringify({
-      name,
-      description,
-      credits,
-      iconImage,
-      previewImage,
-      published,
-      termsOfServices,
-      privacyPolicy,
-      proxyUrl,
-      pathType,
-      minimumPlayersToStart,
-      supportsMobile,
-      mobileOrientation,
-    }),
-  });
+    if (iconImage && !validateUrl(iconImage)) {
+      message = { state: "failed", text: "Invalid icon image URL." };
+      return;
+    }
+    if (previewImage && !validateUrl(previewImage)) {
+      message = { state: "failed", text: "Invalid preview image URL." };
+      return;
+    }
+    if (termsOfServices && !validateUrl(termsOfServices)) {
+      message = { state: "failed", text: "Invalid terms of services URL." };
+      return;
+    }
+    if (privacyPolicy && !validateUrl(privacyPolicy)) {
+      message = { state: "failed", text: "Invalid privacy policy URL." };
+      return;
+    }
+    if (proxyUrl && !validateUrl(proxyUrl)) {
+      message = { state: "failed", text: "Invalid proxy URL." };
+      return;
+    }
 
-  if (!res.ok) return alert(await res.text());
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}`, {
+      method: "PATCH",
+      headers: { authorization: $token, "content-type": "application/json" },
+      body: JSON.stringify({
+        name,
+        description,
+        credits,
+        iconImage,
+        previewImage,
+        published,
+        termsOfServices,
+        privacyPolicy,
+        proxyUrl,
+        pathType,
+        minimumPlayersToStart,
+        supportsMobile,
+        mobileOrientation,
+      }),
+    });
 
-  alert("Success!");
-  refreshStates();
+    if (!res.ok) {
+      const { code } = await res.json();
+      message = { state: "failed", text: ErrorMessageCodesToText[code as ErrorMessageCodes] };
+      return;
+    }
+
+    message = { state: "success", text: "Successfully saved the minigame's settings." };
+    refreshStates();
+  } catch (err) {
+    console.error(err);
+    message = { state: "failed", text: "Failed to save the minigame's settings." };
+  }
 }
 
 function deleteMinigame() {
@@ -87,58 +127,90 @@ function deleteMinigame() {
 async function deleteMinigameConfirm() {
   if (!minigame) throw new Error("Minigame hasn't loaded yet");
 
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}`, {
-    method: "DELETE",
-    headers: { authorization: $token },
-  });
+  try {
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}`, {
+      method: "DELETE",
+      headers: { authorization: $token },
+    });
 
-  if (res.ok) {
-    $isModalOpen = false;
-    return goto("/developers");
+    if (res.ok) {
+      $isModalOpen = false;
+      return goto("/developers");
+    }
+  } catch (err) {
+    console.error(err);
+    message = { state: "failed", text: "Failed to delete the minigame." };
   }
 }
 
 async function regenTestingAccessCode() {
   if (!minigame) throw new Error("Minigame hasn't loaded yet");
 
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/reset`, {
-    method: "POST",
-    headers: { authorization: $token, "content-type": "application/json" },
-    body: JSON.stringify({ location: "usa" }), // There is a location option for resetting the access code
-  });
+  try {
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/reset`, {
+      method: "POST",
+      headers: { authorization: $token, "content-type": "application/json" },
+      body: JSON.stringify({ location: "usa" }), // There is a location option for resetting the access code
+    });
 
-  if (!res.ok) return alert(await res.text());
+    if (!res.ok) {
+      const { code } = await res.json();
+      message = { state: "failed", text: ErrorMessageCodesToText[code as ErrorMessageCodes] };
+      return;
+    }
 
-  alert("Success!");
-  refreshStates();
+    message = { state: "success", text: "Successfully regenerated the minigame's testing access code." };
+    refreshStates();
+  } catch (err) {
+    console.error(err);
+    message = { state: "failed", text: "Failed to regenerate the minigame's testing access code." };
+  }
 }
 
 async function requestToPublishMinigameAccess() {
   if (!minigame) throw new Error("Minigame hasn't loaded yet");
 
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
-    method: "POST",
-    headers: { authorization: $token },
-  });
+  try {
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
+      method: "POST",
+      headers: { authorization: $token },
+    });
 
-  if (!res.ok) return alert(await res.text());
+    if (!res.ok) {
+      const { code } = await res.json();
+      message = { state: "failed", text: ErrorMessageCodesToText[code as ErrorMessageCodes] };
+      return;
+    }
 
-  alert("Success!");
-  refreshStates();
+    message = { state: "success", text: "Successfully requested to be able to publish your minigame." };
+    refreshStates();
+  } catch (err) {
+    console.error(err);
+    message = { state: "failed", text: "Failed to request to be able to publish your minigame." };
+  }
 }
 
 async function removeRequestToPublishMinigameAccess() {
   if (!minigame) throw new Error("Minigame hasn't loaded yet");
 
-  const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
-    method: "DELETE",
-    headers: { authorization: $token },
-  });
+  try {
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames/${encodeURIComponent(minigame.id)}/review`, {
+      method: "DELETE",
+      headers: { authorization: $token },
+    });
 
-  if (!res.ok) return alert(await res.text());
+    if (!res.ok) {
+      const { code } = await res.json();
+      message = { state: "failed", text: ErrorMessageCodesToText[code as ErrorMessageCodes] };
+      return;
+    }
 
-  alert("Success!");
-  refreshStates();
+    message = { state: "success", text: "Successfully removed the request to be able to publish your minigame." };
+    refreshStates();
+  } catch (err) {
+    console.error(err);
+    message = { state: "failed", text: "Failed to remove the request to be able to publish your minigame." };
+  }
 }
 </script>
 
@@ -155,9 +227,9 @@ async function removeRequestToPublishMinigameAccess() {
 
 <main class="main-container">
   <div class="developer-container">
-    <p style="display: flex; gap: 5px;">
+    <p>
       <a class="url" href="/developers">
-        <button class="secondary-button">
+        <button class="secondary-button" style="max-width: 50px;">
           Back
         </button>
       </a>
@@ -171,14 +243,14 @@ async function removeRequestToPublishMinigameAccess() {
       <p>
         {#if minigame.proxyUrl}
           <a href={`/?minigame_id=${minigame.id}`} target="_blank">
-            <button class="primary-button">Play minigame</button>
+            <button class="primary-button" style="max-width: 110px;">Play minigame</button>
           </a>
         {/if}
         {#if !minigame.canPublish}
           {#if minigame.underReview}
-            <button class="error-button" onclick={removeRequestToPublishMinigameAccess}>Remove request access to publish minigame</button>
+            <button class="error-button" style="max-width: 290px;" onclick={removeRequestToPublishMinigameAccess}>Remove request access to publish minigame</button>
           {:else}
-            <button class="success-button" onclick={requestToPublishMinigameAccess}>Request access to publish minigame</button>
+            <button class="success-button" style="max-width: 245px;" onclick={requestToPublishMinigameAccess}>Request access to publish minigame</button>
           {/if}
         {/if}
       </p>
@@ -187,35 +259,42 @@ async function removeRequestToPublishMinigameAccess() {
         ID: <u>{minigame.id}</u><br>
         Testing access code: <u>{minigame.testingAccessCode}</u>
         <br><br>
-        <button class="error-button" onclick={regenTestingAccessCode}>Reset testing access code</button>
+        <button class="error-button" style="max-width: 180px;" onclick={regenTestingAccessCode}>Reset testing access code</button>
+        <button class="error-button" style="max-width: 125px;" onclick={deleteMinigame}>Delete minigame</button>
       </p>
+
+      {#if message?.state === "failed"}
+        <p class="failed-message">{message.text}</p>
+      {:else if message?.state === "success"}
+        <p class="success-message">{message.text}</p>
+      {/if}
 
       <h3>Modify minigame</h3>
       <form onsubmit={saveMinigame}>
         <label for="name">Name:</label>
-        <input class="input" name="name" value={minigame.name}>
+        <input class="input input-dark" name="name" maxlength="100" value={minigame.name} required>
 
         <br><br>
 
         <label for="description">Description:</label>
         <br>
-        <textarea class="input" name="description" rows="5" value={minigame.description}></textarea>
+        <textarea class="input textarea input-dark" name="description" rows="8" maxlength="4000" value={minigame.description}></textarea>
 
         <br><br>
 
         <label for="credits">Credits:</label>
         <br>
-        <textarea class="input" name="credits" rows="5" value={minigame.credits}></textarea>
+        <textarea class="input textarea input-dark" name="credits" rows="8" maxlength="4000" value={minigame.credits}></textarea>
 
         <br><br>
 
         <label for="iconImage">Icon image URL:</label>
-        <input class="input" name="iconImage" value={minigame.iconImage}>
+        <input class="input input-dark" name="iconImage" type="url" maxlength="999" value={minigame.iconImage}>
         
         <br><br>
 
         <label for="previewImage">Preview image URL:</label>
-        <input class="input" name="previewImage" value={minigame.previewImage}>
+        <input class="input input-dark" name="previewImage" type="url" maxlength="999" value={minigame.previewImage}>
         
         <br><br>
 
@@ -227,22 +306,22 @@ async function removeRequestToPublishMinigameAccess() {
         {/if}
 
         <label for="termsOfServices">Terms of Services:</label>
-        <input class="input" name="termsOfServices" value={minigame.termsOfServices}>
+        <input class="input input-dark" name="termsOfServices" type="url" maxlength="999" value={minigame.termsOfServices}>
 
         <br><br>
         
         <label for="privacyPolicy">Privacy Policy:</label>
-        <input class="input" name="privacyPolicy" value={minigame.privacyPolicy}>
+        <input class="input input-dark" name="privacyPolicy" type="url" maxlength="999" value={minigame.privacyPolicy}>
 
         <br><br>
         
         <label for="proxyUrl">Proxy URL:</label>
-        <input class="input" name="proxyUrl" value={minigame.proxyUrl}>
+        <input class="input input-dark" name="proxyUrl" type="url" maxlength="999" value={minigame.proxyUrl}>
 
         <br><br>
         
         <label for="pathType">Path type:</label>
-        <select class="input" name="pathType">
+        <select class="input input-dark" name="pathType">
           <option value={MinigamePathType.ORIGINAL} selected={minigame.pathType === MinigamePathType.ORIGINAL}>
             Original
           </option>
@@ -254,7 +333,7 @@ async function removeRequestToPublishMinigameAccess() {
         <br><br>
         
         <label for="minimumPlayersToStart">Minimum players to start:</label>
-        <input class="input" name="minimumPlayersToStart" value={minigame.minimumPlayersToStart}>
+        <input class="input input-dark" name="minimumPlayersToStart" min="1" max="25" value={minigame.minimumPlayersToStart} required>
 
         <br><br>
 
@@ -264,7 +343,7 @@ async function removeRequestToPublishMinigameAccess() {
         <br><br>
         
         <label for="mobileOrientation">Mobile orientation (Discord activity only):</label>
-        <select class="input" name="mobileOrientation">
+        <select class="input input-dark" name="mobileOrientation">
           <option value={MinigameOrientation.NONE} selected={minigame.mobileOrientation === MinigameOrientation.NONE}>
             None
           </option>
@@ -278,15 +357,9 @@ async function removeRequestToPublishMinigameAccess() {
 
         <br><br>
         
-        <button class="success-button" type="submit">Save minigame</button>
+        <button class="success-button" style="max-width: 115px;" type="submit">Save minigame</button>
       </form>
-
-      <h3>Dangerous actions</h3>
-      <p>These actions are dangerous and not undoable.</p>
-
-      <p>
-        <button class="error-button" onclick={deleteMinigame}>Delete minigame</button>
-      </p>
+      <br>
     {/if}
   </div>
 </main>
@@ -305,7 +378,9 @@ async function removeRequestToPublishMinigameAccess() {
     display: flex;
     text-align: center;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    word-wrap: break-word;
+  }
+  .textarea {
+    resize: none;
   }
 </style>

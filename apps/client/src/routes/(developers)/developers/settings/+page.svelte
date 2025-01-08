@@ -3,75 +3,51 @@ import env from "$lib/utils/env";
 
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { page } from "$app/state";
 import { user, token } from "$lib/stores/developers/cache";
-import type { ApiGetUserMinigames } from "@/public";
 
-let failedToLogin = $state(false);
 let message = $state<{ state: "success" | "failed"; text: string } | null>(null);
-
-let minigames = $state<ApiGetUserMinigames>({ offset: 0, limit: 0, total: 0, minigames: [] });
+let displayNameEditMultiplier = $state(0);
 
 onMount(() => {
   (async () => {
-    if (!$token) {
-      if (page.url.pathname !== "/developers") return;
-
-      failedToLogin = true;
-      return;
-    }
+    if (!$token) return goto("/developers");
 
     if (!$user) {
       const userResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me`, {
         headers: { authorization: $token },
       });
 
-      if (!userResponse.ok) {
-        if (page.url.pathname !== "/developers") return;
-
-        failedToLogin = true;
-        return;
-      }
-
+      if (!userResponse.ok) return goto("/developers");
       $user = (await userResponse.json()).user;
     }
-
-    fetchMinigames();
   })();
 });
 
-async function fetchMinigames() {
+async function updateUser(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }) {
   try {
-    const minigamesResponse = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames?limit=100`, {
-      headers: { authorization: $token },
-    });
-    if (!minigamesResponse.ok) return false;
+    evt.preventDefault();
 
-    minigames = await minigamesResponse.json();
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-}
+    const form = new FormData(evt.target as HTMLFormElement);
+    const name = form.get("name") as string;
 
-async function createMinigame() {
-  try {
-    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me/minigames`, {
-      method: "POST",
+    const res = await fetch(`${env.VITE_BASE_API}/api/users/@me`, {
+      method: "PATCH",
       headers: { authorization: $token, "content-type": "application/json" },
-      body: JSON.stringify({
-        name: "[add your minigame name here]",
-      }),
+      body: JSON.stringify({ name }),
     });
 
     if (!res.ok) throw new Error("The request was not OK");
 
-    const id = (await res.json()).id;
-    return goto(`/developers/minigames/${encodeURIComponent(id)}`);
+    displayNameEditMultiplier++;
+    message = {
+      state: "success",
+      text: `Successfully updated user!${displayNameEditMultiplier !== 1 ? ` (x${displayNameEditMultiplier})` : ""}`,
+    };
   } catch (err) {
     console.error(err);
-    message = { state: "failed", text: "Failed to create minigame." };
+
+    displayNameEditMultiplier = 0;
+    message = { state: "failed", text: "Failed to update user." };
   }
 }
 
@@ -89,6 +65,7 @@ async function logoutAllSessions() {
 
     return goto("/");
   } catch (err) {
+    displayNameEditMultiplier = 0;
     message = { state: "failed", text: "Failed to logout of all sessions." };
   }
 }
@@ -96,25 +73,7 @@ async function logoutAllSessions() {
 
 <main class="main-container">
   <div class="developer-container">
-    {#if failedToLogin}
-    <p>
-      <a class="url" href="/">
-        <button class="secondary-button" style="max-width: 50px;">
-          Back
-        </button>
-        </a>
-      </p>
-      
-      <h2>Developer portal - Login</h2>
-      <p>You can login into the developer portal here!</p>
-      <p>
-        <a href="{env.VITE_BASE_API}/api/auth/discord/login{env.VITE_MODE === "staging" && !env.VITE_IS_PROD ? "?local=true" : ""}">
-          <button class="primary-button">
-            Login with Discord
-          </button>
-        </a>
-      </p>
-    {:else if $user}
+    {#if $user}
       <p>
         <a class="url" href="/">
           <button class="secondary-button" style="max-width: 50px;">
@@ -135,9 +94,9 @@ async function logoutAllSessions() {
       </div>
 
       <p>
-        <a href="/developers/settings">
-          <button class="secondary-button" style="max-width: 75px;">
-            Settings
+        <a href="/developers">
+          <button class="secondary-button" style="max-width: 85px;">
+            Minigames
           </button>
         </a>
         <button class="error-button" style="max-width: 64px;" onclick={logoutAllSessions}>
@@ -146,28 +105,22 @@ async function logoutAllSessions() {
       </p>
 
       <hr class="border" />
+      <br>
 
       {#if message?.state === "failed"}
-        <br>
         <div class="failed-message">{message.text}</div>
-      {:else if message?.state === "success"}
         <br>
+      {:else if message?.state === "success"}
         <div class="success-message">{message.text}</div>
+        <br>
       {/if}
 
-      <h2>Minigames</h2>
-      <div>
-        <button class="success-button" style="max-width: 125px;" onclick={createMinigame}>Create minigame</button>
-      </div>
-      <br>
-      {#each minigames.minigames as minigame}
-        <div>
-          <a class="url light" href="/developers/minigames/{minigame.id}">
-            {minigame.name}
-          </a>
-        </div>
-      {/each}
-
+      <form onsubmit={updateUser}>
+        <label for="name">Display name:</label><br><br>
+        <input class="input input-center input-dark" style="max-width: 200px;" name="name" value={$user?.name} maxlength="32" required>
+        <input class="primary-button" style="max-width: 125px;" type="submit" value="Change username">
+      </form>
+      
       <br>
     {:else}
       <a class="url" href="/">
