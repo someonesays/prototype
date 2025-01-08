@@ -19,7 +19,7 @@ admin.get("/minigames/:id", authMiddleware, adminMiddleware, async (c) => {
   const minigame = await getMinigame(id);
   if (!minigame) return c.json({ code: ErrorMessageCodes.NOT_FOUND }, 404);
 
-  return c.json(minigame);
+  return c.json({ minigame });
 });
 
 admin.get("/reviews", authMiddleware, adminMiddleware, async (c) => {
