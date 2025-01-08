@@ -186,7 +186,7 @@ function changeColor(dir: boolean) {
 }
 </script>
 
-<Modal onclose={() => audio.close.play()}>
+<Modal style="transform: scale({transformScale}); max-height: calc(80vh / {transformScale});" onclose={() => audio.close.play()}>
   <br><br>
   <div class="modal-icon"><Ban color="#000000" /></div>
   <p>{$kickedReason}</p>

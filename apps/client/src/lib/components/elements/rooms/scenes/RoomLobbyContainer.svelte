@@ -337,7 +337,7 @@ function reportMinigame() {
     </div>
   </div>
 {:else}
-  <Modal onclose={() => audio.close.play()}>
+  <Modal style="transform: scale({transformScale}); max-height: calc(80vh / {transformScale});" onclose={() => audio.close.play()}>
     {#if $roomLobbyPopupMessage?.type === "warning"}
       <br><br>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>

@@ -6,9 +6,9 @@ let { children, style = "", onclose } = $props<{ children: any; style?: string; 
 </script>
 
 <div class="modal" class:hidden={!$isModalOpen} role="dialog">
-	<div class="content" style={style} use:clickOutside={() => { if ($isModalOpen) onclose?.(); return $isModalOpen = false; }}>
+  <div class="content" style={style} use:clickOutside={() => { if ($isModalOpen) onclose?.(); return $isModalOpen = false; }}>
     {@render children()}
-	</div>
+  </div>
 </div>
 
 <style>
@@ -41,11 +41,10 @@ let { children, style = "", onclose } = $props<{ children: any; style?: string; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     box-sizing: border-box;
-    max-height: 100vh;
-    max-width: 500px;
+    max-height: 80vh;
 		text-align: center;
-    overflow-y: auto;
     padding: 20px;
+    overflow-y: auto;
   }
   @media (max-width: 319px) {
     .content {
