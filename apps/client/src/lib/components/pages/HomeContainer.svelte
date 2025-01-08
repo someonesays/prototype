@@ -41,7 +41,6 @@ let resetTurnstile = $state<() => void>();
 let resetTurnstileInvisible = $state<() => void>();
 
 let saveSamePageKickedReason = $state<string | null>(null);
-
 let transformScale = $state(1);
 
 // Remove kicked reason if you leave the page
@@ -87,7 +86,7 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
   if (!(await getFeaturedMinigames())) {
     disableJoinPage = false;
     $isModalOpen = true;
-    $kickedReason = saveSamePageKickedReason = "Failed to connect. Check your internet connection.";
+    $kickedReason = "Failed to connect. Check your internet connection.";
     return;
   }
 
@@ -119,11 +118,14 @@ async function joinRoom(evt: SubmitEvent & { currentTarget: EventTarget & HTMLFo
     }
     // Set kick reason
     $isModalOpen = true;
-    $kickedReason = saveSamePageKickedReason = ErrorMessageCodesToText[code];
+    $kickedReason = ErrorMessageCodesToText[code];
     // If is ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT, don't go to "/".
     if ([ErrorMessageCodes.FAILED_CAPTCHA, ErrorMessageCodes.REACHED_MAXIMUM_PLAYER_LIMIT].includes(code)) return;
     // Redirect page to "/" if it's not already that
-    if (location.pathname !== "/") goto("/");
+    if (location.pathname !== "/") {
+      saveSamePageKickedReason = ErrorMessageCodesToText[code];
+      goto("/");
+    }
     return;
   }
 
