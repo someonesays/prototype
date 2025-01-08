@@ -238,13 +238,13 @@ function changeColor(dir: boolean) {
     </form>
 
     <p>
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Developer Portal</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/developers" onclick={(evt) => {if (disableJoin) { evt.preventDefault() } else { $isModalOpen = false; }}}>Developer Portal</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Credits</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/credits" onclick={(evt) => {if (disableJoin) { evt.preventDefault() } else { $isModalOpen = false; }}}>Credits</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Terms of Services</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/terms" onclick={(evt) => {if (disableJoin) { evt.preventDefault() } else { $isModalOpen = false; }}}>Terms of Services</a>
       &nbsp;&nbsp;
-      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy" onclick={(evt) => {if (disableJoin) evt.preventDefault()}}>Privacy Policy</a>
+      <a class="url" class:disabled={disableJoin} tabindex={disableJoin ? -1 : 0} href="/privacy" onclick={(evt) => {if (disableJoin) { evt.preventDefault() } else { $isModalOpen = false; }}}>Privacy Policy</a>
     </p>
   </BaseCard>
 </div>
