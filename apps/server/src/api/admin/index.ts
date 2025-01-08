@@ -37,7 +37,7 @@ admin.post("/publish-access/:id", authMiddleware, adminMiddleware, async (c) => 
 admin.delete("/publish-access/:id", authMiddleware, adminMiddleware, async (c) => {
   const id = c.req.param("id");
 
-  await updateMinigame({ id, underReview: null, canPublish: false });
+  await updateMinigame({ id, underReview: null, canPublish: false, published: false });
   return c.json({ success: true });
 });
 
@@ -50,7 +50,7 @@ admin.get("/official", authMiddleware, adminMiddleware, async (c) => {
 admin.post("/official/:id", authMiddleware, adminMiddleware, async (c) => {
   const id = c.req.param("id");
 
-  await updateMinigame({ id, official: true });
+  await updateMinigame({ id, official: true, underReview: null, canPublish: true });
   return c.json({ success: true });
 });
 
