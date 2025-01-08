@@ -398,6 +398,14 @@ body.discord {
   margin: 0 auto;
 }
 
+.failed-message {
+  color: red;
+}
+
+.success-message {
+  color: #2dcc6f;
+}
+
 .input {
   width: 100%;
   padding: 12px 20px;
@@ -408,6 +416,12 @@ body.discord {
 
 .input-center {
   text-align: center;
+}
+
+.input-dark {
+  border: 1px #333333 solid;
+  background-color: #0f0f0f;
+  color: #fafafa;
 }
 
 .preview-image {
