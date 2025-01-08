@@ -148,10 +148,10 @@ async function logoutAllSessions() {
       <hr class="border" />
 
       {#if message?.state === "failed"}
-        <br>
+        <span class="line-break"></span>
         <div class="failed-message">{message.text}</div>
       {:else if message?.state === "success"}
-        <br>
+        <span class="line-break"></span>
         <div class="success-message">{message.text}</div>
       {/if}
 
@@ -159,7 +159,7 @@ async function logoutAllSessions() {
       <div>
         <button class="success-button" style="max-width: 125px;" onclick={createMinigame}>Create minigame</button>
       </div>
-      <br>
+      <span class="line-break"></span>
       {#each minigames.minigames as minigame}
         <div>
           <a class="url light" href="/developers/minigames/{minigame.id}">
@@ -168,7 +168,7 @@ async function logoutAllSessions() {
         </div>
       {/each}
 
-      <br>
+      <span class="line-break"></span>
     {:else}
       <a class="url" href="/">
         <button class="secondary-button" style="max-width: 50px;">
