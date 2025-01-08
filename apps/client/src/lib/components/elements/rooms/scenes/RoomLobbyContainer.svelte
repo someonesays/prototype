@@ -493,7 +493,7 @@ function reportMinigame() {
                 <p class="volume-text-right">{$volumeValue}%</p>
               </div>
               <br>
-              <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} tabindex={disableTabIndex} />
+              <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} onmousedown={() => audio.press.play()} ontouchstart={() => audio.press.play()} tabindex={disableTabIndex} />
             </div>
           </div>
 
