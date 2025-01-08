@@ -190,7 +190,7 @@ function changeColor(dir: boolean) {
 </script>
 
 <Modal style="transform: scale({transformScale}); max-height: calc(80vh / {transformScale});" onclose={() => audio.close.play()}>
-  <br><br>
+  <span class="line-break"></span><span class="line-break"></span>
   <div class="modal-icon"><Ban color="#000000" /></div>
   <p>{$kickedReason}</p>
   <p><button class="secondary-button margin-top-8px" onclick={() => {$isModalOpen = false; audio.close.play();}}>Close</button></p>
@@ -198,14 +198,14 @@ function changeColor(dir: boolean) {
 
 <div class="main-container">
   <BaseCard style="padding: 20px; transform: scale({transformScale});">
-    <br>
+    <span class="line-break"></span>
     
     <div class="logo-container">
       <Logo />
     </div>
 
     <p class="indev-warning">
-      This game is still in development!<br>Check out the <a class="url discord" href="https://discord.gg/Hce5qUTx5s" target="_blank">Discord server</a> if you're curious.
+      This game is still in development!<span class="line-break"></span>Check out the <a class="url discord" href="https://discord.gg/Hce5qUTx5s" target="_blank">Discord server</a> if you're curious.
     </p>
 
     <div class="avatar-container">
@@ -224,7 +224,7 @@ function changeColor(dir: boolean) {
 
     <form onsubmit={joinRoom}>
       <input class="input input-center" type="text" name="displayName" bind:value={$displayName} placeholder="Nickname" minlength="1" maxlength="32" disabled={disableJoinPage} required>
-      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><br>
+      <input class="primary-button margin-top-8 wait-on-disabled" type="submit" value={(page.url.pathname.startsWith("/join/") ? (disableJoinPage ? "Joining room..." : "Join room") : (disableJoinPage ? "Creating room..." :"Create room"))} disabled={disableJoin}><span class="line-break"></span>
       
       {#if !env.VITE_TURNSTILE_BYPASS_SECRET}
         {#if triedInvisible}

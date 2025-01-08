@@ -105,23 +105,23 @@ async function logoutAllSessions() {
       </p>
 
       <hr class="border" />
-      <br>
+      <span class="line-break"></span>
 
       {#if message?.state === "failed"}
         <div class="failed-message">{message.text}</div>
-        <br>
+        <span class="line-break"></span>
       {:else if message?.state === "success"}
         <div class="success-message">{message.text}</div>
-        <br>
+        <span class="line-break"></span>
       {/if}
 
       <form onsubmit={updateUser}>
-        <label for="name">Display name:</label><br><br>
+        <label for="name">Display name:</label><span class="line-break"></span><span class="line-break"></span>
         <input class="input input-center input-dark" style="max-width: 200px;" name="name" value={$user?.name} maxlength="32" required>
         <input class="primary-button" style="max-width: 125px;" type="submit" value="Change username">
       </form>
       
-      <br>
+      <span class="line-break"></span>
     {:else}
       <a class="url" href="/">
         <button class="secondary-button" style="max-width: 50px;">

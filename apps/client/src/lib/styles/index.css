@@ -84,6 +84,11 @@ body.discord {
   }
 }
 
+.line-break::after {
+  content: "\A";
+  white-space: pre;
+}
+
 .captcha {
   width: 300px;
   height: 65px;

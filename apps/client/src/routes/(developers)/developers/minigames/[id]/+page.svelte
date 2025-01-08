@@ -215,7 +215,7 @@ async function removeRequestToPublishMinigameAccess() {
 </script>
 
 <Modal>
-  <br><br>
+  <span class="line-break"></span><span class="line-break"></span>
   <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
   <p>Are you sure you want to delete this minigame?</p>
 
@@ -256,9 +256,9 @@ async function removeRequestToPublishMinigameAccess() {
       </p>
 
       <p style="text-align: center;">
-        ID: <u>{minigame.id}</u><br>
+        ID: <u>{minigame.id}</u><span class="line-break"></span>
         Testing access code: <u>{minigame.testingAccessCode}</u>
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         <button class="error-button" style="max-width: 180px;" onclick={regenTestingAccessCode}>Reset testing access code</button>
         <button class="error-button" style="max-width: 125px;" onclick={deleteMinigame}>Delete minigame</button>
       </p>
@@ -274,51 +274,51 @@ async function removeRequestToPublishMinigameAccess() {
         <label for="name">Name:</label>
         <input class="input input-dark" name="name" maxlength="100" value={minigame.name} required>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         <label for="description">Description:</label>
-        <br>
+        <span class="line-break"></span>
         <textarea class="input textarea input-dark" name="description" rows="8" maxlength="4000" value={minigame.description}></textarea>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         <label for="credits">Credits:</label>
-        <br>
+        <span class="line-break"></span>
         <textarea class="input textarea input-dark" name="credits" rows="8" maxlength="4000" value={minigame.credits}></textarea>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         <label for="iconImage">Icon image URL:</label>
         <input class="input input-dark" name="iconImage" type="url" maxlength="999" value={minigame.iconImage}>
         
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         <label for="previewImage">Preview image URL:</label>
         <input class="input input-dark" name="previewImage" type="url" maxlength="999" value={minigame.previewImage}>
         
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         {#if minigame.canPublish}
           <label for="published">Published:</label>
           <input type="checkbox" name="published" checked={minigame.published}>
 
-          <br><br>
+          <span class="line-break"></span><span class="line-break"></span>
         {/if}
 
         <label for="termsOfServices">Terms of Services:</label>
         <input class="input input-dark" name="termsOfServices" type="url" maxlength="999" value={minigame.termsOfServices}>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <label for="privacyPolicy">Privacy Policy:</label>
         <input class="input input-dark" name="privacyPolicy" type="url" maxlength="999" value={minigame.privacyPolicy}>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <label for="proxyUrl">Proxy URL:</label>
         <input class="input input-dark" name="proxyUrl" type="url" maxlength="999" value={minigame.proxyUrl}>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <label for="pathType">Path type:</label>
         <select class="input input-dark" name="pathType">
@@ -330,17 +330,17 @@ async function removeRequestToPublishMinigameAccess() {
           </option>
         </select>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <label for="minimumPlayersToStart">Minimum players to start:</label>
         <input class="input input-dark" name="minimumPlayersToStart" min="1" max="25" value={minigame.minimumPlayersToStart} required>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
 
         <label for="supportsMobile">Supports mobile:</label>
         <input type="checkbox" name="supportsMobile" checked={minigame.supportsMobile}>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <label for="mobileOrientation">Mobile orientation (Discord activity only):</label>
         <select class="input input-dark" name="mobileOrientation">
@@ -355,11 +355,11 @@ async function removeRequestToPublishMinigameAccess() {
           </option>
         </select>
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         
         <button class="success-button" style="max-width: 115px;" type="submit">Save minigame</button>
       </form>
-      <br>
+      <span class="line-break"></span>
     {/if}
   </div>
 </main>

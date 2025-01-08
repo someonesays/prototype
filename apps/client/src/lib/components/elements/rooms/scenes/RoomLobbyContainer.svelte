@@ -339,12 +339,12 @@ function reportMinigame() {
 {:else}
   <Modal style="transform: scale({transformScale}); max-height: calc(80vh / {transformScale});" onclose={() => audio.close.play()}>
     {#if $roomLobbyPopupMessage?.type === "warning"}
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>{$roomLobbyPopupMessage?.message}</p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "link"}
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>Are you sure you want to open an external website?</p>
       <p>
@@ -359,7 +359,7 @@ function reportMinigame() {
         <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Cancel</button>
       </p>
     {:else if $roomLobbyPopupMessage?.type === "invite"}
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
       <div class="modal-icon"><Copy color="#000000" /></div>
       <p>Copied invite link!</p>
       <p><a class="url disabled-no-pointer" data-sveltekit-preload-data="off" href={`${location.origin}/join/${$room?.room.id}`} onclick={evt => evt.preventDefault()} tabindex=-1>{location.origin}/join/{$room?.room.id}</a></p>
@@ -380,17 +380,17 @@ function reportMinigame() {
       <form onsubmit={setSettingsForm}>
         <input class="input" type="text" name="minigame_id" placeholder="Minigame ID" value={$room?.minigame?.id ?? ""} disabled={$roomRequestedToChangeSettings} maxlength="50">
 
-        <br><br>
+        <span class="line-break"></span><span class="line-break"></span>
         <input class="primary-button wait-on-disabled" type="submit" value="Set minigame" disabled={$roomRequestedToChangeSettings}>
         <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false }}>Close</button>
       </form>
-      <br>
+      <span class="line-break"></span>
     {:else if $roomLobbyPopupMessage?.type === "select-minigame-search"}
       <h2 style="width: 400px; max-width: 100%;">Select minigame</h2>
       
       <input class="input" type="text" placeholder="Search minigames..." maxlength="100" bind:value={searchMinigameQuery} oninput={handleSearchingMinigames}>
 
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
 
       <div class="select-minigame-container" class:center={!$roomSearchedMinigames?.minigames.length}>
         {#if !$roomSearchedMinigames}
@@ -428,7 +428,7 @@ function reportMinigame() {
           {/each}
         {/if}
       </div>
-      <br>
+      <span class="line-break"></span>
 
       {#if !removeIdsOption}
         <button class="primary-button" onclick={(evt) => { evt.preventDefault(); handleSelectMinigame(); }} tabindex={disableTabIndex}>
@@ -437,16 +437,16 @@ function reportMinigame() {
       {/if}
 
       <button class="secondary-button margin-top-8px" data-audio-type="close" onclick={(evt) => { evt.preventDefault(); $isModalOpen = false; }}>Close</button>
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
     {:else if $roomLobbyPopupMessage?.type === "report"}
       <h2>Report minigame</h2>
       <p>This UI is a work in progress!</p>
       <p><button class="secondary-button margin-top-8px" data-audio-type="close" onclick={() => $isModalOpen = false}>Close</button></p>
     {:else if $roomLobbyPopupMessage?.type === "mobile"}
-      <br><br>
+      <span class="line-break"></span><span class="line-break"></span>
       <div class="modal-icon"><TriangleExclamation color="#000000" /></div>
       <p>
-        This minigame doesn't support mobile devices!<br>
+        This minigame doesn't support mobile devices!<span class="line-break"></span>
         Do you wish to continue?
       </p>
       <p>
@@ -492,7 +492,7 @@ function reportMinigame() {
                 <p class="volume-text-left">Volume</p>
                 <p class="volume-text-right">{$volumeValue}%</p>
               </div>
-              <br>
+              <span class="line-break"></span>
               <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} onmousedown={() => audio.press.play()} ontouchstart={() => audio.press.play()} tabindex={disableTabIndex} />
             </div>
           </div>
@@ -540,7 +540,7 @@ function reportMinigame() {
                   </div>
                 {/each}
               {/if}
-              <br>
+              <span class="line-break"></span>
             </div>
           </div>
         </div>
@@ -631,7 +631,7 @@ function reportMinigame() {
                     <h2>Choose a featured minigame to play!</h2>
 
                     <RoomLobbyFeaturedMinigames tabindex={disableTabIndex} />
-                    <br>
+                    <span class="line-break"></span>
 
                     <div class="nothingselected-buttons">
                       <button class="secondary-button nothingselected-button" onclick={handleSelectMinigameSearch} tabindex={disableTabIndex} disabled={$room.user !== $room.room.host || $roomRequestedToChangeSettings}>

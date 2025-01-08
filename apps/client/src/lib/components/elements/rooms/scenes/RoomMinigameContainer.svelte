@@ -220,7 +220,7 @@ function leaveOrEndGameConfirm() {
 </script>
 
 <Modal style="transform: scale({transformScale}); max-height: calc(80vh / {transformScale});" onclose={() => audio.close.play()}>
-  <br><br>
+  <span class="line-break"></span><span class="line-break"></span>
   {#if $room && $room.room.host === $room.user}
     <div class="modal-icon"><Plug color="#000000" /></div>
     <p>
@@ -273,9 +273,9 @@ function leaveOrEndGameConfirm() {
           <p class="volume-text-left">Volume</p>
           <p class="volume-text-right">{$volumeValue}%</p>
         </div>
-        <br>
+        <span class="line-break"></span>
         <input class="volume-slider" type="range" min="0" max="100" bind:value={$volumeValue} onmousedown={() => audio.press.play()} ontouchstart={() => audio.press.play()} oninput={() => $roomParentSdk?.updateSettings({ settings: { volume: $volumeValue } })} />
-        <br>
+        <span class="line-break"></span>
         {#if $launcher !== "discord" || $room && $room.room.host === $room.user}
           <button class="leave-button {isEnding ? "loading" : ""}" onclick={leaveOrEndGame}>
             {#if $room && $room.room.host === $room.user}

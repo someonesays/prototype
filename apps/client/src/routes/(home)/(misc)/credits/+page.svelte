@@ -27,10 +27,10 @@ onMount(() => {
   
     <h2>Credits</h2>
     <div>
-      <b>Developer</b><br>
-      Two (<a class="url" href="https://github.com/real2two" target="_blank">https://github.com/real2two</a>)<br>
-      <br>
-      <b>Logo Designer</b><br>
+      <b>Developer</b><span class="line-break"></span>
+      Two (<a class="url" href="https://github.com/real2two" target="_blank">https://github.com/real2two</a>)<span class="line-break"></span>
+      <span class="line-break"></span>
+      <b>Logo Designer</b><span class="line-break"></span>
       Realmy (<a class="url" href="https://realmy.net/" target="_blank">https://realmy.net/</a>)
     </div>
   
@@ -55,6 +55,6 @@ onMount(() => {
       "start.mp3" sampled from "New bubble pulse.WAV" by metrostock99 of freesound.org:
       <a class="url" href="https://freesound.org/people/metrostock99/sounds/345081/" target="_blank">https://freesound.org/people/metrostock99/sounds/345081/</a>
     </div>
-    <br>
+    <span class="line-break"></span>
   </BaseCard>
 </main>

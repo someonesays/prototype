@@ -118,10 +118,10 @@ onMount(() => {
     <div class="loader-section">
       <div style="width: 140px;"><Logo /></div>
       {#if !failed}
-        <br>
+        <span class="line-break"></span>
         <div class="loading-animation"></div>
       {/if}
-      <br>
+      <span class="line-break"></span>
       <span class="loading-text">
         {#if failed}
           Failed to load launcher.
