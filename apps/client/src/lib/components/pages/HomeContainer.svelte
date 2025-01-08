@@ -161,6 +161,7 @@ onMount(() => {
 });
 
 function changeShape(dir: boolean) {
+  audio.press.play();
   if (dir) {
     let index = shapes.indexOf($shape) + 1;
     if (index >= shapes.length) index = 0;
@@ -173,10 +174,10 @@ function changeShape(dir: boolean) {
 }
 
 function changeColor(dir: boolean) {
+  audio.press.play();
   if (dir) {
     let index = colors.indexOf($color) + 1;
     if (index >= colors.length) index = 0;
-    console.log(index);
     $color = colors[index];
   } else {
     let index = colors.indexOf($color) - 1;
@@ -300,6 +301,7 @@ function changeColor(dir: boolean) {
   .image-container {
     border-radius: 100px;
     border: solid #fafafa 3px;
+    transition: 0.4s ease-out;
   }
   .avatar-option-container {
     display: flex;
@@ -314,10 +316,14 @@ function changeColor(dir: boolean) {
     border-radius: 100px;
     padding: 10px;
     cursor: pointer;
+    transition: 0.1s ease-out;
   }
   .avatar-option:hover {
     background-color: #ffffff;
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+    transform: scale(1.002);
+  }
+  .avatar-option:active {
     transform: translate(0, 1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 </style>
