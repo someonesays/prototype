@@ -10,7 +10,7 @@
     "format": "biome format --write ./",
     "schema/push": "cd packages/db && bun schema/push",
     "schema/generate": "cd packages/db && bun schema/generate",
-    "schema/migrate": "bun --filter @/db schema/migrate"
+    "schema/migrate": "cd packages/db && bun schema/migrate"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
